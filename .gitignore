@@ -1,0 +1,113 @@
+### webdev-gitignore by https://github.com/TurboLabIt/webdev-gitignore/ ###
+########################################################################
+#
+# curl -o .gitignore https://raw.githubusercontent.com/TurboLabIt/webdev-gitignore/master/.gitignore?$(date +%s)
+
+# IDEs #
+########
+.idea
+.settings
+nbproject
+.buildpath
+.project
+*.code-workspace
+.vscode
+.run
+
+
+# Logs #
+########
+*.log
+
+
+# SVN #
+#######
+.svn
+
+
+# composer #
+############
+#https://adamcod.es/2013/03/07/composer-install-vs-composer-update.html
+#composer.lock
+/vendor/
+website/www/vendor/
+
+
+# OS generated files #
+######################
+__MACOSX
+*.DS_Store*
+._*
+.Spotlight-V100
+.Trash*
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+# Links  #
+##########
+*.lnk
+
+
+# Let's Encrypt #
+#################
+.well-known/
+
+
+# Node.js #
+###########
+node_modules/
+npm-debug.log
+.sass-cache/
+bower_components/
+
+
+# Patches #
+###########
+*.rej
+
+
+## Autodeploy ##
+################
+public/autodeploy.php
+public/autodeploy-async.php
+public/async-runner-request.php
+
+
+## Webdriver ##
+################
+drivers/chromedriver
+drivers/geckodriver
+
+
+## Sitemap ##
+#############
+/public/sitemap/
+/public/sitemap_new/
+
+
+## Environment ##
+#################
+# https://github.com/TurboLabIt/bash-fx/blob/main/scripts/app-env.sh
+/env
+
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/src/.preload.php
+###< symfony/framework-bundle ###
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+
+/wordpress/
