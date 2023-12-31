@@ -46,7 +46,7 @@ Al contrario di WordPress, l'inserimento articoli avviene direttamente sulla pag
 
 La documentazione a supporto del codice sorgente è disponibile qui:
 
-📚 [DOCUMENTAZIONE/wiki](https://github.com/TurboLabIt/turbolab.it/blob/dev/docs/)
+📚 [DOCUMENTAZIONE/wiki](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/)
 
 Per tutte le domande e il coordinamento dello sviluppo, usiamo il forum:
 
