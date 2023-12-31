@@ -46,10 +46,10 @@ Al contrario di WordPress, l'inserimento articoli avviene direttamente sulla pag
 
 La documentazione a supporto del codice sorgente è disponibile qui:
 
-📚 **[DOCUMENTAZIONE/wiki](https://github.com/TurboLabIt/turbolab.it/blob/dev/docs/)**
+📚 [DOCUMENTAZIONE/wiki](https://github.com/TurboLabIt/turbolab.it/blob/dev/docs/)
 
 Per tutte le domande e il coordinamento dello sviluppo, usiamo il forum:
 
-- 💬 [forum](https://turbolab.it/forum/viewforum.php?f=6)
+💬 [Forum](https://turbolab.it/forum/viewforum.php?f=6)
 
 No, non abbiamo e non vogliamo usare né Slack, né una chat su Telegram o qualsiasi altro strumento di conversazione sincrona. Il forum pubblico è il nostro strumento di comunicazione.
