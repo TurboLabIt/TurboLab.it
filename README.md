@@ -5,7 +5,7 @@ Questo repository (link breve: https://turbolab.it/codice ) contiene il codice s
 
 ## Definizione
 
-TurboLab.it (TLI) è una community online, fondata nel 2013, con lo di divenire un polo di aggregazione per smanettoni, professionisti e appassionati di computer e informatica che amino scrivere articoli tecnici, manuali, guide e/o confrontarsi con altri utenti che condividano la stessa passione. Il progetto è no-profit.
+TurboLab.it (TLI) è una community online, fondata nel 2013, con lo scopo di divenire un polo di aggregazione per smanettoni, professionisti e appassionati di computer e informatica che amino scrivere articoli tecnici, manuali, guide e/o confrontarsi con altri utenti che condividano la stessa passione. Il progetto è no-profit.
 
 Le due macro-aree sono:
 
