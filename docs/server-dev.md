@@ -33,4 +33,6 @@ A questo punto, sarà possibile collegarsi in SSH impartendo:
 
 1. seguire [server.md](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/server.md)
 2. modificare la porta SSH in `30986`
-3. attivare la config nginx: `ln -s /var/www/turbolab.it/config/custom/dev/nginx-dev0.conf /etc/nginx/conf.d/turbolab.it-dev0.conf && zzws`
+3. [postfix: external-relay](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/external-relay-template.md) con account `turbolab.prove@xxx`
+4. [postfix: redirect-all](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md) verso `turbolab.prove@xxx`
+5. attivare la config nginx: `ln -s /var/www/turbolab.it/config/custom/dev/nginx-dev0.conf /etc/nginx/conf.d/turbolab.it-dev0.conf && zzws`
