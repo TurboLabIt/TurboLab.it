@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 🪄 Based on https://github.com/TurboLabIt/webstackup/blob/master/my-app-template/scripts/script_begin.sh
 
-APP_NAME="turbolab_it"
+APP_NAME="turbolab.it"
 PROJECT_FRAMEWORK=symfony
 ZZ_CMD_SUFFIX=1
 

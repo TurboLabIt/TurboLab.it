@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 # 🪄 Based on https://github.com/TurboLabIt/webstackup/blob/master/my-app-template/scripts/test-runner.sh
 
-TESTR_SCRIPT_BEGIN=$(dirname $(readlink -f $0))/script_begin.sh
-if [ -f "${TESTR_SCRIPT_BEGIN}" ]; then
-  source "${TESTR_SCRIPT_BEGIN}"
-else
-  source "/usr/local/turbolab.it/webstackup/script/base.sh"
-  APP_NAME=turbolab_it
-  EXPECTED_USER=$(logname)
-fi
+source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "🧪 ${APP_NAME} Test Runner"
 
@@ -18,9 +11,4 @@ source "${WEBSTACKUP_SCRIPT_DIR}php/test-runner-package.sh"
 fxTitle "🧹 Cleaning up..."
 #rm -rf /tmp/any-temp-dir
 
-TESTR_SCRIPT_END=$(dirname $(readlink -f $0))/script_end.sh
-if [ -f "${TESTR_SCRIPT_END}" ]; then
-  source "${TESTR_SCRIPT_END}"
-else
-  fxEndFooter
-fi
+source "${SCRIPT_DIR}/script_end.sh"
