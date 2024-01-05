@@ -7,13 +7,6 @@
 #
 # 🪄 Based on https://github.com/TurboLabIt/webstackup/blob/master/my-app-template/config/custom/dev/db-post-restore.sql
 
-## dev0
-#USE turbolab.it_dev0
-#UPDATE `core_config_data` SET `value` = 'https://dev0-next.turbolab.it/' WHERE `path` IN('web/unsecure/base_url', 'web/secure/base_url');
-#UPDATE `wp_options` SET `option_value` = 'https://dev0-next.turbolab.it/' WHERE `option_name` IN('siteurl', 'home');
-
-
-## dev1
-#USE turbolab.it_dev1
-#UPDATE `core_config_data` SET `value` = 'https://dev1-next.turbolab.it/' WHERE `path` IN('web/unsecure/base_url', 'web/secure/base_url');
-#UPDATE `wp_options` SET `option_value` = 'https://dev1-next.turbolab.it/' WHERE `option_name` IN('siteurl', 'home');
+USE tli1_forum;
+UPDATE phpbb_config SET config_value = 'dev0.turbolab.it' WHERE config_name = 'server_name';
+UPDATE phpbb_config SET config_value = 'https://dev0.turbolab.it' WHERE config_value = 'https://turbolab.it';
