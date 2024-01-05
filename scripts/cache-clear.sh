@@ -20,8 +20,19 @@ if [ "$APP_ENV" = "dev" ]; then
   rm -f ${PROJECT_DIR}.env.local.php
   rm -rf ${PROJECT_DIR}vendor composer.lock
 
+  fxTitle "chown dev..."
+  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
+  sudo chmod ugo= "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
+
 fi
 
 wsuSourceFrameworkScript cache-clear "$@"
+
+fxTitle "👾 symlinking forum/ext/turbolabit..."
+fxLink ${PROJECT_DIR}src/Forum/ext-turbolabit ${WEBROOT_DIR}forum/ext/turbolabit
+
+fxTitle "🧹 Deleting the forum cache folder..."
+rm -rf "${WEBROOT_DIR}forum/cache/production"
 
 source "${SCRIPT_DIR}script_end.sh"

@@ -3,13 +3,19 @@
 
 source $(dirname $(readlink -f $0))/script_begin.sh
 
-## zzmysqldump
-DB_DUMP_FILE_PATH=${DB_DUMP_DIR}db_${APP_NAME}_$(date +'%u').sql.7z
-## local database name to import into (zzmysqldump only)
-MYSQL_DB_NAME=${APP_NAME}
+DB_DUMP_FILE_PATH=${DB_DUMP_DIR}thundercracker_turbolab_it_$(date +'%u').sql.7z
+## local database name to import into
+MYSQL_DB_NAME=tli1
+## options
+SKIP_POST_RESTORE_QUERY=1
+wsuSourceFrameworkScript db-restore
+
+
+DB_DUMP_FILE_PATH=${DB_DUMP_DIR}thundercracker_turbolab_it_forum_$(date +'%u').sql.7z
+## local database name to import into
+MYSQL_DB_NAME=tli1_forum
 ## options
 SKIP_POST_RESTORE_QUERY=0
-
 wsuSourceFrameworkScript db-restore
 
 source "${SCRIPT_DIR}script_end.sh"

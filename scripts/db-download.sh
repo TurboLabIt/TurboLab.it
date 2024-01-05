@@ -5,7 +5,8 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 
 REMOTE_SERVER=turbolab.it
 REMOTE_SSH_USERNAME=root
-REMOTE_PROJECT_DIR=/var/www/turbolab.it/
+## 👇 this is still related to TLI1
+REMOTE_PROJECT_DIR=/var/www/turbolab_it/website/www/
 REMOTE_APP_ENV=prod
 DISABLE_SSH_TEST=0
 
