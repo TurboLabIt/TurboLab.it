@@ -1,0 +1,10 @@
+services:
+    turbolabit.tapatalkstripsign.listener:
+        class: turbolabit\tapatalkstripsign\event\listener
+        arguments:
+            - '@config'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+        tags:
+            - { name: event.listener }

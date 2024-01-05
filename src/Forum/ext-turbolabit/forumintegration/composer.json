@@ -1,0 +1,26 @@
+{
+	"name": "turbolabit/forumintegration",
+	"type": "phpbb-extension",
+	"description": "Integra sul forum le personalizzazioni di TurboLab.it",
+	"homepage": "http://turbolab.it",
+	"version": "1.0.0",
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Zane",
+			"email": "info@turbolab.it",
+			"homepage": "http://turbolab.it",
+			"role": "CEO"
+		}
+	],
+	"require": {
+		"php": ">=5.3.3",
+		"composer/installers": "~1.0"
+	},
+	"extra": {
+		"display-name": "TurboLab.it Forum Integration",
+		"soft-require": {
+			"phpbb/phpbb": ">=3.1.0"
+		}
+	}
+}

@@ -1,0 +1,10 @@
+services:
+    turbolabit.httpsonimg.listener:
+        class: turbolabit\httpsonimg\event\listener
+        arguments:
+            - '@config'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+        tags:
+            - { name: event.listener }
