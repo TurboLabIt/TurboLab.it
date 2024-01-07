@@ -36,8 +36,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             //->fxTitle("Load Users from view...")
             //->loadUsers()
 
-            ->fxTitle("Disable autoincrement on TLI2 (so that we can import old IDs...")
+            ->fxTitle("Disable autoincrement on TLI2 (so we can preserve old IDs)...")
             ->disableAutoincrementOnTli2()
+
+            ->fxTitle("Processing invalid TLI1 Pages...")
+            ->processInvalidTli1Pages()
 
             ->fxTitle("Import Articles...")
             ->importArticles()
@@ -75,6 +78,54 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
+    protected function processInvalidTli1Pages() : static
+    {
+        $this->io->text("Removing pages with empty body from TLI1...");
+        $this->dbTli1->exec("
+            DELETE FROM pagine
+            WHERE corpo IS NULL OR corpo = ''
+        ");
+        $this->fxOK();
+
+        $this->io->text("Checking for dangling pages on TLI1...");
+        $stmt = $this->dbTli1->query("
+            SELECT pagine.id_pagina, contenuti.id_contenuto
+            FROM pagine
+            LEFT JOIN contenuti
+            ON pagine.id_contenuto = contenuti.id_contenuto
+            WHERE
+            pagine.id_contenuto IS NULL OR pagine.id_contenuto = '' OR
+            contenuti.id_contenuto IS NULL OR contenuti.id_contenuto = ''
+        ");
+        $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        if( !empty($arrInvalidPages) ) {
+            return $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true));
+        }
+        $this->fxOK();
+
+        $this->io->text("Check for multiple pages relating to the same article on TLI1...");
+        $stmt = $this->dbTli1->query("
+            SELECT id_pagina, id_contenuto
+            FROM pagine WHERE id_contenuto IN(
+                SELECT id_contenuto
+                FROM pagine
+                GROUP BY id_contenuto
+                HAVING COUNT(1) > 1
+                )
+            ORDER BY id_contenuto,id_pagina
+        ");
+        $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        if( !empty($arrInvalidPages) ) {
+            return $this->endWithError(
+                "There are multiple pages relating to the same article on TLI1: " . print_r($arrInvalidPages, true)
+            );
+        }
+        $this->fxOK();
+
+        return $this;
+    }
+
+
     protected function disableAutoincrementOnTli2() : static
     {
         foreach([ArticleEntity::class] as $className) {
@@ -90,25 +141,20 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function importArticles()
     {
-        // TODO check for pagine without contenuto, report and stop exec if any
-        // TODO check for multiple pagine relating to one contenuto, report and stop exec if any
-
         $this->io->text("Loading TLI1 articles...");
-        // https://turbolab.it/1939 , https://turbolab.it/2125
-        $arrMalformedTli1Articles = [1939,2125];
-        $stmt = $this->dbTli1->query('
+        $stmt = $this->dbTli1->query("
             SELECT contenuti.id_contenuto AS pdokey, contenuti.*, pagine.corpo
             FROM contenuti
             LEFT JOIN pagine
             ON contenuti.id_contenuto = pagine.id_contenuto
-            WHERE contenuti.id_contenuto NOT IN(' . implode(',', $arrMalformedTli1Articles) . ') ORDER BY id_contenuto ASC'
-        );
+            ORDER BY id_contenuto ASC
+        ");
         $arrTli1Articles = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
-        $this->fxOK( count($arrTli1Articles) . " items loaded!");
+        $this->fxOK( count($arrTli1Articles) . " items loaded");
 
         $this->io->text("Loading TLI2 articles...");
         $arrTli2Articles = $this->em->getRepository(ArticleEntity::class)->loadAll();
-        $this->fxOK( count($arrTli2Articles) . " item(s) loaded!");
+        $this->fxOK( count($arrTli2Articles) . " item(s) loaded");
         unset($arrTli2Articles);
 
         //$this->io->text("Loading new article authors...");

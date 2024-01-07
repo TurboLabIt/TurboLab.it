@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 abstract class BaseRepository extends ServiceEntityRepository
 {
-    protected $cachedRs;
+    protected array $cachedRs;
 
 
     protected function getTableName() : string
