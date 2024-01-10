@@ -2,6 +2,9 @@
 namespace App\Command;
 
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Entity\Cms\ArticleAuthor;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -17,6 +20,8 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 class TLI1ImporterCommand extends AbstractBaseCommand
 {
     protected \PDO $dbTli1;
+    protected UserRepository $repoUsers;
+    protected array $arrUsersByContributionType = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
@@ -33,8 +38,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ->fxTitle("Connecting to TLI1 DB...")
             ->tli1DbConnect()
 
-            //->fxTitle("Load Users from view...")
-            //->loadUsers()
+            ->fxTitle("Loading Users from view...")
+            ->loadUsers()
+
+            ->fxTitle("Loading Authors from TLI1...")
+            ->loadAuthors()
 
             ->fxTitle("Disable autoincrement on TLI2 (so we can preserve old IDs)...")
             ->disableAutoincrementOnTli2()
@@ -73,6 +81,59 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         ];
 
         $this->dbTli1 = new \PDO($dsn, $arrDbConfig["user"], $arrDbConfig["password"], $options);
+
+        return $this;
+    }
+
+
+    protected function loadUsers() : static
+    {
+        $this->repoUsers = $this->em->getRepository(User::class);
+        $arrUsers = $this->repoUsers->loadAll();
+        $this->fxOK(count($arrUsers) . " item(s) loaded");
+        return $this;
+    }
+
+
+    protected function loadAuthors()
+    {
+        $this->io->text("Loading authors from TLI1...");
+        /**
+         * TLI1 doesn't provide the author of the images uploaded after 2013 (???) =>
+         * discard the whole "author of the image" data and
+         * fall back to the "author of the article" as "article of the images it contains"
+         */
+        $stmt = $this->dbTli1->query("
+            SELECT * FROM autori WHERE tipo != 'immagine'
+            UNION
+            SELECT id_utente, id_tag AS id_opera, 'tag' AS tipo, data_creazione AS data FROM tag
+            ORDER BY data ASC
+        ");
+        $arrOldAuthors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $this->fxOK( "OK, " . count($arrOldAuthors) . " author associations loaded!");
+
+        $this->io->text("Building the authors data structure...");
+        foreach($arrOldAuthors as $arrOldAuthor) {
+
+            $userId         = $arrOldAuthor["id_utente"];
+            $contributionId = $arrOldAuthor["id_opera"];
+            $contribType    = $arrOldAuthor["tipo"];
+            $createdAt      = \DateTime::createFromFormat('YmdHis', $arrOldAuthor["data"]);
+
+            if( empty($createdAt) ) {
+                return $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true));
+            }
+
+            $user = $this->repoUsers->selectOrNull($userId);
+            if( empty($user) ) {
+                continue;
+            }
+
+            $this->arrUsersByContributionType[$contribType][$contributionId][] = [
+                "user"  => $user,
+                "date"  => $createdAt
+            ];
+        }
 
         return $this;
     }
@@ -157,9 +218,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli2Articles) . " item(s) loaded");
         unset($arrTli2Articles);
 
-        //$this->io->text("Loading new article authors...");
-        //$repoAuthors = $this->em->getRepository(ArticleAuthor::class)->loadWholeTable();
-
         //$this->io->text("Load comments (forum topics) from view...");
         //$repoComments = $this->em->getRepository(Topic::class)->loadWholeTable();
 
@@ -174,9 +232,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $title          = $arrArticle["titolo"];
         $abstract       = $arrArticle["abstract"];
-        $pubStatus      = match($arrArticle["finito"]) {
-            0   => ArticleEntity::PUBLISHING_STATUS_DRAFT,
-            1   => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
+        $pubStatus      = match( $arrArticle["finito"] ) {
+            0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
+            1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
         };
 
         $views          = (int)$arrArticle["visite"];
@@ -190,7 +248,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
 
         if( empty($createdAt) && empty($updatedAt) ) {
-            throw new \Exception("This article has no dates");
+            return $this->endWithError("This article has no dates: " . print_r($arrArticle, true));
         }
 
         $createdAt  = $createdAt ?: $updatedAt ?: $publishedAt;
@@ -209,6 +267,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $pubStatus      = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
         }
 
+        /** @var ArticleEntity $entityTli2Article */
         $entityTli2Article =
             $this->em->getRepository(ArticleEntity::class)
                 ->selectOrNew($articleId)
@@ -229,20 +288,19 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $this->arrSpotlightIds[$articleId] = $spotlightId;
         }*/
 
-        /*$arrAuthors = $this->arrUsersByContributionType["contenuto"][$articleId];
-        foreach($arrAuthors as $idx => $arrOldAuthorData) {
+        // AUTHORS
+        $arrTli1Authors = $this->arrUsersByContributionType["contenuto"][$articleId] ?? [];
+        foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
 
-            $entityUser     = $arrOldAuthorData["user"];
-            $createdAt      = $arrOldAuthorData["date"];
+            $author =
+                (new ArticleAuthor())
+                    ->setUser( $arrOldAuthorData["user"] )
+                    ->setCreatedAt( $arrOldAuthorData["date"] )
+                    ->setUpdatedAt( $arrOldAuthorData["date"] )
+                    ->setRanking($idx);
 
-            $author  =
-                $repoAuthors->selectOrNew($entity, $entityUser)
-                    ->setCreatedAt($createdAt)
-                    ->setUpdatedAt($createdAt)
-                    ->setPriority($idx);
-
-            $this->em->persist($author);
-        }*/
+            $entityTli2Article->addAuthor($author);
+        }
 
         $this->em->persist($entityTli2Article);
         //$this->arrNewArticles[$articleId] = $entity;

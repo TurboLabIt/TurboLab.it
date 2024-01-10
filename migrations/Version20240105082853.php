@@ -19,6 +19,7 @@ final class Version20240105082853 extends AbstractMigration
         $this->addSql('DROP VIEW IF EXISTS user');
         $this->addSql('DROP VIEW IF EXISTS forum_post');
         $this->addSql('DROP TABLE IF EXISTS article');
+        $this->addSql('DROP TABLE IF EXISTS article_author');
         $this->addSql('SET foreign_key_checks = 1');
 
         // https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/users.md
