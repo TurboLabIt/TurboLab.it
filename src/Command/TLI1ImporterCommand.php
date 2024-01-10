@@ -97,7 +97,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function loadAuthors()
     {
-        $this->io->text("Loading authors from TLI1...");
         /**
          * TLI1 doesn't provide the author of the images uploaded after 2013 (???) =>
          * discard the whole "author of the image" data and
