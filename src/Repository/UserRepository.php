@@ -27,17 +27,21 @@ class UserRepository extends ServiceEntityRepository
         $db  = $this->getEntityManager()->getConnection();
         $sql = "
                 SELECT
-                    sessions.session_user_id AS user_id
+                    userView.id, userView.username
                 FROM
+                    user AS userView
+                INNER JOIN
                     turbolab_it_forum.phpbb_sessions AS sessions
+                ON
+                    userView.id = sessions.session_user_id
                 INNER JOIN
                     turbolab_it_forum.phpbb_sessions_keys AS sessKeys
                 ON
-                    sessions.session_user_id = sessKeys.user_id
+                    userView.id = sessKeys.user_id
                 WHERE
-                    sessions.session_user_id    = :userId AND
-                    sessions.session_id         = :sessionId AND
-                    sessKeys.key_id             = :sessionKey
+                    userView.id         = :userId AND
+                    sessions.session_id = :sessionId AND
+                    sessKeys.key_id     = :sessionKey
                 ";
 
         $stmt = $db->prepare($sql);
@@ -45,18 +49,18 @@ class UserRepository extends ServiceEntityRepository
         $stmt->bindValue('sessionId', $sessionId);
         $stmt->bindValue('sessionKey', md5($sessionKey) );
 
-        $ormResult = $stmt->executeQuery();
-        $arrUserId = $ormResult->fetchNumeric();
+        $ormResult  = $stmt->executeQuery();
+        $arrUser    = $ormResult->fetchAssociative();
 
-        if( empty($arrUserId[0]) ) {
+        if( empty($arrUser) ) {
             return null;
         }
 
-        return
-            $this->createQueryBuilder('t')
-                ->andWhere('t.id = :userId')
-                    ->setParameter('userId', $userId)
-                ->getQuery()
-                ->getOneOrNullResult();
+        $user =
+            (new User())
+                ->setId( $arrUser["id"] )
+                ->setUsername( $arrUser["username"] );
+
+        return $user;
     }
 }

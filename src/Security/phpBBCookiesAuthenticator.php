@@ -82,9 +82,18 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
 
     public function authenticate(Request $request): Passport
     {
-        $user = $this->getUserFromPhpBBCookies($request);
+        /**
+         * re-using symfony current user doesn't work bc
+         * it wouldn't detect a logout started from phpBB
+         * $user = $this->security->getUser();
+         */
+
         if( empty($user) ) {
-            throw new AuthenticationException("No login data from phpBB cookies");
+
+            $user = $this->getUserFromPhpBBCookies($request);
+            if( empty($user) ) {
+                throw new AuthenticationException("No login data from phpBB cookies");
+            }
         }
 
         $userIdentifier = $user->getUserIdentifier();
