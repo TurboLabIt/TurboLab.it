@@ -27,6 +27,7 @@ class Article extends BaseCmsEntity
     use ViewableEntityTrait;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
 

@@ -296,7 +296,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setUser( $arrOldAuthorData["user"] )
                     ->setCreatedAt( $arrOldAuthorData["date"] )
                     ->setUpdatedAt( $arrOldAuthorData["date"] )
-                    ->setRanking($idx);
+                    ->setRanking( $idx + 1 );
 
             $entityTli2Article->addAuthor($author);
         }
