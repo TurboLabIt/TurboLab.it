@@ -2,6 +2,7 @@
 namespace App\Entity;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ImageAuthor;
 use App\Repository\UserRepository;
 use App\Trait\IdableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,13 +22,17 @@ class User implements UserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true)]
-    protected Collection $articles;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $articles;
+
+    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $images;
 
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->images   = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,6 +88,7 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
+
     /**
      * @return Collection<int, ArticleAuthor>
      */
@@ -107,6 +113,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($article->getUser() === $this) {
                 $article->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, ImageAuthor>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ImageAuthor $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(ImageAuthor $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getUser() === $this) {
+                $image->setUser(null);
             }
         }
 

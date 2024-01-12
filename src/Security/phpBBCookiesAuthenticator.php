@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 
 /**
- * @link 📚 https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
+ * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
  */
 class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSubscriberInterface
 {

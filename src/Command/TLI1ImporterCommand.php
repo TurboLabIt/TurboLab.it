@@ -3,7 +3,12 @@ namespace App\Command;
 
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleImage;
+use App\Entity\Cms\Image as ImageEntity;
+use App\Entity\Cms\ImageAuthor;
+use App\Entity\PhpBB\Topic;
 use App\Entity\User;
+use App\Repository\PhpBB\TopicRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -13,15 +18,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 
 
-#[AsCommand(
-    name: 'tli1',
-    description: 'Import data from TLI1 to TLI2',
-)]
+#[AsCommand(name: 'TLI1 Importer', description: 'Import data from TLI1 to TLI2', aliases: ['tli1'])]
 class TLI1ImporterCommand extends AbstractBaseCommand
 {
     protected \PDO $dbTli1;
     protected UserRepository $repoUsers;
-    protected array $arrUsersByContributionType = [];
+    protected array $arrAuthorsByContributionType = [];
+    protected TopicRepository $repoTopics;
+    protected array $arrNewArticles = [];
+    protected array $arrNewImages = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
@@ -44,17 +49,20 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ->fxTitle("Loading Authors from TLI1...")
             ->loadAuthors()
 
+            ->fxTitle("Loading Comment Topics...")
+            ->loadCommentTopics()
+
             ->fxTitle("Disable autoincrement on TLI2 (so we can preserve old IDs)...")
             ->disableAutoincrementOnTli2()
 
             ->fxTitle("Processing invalid TLI1 Pages...")
             ->processInvalidTli1Pages()
 
-            ->fxTitle("Import Articles...")
+            ->fxTitle("Importing Articles...")
             ->importArticles()
 
-            //->fxTitle("Import Images...")
-            //->importImages()
+            ->fxTitle("Import Images...")
+            ->importImages()
 
             //->fxTitle("Import Tags...")
             //->importTags()
@@ -128,12 +136,21 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 continue;
             }
 
-            $this->arrUsersByContributionType[$contribType][$contributionId][] = [
+            $this->arrAuthorsByContributionType[$contribType][$contributionId][] = [
                 "user"  => $user,
                 "date"  => $createdAt
             ];
         }
 
+        return $this;
+    }
+
+
+    protected function loadCommentTopics() : static
+    {
+        $this->repoTopics = $this->em->getRepository(Topic::class);
+        $arrTopics = $this->repoTopics->loadAll();
+        $this->fxOK(count($arrTopics) . " item(s) loaded");
         return $this;
     }
 
@@ -188,7 +205,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function disableAutoincrementOnTli2() : static
     {
-        foreach([ArticleEntity::class] as $className) {
+        foreach([ArticleEntity::class, ImageEntity::class] as $className) {
 
             $this->em
                 ->getClassMetadata($className)
@@ -217,9 +234,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli2Articles) . " item(s) loaded");
         unset($arrTli2Articles);
 
-        //$this->io->text("Load comments (forum topics) from view...");
-        //$repoComments = $this->em->getRepository(Topic::class)->loadWholeTable();
-
         $this->io->text("Processing every TLI1 article...");
         $this->processItems($arrTli1Articles, [$this, 'processTli1Article'], null, [$this, 'buildItemTitle']);
 
@@ -240,7 +254,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $format         = (int)$arrArticle["formato"];
         $rating         = (int)$arrArticle["rating"];
         $ads            = (bool)$arrArticle["ads"];
-        //$commentsTopic  = $repoComments->selectOrNull($arrArticle["id_commenti_phpbb"]);
+        $commentsTopic  = $this->repoTopics->selectOrNull($arrArticle["id_commenti_phpbb"]);
         $body           = $arrArticle["corpo"];
         $createdAt      = $arrArticle["data_creazione"] ?: null;
         $updatedAt      = $arrArticle["data_update"] ?: null;
@@ -273,14 +287,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setTitle($title)
                     ->setFormat($format)
                     ->setPublishingStatus($pubStatus)
+                    ->setPublishedAt($publishedAt)
                     ->setShowAds($ads)
-                    //->setCommentsTopic($commentsTopic)
+                    ->setCommentsTopic($commentsTopic)
                     ->setViews($views)
                     ->setAbstract($abstract)
                     ->setBody($body)
                     ->setCreatedAt($createdAt)
-                    ->setUpdatedAt($updatedAt)
-                    ->setPublishedAt($publishedAt);
+                    ->setUpdatedAt($updatedAt);
 
         /*$spotlightId = $arrArticle["spotlight"];
         if( !empty($spotlightId) && $spotlightId != 1 ) {
@@ -288,7 +302,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }*/
 
         // AUTHORS
-        $arrTli1Authors = $this->arrUsersByContributionType["contenuto"][$articleId] ?? [];
+        $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
         foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
 
             $author =
@@ -302,6 +316,190 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $this->em->persist($entityTli2Article);
-        //$this->arrNewArticles[$articleId] = $entity;
+        $this->arrNewArticles[$articleId] = $entityTli2Article;
+    }
+
+
+    protected function importImages() : static
+    {
+        $this->io->text("Loading TLI1 images...");
+        $stmt = $this->dbTli1->query("SELECT id_immagine AS pdokey, immagini.* FROM immagini ORDER BY id_immagine ASC");
+        $arrTli1Images = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1Images) . " items loaded");
+
+        $this->io->text("Loading TLI2 images...");
+        $arrTli2Images = $this->em->getRepository(ImageEntity::class)->loadAll();
+        $this->fxOK( count($arrTli2Images) . " item(s) loaded");
+        unset($arrTli2Images);
+
+        $this->io->text("Processing every TLI2 image...");
+        $this->processItems($arrTli1Images, [$this, 'processTli1Image'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1Image(int $imageId, array $arrImage)
+    {
+        $title = $arrImage["titolo"];
+        $format = mb_strtolower($arrImage["formato"]);
+        $createdAt = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
+        $watermark = match ($arrImage["watermarked"]) {
+            0 => ImageEntity::WATERMARK_DISABLED,
+            1 => ImageEntity::WATERMARK_BOTTOM_RIGHT
+        };
+
+        if (!in_array($format, ['png', 'jpg'])) {
+            return $this->endWithError(
+                "This is not a png/jpg image: " . print_r($arrImage, true)
+            );
+        }
+
+        /** @var ImageEntity $entityTli2Image */
+        $entityTli2Image =
+            $this->em->getRepository(ImageEntity::class)
+                ->selectOrNew($imageId)
+                ->setTitle($title)
+                ->setFormat($format)
+                ->setWatermarkPosition($watermark)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        // LINK TO ARTICLE
+        $articleId = $arrImage["id_opera"];
+        /** @var ArticleEntity $article */
+        $article = $this->arrNewArticles[$articleId] ?? null;
+
+        if (empty($article)) {
+            return $this->endWithError(
+                "No related article: " . print_r($arrImage, true)
+            );
+        }
+
+        $imageArticleLink =
+            (new ArticleImage())
+                ->setArticle($article)
+                ->setCreatedAt( $article->getCreatedAt() )
+                ->setUpdatedAt( $article->getUpdatedAt() );
+
+        $entityTli2Image->addArticle($imageArticleLink);
+
+        // AUTHORS
+        $arrArticleAuthors = $article->getAuthors();
+        foreach ($arrArticleAuthors as $idx => $articleAuthor) {
+
+            $imageAuthor =
+                (new ImageAuthor())
+                    ->setUser($articleAuthor->getUser())
+                    ->setCreatedAt($articleAuthor->getCreatedAt())
+                    ->setUpdatedAt($articleAuthor->getUpdatedAt())
+                    ->setRanking($idx + 1);
+
+            $entityTli2Image->addAuthor($imageAuthor);
+        }
+
+        $this->em->persist($entityTli2Image);
+        $this->arrNewImages[$imageId] = $entityTli2Image;
+    }
+
+
+    protected function assignSpotlights() : static
+    {
+        $this->io->text("Adding the spotlight to each article...");
+        $progressBar = new ProgressBar($this->output, count($this->arrNewArticles));
+        $progressBar->start();
+
+        foreach($this->arrNewArticles as $articleId => $article) {
+
+            $spotlightId =
+                empty($this->arrSpotlightIds[$articleId]) ? null : $this->arrSpotlightIds[$articleId];
+
+            $spotlight =
+                empty($arrNewImages[$spotlightId]) ? null : $arrNewImages[$spotlightId];
+
+            if( !empty($spotlight) ) {
+
+                $article->setSpotlight($spotlight);
+                $this->em->persist($article);
+
+                $imageLoadedInArticleId = $article->getId();
+                $arrImagesLoadedIn[$spotlightId][$imageLoadedInArticleId] = $this->arrNewArticles[$imageLoadedInArticleId];
+            }
+
+            $progressBar->advance();
+        }
+
+        $progressBar->finish();
+        $this->io->newLine(2);
+
+
+        $this->io->text("Loading new images attached to articles...");
+        $repoAttachs = $this->em->getRepository(ImageArticle::class)->loadWholeTable();
+
+        $this->io->text("Attaching each image to the releated article...");
+        $progressBar = new ProgressBar($this->output, count($arrNewImages));
+        $progressBar->start();
+
+        foreach($arrNewImages as $imageId => $image) {
+
+            $arrArticles =  $arrImagesLoadedIn[$imageId];
+
+            if( empty($arrArticles) ) {
+
+                throw new \Exception("Dangling image!");
+            }
+
+            foreach($arrArticles as $article) {
+
+                $entityAttach =
+                    $repoAttachs->selectOrNew($image, $article)
+                        ->setCreatedAt($image->getCreatedAt())
+                        ->setUpdatedAt($image->getUpdatedAt());
+
+                $this->em->persist($entityAttach);
+            }
+
+            $progressBar->advance();
+        }
+
+        $progressBar->finish();
+        $this->io->newLine(2);
+
+
+        $this->io->text("Loading new images authors...");
+        $repoAuthors = $this->em->getRepository(ImageAuthor::class)->loadWholeTable();
+
+        $this->io->text("Adding authors to each image...");
+        $progressBar = new ProgressBar($this->output, count($arrNewImages));
+        $progressBar->start();
+
+        // image authors are missing after 2013 => fetching images authors from article authors
+
+        foreach($arrNewImages as $imageId => $image) {
+
+            $arrArticles = $arrImagesLoadedIn[$imageId];
+            foreach($arrArticles as $articleId => $article) {
+
+                $arrAuthorsData = $this->arrAuthorsByContributionType["contenuto"][$articleId];
+                foreach($arrAuthorsData as $idx => $arrAuthorData) {
+
+                    $entityUser = $arrAuthorData["user"];
+                    $createdAt  = $arrAuthorData["date"];
+
+                    $imageAuthor  =
+                        $repoAuthors->selectOrNew($image, $entityUser)
+                            ->setCreatedAt($createdAt)
+                            ->setUpdatedAt($createdAt)
+                            ->setPriority($idx);
+
+                    $this->em->persist($imageAuthor);
+                }
+            }
+
+            $progressBar->advance();
+        }
+
+        $progressBar->finish();
+        $this->io->newLine(2);
     }
 }

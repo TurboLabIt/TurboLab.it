@@ -45,12 +45,11 @@ trait PublishableEntityTrait
 
     public function setPublishingStatus(int $status): static
     {
-        if( !in_array($status, $this->getStatuses()) ) {
-            throw new InvalidEnumException("Invalid publishing stauts for the article");
+        if( !in_array($status, $this->getStatuses() ) ) {
+            throw new InvalidEnumException("Invalid publishing status for the article");
         }
 
         $this->publishingStatus = $status;
-
         return $this;
     }
 

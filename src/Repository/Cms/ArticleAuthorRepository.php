@@ -5,7 +5,6 @@ use App\Entity\ArticleAuthor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 /**
  * @extends ServiceEntityRepository<ArticleAuthor>
  *

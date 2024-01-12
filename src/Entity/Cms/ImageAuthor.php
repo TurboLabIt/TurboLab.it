@@ -2,33 +2,33 @@
 namespace App\Entity\Cms;
 
 use App\Entity\User;
-use App\Repository\Cms\ArticleAuthorRepository;
+use App\Repository\Cms\ImageAuthorRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 
-#[ORM\Entity(repositoryClass: ArticleAuthorRepository::class)]
-class ArticleAuthor extends BaseCmsEntity
+#[ORM\Entity(repositoryClass: ImageAuthorRepository::class)]
+class ImageAuthor extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'authors')]
     #[ORM\JoinColumn(nullable: false)]
-    protected ?Article $article = null;
+    protected ?Image $image = null;
 
-    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\ManyToOne(inversedBy: 'images')]
     #[ORM\JoinColumn(nullable: false)]
     protected ?User $user = null;
 
     use RankableEntityTrait;
 
 
-    public function getArticle(): ?Article
+    public function getImage(): ?Image
     {
-        return $this->article;
+        return $this->image;
     }
 
-    public function setArticle(?Article $article): static
+    public function setImage(?Image $image): static
     {
-        $this->article = $article;
+        $this->image = $image;
         return $this;
     }
 
