@@ -27,6 +27,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected TopicRepository $repoTopics;
     protected array $arrNewArticles = [];
     protected array $arrNewImages = [];
+    protected array $arrSpotlightIds = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
@@ -63,6 +64,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             ->fxTitle("Import Images...")
             ->importImages()
+
+            ->fxTitle("Assigning the cover image to each article...")
+            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, [$this, 'buildItemTitle'])
 
             //->fxTitle("Import Tags...")
             //->importTags()
@@ -280,6 +284,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $pubStatus      = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
         }
 
+        // this will be handled later on
+        $spotlightId = $arrArticle["spotlight"];
+        if( !empty($spotlightId) && $spotlightId != 1 ) {
+            $this->arrSpotlightIds[$articleId] = $spotlightId;
+        }
+
         /** @var ArticleEntity $entityTli2Article */
         $entityTli2Article =
             $this->em->getRepository(ArticleEntity::class)
@@ -295,11 +305,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setBody($body)
                     ->setCreatedAt($createdAt)
                     ->setUpdatedAt($updatedAt);
-
-        /*$spotlightId = $arrArticle["spotlight"];
-        if( !empty($spotlightId) && $spotlightId != 1 ) {
-            $this->arrSpotlightIds[$articleId] = $spotlightId;
-        }*/
 
         // AUTHORS
         $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
@@ -376,23 +381,25 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             );
         }
 
+        $articleCreatedAt = $article->getCreatedAt();
+
         $imageArticleLink =
             (new ArticleImage())
                 ->setArticle($article)
-                ->setCreatedAt( $article->getCreatedAt() )
-                ->setUpdatedAt( $article->getUpdatedAt() );
+                ->setCreatedAt($articleCreatedAt)
+                ->setUpdatedAt($articleCreatedAt);
 
         $entityTli2Image->addArticle($imageArticleLink);
 
-        // AUTHORS
+        // IMAGE AUTHOR(S)
         $arrArticleAuthors = $article->getAuthors();
         foreach ($arrArticleAuthors as $idx => $articleAuthor) {
 
             $imageAuthor =
                 (new ImageAuthor())
-                    ->setUser($articleAuthor->getUser())
-                    ->setCreatedAt($articleAuthor->getCreatedAt())
-                    ->setUpdatedAt($articleAuthor->getUpdatedAt())
+                    ->setUser( $articleAuthor->getUser() )
+                    ->setCreatedAt( $articleAuthor->getCreatedAt() )
+                    ->setUpdatedAt( $articleAuthor->getCreatedAt() )
                     ->setRanking($idx + 1);
 
             $entityTli2Image->addAuthor($imageAuthor);
@@ -403,103 +410,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function assignSpotlights() : static
+    protected function assignCoverImage(int $articleId, ArticleEntity $article) : static
     {
-        $this->io->text("Adding the spotlight to each article...");
-        $progressBar = new ProgressBar($this->output, count($this->arrNewArticles));
-        $progressBar->start();
+        $coverImageId   = $this->arrSpotlightIds[$articleId] ?? null;
+        $coverImage     = $this->arrNewImages[$coverImageId] ?? null;
 
-        foreach($this->arrNewArticles as $articleId => $article) {
-
-            $spotlightId =
-                empty($this->arrSpotlightIds[$articleId]) ? null : $this->arrSpotlightIds[$articleId];
-
-            $spotlight =
-                empty($arrNewImages[$spotlightId]) ? null : $arrNewImages[$spotlightId];
-
-            if( !empty($spotlight) ) {
-
-                $article->setSpotlight($spotlight);
-                $this->em->persist($article);
-
-                $imageLoadedInArticleId = $article->getId();
-                $arrImagesLoadedIn[$spotlightId][$imageLoadedInArticleId] = $this->arrNewArticles[$imageLoadedInArticleId];
-            }
-
-            $progressBar->advance();
-        }
-
-        $progressBar->finish();
-        $this->io->newLine(2);
-
-
-        $this->io->text("Loading new images attached to articles...");
-        $repoAttachs = $this->em->getRepository(ImageArticle::class)->loadWholeTable();
-
-        $this->io->text("Attaching each image to the releated article...");
-        $progressBar = new ProgressBar($this->output, count($arrNewImages));
-        $progressBar->start();
-
-        foreach($arrNewImages as $imageId => $image) {
-
-            $arrArticles =  $arrImagesLoadedIn[$imageId];
-
-            if( empty($arrArticles) ) {
-
-                throw new \Exception("Dangling image!");
-            }
-
-            foreach($arrArticles as $article) {
-
-                $entityAttach =
-                    $repoAttachs->selectOrNew($image, $article)
-                        ->setCreatedAt($image->getCreatedAt())
-                        ->setUpdatedAt($image->getUpdatedAt());
-
-                $this->em->persist($entityAttach);
-            }
-
-            $progressBar->advance();
-        }
-
-        $progressBar->finish();
-        $this->io->newLine(2);
-
-
-        $this->io->text("Loading new images authors...");
-        $repoAuthors = $this->em->getRepository(ImageAuthor::class)->loadWholeTable();
-
-        $this->io->text("Adding authors to each image...");
-        $progressBar = new ProgressBar($this->output, count($arrNewImages));
-        $progressBar->start();
-
-        // image authors are missing after 2013 => fetching images authors from article authors
-
-        foreach($arrNewImages as $imageId => $image) {
-
-            $arrArticles = $arrImagesLoadedIn[$imageId];
-            foreach($arrArticles as $articleId => $article) {
-
-                $arrAuthorsData = $this->arrAuthorsByContributionType["contenuto"][$articleId];
-                foreach($arrAuthorsData as $idx => $arrAuthorData) {
-
-                    $entityUser = $arrAuthorData["user"];
-                    $createdAt  = $arrAuthorData["date"];
-
-                    $imageAuthor  =
-                        $repoAuthors->selectOrNew($image, $entityUser)
-                            ->setCreatedAt($createdAt)
-                            ->setUpdatedAt($createdAt)
-                            ->setPriority($idx);
-
-                    $this->em->persist($imageAuthor);
-                }
-            }
-
-            $progressBar->advance();
-        }
-
-        $progressBar->finish();
-        $this->io->newLine(2);
+        $article->setCoverImage($coverImage);
+        return $this;
     }
 }

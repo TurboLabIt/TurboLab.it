@@ -24,6 +24,9 @@ class Article extends BaseCmsEntity
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,
         ViewableEntityTrait;
 
+    #[ORM\ManyToOne(inversedBy: 'coverForArticles')]
+    private ?Image $coverImage = null;
+
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn('comments_topic_id', 'topic_id')]
     private ?Topic $commentsTopic = null;
@@ -41,6 +44,17 @@ class Article extends BaseCmsEntity
     {
         $this->authors  = new ArrayCollection();
         $this->images   = new ArrayCollection();
+    }
+
+    public function getCoverImage(): ?Image
+    {
+        return $this->coverImage;
+    }
+
+    public function setCoverImage(?Image $coverImage): static
+    {
+        $this->coverImage = $coverImage;
+        return $this;
     }
 
     public function getCommentsTopic(): ?Topic

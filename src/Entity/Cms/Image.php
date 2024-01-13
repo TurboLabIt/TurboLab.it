@@ -39,11 +39,15 @@ class Image extends BaseCmsEntity
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $articles;
 
+    #[ORM\OneToMany(mappedBy: 'coverImage', targetEntity: Article::class)]
+    private Collection $coverForArticles;
+
 
     public function __construct()
     {
-        $this->authors  = new ArrayCollection();
-        $this->articles = new ArrayCollection();
+        $this->authors          = new ArrayCollection();
+        $this->articles         = new ArrayCollection();
+        $this->coverForArticles = new ArrayCollection();
     }
 
     public function getFormat(): ?string
@@ -159,6 +163,36 @@ class Image extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($article->getImage() === $this) {
                 $article->setImage(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getCoverForArticles(): Collection
+    {
+        return $this->coverForArticles;
+    }
+
+    public function addCoverForArticle(Article $coverForArticle): static
+    {
+        if (!$this->coverForArticles->contains($coverForArticle)) {
+            $this->coverForArticles->add($coverForArticle);
+            $coverForArticle->setCoverImage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoverForArticle(Article $coverForArticle): static
+    {
+        if ($this->coverForArticles->removeElement($coverForArticle)) {
+            // set the owning side to null (unless already changed)
+            if ($coverForArticle->getCoverImage() === $this) {
+                $coverForArticle->setCoverImage(null);
             }
         }
 
