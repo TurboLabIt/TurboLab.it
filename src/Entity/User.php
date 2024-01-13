@@ -25,7 +25,7 @@ class User implements UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $articles;
 
-    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $images;
 
 
