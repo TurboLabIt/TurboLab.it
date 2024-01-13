@@ -25,11 +25,11 @@ class Article extends BaseCmsEntity
         ViewableEntityTrait;
 
     #[ORM\ManyToOne(inversedBy: 'coverForArticles')]
-    private ?Image $coverImage = null;
+    protected ?Image $coverImage = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn('comments_topic_id', 'topic_id')]
-    private ?Topic $commentsTopic = null;
+    protected ?Topic $commentsTopic = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
@@ -39,11 +39,15 @@ class Article extends BaseCmsEntity
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $images;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $tags;
+
 
     public function __construct()
     {
         $this->authors  = new ArrayCollection();
         $this->images   = new ArrayCollection();
+        $this->tags     = new ArrayCollection();
     }
 
     public function getCoverImage(): ?Image
@@ -135,6 +139,42 @@ class Article extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($image->getArticle() === $this) {
                 $image->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleTag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(ArticleTag $tag): static
+    {
+        $currentItems = $this->getTags();
+        foreach($currentItems as $item) {
+
+            if( $item->getTag()->getId() == $tag->getTag()->getId() ) {
+                return $this;
+            }
+        }
+
+        $this->tags->add($tag);
+        $tag->setArticle($this);
+
+        return $this;
+    }
+
+    public function removeTag(ArticleTag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            // set the owning side to null (unless already changed)
+            if ($tag->getArticle() === $this) {
+                $tag->setArticle(null);
             }
         }
 

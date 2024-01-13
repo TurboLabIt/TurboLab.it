@@ -2,7 +2,9 @@
 namespace App\Entity;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\ImageAuthor;
+use App\Entity\Cms\TagAuthor;
 use App\Repository\UserRepository;
 use App\Trait\IdableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,22 +19,30 @@ class User implements UserInterface
     use IdableEntityTrait;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $username = null;
+    protected ?string $username = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    protected array $roles = [];
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
-    private Collection $articles;
+    protected Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
-    private Collection $images;
+    protected Collection $images;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $tags;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class)]
+    private Collection $articleTags;
 
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
-        $this->images   = new ArrayCollection();
+        $this->articles     = new ArrayCollection();
+        $this->images       = new ArrayCollection();
+        $this->tags         = new ArrayCollection();
+        $this->articleTags  = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,6 +154,66 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($image->getUser() === $this) {
                 $image->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TagAuthor>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(TagAuthor $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(TagAuthor $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            // set the owning side to null (unless already changed)
+            if ($tag->getUser() === $this) {
+                $tag->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleTag>
+     */
+    public function getArticleTags(): Collection
+    {
+        return $this->articleTags;
+    }
+
+    public function addArticleTag(ArticleTag $articleTag): static
+    {
+        if (!$this->articleTags->contains($articleTag)) {
+            $this->articleTags->add($articleTag);
+            $articleTag->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticleTag(ArticleTag $articleTag): static
+    {
+        if ($this->articleTags->removeElement($articleTag)) {
+            // set the owning side to null (unless already changed)
+            if ($articleTag->getUser() === $this) {
+                $articleTag->setUser(null);
             }
         }
 

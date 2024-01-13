@@ -4,8 +4,11 @@ namespace App\Command;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleImage;
+use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\ImageAuthor;
+use App\Entity\Cms\Tag as TagEntity;
+use App\Entity\Cms\TagAuthor;
 use App\Entity\PhpBB\Topic;
 use App\Entity\User;
 use App\Repository\PhpBB\TopicRepository;
@@ -14,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 
@@ -21,6 +25,10 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 #[AsCommand(name: 'TLI1 Importer', description: 'Import data from TLI1 to TLI2', aliases: ['tli1'])]
 class TLI1ImporterCommand extends AbstractBaseCommand
 {
+    const OPT_SKIP_ARTICLES = "skip-articles";
+    const OPT_SKIP_IMAGES   = "skip-images";
+    const OPT_SKIP_TAGS     = "skip-tags";
+
     protected \PDO $dbTli1;
     protected UserRepository $repoUsers;
     protected array $arrAuthorsByContributionType = [];
@@ -28,11 +36,21 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected array $arrNewArticles = [];
     protected array $arrNewImages = [];
     protected array $arrSpotlightIds = [];
+    protected array $arrNewTags = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
     {
         parent::__construct();
+    }
+
+
+    protected function configure() : void
+    {
+        parent::configure();
+        $this->addOption(static::OPT_SKIP_ARTICLES, null, InputOption::VALUE_NONE);
+        $this->addOption(static::OPT_SKIP_IMAGES, null, InputOption::VALUE_NONE);
+        $this->addOption(static::OPT_SKIP_TAGS, null, InputOption::VALUE_NONE);
     }
 
 
@@ -65,11 +83,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ->fxTitle("Import Images...")
             ->importImages()
 
-            ->fxTitle("Assigning the cover image to each article...")
-            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, [$this, 'buildItemTitle'])
+            ->fxTitle("Import Tags...")
+            ->importTags()
 
-            //->fxTitle("Import Tags...")
-            //->importTags()
+            ->fxTitle("Processing invalid TLI1 Tag Associations...")
+            ->processInvalidTli1TagAssoc()
+
+            ->fxTitle("Tagging articles...")
+            ->tagArticles()
 
             //->fxTitle("Import Files...")
             //->importFiles()
@@ -152,6 +173,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function loadCommentTopics() : static
     {
+        if( $this->getCliOption(static::OPT_SKIP_ARTICLES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
         $this->repoTopics = $this->em->getRepository(Topic::class);
         $arrTopics = $this->repoTopics->loadAll();
         $this->fxOK(count($arrTopics) . " item(s) loaded");
@@ -161,6 +186,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processInvalidTli1Pages() : static
     {
+        if( $this->getCliOption(static::OPT_SKIP_ARTICLES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
         $this->io->text("Removing pages with empty body from TLI1...");
         $this->dbTli1->exec("
             DELETE FROM pagine
@@ -222,6 +251,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function importArticles()
     {
+        if( $this->getCliOption(static::OPT_SKIP_ARTICLES) ) {
+
+            $this->arrNewArticles = $this->em->getRepository(ArticleEntity::class)->loadAll();
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
         $this->io->text("Loading TLI1 articles...");
         $stmt = $this->dbTli1->query("
             SELECT contenuti.id_contenuto AS pdokey, contenuti.*, pagine.corpo
@@ -327,6 +362,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function importImages() : static
     {
+        if( $this->getCliOption(static::OPT_SKIP_IMAGES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
         $this->io->text("Loading TLI1 images...");
         $stmt = $this->dbTli1->query("SELECT id_immagine AS pdokey, immagini.* FROM immagini ORDER BY id_immagine ASC");
         $arrTli1Images = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
@@ -339,6 +378,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Processing every TLI2 image...");
         $this->processItems($arrTli1Images, [$this, 'processTli1Image'], null, [$this, 'buildItemTitle']);
+
+        $this
+            ->fxTitle("Assigning the cover image to each article...")
+            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, [$this, 'buildItemTitle']);
 
         return $this;
     }
@@ -375,7 +418,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         /** @var ArticleEntity $article */
         $article = $this->arrNewArticles[$articleId] ?? null;
 
-        if (empty($article)) {
+        if ( empty($article) ) {
             return $this->endWithError(
                 "No related article: " . print_r($arrImage, true)
             );
@@ -417,5 +460,150 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $article->setCoverImage($coverImage);
         return $this;
+    }
+
+
+    protected function importTags() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 tags...");
+        $stmt = $this->dbTli1->query("
+            SELECT
+                tag.*, COUNT(1) AS usageCount
+            FROM
+                tag
+            LEFT JOIN
+                etichette
+            ON
+                tag.id_tag = etichette.id_tag
+            WHERE
+                etichette.tipo = 'contenuto'
+            GROUP BY
+                etichette.id_tag
+            ORDER BY
+                tag.id_tag ASC
+        ");
+        $arrTli1Tags = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1Tags) . " items loaded");
+
+        $this->io->text("Loading TLI2 tags...");
+        $arrTli2Tags = $this->em->getRepository(TagEntity::class)->loadAll();
+        $this->fxOK( count($arrTli2Tags) . " item(s) loaded");
+        unset($arrTli2Tags);
+
+        $this->io->text("Processing every TLI2 tag...");
+        $this->processItems($arrTli1Tags, [$this, 'processTli1Tag'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1Tag(int $tagId, array $arrTag)
+    {
+        $title      = $arrTag["tag"];
+        $ranking    = (int)$arrTag["peso"];
+        $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
+
+        /** @var TagEntity $entityTli2Tag */
+        $entityTli2Tag =
+            $this->em->getRepository(TagEntity::class)
+                ->selectOrNew($tagId)
+                ->setTitle($title)
+                ->setRanking($ranking)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        // AUTHORS
+        $arrTli1Authors = $this->arrAuthorsByContributionType["tag"][$tagId] ?? [];
+        foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
+
+            $author =
+                (new TagAuthor())
+                    ->setUser( $arrOldAuthorData["user"] )
+                    ->setCreatedAt( $arrOldAuthorData["date"] )
+                    ->setUpdatedAt( $arrOldAuthorData["date"] )
+                    ->setRanking( $idx + 1 );
+
+            $entityTli2Tag->addAuthor($author);
+        }
+
+        $this->em->persist($entityTli2Tag);
+        $this->arrNewTags[$tagId] = $entityTli2Tag;
+    }
+
+
+    protected function processInvalidTli1TagAssoc() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Removing associations to a non-existing tag...");
+        $this->dbTli1->exec("
+            DELETE etichette FROM etichette
+            LEFT JOIN tag
+            ON etichette.id_tag = tag.id_tag
+            WHERE tag.id_tag IS NULL
+        ");
+        $this->fxOK();
+
+        return $this;
+    }
+
+
+    public function tagArticles() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 tag associations...");
+        $stmt = $this->dbTli1->query("SELECT * FROM etichette WHERE tipo = 'contenuto' ORDER BY data_creazione ASC");
+        $arrTli1TagAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1TagAssoc) . " items loaded");
+
+        $this->io->text("Processing every TLI1 tag association...");
+        $this->processItems($arrTli1TagAssoc, [$this, 'processTli1TagAssoc'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1TagAssoc(int $none, array $arrTagAssoc)
+    {
+        $articleId  = $arrTagAssoc["id_opera"];
+        $article    = $this->arrNewArticles[$articleId] ?? null;
+
+        if ( empty($article) ) {
+            return $this->endWithError(
+                "No related article: " . print_r($arrTagAssoc, true)
+            );
+        }
+
+        $tagId  = $arrTagAssoc["id_tag"];
+        $tag    = $this->arrNewTags[$tagId] ?? null;
+
+        if ( empty($tag) ) {
+            return $this->endWithError(
+                "No related tag: " . print_r($arrTagAssoc, true)
+            );
+        }
+
+        $attacherId = $arrTagAssoc["id_utente"];
+        $attacher   = $this->repoUsers->selectOrNull($attacherId);
+
+        $createdAt  = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
+
+        $articleTag =
+            (new ArticleTag())
+                ->setTag($tag)
+                ->setUser($attacher)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        $article->addTag($articleTag);
     }
 }

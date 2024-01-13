@@ -48,7 +48,7 @@ class Topic
     protected ?int $deleteTime = null;
 
     #[ORM\OneToMany(mappedBy: 'commentsTopic', targetEntity: Article::class)]
-    private Collection $articles;
+    protected Collection $articles;
 
 
     public function __construct()

@@ -40,7 +40,7 @@ class Image extends BaseCmsEntity
     protected Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'coverImage', targetEntity: Article::class)]
-    private Collection $coverForArticles;
+    protected Collection $coverForArticles;
 
 
     public function __construct()
