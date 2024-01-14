@@ -1,24 +1,31 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Repository\Cms\TagRepository;
-use App\Trait\RankableEntityTrait;
+use App\Exception\InvalidEnumException;
+use App\Repository\Cms\FileRepository;
 use App\Trait\TitleableEntityTrait;
+use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 
-#[ORM\Entity(repositoryClass: TagRepository::class)]
-class Tag extends BaseCmsEntity
+#[ORM\Entity(repositoryClass: FileRepository::class)]
+class File extends BaseCmsEntity
 {
-    use TitleableEntityTrait, RankableEntityTrait;
+    use TitleableEntityTrait, ViewableEntityTrait;
 
-    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\Column(length: 5, nullable: true)]
+    protected ?string $format = null;
+
+    #[ORM\Column(length: 2500, nullable: true)]
+    private ?string $url = null;
+
+    #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'file', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $articles;
 
@@ -30,15 +37,39 @@ class Tag extends BaseCmsEntity
     }
 
 
+    public function getFormat(): ?string
+    {
+        return $this->format;
+    }
+
+    public function setFormat(?string $format): static
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+
     /**
-     * @return Collection<int, TagAuthor>
+     * @return Collection<int, FileAuthor>
      */
     public function getAuthors(): Collection
     {
         return $this->authors;
     }
 
-    public function addAuthor(TagAuthor $author): static
+    public function addAuthor(FileAuthor $author): static
     {
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
@@ -49,17 +80,17 @@ class Tag extends BaseCmsEntity
         }
 
         $this->authors->add($author);
-        $author->setTag($this);
+        $author->setFile($this);
 
         return $this;
     }
 
-    public function removeAuthor(TagAuthor $author): static
+    public function removeAuthor(FileAuthor $author): static
     {
         if ($this->authors->removeElement($author)) {
             // set the owning side to null (unless already changed)
-            if ($author->getTag() === $this) {
-                $author->setTag(null);
+            if ($author->getFile() === $this) {
+                $author->setFile(null);
             }
         }
 
@@ -68,14 +99,14 @@ class Tag extends BaseCmsEntity
 
 
     /**
-     * @return Collection<int, ArticleTag>
+     * @return Collection<int, ArticleFile>
      */
     public function getArticles(): Collection
     {
         return $this->articles;
     }
 
-    public function addArticle(ArticleTag $article): static
+    public function addArticle(ArticleFile $article): static
     {
         $currentItems = $this->getArticles();
         foreach($currentItems as $item) {
@@ -86,17 +117,17 @@ class Tag extends BaseCmsEntity
         }
 
         $this->articles->add($article);
-        $article->setTag($this);
+        $article->setFile($this);
 
         return $this;
     }
 
-    public function removeArticle(ArticleTag $article): static
+    public function removeArticle(ArticleFile $article): static
     {
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
-            if ($article->getTag() === $this) {
-                $article->setTag(null);
+            if ($article->getFile() === $this) {
+                $article->setFile(null);
             }
         }
 

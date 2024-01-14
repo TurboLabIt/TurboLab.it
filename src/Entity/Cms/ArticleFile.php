@@ -2,23 +2,23 @@
 namespace App\Entity\Cms;
 
 use App\Entity\User;
-use App\Repository\Cms\ArticleTagRepository;
+use App\Repository\Cms\ArticleFileRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 
-#[ORM\Entity(repositoryClass: ArticleTagRepository::class)]
-class ArticleTag extends BaseCmsEntity
+#[ORM\Entity(repositoryClass: ArticleFileRepository::class)]
+class ArticleFile extends BaseCmsEntity
 {
-    #[ORM\ManyToOne(inversedBy: 'tags')]
+    #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: false)]
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
-    protected ?Tag $tag = null;
+    protected ?File $file = null;
 
-    #[ORM\ManyToOne(inversedBy: 'articlesTagged')]
+    #[ORM\ManyToOne(inversedBy: 'articlesAttachedToFiles')]
     private ?User $user = null;
 
     use RankableEntityTrait;
@@ -35,14 +35,14 @@ class ArticleTag extends BaseCmsEntity
         return $this;
     }
 
-    public function getTag(): ?Tag
+    public function getFile(): ?File
     {
-        return $this->tag;
+        return $this->file;
     }
 
-    public function setTag(?Tag $tag): static
+    public function setFile(?File $file): static
     {
-        $this->tag = $tag;
+        $this->file = $file;
         return $this;
     }
 

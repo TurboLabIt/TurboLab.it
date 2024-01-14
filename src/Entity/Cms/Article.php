@@ -42,12 +42,16 @@ class Article extends BaseCmsEntity
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     protected Collection $tags;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $files;
+
 
     public function __construct()
     {
         $this->authors  = new ArrayCollection();
         $this->images   = new ArrayCollection();
         $this->tags     = new ArrayCollection();
+        $this->files    = new ArrayCollection();
     }
 
     public function getCoverImage(): ?Image
@@ -175,6 +179,42 @@ class Article extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($tag->getArticle() === $this) {
                 $tag->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleFile>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(ArticleFile $file): static
+    {
+        $currentItems = $this->getFiles();
+        foreach($currentItems as $item) {
+
+            if( $item->getFile()->getId() == $file->getFile()->getId() ) {
+                return $this;
+            }
+        }
+
+        $this->files->add($file);
+        $file->setArticle($this);
+
+        return $this;
+    }
+
+    public function removeFile(ArticleFile $file): static
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getArticle() === $this) {
+                $file->setArticle(null);
             }
         }
 

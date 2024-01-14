@@ -20,6 +20,9 @@ class Image extends BaseCmsEntity
     const WATERMARK_BOTTOM_RIGHT    = 3;
     const WATERMARK_BOTTOM_LEFT     = 4;
 
+    const FORMAT_PNG    = 'png';
+    const FORMAT_JPG    = 'jpg';
+
     use IdableEntityTrait, TitleableEntityTrait;
 
     #[ORM\Column(length: 5)]
@@ -40,6 +43,7 @@ class Image extends BaseCmsEntity
     protected Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'coverImage', targetEntity: Article::class)]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $coverForArticles;
 
 
@@ -50,6 +54,12 @@ class Image extends BaseCmsEntity
         $this->coverForArticles = new ArrayCollection();
     }
 
+
+    public function getFormats() : array
+    {
+        return [static::FORMAT_PNG, static::FORMAT_JPG];
+    }
+
     public function getFormat(): ?string
     {
         return $this->format;
@@ -57,9 +67,14 @@ class Image extends BaseCmsEntity
 
     public function setFormat(string $format): static
     {
+        if( !in_array($format, $this->getFormats()) ) {
+            throw new InvalidEnumException("Invalid image format");
+        }
+
         $this->format = $format;
         return $this;
     }
+
 
     public function getWatermarkPositions() : array
     {

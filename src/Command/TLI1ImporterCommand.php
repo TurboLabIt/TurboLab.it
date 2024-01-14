@@ -3,12 +3,15 @@ namespace App\Command;
 
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
+use App\Entity\Cms\File as FileEntity;
+use App\Entity\Cms\FileAuthor;
 use App\Entity\PhpBB\Topic;
 use App\Entity\User;
 use App\Repository\PhpBB\TopicRepository;
@@ -28,15 +31,21 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     const OPT_SKIP_ARTICLES = "skip-articles";
     const OPT_SKIP_IMAGES   = "skip-images";
     const OPT_SKIP_TAGS     = "skip-tags";
+    const OPT_SKIP_FILES    = "skip-files";
+
+    protected bool $allowDryRunOpt = true;
 
     protected \PDO $dbTli1;
     protected UserRepository $repoUsers;
-    protected array $arrAuthorsByContributionType = [];
     protected TopicRepository $repoTopics;
-    protected array $arrNewArticles = [];
-    protected array $arrNewImages = [];
-    protected array $arrSpotlightIds = [];
-    protected array $arrNewTags = [];
+
+    protected array $arrAuthorsByContributionType = [];
+
+    protected array $arrNewArticles     = [];
+    protected array $arrNewImages       = [];
+    protected array $arrSpotlightIds    = [];
+    protected array $arrNewTags         = [];
+    protected array $arrNewFiles        = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
@@ -48,9 +57,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function configure() : void
     {
         parent::configure();
-        $this->addOption(static::OPT_SKIP_ARTICLES, null, InputOption::VALUE_NONE);
-        $this->addOption(static::OPT_SKIP_IMAGES, null, InputOption::VALUE_NONE);
-        $this->addOption(static::OPT_SKIP_TAGS, null, InputOption::VALUE_NONE);
+        foreach([
+                static::OPT_SKIP_ARTICLES, static::OPT_SKIP_IMAGES, static::OPT_SKIP_TAGS, static::OPT_SKIP_FILES
+            ] as $name) {
+            $this->addOption($name, null, InputOption::VALUE_NONE);
+        }
     }
 
 
@@ -80,23 +91,32 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ->fxTitle("Importing Articles...")
             ->importArticles()
 
-            ->fxTitle("Import Images...")
+            ->fxTitle("Importing Images...")
             ->importImages()
 
-            ->fxTitle("Import Tags...")
+            ->fxTitle("Importing Tags...")
             ->importTags()
 
-            ->fxTitle("Processing invalid TLI1 Tag Associations...")
+            ->fxTitle("Processing invalid TLI1 Tags Associations...")
             ->processInvalidTli1TagAssoc()
 
-            ->fxTitle("Tagging articles...")
+            ->fxTitle("Tagging Articles...")
             ->tagArticles()
 
-            //->fxTitle("Import Files...")
-            //->importFiles()
+            ->fxTitle("Importing Files...")
+            ->importFiles()
 
-            ->fxTitle("Persisting...")
-            ->em->flush();
+            ->fxTitle("Processing invalid TLI1 Files Associations...")
+            ->processInvalidTli1FileAssoc()
+
+            ->fxTitle("Linking Files to Articles...")
+            ->linkFilesAndArticles()
+
+            ->fxTitle("Persisting...");
+
+        if( $this->isNotDryRun() ) {
+            $this->em->flush();
+        }
 
         return $this->endWithSuccess();
     }
@@ -123,8 +143,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $this->repoUsers = $this->em->getRepository(User::class);
         $arrUsers = $this->repoUsers->loadAll();
-        $this->fxOK(count($arrUsers) . " item(s) loaded");
-        return $this;
+
+        return $this->fxOK(count($arrUsers) . " item(s) loaded");
     }
 
 
@@ -179,8 +199,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->repoTopics = $this->em->getRepository(Topic::class);
         $arrTopics = $this->repoTopics->loadAll();
-        $this->fxOK(count($arrTopics) . " item(s) loaded");
-        return $this;
+
+        return $this->fxOK(count($arrTopics) . " item(s) loaded");
     }
 
 
@@ -230,15 +250,17 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 "There are multiple pages relating to the same article on TLI1: " . print_r($arrInvalidPages, true)
             );
         }
-        $this->fxOK();
 
-        return $this;
+        return $this->fxOK();
     }
 
 
     protected function disableAutoincrementOnTli2() : static
     {
-        foreach([ArticleEntity::class, ImageEntity::class] as $className) {
+        foreach([
+            ArticleEntity::class, ImageEntity::class,
+            TagEntity::class, FileEntity::class
+            ] as $className) {
 
             $this->em
                 ->getClassMetadata($className)
@@ -541,16 +563,15 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             return $this->fxWarning('🦘 Skipped!');
         }
 
-        $this->io->text("Removing associations to a non-existing tag...");
+        $this->io->text("Removing associations to non-existing tags...");
         $this->dbTli1->exec("
             DELETE etichette FROM etichette
             LEFT JOIN tag
             ON etichette.id_tag = tag.id_tag
             WHERE tag.id_tag IS NULL
         ");
-        $this->fxOK();
 
-        return $this;
+        return $this->fxOK();
     }
 
 
@@ -605,5 +626,160 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setUpdatedAt($createdAt);
 
         $article->addTag($articleTag);
+    }
+
+
+    protected function importFiles() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_FILES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 files...");
+        $stmt = $this->dbTli1->query("
+            SELECT
+                file.*, COUNT(1) AS usageCount
+            FROM
+                file
+            LEFT JOIN
+                allegati
+            ON
+                file.id_file = allegati.id_file
+            WHERE
+                allegati.tipo = 'contenuto'
+            GROUP BY
+                allegati.id_file
+            ORDER BY
+                file.id_file ASC
+        ");
+        $arrTli1Files = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1Files) . " items loaded");
+
+        $this->io->text("Loading TLI2 files...");
+        $arrTli2Files = $this->em->getRepository(FileEntity::class)->loadAll();
+        $this->fxOK( count($arrTli2Files) . " item(s) loaded");
+        unset($arrTli2Files);
+
+        $this->io->text("Processing every TLI2 file...");
+        $this->processItems($arrTli1Files, [$this, 'processTli1File'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1File(int $fileId, array $arrFile)
+    {
+        $title      = $arrFile["titolo"];
+        $views      = (int)$arrFile["visite"];
+        $url        = $arrFile["url"] ?: null;
+        $format     = $arrFile["formato"] ?: null;
+        $createdAt = \DateTime::createFromFormat('YmdHis', $arrFile["data_creazione"]);
+
+        if( empty($createdAt) ) {
+            return $this->endWithError("This File has no date: " . print_r($arrFile, true));
+        }
+
+        /** @var FileEntity $entityTli2File */
+        $entityTli2File =
+            $this->em->getRepository(FileEntity::class)
+                ->selectOrNew($fileId)
+                ->setTitle($title)
+                ->setViews($views)
+                ->setUrl($url)
+                ->setFormat($format)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        // AUTHORS
+        $arrTli1Authors = $this->arrAuthorsByContributionType["file"][$fileId] ?? [];
+        foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
+
+            $author =
+                (new FileAuthor())
+                    ->setUser( $arrOldAuthorData["user"] )
+                    ->setCreatedAt( $arrOldAuthorData["date"] )
+                    ->setUpdatedAt( $arrOldAuthorData["date"] )
+                    ->setRanking( $idx + 1 );
+
+            $entityTli2File->addAuthor($author);
+        }
+
+        $this->em->persist($entityTli2File);
+        $this->arrNewFiles[$fileId] = $entityTli2File;
+    }
+
+
+    protected function processInvalidTli1FileAssoc() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_FILES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Removing associations to non-existing files...");
+        $this->dbTli1->exec("
+            DELETE allegati FROM allegati
+            LEFT JOIN file
+            ON allegati.id_file = file.id_file
+            WHERE file.id_file IS NULL
+        ");
+
+        return $this->fxOK();
+    }
+
+
+    public function linkFilesAndArticles() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_FILES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 file associations...");
+        $stmt = $this->dbTli1->query("SELECT * FROM allegati WHERE tipo = 'contenuto' ORDER BY data ASC");
+        $arrTli1FileAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1FileAssoc) . " items loaded");
+
+        $this->io->text("Processing every TLI1 file association...");
+        $this->processItems($arrTli1FileAssoc, [$this, 'processTli1FileAssoc'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1FileAssoc(int $none, array $arrFileAssoc)
+    {
+        $articleId  = $arrFileAssoc["id_opera"];
+        $article    = $this->arrNewArticles[$articleId] ?? null;
+        if ( empty($article) ) {
+            return $this->endWithError(
+                "No related article: " . print_r($arrFileAssoc, true)
+            );
+        }
+
+        $fileId  = $arrFileAssoc["id_file"];
+        $file    = $this->arrNewFiles[$fileId] ?? null;
+        if ( empty($file) ) {
+            return $this->endWithError(
+                "No related file: " . print_r($arrFileAssoc, true)
+            );
+        }
+
+        $createdAt = \DateTime::createFromFormat('YmdHis', $arrFileAssoc["data"]) ?: $file->getCreatedAt();
+        if ( empty($createdAt) ) {
+            return $this->endWithError(
+                "Invalid attach file date: " . print_r($arrFileAssoc, true)
+            );
+        }
+
+        // we didn't track who attached the file to the article on TLI1 => falling back to the first author of the file
+        $attacher = $article->getAuthors()->first()->getUser();
+
+        $articleFile =
+            (new ArticleFile())
+                ->setFile($file)
+                ->setUser($attacher)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        $article->addFile($articleFile);
     }
 }

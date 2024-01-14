@@ -2,7 +2,9 @@
 namespace App\Entity;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleTag;
+use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\TagAuthor;
 use App\Repository\UserRepository;
@@ -33,16 +35,24 @@ class User implements UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     protected Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class)]
-    private Collection $articleTags;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'])]
+    private Collection $articlesTagged;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $files;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'])]
+    private Collection $articlesAttachedToFiles;
 
 
     public function __construct()
     {
-        $this->articles     = new ArrayCollection();
-        $this->images       = new ArrayCollection();
-        $this->tags         = new ArrayCollection();
-        $this->articleTags  = new ArrayCollection();
+        $this->articles         = new ArrayCollection();
+        $this->images           = new ArrayCollection();
+        $this->tags             = new ArrayCollection();
+        $this->articlesTagged   = new ArrayCollection();
+        $this->files            = new ArrayCollection();
+        $this->fileTags         = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,15 +203,15 @@ class User implements UserInterface
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getArticleTags(): Collection
+    public function getArticlesTagged(): Collection
     {
-        return $this->articleTags;
+        return $this->articlesTagged;
     }
 
     public function addArticleTag(ArticleTag $articleTag): static
     {
-        if (!$this->articleTags->contains($articleTag)) {
-            $this->articleTags->add($articleTag);
+        if (!$this->articlesTagged->contains($articleTag)) {
+            $this->articlesTagged->add($articleTag);
             $articleTag->setUser($this);
         }
 
@@ -210,10 +220,71 @@ class User implements UserInterface
 
     public function removeArticleTag(ArticleTag $articleTag): static
     {
-        if ($this->articleTags->removeElement($articleTag)) {
+        if ($this->articlesTagged->removeElement($articleTag)) {
             // set the owning side to null (unless already changed)
             if ($articleTag->getUser() === $this) {
                 $articleTag->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FileAuthor>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(FileAuthor $file): static
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(FileAuthor $file): static
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getUser() === $this) {
+                $file->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, ArticleFile>
+     */
+    public function getArticlesAttachedToFiles(): Collection
+    {
+        return $this->articlesAttachedToFiles;
+    }
+
+    public function addArticleFile(ArticleFile $articleFile): static
+    {
+        if (!$this->articlesAttachedToFiles->contains($articleFile)) {
+            $this->articlesAttachedToFiles->add($articleFile);
+            $articleFile->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticleFile(ArticleFile $articleFile): static
+    {
+        if ($this->articlesAttachedToFiles->removeElement($articleFile)) {
+            // set the owning side to null (unless already changed)
+            if ($articleFile->getUser() === $this) {
+                $articleFile->setUser(null);
             }
         }
 
