@@ -845,6 +845,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Badge(int $badgeId, array $arrBadge)
     {
+        // we don't have any dates for the badge itself => using static value, updating later with the date from the badge assoc
+        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', '2014-03-13 13:12:13');
+
         /** @var BadgeEntity $entityTli2Badge */
         $entityTli2Badge =
             $this->em->getRepository(BadgeEntity::class)
@@ -854,8 +857,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setBody( $arrBadge["testo_esteso"] )
                 ->setImageUrl( $arrBadge["spotlight"] )
                 ->setUserSelectable(false)
-                // we don't have any dates for the badge itself => using NOW(), updating later with the date from the badge assoc
-        ;
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
 
         $this->em->persist($entityTli2Badge);
         $this->arrNewBadges[$badgeId] = $entityTli2Badge;
