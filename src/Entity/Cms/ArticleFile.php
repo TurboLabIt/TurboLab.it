@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: ArticleFileRepository::class)]
+#[ORM\UniqueConstraint(name: 'same_article_same_file_unique_idx', columns: ['article_id', 'file_id'])]
 class ArticleFile extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'files')]

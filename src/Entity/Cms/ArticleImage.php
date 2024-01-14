@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: ArticleImageRepository::class)]
+#[ORM\UniqueConstraint(name: 'same_article_same_image_unique_idx', columns: ['article_id', 'image_id'])]
 class ArticleImage extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'images')]
