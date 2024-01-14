@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: TagAuthorRepository::class)]
+#[ORM\UniqueConstraint(name: 'same_tag_same_author_unique_idx', columns: ['tag_id', 'user_id'])]
 class TagAuthor extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'authors')]

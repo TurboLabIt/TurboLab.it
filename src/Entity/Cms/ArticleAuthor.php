@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: ArticleAuthorRepository::class)]
+#[ORM\UniqueConstraint(name: 'same_article_same_author_unique_idx', columns: ['article_id', 'user_id'])]
 class ArticleAuthor extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'authors')]
