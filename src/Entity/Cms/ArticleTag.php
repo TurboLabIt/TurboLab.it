@@ -1,7 +1,7 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Entity\User;
+use App\Entity\PhpBB\User;
 use App\Repository\Cms\ArticleTagRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,7 +20,8 @@ class ArticleTag extends BaseCmsEntity
     protected ?Tag $tag = null;
 
     #[ORM\ManyToOne(inversedBy: 'articlesTagged')]
-    private ?User $user = null;
+    #[ORM\JoinColumn(referencedColumnName: 'user_id', nullable: false)]
+    protected ?User $user = null;
 
     use RankableEntityTrait;
 

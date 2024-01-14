@@ -19,7 +19,7 @@ class File extends BaseCmsEntity
     protected ?string $format = null;
 
     #[ORM\Column(length: 2500, nullable: true)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['ranking' => 'ASC'])]

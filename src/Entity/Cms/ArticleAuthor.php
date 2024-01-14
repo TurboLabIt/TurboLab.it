@@ -1,7 +1,7 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Entity\User;
+use App\Entity\PhpBB\User;
 use App\Repository\Cms\ArticleAuthorRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +16,7 @@ class ArticleAuthor extends BaseCmsEntity
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(referencedColumnName: 'user_id', nullable: false)]
     protected ?User $user = null;
 
     use RankableEntityTrait;

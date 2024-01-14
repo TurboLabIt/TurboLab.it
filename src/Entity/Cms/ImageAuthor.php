@@ -1,7 +1,7 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Entity\User;
+use App\Entity\PhpBB\User;
 use App\Repository\Cms\ImageAuthorRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +16,7 @@ class ImageAuthor extends BaseCmsEntity
     protected ?Image $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'images')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(referencedColumnName: 'user_id', nullable: false)]
     protected ?User $user = null;
 
     use RankableEntityTrait;

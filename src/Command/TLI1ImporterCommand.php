@@ -6,16 +6,16 @@ use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
+use App\Entity\Cms\File as FileEntity;
+use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
-use App\Entity\Cms\File as FileEntity;
-use App\Entity\Cms\FileAuthor;
 use App\Entity\PhpBB\Topic;
-use App\Entity\User;
+use App\Entity\PhpBB\User;
 use App\Repository\PhpBB\TopicRepository;
-use App\Repository\UserRepository;
+use App\Repository\PhpBB\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -73,7 +73,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ->fxTitle("Connecting to TLI1 DB...")
             ->tli1DbConnect()
 
-            ->fxTitle("Loading Users from view...")
+            ->fxTitle("Loading Users...")
             ->loadUsers()
 
             ->fxTitle("Loading Authors from TLI1...")

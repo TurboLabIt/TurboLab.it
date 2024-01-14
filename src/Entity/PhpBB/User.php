@@ -1,5 +1,5 @@
 <?php
-namespace App\Entity;
+namespace App\Entity\PhpBB;
 
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
@@ -7,23 +7,46 @@ use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\TagAuthor;
-use App\Repository\UserRepository;
-use App\Trait\IdableEntityTrait;
+use App\Exception\InvalidIdException;
+use App\Repository\PhpBB\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
 class User implements UserInterface
 {
-    use IdableEntityTrait;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(options: ['unsigned' => true])]
+    protected ?int $user_id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(unique: true)]
     protected ?string $username = null;
 
+    #[ORM\Column(unique: true)]
+    protected ?string $user_email = null;
+
     #[ORM\Column]
+    protected ?string $user_avatar_type = null;
+
+    #[ORM\Column]
+    protected ?string $user_avatar = null;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
+    protected ?int $user_posts = 0;
+
+    #[ORM\Column]
+    protected ?string $user_colour = null;
+
+    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    protected ?int $user_allow_massemail = 1;
+
+    //#[ORM\Column]
     protected array $roles = [];
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
@@ -35,14 +58,14 @@ class User implements UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     protected Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'])]
-    private Collection $articlesTagged;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $articlesTagged;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     protected Collection $files;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'])]
-    private Collection $articlesAttachedToFiles;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $articlesAttachedToFiles;
 
 
     public function __construct()
@@ -57,7 +80,17 @@ class User implements UserInterface
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->user_id;
+    }
+
+    public function setId(int $id) : static
+    {
+        if( empty($id) || $id < 1 ) {
+            throw new InvalidIdException();
+        }
+
+        $this->user_id = $id;
+        return $this;
     }
 
     public function getUsername(): ?string
@@ -71,6 +104,74 @@ class User implements UserInterface
         return $this;
     }
 
+
+    public function getEmail() : ?string
+    {
+        return $this->user_email;
+    }
+
+    public function setEmail(string $email) : static
+    {
+        $this->user_email = $email;
+        return $this;
+    }
+
+    public function getAvatarType() : ?string
+    {
+        return $this->user_avatar_type;
+    }
+
+    public function setAvatarType(string $avatarType) : static
+    {
+        $this->user_avatar_type = $avatarType;
+        return $this;
+    }
+
+    public function getAvatarFile() : ?string
+    {
+        return $this->user_avatar;
+    }
+
+    public function setAvatarFile(string $avatarFile) : static
+    {
+        $this->user_avatar = $avatarFile;
+        return $this;
+    }
+
+    public function getPostNum() : ?int
+    {
+        return $this->user_posts;
+    }
+
+    public function setPostNum(int $postNum) : static
+    {
+        $this->user_posts = $postNum;
+        return $this;
+    }
+
+    public function getColor() : ?string
+    {
+        return $this->user_colour;
+    }
+
+    public function setColor(string $color) : static
+    {
+        $this->user_colour = $color;
+        return $this;
+    }
+
+    public function getAllowMassEmail() : bool
+    {
+        return (bool)$this->user_allow_massemail;
+    }
+
+    public function setAllowMassEmail(int|bool $allow) : static
+    {
+        $this->user_allow_massemail = (int)$allow;
+        return $this;
+    }
+
+
     /**
      * A visual identifier that represents this user.
      *
@@ -78,7 +179,7 @@ class User implements UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     /**

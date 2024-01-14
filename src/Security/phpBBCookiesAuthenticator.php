@@ -1,9 +1,9 @@
 <?php
 namespace App\Security;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\PhpBB\User;
 use App\Exception\PhpBBCookesAuthenticationException;
+use App\Repository\PhpBB\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
