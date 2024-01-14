@@ -173,7 +173,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $createdAt      = \DateTime::createFromFormat('YmdHis', $arrOldAuthor["data"]);
 
             if( empty($createdAt) ) {
-                return $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true));
+                return $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true) );
             }
 
             $user = $this->repoUsers->selectOrNull($userId);
@@ -229,7 +229,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         ");
         $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
-            return $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true));
+            return $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true) );
         }
         $this->fxOK();
 
@@ -244,8 +244,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 )
             ORDER BY id_contenuto,id_pagina
         ");
+
         $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
+
             return $this->endWithError(
                 "There are multiple pages relating to the same article on TLI1: " . print_r($arrInvalidPages, true)
             );
@@ -322,7 +324,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
 
         if( empty($createdAt) && empty($updatedAt) ) {
-            return $this->endWithError("This article has no dates: " . print_r($arrArticle, true));
+            $this->endWithError("This article has no dates: " . print_r($arrArticle, true) );
         }
 
         $createdAt  = $createdAt ?: $updatedAt ?: $publishedAt;
@@ -365,6 +367,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         // AUTHORS
         $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
+        if( empty($arrTli1Authors) ) {
+            $this->fxWarning("This Article has no Authors: " . print_r($arrArticle, true) );
+        }
+
         foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
 
             $author =
@@ -403,7 +409,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this
             ->fxTitle("Assigning the cover image to each article...")
-            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, [$this, 'buildItemTitle']);
+            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, function(){ return '';} );
 
         return $this;
     }
@@ -420,9 +426,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         };
 
         if (!in_array($format, ['png', 'jpg'])) {
-            return $this->endWithError(
-                "This is not a png/jpg image: " . print_r($arrImage, true)
-            );
+            return $this->endWithError("This is not a png/jpg image: " . print_r($arrImage, true) );
         }
 
         /** @var ImageEntity $entityTli2Image */
@@ -441,9 +445,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $article = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
-            return $this->endWithError(
-                "No related article: " . print_r($arrImage, true)
-            );
+            return $this->endWithError("No related article: " . print_r($arrImage, true) );
         }
 
         $articleCreatedAt = $article->getCreatedAt();
@@ -458,6 +460,15 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         // IMAGE AUTHOR(S)
         $arrArticleAuthors = $article->getAuthors();
+        if( empty($arrArticleAuthors->first()) ) {
+            $this->fxWarning(
+                "This Article has no Authors to transfer to the the image: " . print_r([
+                    "article_id"    => $article->getId(),
+                    "image_id"      => $imageId
+                ], true)
+            );
+        }
+
         foreach ($arrArticleAuthors as $idx => $articleAuthor) {
 
             $imageAuthor =
@@ -540,6 +551,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         // AUTHORS
         $arrTli1Authors = $this->arrAuthorsByContributionType["tag"][$tagId] ?? [];
+        if( empty($arrTli1Authors) ) {
+            $this->fxWarning("This Tag has no Authors: " . print_r($arrTag, true) );
+        }
+
         foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
 
             $author =
@@ -596,25 +611,30 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1TagAssoc(int $none, array $arrTagAssoc)
     {
         $articleId  = $arrTagAssoc["id_opera"];
+        /** @var ArticleEntity $article */
         $article    = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
-            return $this->endWithError(
-                "No related article: " . print_r($arrTagAssoc, true)
-            );
+            return $this->endWithError("No related article: " . print_r($arrTagAssoc, true) );
         }
 
         $tagId  = $arrTagAssoc["id_tag"];
         $tag    = $this->arrNewTags[$tagId] ?? null;
 
         if ( empty($tag) ) {
-            return $this->endWithError(
-                "No related tag: " . print_r($arrTagAssoc, true)
-            );
+            return $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
 
         $attacherId = $arrTagAssoc["id_utente"];
-        $attacher   = $this->repoUsers->selectOrNull($attacherId);
+        $attacher   = $this->repoUsers->selectOrNull($attacherId) ?? $article->getAuthors()->first()->getUser();
+        if( empty($attacher) ) {
+            $this->fxWarning(
+                "This Tag Assoc has no Authors: " . print_r([
+                    "article_id"    => $article->getId(),
+                    "tag_id"        => $tag->getId()
+                ], true)
+            );
+        }
 
         $createdAt  = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
 
@@ -676,7 +696,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrFile["data_creazione"]);
 
         if( empty($createdAt) ) {
-            return $this->endWithError("This File has no date: " . print_r($arrFile, true));
+            return $this->endWithError("This File has no date: " . print_r($arrFile, true) );
         }
 
         /** @var FileEntity $entityTli2File */
@@ -691,7 +711,16 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setUpdatedAt($createdAt);
 
         // AUTHORS
-        $arrTli1Authors = $this->arrAuthorsByContributionType["file"][$fileId] ?? [];
+        $arrTli1Authors = $this->arrAuthorsByContributionType["file"][$fileId] ?? null;
+
+        // we don't have the author for multiple Files - assigning them to "User 2"
+        if( empty($arrTli1Authors) ) {
+            $arrTli1Authors = [[
+                "user"  => $this->repoUsers->selectOrNull(2),
+                "date"  => $entityTli2File->getCreatedAt()
+            ]];
+        }
+
         foreach($arrTli1Authors as $idx => $arrOldAuthorData) {
 
             $author =
@@ -750,24 +779,18 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $articleId  = $arrFileAssoc["id_opera"];
         $article    = $this->arrNewArticles[$articleId] ?? null;
         if ( empty($article) ) {
-            return $this->endWithError(
-                "No related article: " . print_r($arrFileAssoc, true)
-            );
+            return $this->endWithError("No related article: " . print_r($arrFileAssoc, true) );
         }
 
         $fileId  = $arrFileAssoc["id_file"];
         $file    = $this->arrNewFiles[$fileId] ?? null;
         if ( empty($file) ) {
-            return $this->endWithError(
-                "No related file: " . print_r($arrFileAssoc, true)
-            );
+            return $this->endWithError("No related file: " . print_r($arrFileAssoc, true) );
         }
 
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrFileAssoc["data"]) ?: $file->getCreatedAt();
         if ( empty($createdAt) ) {
-            return $this->endWithError(
-                "Invalid attach file date: " . print_r($arrFileAssoc, true)
-            );
+            return $this->endWithError("Invalid attach file date: " . print_r($arrFileAssoc, true) );
         }
 
         // we didn't track who attached the file to the article on TLI1 => falling back to the first author of the file
