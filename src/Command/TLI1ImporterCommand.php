@@ -6,12 +6,14 @@ use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
+use App\Entity\Cms\Badge as BadgeEntity;
 use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
+use App\Entity\Cms\TagBadge;
 use App\Entity\PhpBB\Topic;
 use App\Entity\PhpBB\User;
 use App\Repository\PhpBB\TopicRepository;
@@ -32,6 +34,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     const OPT_SKIP_IMAGES   = "skip-images";
     const OPT_SKIP_TAGS     = "skip-tags";
     const OPT_SKIP_FILES    = "skip-files";
+    const OPT_SKIP_BADGES   = "skip-badges";
 
     protected bool $allowDryRunOpt = true;
 
@@ -46,6 +49,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected array $arrSpotlightIds    = [];
     protected array $arrNewTags         = [];
     protected array $arrNewFiles        = [];
+    protected array $arrNewBadges       = [];
 
 
     public function __construct(protected EntityManagerInterface $em)
@@ -58,7 +62,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         parent::configure();
         foreach([
-                static::OPT_SKIP_ARTICLES, static::OPT_SKIP_IMAGES, static::OPT_SKIP_TAGS, static::OPT_SKIP_FILES
+                static::OPT_SKIP_ARTICLES, static::OPT_SKIP_IMAGES, static::OPT_SKIP_TAGS, static::OPT_SKIP_FILES,
+                static::OPT_SKIP_BADGES
             ] as $name) {
             $this->addOption($name, null, InputOption::VALUE_NONE);
         }
@@ -111,6 +116,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             ->fxTitle("Linking Files to Articles...")
             ->linkFilesAndArticles()
+
+            ->fxTitle("Importing Badges...")
+            ->importBadges()
+
+            ->fxTitle("Badging Tags...")
+            ->tagBadges()
 
             ->fxTitle("Persisting...");
 
@@ -261,7 +272,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         foreach([
             ArticleEntity::class, ImageEntity::class,
-            TagEntity::class, FileEntity::class
+            TagEntity::class, FileEntity::class, BadgeEntity::class
             ] as $className) {
 
             $this->em
@@ -499,6 +510,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function importTags() : static
     {
         if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
+
+            $this->arrNewTags = $this->em->getRepository(TagEntity::class)->loadAll();
             return $this->fxWarning('🦘 Skipped!');
         }
 
@@ -804,5 +817,107 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setUpdatedAt($createdAt);
 
         $article->addFile($articleFile);
+    }
+
+
+    protected function importBadges() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_BADGES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 badges...");
+        $stmt = $this->dbTli1->query("SELECT * FROM bollini");
+        $arrTli1Badges = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1Badges) . " items loaded");
+
+        $this->io->text("Loading TLI2 badges...");
+        $arrTli2Badges = $this->em->getRepository(BadgeEntity::class)->loadAll();
+        $this->fxOK( count($arrTli2Badges) . " item(s) loaded");
+        unset($arrTli2Articles);
+
+        $this->io->text("Processing every TLI1 badge...");
+        $this->processItems($arrTli1Badges, [$this, 'processTli1Badge'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1Badge(int $badgeId, array $arrBadge)
+    {
+        /** @var BadgeEntity $entityTli2Badge */
+        $entityTli2Badge =
+            $this->em->getRepository(BadgeEntity::class)
+                ->selectOrNew($badgeId)
+                ->setTitle( $arrBadge["titolo"] )
+                ->setAbstract( $arrBadge["testo_breve"] )
+                ->setBody( $arrBadge["testo_esteso"] )
+                ->setImageUrl( $arrBadge["spotlight"] )
+                ->setUserSelectable(false)
+                // we don't have any dates for the badge itself => using NOW(), updating later with the date from the badge assoc
+        ;
+
+        $this->em->persist($entityTli2Badge);
+        $this->arrNewBadges[$badgeId] = $entityTli2Badge;
+
+        return $this;
+    }
+
+
+    public function tagBadges() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_BADGES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $this->io->text("Loading TLI1 tag-badge associations...");
+        $stmt = $this->dbTli1->query("SELECT * FROM bollini_assegnati WHERE tipo = 'tag' ORDER BY data_creazione ASC");
+        $arrTli1TagAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $this->fxOK( count($arrTli1TagAssoc) . " items loaded");
+
+        $this->io->text("Processing every TLI1 tag-badge association...");
+        $this->processItems($arrTli1TagAssoc, [$this, 'processTli1TagBadgeAssoc'], null, [$this, 'buildItemTitle']);
+
+        return $this;
+    }
+
+
+    protected function processTli1TagBadgeAssoc(int $none, array $arrTagAssoc)
+    {
+        $badgeId  = $arrTagAssoc["id_bollino"];
+        /** @var BadgeEntity $badge */
+        $badge = $this->arrNewBadges[$badgeId] ?? null;
+
+        if ( empty($badge) ) {
+            return $this->endWithError("No related badge: " . print_r($arrTagAssoc, true) );
+        }
+
+        $tagId  = $arrTagAssoc["id_opera"];
+        $tag    = $this->arrNewTags[$tagId] ?? null;
+        if ( empty($tag) ) {
+            return $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
+        }
+
+        $createdAt = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
+        if ( empty($createdAt) ) {
+            return $this->endWithError("No date on this badge assoc: " . print_r($arrTagAssoc, true) );
+        }
+
+        // we didn't have the createdAt for the badge => using this one
+        $badge
+            ->setCreatedAt($createdAt)
+            ->setUpdatedAt($createdAt);
+
+        $badgeTag =
+            (new TagBadge())
+                ->setTag($tag)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt);
+
+        $badge->addTag($badgeTag);
+
+        $this->em->persist($badge);
+
+        return $this;
     }
 }

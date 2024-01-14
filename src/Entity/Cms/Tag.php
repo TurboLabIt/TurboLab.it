@@ -22,11 +22,15 @@ class Tag extends BaseCmsEntity
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $articles;
 
+    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagBadge::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    protected Collection $badges;
+
 
     public function __construct()
     {
         $this->authors  = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->badges = new ArrayCollection();
     }
 
 
@@ -97,6 +101,36 @@ class Tag extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($article->getTag() === $this) {
                 $article->setTag(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TagBadge>
+     */
+    public function getBadges(): Collection
+    {
+        return $this->badges;
+    }
+
+    public function addBadge(TagBadge $badge): static
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
+            $badge->setTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(TagBadge $badge): static
+    {
+        if ($this->badges->removeElement($badge)) {
+            // set the owning side to null (unless already changed)
+            if ($badge->getTag() === $this) {
+                $badge->setTag(null);
             }
         }
 
