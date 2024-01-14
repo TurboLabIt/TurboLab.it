@@ -15,7 +15,7 @@ class File extends BaseCmsEntity
 {
     use TitleableEntityTrait, ViewableEntityTrait;
 
-    #[ORM\Column(length: 5, nullable: true)]
+    #[ORM\Column(length: 15, nullable: true)]
     protected ?string $format = null;
 
     #[ORM\Column(length: 2500, nullable: true)]
