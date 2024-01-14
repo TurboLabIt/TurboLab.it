@@ -9,11 +9,10 @@ Il requisito è che gli utenti possano eseguire login/logout sia dal sito, sia d
 
 Per accedere alla tabella degli utenti dal sito:
 
-1. [questa migrazione](https://github.com/TurboLabIt/TurboLab.it/blob/main/migrations/Version20240105082853.php) crea una **vista** `user` nel DB del sito: `turbolab_it.users`
-2. tale vista insiste sulla già citata tabella `turbolab_it_forum.phpbb_users` di phpBB
-3. l'applicazione accede alla vista tramite [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/User.php) e relativo [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/UserRepository.php)
-4. per evitare che le migration agiscano sulla vista scambiandola per una tabella, la vista è esclusa in [config/packages/doctrine.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/doctrine.yaml) (parametro `schema_filter`)
-5. la vista espone la colonna fittizia `roles`, valorizzata in modo statico a `["ROLE_USER"]`, cioè il ruolo di default di qualsiasi utente Symfony registrato. Questa colonna è necessaria per sfruttare il login di Symfony, che altrimenti restituisce errore "colonna mancante nella tabella user"
+1. l'applicazione mappa la tabella `phpbb_users` tramite [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/PhpBB/User.php) e relativo [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/PhpBB/UserRepository.php)
+2. per evitare che le migration agiscano sulla tabella di phpBB (come avverrebbe con qualsiasi altra Entity), tabella è esclusa in [config/packages/doctrine.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/doctrine.yaml) (parametro `schema_filter`)
+
+In una prima implementazione si era tentato di [usare una *view*](https://github.com/TurboLabIt/TurboLab.it/commit/15d60324d2027e404dcbb102a876295f4b5bb74a#diff-9e8d1f28092b733b6d0067fdf5c74d12980ec1ba992f9cd74d3259980aba02d7) al posto di accedere alla tabella `phpbb_users` direttamente. Ma non è possibile creare *foreign key* verso una view, e quindi l'elemento *Author* delle relazioni non era gestibile correttamente (funzionava, ma la `make:migration` tentata di creare una foreign key che dava errore eseguendo la migrazione).
 
 
 ## Analisi del sistema di login di phpBB
