@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>{{ title }}</title>
+        <link>{{ siteUrl }}</link>
+        <description>{{ description }}</description>
+        <language>it-it</language>
+        <copyright>Copyright 2013-{{ 'now'|date('Y') }}, TurboLab.it</copyright>
+        <managingEditor>info@turbolab.it (TurboLab.it)</managingEditor>
+        <webMaster>info@turbolab.it (TurboLab.it)</webMaster>
+        <pubDate>{{ 'now'|date('r') }}</pubDate>
+        <lastBuildDate>{{ 'now'|date('r') }}</lastBuildDate>
+        <category>computer</category>
+        <category>windows</category>
+        <category>linux</category>
+        <category>internet</category>
+        <category>software</category>
+        <category>bitcoin</category>
+        <generator>TurboLab.it 2.0</generator>
+        <docs>http://www.rssboard.org/rss-specification</docs>
+        <ttl>7</ttl>
+        <image>
+            <url>{{ absolute_url(asset('build/images/logo/logo.png')) }}</url>
+            <title>{{ title }}</title>
+            <link>{{ siteUrl }}</link>
+        </image>
+        <skipHours><hour>2</hour><hour>3</hour><hour>4</hour><hour>5</hour><hour>6</hour></skipHours>
+        <atom:link href="{{ selfUrl }}" rel="self" type="application/rss+xml" />
+
+        {% for Article in Articles %}
+            <item>
+                <title>{{ Article.title }}</title>
+                <link>{{ Article.url }}</link>
+                {% if fullFeed %}
+                    <content:encoded><![CDATA[{{ Article.body|raw }}]]></content:encoded>
+                {% else %}
+                    <description><![CDATA[{#
+                        {% set Spotlight = Article.SpotlightNoDefault %}
+                        {% if Spotlight is not null  %}
+                            <p>
+                                <a href="{{ Article.url }}">
+                                    <img style="border: 0; display: block; margin-left: auto; margin-right: auto" src="{{ Spotlight.url('med') }}">
+                                 </a>
+                            </p>
+                        {% endif %}
+                        <p>{{ Article.abstract }}</p>
+                        <p>&rsaquo;&rsaquo; <a href="{{ Article.url }}">Leggi tutto</a></p>
+                    #}]]>
+                    </description>
+                {% endif %}
+
+                <author>info@turbolab.it (TurboLab.it)</author>
+                {% if Article.commentsUrl  %}
+                    <comments>{{ Article.commentsUrl }}</comments>
+                {% endif %}
+                <guid isPermaLink="false">{{ Article.getFeedGuId }}</guid>
+                <pubDate>{{ Article.publishedAt|date('r') }}</pubDate>
+                <source url="{{ selfUrl }}">{{ title }}</source>
+            </item>
+        {% endfor %}
+    </channel>
+</rss>

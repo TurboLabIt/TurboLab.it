@@ -1,12 +1,12 @@
 <?php
-namespace App\Controller\Cms;
+namespace App\Controller;
 
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class ArticleController extends BaseCmsController
+class ArticleController extends BaseController
 {
     public function __construct(protected ArticleCollection $articleCollection)
     { }
@@ -24,7 +24,7 @@ class ArticleController extends BaseCmsController
 
         $article->countOneView();
 
-        return $this->render('cms/article/index.html.twig', [
+        return $this->render('article/index.html.twig', [
             'Article' => $article
         ]);
     }

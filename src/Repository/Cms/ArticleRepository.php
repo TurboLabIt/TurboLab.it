@@ -3,6 +3,7 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,5 +19,24 @@ class ArticleRepository extends BaseCmsRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Article::class);
+    }
+
+
+    protected function getQueryBuilder() : QueryBuilder
+    {
+        return $this->createQueryBuilder('t', 't.id');
+    }
+
+
+    public function findLatestPublished(int $num) : array
+    {
+        return
+            $this->getQueryBuilder()
+                ->andWhere('t.publishingStatus = :published')
+                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
+                ->orderBy('t.publishedAt', 'DESC')
+                ->setMaxResults($num)
+            ->getQuery()
+            ->getResult();
     }
 }
