@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>{{ title }}</title>
-        <link>{{ siteUrl }}</link>
+        <link>{{ siteUrl|trim('/') }}</link>
         <description>{{ description }}</description>
         <language>it-it</language>
         <copyright>Copyright 2013-{{ 'now'|date('Y') }}, TurboLab.it</copyright>
@@ -22,9 +22,13 @@
         <image>
             <url>{{ absolute_url(asset('build/images/logo/logo.png')) }}</url>
             <title>{{ title }}</title>
-            <link>{{ siteUrl }}</link>
+            <link>{{ siteUrl|trim('/') }}</link>
         </image>
-        <skipHours><hour>2</hour><hour>3</hour><hour>4</hour><hour>5</hour><hour>6</hour></skipHours>
+        <skipHours>
+            {% for i in 2..6 %}
+                <hour>{{ i }}</hour>
+            {% endfor %}
+        </skipHours>
         <atom:link href="{{ selfUrl }}" rel="self" type="application/rss+xml" />
 
         {% for Article in Articles %}
@@ -34,18 +38,17 @@
                 {% if fullFeed %}
                     <content:encoded><![CDATA[{{ Article.body|raw }}]]></content:encoded>
                 {% else %}
-                    <description><![CDATA[{#
-                        {% set Spotlight = Article.SpotlightNoDefault %}
-                        {% if Spotlight is not null  %}
+                    <description><![CDATA[
+                        {% if Article.Spotlight is not null  %}
                             <p>
                                 <a href="{{ Article.url }}">
-                                    <img style="border: 0; display: block; margin-left: auto; margin-right: auto" src="{{ Spotlight.url('med') }}">
+                                    <img style="border: 0; display: block; margin-left: auto; margin-right: auto" src="{{ Article.Spotlight.url('med') }}">
                                  </a>
                             </p>
                         {% endif %}
                         <p>{{ Article.abstract }}</p>
                         <p>&rsaquo;&rsaquo; <a href="{{ Article.url }}">Leggi tutto</a></p>
-                    #}]]>
+                    ]]>
                     </description>
                 {% endif %}
 
