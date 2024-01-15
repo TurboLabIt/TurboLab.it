@@ -24,8 +24,8 @@ class Article extends BaseCmsEntity
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,
         ViewableEntityTrait;
 
-    #[ORM\ManyToOne(inversedBy: 'coverForArticles')]
-    protected ?Image $coverImage = null;
+    #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
+    protected ?Image $spotlight = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn('comments_topic_id', 'topic_id')]
@@ -54,14 +54,14 @@ class Article extends BaseCmsEntity
         $this->files    = new ArrayCollection();
     }
 
-    public function getCoverImage(): ?Image
+    public function getSpotlight(): ?Image
     {
-        return $this->coverImage;
+        return $this->spotlight;
     }
 
-    public function setCoverImage(?Image $coverImage): static
+    public function setSpotlight(?Image $spotlight): static
     {
-        $this->coverImage = $coverImage;
+        $this->spotlight = $spotlight;
         return $this;
     }
 

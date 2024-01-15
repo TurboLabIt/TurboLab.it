@@ -420,7 +420,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this
             ->fxTitle("Assigning the cover image to each article...")
-            ->processItems($this->arrNewArticles, [$this, 'assignCoverImage'], null, function(){ return '';} );
+            ->processItems($this->arrNewArticles, [$this, 'assignSpotlight'], null, function(){ return '';} );
 
         return $this;
     }
@@ -497,12 +497,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function assignCoverImage(int $articleId, ArticleEntity $article) : static
+    protected function assignSpotlight(int $articleId, ArticleEntity $article) : static
     {
-        $coverImageId   = $this->arrSpotlightIds[$articleId] ?? null;
-        $coverImage     = $this->arrNewImages[$coverImageId] ?? null;
+        $spotlightId   = $this->arrSpotlightIds[$articleId] ?? null;
+        $spotlight     = $this->arrNewImages[$spotlightId] ?? null;
 
-        $article->setCoverImage($coverImage);
+        $article->setSpotlight($spotlight);
         return $this;
     }
 

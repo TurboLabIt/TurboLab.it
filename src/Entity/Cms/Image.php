@@ -42,16 +42,16 @@ class Image extends BaseCmsEntity
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $articles;
 
-    #[ORM\OneToMany(mappedBy: 'coverImage', targetEntity: Article::class)]
+    #[ORM\OneToMany(mappedBy: 'spotlight', targetEntity: Article::class)]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
-    protected Collection $coverForArticles;
+    protected Collection $spotlightForArticles;
 
 
     public function __construct()
     {
-        $this->authors          = new ArrayCollection();
-        $this->articles         = new ArrayCollection();
-        $this->coverForArticles = new ArrayCollection();
+        $this->authors              = new ArrayCollection();
+        $this->articles             = new ArrayCollection();
+        $this->spotlightForArticles = new ArrayCollection();
     }
 
 
@@ -187,16 +187,16 @@ class Image extends BaseCmsEntity
     /**
      * @return Collection<int, Article>
      */
-    public function getCoverForArticles(): Collection
+    public function getSpotlightForArticles(): Collection
     {
-        return $this->coverForArticles;
+        return $this->spotlightForArticles;
     }
 
     public function addCoverForArticle(Article $coverForArticle): static
     {
-        if (!$this->coverForArticles->contains($coverForArticle)) {
-            $this->coverForArticles->add($coverForArticle);
-            $coverForArticle->setCoverImage($this);
+        if (!$this->spotlightForArticles->contains($coverForArticle)) {
+            $this->spotlightForArticles->add($coverForArticle);
+            $coverForArticle->setSpotlight($this);
         }
 
         return $this;
@@ -204,10 +204,10 @@ class Image extends BaseCmsEntity
 
     public function removeCoverForArticle(Article $coverForArticle): static
     {
-        if ($this->coverForArticles->removeElement($coverForArticle)) {
+        if ($this->spotlightForArticles->removeElement($coverForArticle)) {
             // set the owning side to null (unless already changed)
-            if ($coverForArticle->getCoverImage() === $this) {
-                $coverForArticle->setCoverImage(null);
+            if ($coverForArticle->getSpotlight() === $this) {
+                $coverForArticle->setSpotlight(null);
             }
         }
 
