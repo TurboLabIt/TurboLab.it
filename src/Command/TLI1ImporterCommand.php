@@ -16,6 +16,7 @@ use App\Entity\Cms\TagAuthor;
 use App\Entity\Cms\TagBadge;
 use App\Entity\PhpBB\Topic;
 use App\Entity\PhpBB\User;
+use App\Factory\Cms\ImageFactory;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
 #[AsCommand(name: 'TLI1 Importer', description: 'Import data from TLI1 to TLI2', aliases: ['tli1'])]
@@ -52,7 +54,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected array $arrNewBadges       = [];
 
 
-    public function __construct(protected EntityManagerInterface $em)
+    public function __construct(
+        protected EntityManagerInterface $em, protected ProjectDir $projectDir,
+        protected ImageFactory $imageFactory
+    )
     {
         parent::__construct();
     }
@@ -494,6 +499,21 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->em->persist($entityTli2Image);
         $this->arrNewImages[$imageId] = $entityTli2Image;
+
+        // file copy
+        $imageService   = $this->imageFactory->create($entityTli2Image);
+        $filename       = $imageService->getOriginalFileName();
+        $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/images/$filename");
+        $destFilePath   = $imageService->getOriginalFilePath();
+
+        if( !file_exists($sourceFilePath) ) {
+            return $this->fxWarning("The related image file is missing: " . print_r($arrImage, true) );
+        }
+
+        $copyResult = copy($sourceFilePath, $destFilePath);
+        if( $copyResult !== true ) {
+            return $this->endWithError("Failed to copy image file ##$sourceFilePath## to ##$destFilePath##");
+        }
     }
 
 
