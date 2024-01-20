@@ -19,8 +19,11 @@ class Image extends BaseCmsService
 {
     const UPLOADED_IMAGES_FOLDER_NAME   = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
-    const WATERMARK_FILEPATH            = 'images/logo/turbolab.it.png';
-    const WATERMARK_COVERAGE_PERCENT    = 40;
+    const BUILD_CACHE_ENABLED = true;
+
+    const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
+    const WATERMARK_WIDTH_PERCENT   = 25;
+    const WATERMARK_FORCED_POSITION = null;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -33,16 +36,16 @@ class Image extends BaseCmsService
 
     const SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [
-            self::WIDTH     => 124,
-            self::HEIGHT    => null,
+            self::WIDTH     => 480,
+            self::HEIGHT    => 270,
         ],
         self::SIZE_MED  => [
-            self::WIDTH     => 650,
-            self::HEIGHT    => null,
+            self::WIDTH     => 960,
+            self::HEIGHT    => 540,
         ],
         self::SIZE_MAX  => [
-            self::WIDTH     => 1300,
-            self::HEIGHT    => null,
+            self::WIDTH     => 1920,
+            self::HEIGHT    => 1080,
         ]
     ];
 
@@ -150,7 +153,7 @@ class Image extends BaseCmsService
     public function tryPreBuilt(string $size) : bool
     {
         $builtFilePath = $this->getBuiltFilePath($size);
-        $exists = file_exists($builtFilePath);
+        $exists = file_exists($builtFilePath) && static::BUILD_CACHE_ENABLED;
         $this->lastBuiltImageMimeType = $exists ? mime_content_type($builtFilePath) : null;
         return $exists;
     }
@@ -160,7 +163,10 @@ class Image extends BaseCmsService
     {
         $originalFilePath = $this->getOriginalFilePath();
 
-        // https://symfony.com/doc/current/the-fast-track/en/23-imagine.html#optimizing-images-with-imagine
+        // 📚 https://symfony.com/doc/current/the-fast-track/en/23-imagine.html#optimizing-images-with-imagine
+        // 📚 https://github.com/php-imagine/Imagine
+        $phpImagine = (new Imagine())->open($originalFilePath);
+
         list($iwidth, $iheight) = getimagesize($originalFilePath);
         $ratio = $iwidth / $iheight;
 
@@ -173,9 +179,13 @@ class Image extends BaseCmsService
             $height = $width / $ratio;
         }
 
-        // https://github.com/php-imagine/Imagine
-        $phpImagine = (new Imagine())->open($originalFilePath);
-        $phpImagine->resize(new Box($width, $height));
+        $width  = (int)round($width);
+        $height = (int)round($height);
+
+        // resize
+        if( $iwidth > $width || $iheight > $height ) {
+            $phpImagine->resize(new Box($width, $height), ImageInterface::FILTER_MITCHELL);
+        }
 
         //
         $outputFilePath =
@@ -199,7 +209,7 @@ class Image extends BaseCmsService
     public function applyWatermark(ImageInterface $phpImagine, string $size) : static
     {
         $this->checkSize($size);
-        $watermarkPosition = $this->entity->getWatermarkPosition();
+        $watermarkPosition = static::WATERMARK_FORCED_POSITION ?? $this->entity->getWatermarkPosition();
 
         if(
             in_array($size, [static::SIZE_MIN]) ||
@@ -218,10 +228,16 @@ class Image extends BaseCmsService
         $watermW    = $watermark->getSize()->getWidth();
         $watermH    = $watermark->getSize()->getHeight();
 
-        $newWatermW = floor( $imageW / 100 * static::WATERMARK_COVERAGE_PERCENT );
+        $newWatermW = floor( $imageW / 100 * static::WATERMARK_WIDTH_PERCENT );
+        $newWatermW = (int)round($newWatermW);
         $newWatermH = floor( $watermH *  $newWatermW / $watermW );
+        $newWatermH = (int)round($newWatermH);
 
-        $watermark->resize(new Box($newWatermW, $newWatermH));
+        /**
+         * Mitchell is often the most accurate.
+         * @link https://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-B3BF7F3A-CD5B-46D6-AC89-0BF9AEF27C47
+         */
+        $watermark->resize(new Box($newWatermW, $newWatermH), ImageInterface::FILTER_MITCHELL);
 
         // TODO zaneeee!! Gestire posizione watermark da DB
 
