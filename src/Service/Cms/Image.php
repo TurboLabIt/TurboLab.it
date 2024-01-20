@@ -187,7 +187,7 @@ class Image extends BaseCmsService
             'flatten'               => false,
             'jpeg_quality'          => '80',
             'png_compression_level' => 9,
-            'avif_quality'          => 50,
+            'avif_quality'          => 30,
         ]);
 
         $this->lastBuiltImageMimeType = mime_content_type($outputFilePath);
