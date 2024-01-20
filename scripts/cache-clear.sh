@@ -25,6 +25,9 @@ if [ "$APP_ENV" = "dev" ]; then
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwx "${PROJECT_DIR}" -R
 
+  fxTitle "Removing built images cache..."
+  rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
+
 fi
 
 wsuSourceFrameworkScript cache-clear "$@"

@@ -1,21 +1,27 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Entity\BaseEntity;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
-use Imagine\Gd\Imagine;
+use Imagine\Imagick\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 
 
+/**
+ * @link https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images.md
+ */
 class Image extends BaseCmsService
 {
     const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
+
+    const EXTENSION_BEST_FORMAT = 'avif';
 
     const SIZE_MIN  = 'min';
     const SIZE_MED  = 'med';
@@ -40,7 +46,8 @@ class Image extends BaseCmsService
     ];
 
     protected ImageEntity $entity;
-    protected ?string $lastBuiltImageMimeType = null;
+    protected ?string $buildFileExtension       = self::EXTENSION_BEST_FORMAT;
+    protected ?string $lastBuiltImageMimeType   = null;
 
 
     public function __construct(
@@ -67,7 +74,7 @@ class Image extends BaseCmsService
     }
 
 
-    public function getFileName() : string
+    public function getOriginalFileName() : string
     {
         $imageId = $this->entity->getId();
         if( empty($imageId) ) {
@@ -87,12 +94,9 @@ class Image extends BaseCmsService
 
     public function getOriginalFilePath() : string
     {
-        $fileName   = $this->getFileName();
-        $imageId    = $this->entity->getId();
-
-        $imageFolderMod = (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
-
-        $imageFilePath = $this->projectDir->createVarDirFromFilePath(
+        $imageFolderMod = $this->getFolderMod();
+        $fileName       = $this->getOriginalFileName();
+        $imageFilePath  = $this->projectDir->createVarDirFromFilePath(
             static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"
         );
 
@@ -100,14 +104,36 @@ class Image extends BaseCmsService
     }
 
 
-    protected function getBuiltImageFilePath(string $size) : string
+    public function getFolderMod() : int
+    {
+        $imageId = $this->entity->getId();
+        if( empty($imageId) ) {
+            throw new ImageLogicException("Cannot get the FolderMod of an Image without ID");
+        }
+
+        $imageFolderMod = (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
+        return $imageFolderMod;
+    }
+
+
+    public function getBuiltFileName() : string
+    {
+        $fileName = $this->getOriginalFileName();
+
+        if( !empty($this->buildFileExtension) ) {
+            $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . $this->buildFileExtension;
+        }
+
+        return $fileName;
+    }
+
+
+    protected function getBuiltFilePath(string $size) : string
     {
         $this->checkSize($size);
 
-        $fileName   = $this->getFileName();
-        $imageId    = $this->entity->getId();
-
-        $imageFolderMod = (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
+        $imageFolderMod = $this->getFolderMod();
+        $fileName       = $this->getBuiltFileName();
 
         $imageFilePath = $this->projectDir->createVarDirFromFilePath(
             static::UPLOADED_IMAGES_FOLDER_NAME . "/cache/$size/$imageFolderMod/$fileName"
@@ -119,7 +145,7 @@ class Image extends BaseCmsService
 
     public function tryPreBuilt(string $size) : bool
     {
-        $builtFilePath = $this->getBuiltImageFilePath($size);
+        $builtFilePath = $this->getBuiltFilePath($size);
         $exists = file_exists($builtFilePath);
         $this->lastBuiltImageMimeType = $exists ? mime_content_type($builtFilePath) : null;
         return $exists;
@@ -151,12 +177,13 @@ class Image extends BaseCmsService
         $outputFilePath =
             $this
                 ->applyWatermark($phpImagine)
-                ->getBuiltImageFilePath($size);
+                ->getBuiltFilePath($size);
 
         $phpImagine->save($outputFilePath, [
-            'flatten' => false,
-            'jpeg_quality' => '80',
-            'png_compression_level' => 9
+            'flatten'               => false,
+            'jpeg_quality'          => '80',
+            'png_compression_level' => 9,
+            'avif_quality'          => 50,
         ]);
 
         $this->lastBuiltImageMimeType = mime_content_type($outputFilePath);
@@ -179,19 +206,23 @@ class Image extends BaseCmsService
 
     public function getXSendPath(string $size) : string
     {
-        $imageId = $this->getId();
-        $imageFolderMod = (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
-
-        $xSendPath = DIRECTORY_SEPARATOR .
+        $xSendPath =
+            DIRECTORY_SEPARATOR .
             implode(DIRECTORY_SEPARATOR, [
-                static::UPLOADED_ASSET_XSEND_PATH, 'images', 'cache', $size, $imageFolderMod, $this->getFileName()
+                static::UPLOADED_ASSET_XSEND_PATH, 'images', 'cache', $size, $this->getFolderMod(), $this->getBuiltFileName()
             ]);
 
         return $xSendPath;
     }
 
 
-    public function getEntity() : ImageEntity { return $this->entity; }
+    public function getEntity() : ImageEntity { return parent::getEntity(); }
+
+    /**
+     * @param ImageEntity $entity
+     */
+    public function setEntity(BaseEntity $entity) : static { return parent::setEntity($entity); }
+
     public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 

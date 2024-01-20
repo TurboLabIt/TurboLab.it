@@ -2,20 +2,24 @@
 namespace App\Controller;
 
 use App\Entity\Cms\Image as ImageEntity;
+use App\Exception\ImageNotFoundException;
 use App\Service\Cms\Image;
 use App\ServiceCollection\Cms\ImageCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
+/**
+ * @link https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images.md
+ */
 class ImageController extends BaseController
 {
     public function __construct(protected ImageCollection $imageCollection)
     { }
 
 
-    #[Route('/immagini/{size<min|med|max>}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
-    public function index($size, $imageSlugDashId, $format) : Response
+    #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
+    public function index($size, $imageFolderMod, $imageSlugDashId, $format) : Response
     {
         // try direct filesystem access, without db
         $entityId = substr($imageSlugDashId, strrpos($imageSlugDashId, '-') + 1);
@@ -33,7 +37,6 @@ class ImageController extends BaseController
 
         //
         try {
-            /** @var Image $image */
             $image = $this->imageCollection->loadBySlugDashId($imageSlugDashId);
 
         } catch(ImageNotFoundException $ex) {
@@ -68,5 +71,19 @@ class ImageController extends BaseController
         $response->headers->set('X-Accel-Redirect', $xSendPath);
 
         return $response;
+    }
+
+
+    #[Route('/immagini/{size<min|med|max>}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no_folder_mod')]
+    public function legacyNoFolderMod($size, $imageSlugDashId, $format) : Response
+    {
+        return $this->index($size, 0, $imageSlugDashId, $format);
+    }
+
+
+    #[Route('/immagini/{imageId<[1-9]+[0-9]*>}/{size<min|med|max>}', name: 'app_image_legacy_id_size_only')]
+    public function legacyIdAndSize($imageId, $size) : Response
+    {
+        return $this->index($size, 0, "image-$imageId", Image::EXTENSION_BEST_FORMAT);
     }
 }

@@ -12,8 +12,9 @@ class ImageUrlGenerator extends UrlGenerator
         $imageSlugDashId = $this->buildSlugDashIdString($image);
         $imageUrl =
             $this->symfonyUrlGenerator->generate('app_image', [
-                "imageSlugDashId"   => $imageSlugDashId,
                 "size"              => $size,
+                "imageFolderMod"    => $image->getFolderMod(),
+                "imageSlugDashId"   => $imageSlugDashId,
                 "format"            => $image->getFormat()
             ], $urlType);
 

@@ -20,8 +20,10 @@ class Image extends BaseCmsEntity
     const WATERMARK_BOTTOM_RIGHT    = 3;
     const WATERMARK_BOTTOM_LEFT     = 4;
 
-    const FORMAT_PNG    = 'png';
     const FORMAT_JPG    = 'jpg';
+    const FORMAT_PNG    = 'png';
+    const FORMAT_WEBP   = 'webp';
+    const FORMAT_AVIF   = 'avif';
 
     use IdableEntityTrait, TitleableEntityTrait;
 
@@ -57,7 +59,7 @@ class Image extends BaseCmsEntity
 
     public function getFormats() : array
     {
-        return [static::FORMAT_PNG, static::FORMAT_JPG];
+        return [static::FORMAT_JPG, static::FORMAT_PNG, static::FORMAT_WEBP, static::FORMAT_AVIF];
     }
 
     public function getFormat(): ?string

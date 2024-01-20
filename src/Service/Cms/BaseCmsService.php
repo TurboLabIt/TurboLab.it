@@ -12,6 +12,7 @@ abstract class BaseCmsService extends BaseService
         return $this->entity->getId();
     }
 
+    public function getEntity() : BaseEntity { return $this->entity; }
 
     public function setEntity(BaseEntity $entity) : static
     {

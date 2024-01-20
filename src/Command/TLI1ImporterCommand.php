@@ -502,7 +502,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         // file copy
         $imageService   = $this->imageFactory->create($entityTli2Image);
-        $filename       = $imageService->getFileName();
+        $filename       = $imageService->getOriginalFileName();
         $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/images/$filename");
         $destFilePath   = $imageService->getOriginalFilePath();
 
