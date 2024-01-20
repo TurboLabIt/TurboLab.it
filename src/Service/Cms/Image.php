@@ -33,16 +33,16 @@ class Image extends BaseCmsService
 
     const SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [
-            self::WIDTH     => 2000,
-            self::HEIGHT    => 2000,
+            self::WIDTH     => 124,
+            self::HEIGHT    => null,
         ],
         self::SIZE_MED  => [
-            self::WIDTH     => 2000,
-            self::HEIGHT    => 2000,
+            self::WIDTH     => 650,
+            self::HEIGHT    => null,
         ],
         self::SIZE_MAX  => [
-            self::WIDTH     => 2000,
-            self::HEIGHT    => 2000,
+            self::WIDTH     => 1300,
+            self::HEIGHT    => null,
         ]
     ];
 
