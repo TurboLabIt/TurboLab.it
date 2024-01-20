@@ -216,7 +216,7 @@ class Image extends BaseCmsService
     }
 
 
-    public function getContent(string $size)
+    public function getContent(string $size) : string
     {
         $result = $this->tryPreBuilt($size);
 
