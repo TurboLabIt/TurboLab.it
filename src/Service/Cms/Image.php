@@ -17,7 +17,10 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
+    const UPLOADED_IMAGES_FOLDER_NAME   = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
+
+    const WATERMARK_FILEPATH            = 'images/logo/turbolab.it.png';
+    const WATERMARK_COVERAGE_PERCENT    = 40;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -177,7 +180,7 @@ class Image extends BaseCmsService
         //
         $outputFilePath =
             $this
-                ->applyWatermark($phpImagine)
+                ->applyWatermark($phpImagine, $size)
                 ->getBuiltFilePath($size);
 
         $phpImagine->save($outputFilePath, [
@@ -193,8 +196,38 @@ class Image extends BaseCmsService
     }
 
 
-    public function applyWatermark(ImageInterface $phpImagine) : static
+    public function applyWatermark(ImageInterface $phpImagine, string $size) : static
     {
+        $this->checkSize($size);
+        $watermarkPosition = $this->entity->getWatermarkPosition();
+
+        if(
+            in_array($size, [static::SIZE_MIN]) ||
+            $watermarkPosition == ImageEntity::WATERMARK_DISABLED
+        ) {
+            return $this;
+        }
+
+        $watermarkFilePath = $this->projectDir->getPublicDirFromFilePath(static::WATERMARK_FILEPATH);
+
+        $watermark  = (new Imagine())->open($watermarkFilePath);
+
+        $imageW     = $phpImagine->getSize()->getWidth();
+        $imageH     = $phpImagine->getSize()->getHeight();
+
+        $watermW    = $watermark->getSize()->getWidth();
+        $watermH    = $watermark->getSize()->getHeight();
+
+        $newWatermW = floor( $imageW / 100 * static::WATERMARK_COVERAGE_PERCENT );
+        $newWatermH = floor( $watermH *  $newWatermW / $watermW );
+
+        $watermark->resize(new Box($newWatermW, $newWatermH));
+
+        // TODO zaneeee!! Gestire posizione watermark da DB
+
+        $bottomLeft = new Point(0, $imageH - $newWatermH);
+
+        $phpImagine->paste($watermark, $bottomLeft);
         return $this;
     }
 

@@ -6598,7 +6598,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "70169b32d2e060f7980f443a87408b2e7872608b"
+                "reference": "de839d52c9350d6edd0f226af60c91794962e910"
             },
             "require": {
                 "league/csv": "@stable",
@@ -6633,7 +6633,7 @@
                 }
             ],
             "description": "A minimal Symfony bundle to build your own CLI commands even faster",
-            "time": "2024-01-06T10:09:50+00:00"
+            "time": "2024-01-20T15:49:45+00:00"
         },
         {
             "name": "twig/extra-bundle",
