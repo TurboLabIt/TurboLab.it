@@ -21,8 +21,6 @@ class Image extends BaseCmsService
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
-    const EXTENSION_BEST_FORMAT = 'avif';
-
     const SIZE_MIN  = 'min';
     const SIZE_MED  = 'med';
     const SIZE_MAX  = 'max';
@@ -46,8 +44,8 @@ class Image extends BaseCmsService
     ];
 
     protected ImageEntity $entity;
-    protected ?string $buildFileExtension       = self::EXTENSION_BEST_FORMAT;
-    protected ?string $lastBuiltImageMimeType   = null;
+    protected static ?string $buildFileExtension    = null;
+    protected ?string $lastBuiltImageMimeType       = null;
 
 
     public function __construct(
@@ -55,6 +53,9 @@ class Image extends BaseCmsService
     )
     {
         $this->entity = new ImageEntity();
+        if( empty(static::$buildFileExtension) ) {
+            static::setBestFormatFromBrowserSupport();
+        }
     }
 
 
@@ -120,8 +121,8 @@ class Image extends BaseCmsService
     {
         $fileName = $this->getOriginalFileName();
 
-        if( !empty($this->buildFileExtension) ) {
-            $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . $this->buildFileExtension;
+        if( !empty(static::$buildFileExtension) ) {
+            $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
         }
 
         return $fileName;
@@ -227,6 +228,27 @@ class Image extends BaseCmsService
         $filePath   = $this->getBuiltFilePath($size);
         $data       = file_get_contents($filePath);
         return $data;
+    }
+
+
+    public static function setBestFormatFromBrowserSupport() : ?string
+    {
+        $httpAccept = $_SERVER['HTTP_ACCEPT'] ?? '';
+
+        foreach([ImageEntity::FORMAT_AVIF, ImageEntity::FORMAT_WEBP] as $format) {
+
+            $bestFormatMimeType = 'image/' . $format;
+            $isSupported = stripos($httpAccept, $bestFormatMimeType) !== false;
+
+            if($isSupported) {
+
+                static::$buildFileExtension = $format;
+                return $format;
+            }
+        }
+
+        static::$buildFileExtension = null;
+        return null;
     }
 
 

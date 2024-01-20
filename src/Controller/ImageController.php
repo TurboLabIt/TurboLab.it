@@ -87,6 +87,7 @@ class ImageController extends BaseController
     #[Route('/immagini/{imageId<[1-9]+[0-9]*>}/{size<min|med|max>}', name: 'app_image_legacy_id_size_only')]
     public function legacyIdAndSize($imageId, $size) : Response
     {
-        return $this->index($size, 0, "image-$imageId", Image::EXTENSION_BEST_FORMAT);
+        // the format here is ignored, but it must be a valid one
+        return $this->index($size, 0, "image-$imageId", ImageEntity::FORMAT_PNG);
     }
 }
