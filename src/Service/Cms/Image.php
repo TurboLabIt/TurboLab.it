@@ -17,13 +17,13 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const UPLOADED_IMAGES_FOLDER_NAME   = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
+    const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
-    const BUILD_CACHE_ENABLED = true;
+    const BUILD_CACHE_ENABLED       = true;
 
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
-    const WATERMARK_FORCED_POSITION = null;
+    const WATERMARK_FORCED_POSITION = ImageEntity::WATERMARK_BOTTOM_LEFT;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -197,7 +197,7 @@ class Image extends BaseCmsService
             'flatten'               => false,
             'jpeg_quality'          => '80',
             'png_compression_level' => 9,
-            'avif_quality'          => 30,
+            'avif_quality'          => 40,
         ]);
 
         $this->lastBuiltImageMimeType = mime_content_type($outputFilePath);
