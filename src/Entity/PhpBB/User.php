@@ -16,6 +16,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 
+/**
+ * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
 class User implements UserInterface

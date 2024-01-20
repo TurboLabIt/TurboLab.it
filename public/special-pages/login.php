@@ -1,5 +1,7 @@
 <?php
 /**
+ * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
+ *
  * https://turbolab.it/ajax/login/
  *
  * 400: generic client error
@@ -8,8 +10,6 @@
  * 403: worng password
  * 429: too many retries
  * 200: OK
- *
- * @link 📚 https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
  */
 
 const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';

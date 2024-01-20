@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
+ * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
  * @extends ServiceEntityRepository<User>
  *
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
