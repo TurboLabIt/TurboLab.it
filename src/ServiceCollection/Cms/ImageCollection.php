@@ -14,11 +14,18 @@ use Doctrine\ORM\EntityManagerInterface;
 class ImageCollection extends BaseCmsServiceCollection
 {
     const ENTITY_CLASS          = ImageEntity::class;
-    const NOT_FOUND_EXCEPTION   = '\App\Exception\ImageNotFoundException';
+    const NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
 
 
     public function __construct(protected EntityManagerInterface $em, protected ImageFactory $factory)
     { }
+
+
+    public function get404(string $size) : ImageService
+    {
+        // 👀 https://turbolab.it/immagini/24297/med
+        return $this->loadById(24297);
+    }
 
 
     public function loadById(int $entityId) : ImageService { return parent::loadById($entityId); }

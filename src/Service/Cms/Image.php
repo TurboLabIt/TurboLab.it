@@ -216,6 +216,20 @@ class Image extends BaseCmsService
     }
 
 
+    public function getContent(string $size)
+    {
+        $result = $this->tryPreBuilt($size);
+
+        if( !$result ) {
+            $this->build($size);
+        }
+
+        $filePath   = $this->getBuiltFilePath($size);
+        $data       = file_get_contents($filePath);
+        return $data;
+    }
+
+
     public function getEntity() : ImageEntity { return parent::getEntity(); }
 
     /**

@@ -41,10 +41,12 @@ class ImageController extends BaseController
 
         } catch(ImageNotFoundException $ex) {
 
-            $image404 = $this->imageCollection->get404();
-            return new Response($image404, Response::HTTP_NOT_FOUND, [
-                'Content-Type' => 'image/png'
-            ]);
+            $image404 = $this->imageCollection->get404($size);
+            // can't use X-Sendfile: the status code MUST be 404, not 200
+            return
+                new Response($image404->getContent($size), Response::HTTP_NOT_FOUND, [
+                    'Content-Type' => $image404->getBuiltImageMimeType()
+                ]);
         }
 
         // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to the requested format being wrong)
@@ -62,6 +64,7 @@ class ImageController extends BaseController
     protected function xSendImage(Image $image, string $size) : Response
     {
         $response =
+            // 📕 the HTTP Status code here is IGNORED by the X-Sendfile location
             new Response('', Response::HTTP_OK, [
                 'Content-Type' => $image->getBuiltImageMimeType()
             ]);

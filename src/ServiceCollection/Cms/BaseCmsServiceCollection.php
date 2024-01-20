@@ -19,7 +19,9 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
         $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($entityId);
 
         if( empty($entity) ) {
-            throw new ${static::NOT_FOUND_EXCEPTION}($entityId);
+
+            $exceptionClass = static::NOT_FOUND_EXCEPTION;
+            throw new $exceptionClass($entityId);
         }
 
         $service    = $this->createService($entity);
