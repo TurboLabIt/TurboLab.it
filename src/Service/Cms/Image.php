@@ -6,7 +6,7 @@ use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
-use Imagine\Imagick\Imagine;
+use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
@@ -22,8 +22,9 @@ class Image extends BaseCmsService
 
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
-    const WATERMARK_OPACITY         = 100;
+    const WATERMARK_OPACITY         = 25;
     const WATERMARK_FORCED_POSITION = ImageEntity::WATERMARK_BOTTOM_LEFT;
+    const WATERMARK_MIN_WIDTH       = 225;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -183,9 +184,15 @@ class Image extends BaseCmsService
         $width  = (int)round($width);
         $height = (int)round($height);
 
-        // resize
-        if( $iwidth > $width || $iheight > $height ) {
+        // resize (down only, never "up")
+        if($iwidth > $width || $iheight > $height ) {
+
             $phpImagine->resize(new Box($width, $height), ImageInterface::FILTER_MITCHELL);
+
+        } else {
+
+            // "resizing" the image to... the same size prevents the watermark to become "very black"
+            $phpImagine->resize(new Box($iwidth, $iheight));
         }
 
         //
@@ -195,7 +202,7 @@ class Image extends BaseCmsService
                 ->getBuiltFilePath($size);
 
         $phpImagine->save($outputFilePath, [
-            'flatten'               => false,
+            'flatten'               => true,
             'jpeg_quality'          => '80',
             'png_compression_level' => 9,
             'avif_quality'          => 40,
@@ -231,6 +238,11 @@ class Image extends BaseCmsService
 
         $newWatermW = floor( $imageW / 100 * static::WATERMARK_WIDTH_PERCENT );
         $newWatermW = (int)round($newWatermW);
+
+        if( $newWatermW < static::WATERMARK_MIN_WIDTH ) {
+            return $this;
+        }
+
         $newWatermH = floor( $watermH *  $newWatermW / $watermW );
         $newWatermH = (int)round($newWatermH);
 
@@ -239,8 +251,6 @@ class Image extends BaseCmsService
          * @link https://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-B3BF7F3A-CD5B-46D6-AC89-0BF9AEF27C47
          */
         $watermark->resize(new Box($newWatermW, $newWatermH), ImageInterface::FILTER_MITCHELL);
-
-        // TODO zaneeee!! Gestire posizione watermark da DB
 
         $bottomLeft = new Point(0, $imageH - $newWatermH);
 
