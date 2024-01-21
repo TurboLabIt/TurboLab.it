@@ -31,7 +31,7 @@ class Image extends BaseCmsEntity
     protected ?string $format = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
-    protected int $watermarkPosition = self::WATERMARK_BOTTOM_RIGHT;
+    protected int $watermarkPosition = self::WATERMARK_BOTTOM_LEFT;
 
     #[ORM\Column]
     protected ?bool $reusable = false;

@@ -438,7 +438,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark = match ($arrImage["watermarked"]) {
             0 => ImageEntity::WATERMARK_DISABLED,
-            1 => ImageEntity::WATERMARK_BOTTOM_RIGHT
+            1 => ImageEntity::WATERMARK_BOTTOM_LEFT
         };
 
         if (!in_array($format, ['png', 'jpg'])) {
