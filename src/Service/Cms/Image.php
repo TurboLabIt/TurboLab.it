@@ -24,6 +24,7 @@ class Image extends BaseCmsService
     const WATERMARK_WIDTH_PERCENT   = 25;
     const WATERMARK_OPACITY         = 100;
     const WATERMARK_FORCED_POSITION = null;
+    const WATERMARK_MIN_WIDTH       = 225;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -237,6 +238,10 @@ class Image extends BaseCmsService
 
         $newWatermW = floor( $imageW / 100 * static::WATERMARK_WIDTH_PERCENT );
         $newWatermW = (int)round($newWatermW);
+
+        if( $newWatermW < static::WATERMARK_MIN_WIDTH ) {
+            return $this;
+        }
 
         $newWatermH = floor( $watermH *  $newWatermW / $watermW );
         $newWatermH = (int)round($newWatermH);
