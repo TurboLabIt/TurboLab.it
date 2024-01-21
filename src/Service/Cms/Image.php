@@ -17,12 +17,12 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
-
     const BUILD_CACHE_ENABLED       = true;
+    const BUILD_FORMAT_FORCED       = null;
 
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
+    const WATERMARK_OPACITY         = 100;
     const WATERMARK_FORCED_POSITION = ImageEntity::WATERMARK_BOTTOM_LEFT;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
@@ -48,6 +48,8 @@ class Image extends BaseCmsService
             self::HEIGHT    => 1080,
         ]
     ];
+
+    const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
     protected ImageEntity $entity;
     protected static ?string $buildFileExtension    = null;
@@ -94,7 +96,6 @@ class Image extends BaseCmsService
         }
 
         $imageFileName = implode('.', [$imageId, $format]);
-
         return $imageFileName;
     }
 
@@ -243,7 +244,7 @@ class Image extends BaseCmsService
 
         $bottomLeft = new Point(0, $imageH - $newWatermH);
 
-        $phpImagine->paste($watermark, $bottomLeft);
+        $phpImagine->paste($watermark, $bottomLeft, static::WATERMARK_OPACITY);
         return $this;
     }
 
@@ -282,6 +283,10 @@ class Image extends BaseCmsService
 
     public static function setBestFormatFromBrowserSupport() : ?string
     {
+        if( !empty(static::BUILD_FORMAT_FORCED) ) {
+            return static::$buildFileExtension = static::BUILD_FORMAT_FORCED;
+        }
+
         $httpAccept = $_SERVER['HTTP_ACCEPT'] ?? '';
 
         foreach([ImageEntity::FORMAT_AVIF, ImageEntity::FORMAT_WEBP] as $format) {
@@ -290,14 +295,11 @@ class Image extends BaseCmsService
             $isSupported = stripos($httpAccept, $bestFormatMimeType) !== false;
 
             if($isSupported) {
-
-                static::$buildFileExtension = $format;
-                return $format;
+                return static::$buildFileExtension = $format;
             }
         }
 
-        static::$buildFileExtension = null;
-        return null;
+        return static::$buildFileExtension = null;
     }
 
 
