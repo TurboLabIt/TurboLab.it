@@ -22,8 +22,8 @@ class Image extends BaseCmsService
 
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
-    const WATERMARK_OPACITY         = 25;
-    const WATERMARK_FORCED_POSITION = ImageEntity::WATERMARK_BOTTOM_LEFT;
+    const WATERMARK_OPACITY         = 100;
+    const WATERMARK_FORCED_POSITION = null;
     const WATERMARK_MIN_WIDTH       = 225;
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
@@ -252,10 +252,52 @@ class Image extends BaseCmsService
          */
         $watermark->resize(new Box($newWatermW, $newWatermH), ImageInterface::FILTER_MITCHELL);
 
-        $bottomLeft = new Point(0, $imageH - $newWatermH);
+        $pointPosition = $this->getWatermarkPointPosition($watermarkPosition, $imageW, $imageH, $newWatermW, $newWatermH);
 
-        $phpImagine->paste($watermark, $bottomLeft, static::WATERMARK_OPACITY);
+        $phpImagine->paste($watermark, $pointPosition, static::WATERMARK_OPACITY);
         return $this;
+    }
+
+
+    public function getWatermarkPointPosition(int $watermarkPosition, int $imageW, int $imageH, int $wmW, int $wmH) : Point
+    {
+        $x = 0;
+        $y = 0;
+
+        switch($watermarkPosition) {
+
+            case ImageEntity::WATERMARK_TOP_LEFT: {
+
+                // 0,0 is fine
+
+            } break;
+
+            case ImageEntity::WATERMARK_TOP_RIGHT: {
+
+                $x = $imageW - $wmW;
+
+            } break;
+
+            case ImageEntity::WATERMARK_BOTTOM_RIGHT: {
+
+                $x = $imageW - $wmW;
+                $y = $imageH - $wmH;
+
+            } break;
+
+            case ImageEntity::WATERMARK_BOTTOM_LEFT: {
+
+                $y = $imageH - $wmH;
+
+            } break;
+
+            default: {
+                throw new ImageLogicException("Unhandled watermark position");
+            }
+        }
+
+        $point = new Point($x, $y);
+        return $point;
     }
 
 
