@@ -1,9 +1,20 @@
 ## Immagini di esempio
 
-### standard med
+[markdown_tables](https://www.tablesgenerator.com/markdown_tables)
 
-<img src="https://dev0.turbolab.it/immagini/24206/med">
-
-### standard max
-
-![image](https://dev0.turbolab.it/immagini/24206/max)
+| **Descr**    | **Med**                                            | **Max**                                            |
+|--------------|----------------------------------------------------|----------------------------------------------------|
+| 🖼 standard  | [med](https://dev0.turbolab.it/immagini/24206/med) | [max](https://dev0.turbolab.it/immagini/24206/max) |
+| 🏟 full HD   | [med](https://dev0.turbolab.it/immagini/24010/med) | [max](https://dev0.turbolab.it/immagini/24010/max) |
+| 🦸 strip     | [med](https://dev0.turbolab.it/immagini/5735/med)  | [max](https://dev0.turbolab.it/immagini/5735/max)  |
+| ⛰ palo       |                                                    |                                                    |
+| 🤳 verticale | [med](https://dev0.turbolab.it/immagini/18033/med) | [med](https://dev0.turbolab.it/immagini/18033/max) |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
+|              |                                                    |                                                    |
