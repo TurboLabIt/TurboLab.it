@@ -29,8 +29,8 @@ class Image extends BaseCmsService
     const WATERMARK_FORCED_POSITION = null;
     const WATERMARK_MIN_SIZE        = 175;
     const MIN_WATERMARKABLE_SIZES   = [
-        self::WIDTH     => 250,
-        self::HEIGHT    => 250,
+        self::WIDTH     => 300,
+        self::HEIGHT    => 300,
     ];
 
 
