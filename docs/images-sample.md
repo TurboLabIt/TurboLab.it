@@ -6,7 +6,7 @@
 | 📔 cover (no WM)     | [med](https://dev0.turbolab.it/immagini/24010/med) | [max](https://dev0.turbolab.it/immagini/24010/max) |
 | 🦸 strip             | [med](https://dev0.turbolab.it/immagini/5735/med)  | [max](https://dev0.turbolab.it/immagini/5735/max)  |
 | ⛰ palo              |                                                    |                                                    |
-| 🤳 verticale, no max | [med](https://dev0.turbolab.it/immagini/18033/med) | [med](https://dev0.turbolab.it/immagini/18033/max) |
+| 🤳 verticale, no max | [med](https://dev0.turbolab.it/immagini/18033/med) | [max](https://dev0.turbolab.it/immagini/18033/max) |
 |                     |                                                    |                                                    |
 |                     |                                                    |                                                    |
 |                     |                                                    |                                                    |
