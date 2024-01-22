@@ -20,20 +20,25 @@ class Image extends BaseCmsService
     const BUILD_CACHE_ENABLED       = true;
     const BUILD_FORMAT_FORCED       = null;
 
+    const WIDTH     = 'width';
+    const HEIGHT    = 'height';
+
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
     const WATERMARK_OPACITY         = 100;
     const WATERMARK_FORCED_POSITION = null;
-    const WATERMARK_MIN_WIDTH       = 225;
+    const WATERMARK_MIN_SIZE        = 175;
+    const MIN_WATERMARKABLE_SIZES   = [
+        self::WIDTH     => 250,
+        self::HEIGHT    => 250,
+    ];
+
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
     const SIZE_MIN  = 'min';
     const SIZE_MED  = 'med';
     const SIZE_MAX  = 'max';
-
-    const WIDTH     = 'width';
-    const HEIGHT    = 'height';
 
     const SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [
@@ -217,11 +222,17 @@ class Image extends BaseCmsService
     public function applyWatermark(ImageInterface $phpImagine, string $size) : static
     {
         $this->checkSize($size);
+
         $watermarkPosition = static::WATERMARK_FORCED_POSITION ?? $this->entity->getWatermarkPosition();
+
+        $imageW = $phpImagine->getSize()->getWidth();
+        $imageH = $phpImagine->getSize()->getHeight();
 
         if(
             in_array($size, [static::SIZE_MIN]) ||
-            $watermarkPosition == ImageEntity::WATERMARK_DISABLED
+            $watermarkPosition == ImageEntity::WATERMARK_DISABLED ||
+            $imageW < static::MIN_WATERMARKABLE_SIZES[static::WIDTH] ||
+            $imageH < static::MIN_WATERMARKABLE_SIZES[static::HEIGHT]
         ) {
             return $this;
         }
@@ -229,18 +240,14 @@ class Image extends BaseCmsService
         $watermarkFilePath = $this->projectDir->getPublicDirFromFilePath(static::WATERMARK_FILEPATH);
 
         $watermark  = (new Imagine())->open($watermarkFilePath);
-
-        $imageW     = $phpImagine->getSize()->getWidth();
-        $imageH     = $phpImagine->getSize()->getHeight();
-
         $watermW    = $watermark->getSize()->getWidth();
         $watermH    = $watermark->getSize()->getHeight();
 
         $newWatermW = floor( $imageW / 100 * static::WATERMARK_WIDTH_PERCENT );
         $newWatermW = (int)round($newWatermW);
 
-        if( $newWatermW < static::WATERMARK_MIN_WIDTH ) {
-            return $this;
+        if( $newWatermW < static::WATERMARK_MIN_SIZE ) {
+            $newWatermW = static::WATERMARK_MIN_SIZE;
         }
 
         $newWatermH = floor( $watermH *  $newWatermW / $watermW );
