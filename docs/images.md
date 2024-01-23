@@ -7,11 +7,16 @@ TurboLab.it deve salvare, gestire ed erogare diverse tipologie di immagini.
 
 Logo, icone e altre immagini decorative.
 
-Sono Git-versionate e salvate direttamente nella cartella [public/images](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/images), quindi risultano direttamente accssibili via web.
+Sono Git-versionate e salvate direttamente nella cartella [public/images](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/images), quindi risultano direttamente accessibili via web.
 
-I formati da utilizzare sono, nell'ordine di preferenza: SVG, AVIF trasparente, PNG trasparente. Il logo fa eccezione: deve rimanere in PNG trasparente per massimizzare la compatibilità.
+I formati da utilizzare per aggiungere nuove immagini sono, nell'ordine di preferenza: SVG, AVIF trasparente, PNG trasparente. Il logo fa eccezione: deve rimanere in PNG trasparente per massimizzare la compatibilità.
 
-Le immagini PNG da utilizzare concretamente nel codice sono quelle con suffisso `-tiny`, processate con [tinypng.com](https://tinypng.com). Aggiungere sempre al repo sia l'immagine originale, sia quella processata.
+Le immagini PNG da erogare ai client sono quelle con suffisso `-tiny`, processate con [tinypng.com](https://tinypng.com). Aggiungere sempre al repo sia l'immagine originale, sia quella processata.
+
+Eventuali "originali" in formato PSD, PDN, ... dovrebbero essere caricati assieme alle rispettive grafiche per il web, utilizzando il medesimo nome ed estensione differente. Ad esempio:
+
+1. [turbolab.it-2013-finale.pdn](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/images/logo/2013/turbolab.it-2013-finale.pdn): originale PDN
+2. [turbolab.it-2013-finale-tiny.png](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/images/logo/2013/turbolab.it-2013-finale-tiny.png): PNG processata partendo dal PDN
 
 
 ## Immagini di phpBB
