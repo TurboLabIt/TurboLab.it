@@ -17,11 +17,11 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const BUILD_CACHE_ENABLED       = true;
-    const BUILD_FORMAT_FORCED       = null;
+    const BUILD_CACHE_ENABLED = true;
+    const BUILD_FORMAT_FORCED = null;
 
-    const WIDTH     = 'width';
-    const HEIGHT    = 'height';
+    const WIDTH  = 'width';
+    const HEIGHT = 'height';
 
     const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
     const WATERMARK_WIDTH_PERCENT   = 25;
@@ -32,7 +32,6 @@ class Image extends BaseCmsService
         self::WIDTH     => 300,
         self::HEIGHT    => 300,
     ];
-
 
     const HOW_MANY_FILES_PER_FOLDER = 5000;
 
@@ -75,7 +74,7 @@ class Image extends BaseCmsService
 
     public function getSizes() : array
     {
-        return [static::SIZE_MIN, static::SIZE_MED, static::SIZE_MAX];
+        return array_keys(static::SIZE_DIMENSIONS);
     }
 
 
