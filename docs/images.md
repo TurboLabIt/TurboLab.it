@@ -23,7 +23,7 @@ Eventuali "originali" in formato PSD, PDN, ... dovrebbero essere caricati assiem
 
 Pulsanti, smiley ecc propri della piattaforma phpBB.
 
-Non sono Git-versionate, ma vengono prese dal pacchetto originale di phpBB e utilizzate *as-is* (non ci sono particolari benefici a processarle di nuovo).
+Non sono Git-versionate, ma vengono prese dal pacchetto originale di phpBB e utilizzate *as is* (non ci sono particolari benefici a processarle di nuovo).
 
 Ad ogni aggiornamento effettuato tramite [phpbb-upgrade.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/phpbb-upgrade.sh), le immagini di phpBB vengono sovrascritte con le versioni presenti nel nuovo pacchetto originale di phpBB.
 
@@ -34,9 +34,24 @@ Avatar ed eventuali altre immagini caricate dagli utenti sul forum.
 
 Gli avatar sono salvati nella cartella `public/forum/images/avatars/upload/`. La gestione è totalmente in carico a phpBB.
 
-Per semplificare la gestione, aumentare la sicurezza e prevenire contestazioni di vario tipo, abbiamo scelto di disattivare la funzione di phpBB che consente agli utenti di caricare immagini direttamente sul nostro server.
+Abbiamo scelto di disattivare la funzione di phpBB che consente agli utenti di caricare immagini direttamente sul nostro server per i seguenti motivi:
 
-Le immagini caricate dagli utenti vengono invece ospitate esternamente: [vedi #13](https://github.com/TurboLabIt/TurboLab.it/issues/13).
+1. limitare il consumo di storage sul server
+2. aumentare la sicurezza
+3. prevenire contestazioni di copyright
+4. ridurre spazio e tempo di backup
+
+Le immagini caricate dagli utenti sono invece ospitate esternamente: [vedi #13](https://github.com/TurboLabIt/TurboLab.it/issues/13).
 
 
 ## Immagini degli articoli
+
+Screenshot, foto e altre grafiche caricate dagli autori negli articoli.
+
+Il flusso richiesto è il seguente:
+
+1. l'autore sceglie il file immagine -alla massima risoluzione e senza watermark- dal proprio PC e la carica all'interno dell'articolo
+2. il server di TurboLab.it salva il file originale ricevuto *as is*
+3. tramite PHP, il server processa il file originale e ne deriva diverse copie, con dimensioni e formati diversi
+4. le copie processate vengono salvate in un percorso raggiungibile pubblicamente via web
+5. alla richiesta di visualizzazione di un'immagine da parte di un client, il server web eroga direttamente l'appropriata copia generata in precedenza, senza più bisogno di attivare l'interprete PHP ad ogni accesso
