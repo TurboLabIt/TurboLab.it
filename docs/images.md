@@ -3,7 +3,7 @@
 TurboLab.it deve salvare, gestire ed erogare diverse tipologie di immagini.
 
 
-## Immagini del sito
+## 📃 Immagini del sito
 
 Logo, icone e altre immagini decorative.
 
@@ -19,7 +19,7 @@ Eventuali "originali" in formato PSD, PDN, ... dovrebbero essere caricati assiem
 2. [turbolab.it-2013-finale-tiny.png](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/images/logo/2013/turbolab.it-2013-finale-tiny.png): PNG processata partendo dal PDN
 
 
-## Immagini di phpBB
+## 🏟 Immagini di phpBB
 
 Pulsanti, smiley ecc propri della piattaforma phpBB.
 
@@ -28,7 +28,7 @@ Non sono Git-versionate, ma vengono prese dal pacchetto originale di phpBB e uti
 Ad ogni aggiornamento effettuato tramite [phpbb-upgrade.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/phpbb-upgrade.sh), le immagini di phpBB vengono sovrascritte con le versioni presenti nel nuovo pacchetto originale di phpBB.
 
 
-## Immagini caricate dagli utenti tramite il forum
+## 🧔 Immagini caricate dagli utenti tramite il forum
 
 Avatar ed eventuali altre immagini caricate dagli utenti sul forum.
 
@@ -44,9 +44,9 @@ Abbiamo scelto di disattivare la funzione di phpBB che consente agli utenti di c
 Le immagini caricate dagli utenti sono invece ospitate esternamente: [vedi #13](https://github.com/TurboLabIt/TurboLab.it/issues/13).
 
 
-## Immagini degli articoli
+## 📸 Immagini degli articoli
 
-Screenshot, foto e altre grafiche caricate dagli autori negli articoli.
+Screenshot, foto e altre grafiche caricate dagli autori negli articoli. 🖼 [Immagini a campione qui](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-sample.md).
 
 Il flusso richiesto è il seguente:
 
