@@ -5,7 +5,7 @@ TurboLab.it deve salvare, gestire ed erogare diverse tipologie di immagini.
 
 ## 📃 Immagini del sito
 
-Logo, icone e altre immagini decorative.
+**Logo, icone e altre immagini decorative**
 
 Sono Git-versionate e salvate direttamente nella cartella [public/images](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/images), quindi risultano direttamente accessibili via web.
 
@@ -21,7 +21,7 @@ Eventuali "originali" in formato PSD, PDN, ... dovrebbero essere caricati assiem
 
 ## 🏟 Immagini di phpBB
 
-Pulsanti, smiley ecc propri della piattaforma phpBB.
+**Pulsanti, smiley ecc propri della piattaforma phpBB**
 
 Non sono Git-versionate, ma vengono prese dal pacchetto originale di phpBB e utilizzate *as is* (non ci sono particolari benefici a processarle di nuovo).
 
@@ -30,7 +30,7 @@ Ad ogni aggiornamento effettuato tramite [phpbb-upgrade.sh](https://github.com/T
 
 ## 🧔 Immagini caricate dagli utenti tramite il forum
 
-Avatar ed eventuali altre immagini caricate dagli utenti sul forum.
+**Avatar e altre immagini caricate dagli utenti sul forum**
 
 Gli avatar sono salvati nella cartella `public/forum/images/avatars/upload/`. La gestione è totalmente in carico a phpBB.
 
@@ -46,12 +46,26 @@ Le immagini caricate dagli utenti sono invece ospitate esternamente: [vedi #13](
 
 ## 📸 Immagini degli articoli
 
-Screenshot, foto e altre grafiche caricate dagli autori negli articoli. 🖼 [Immagini a campione qui](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-sample.md).
+**Screenshot, foto e altre grafiche caricate dagli autori negli articoli** | 🖼 [Immagini a campione qui](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-sample.md)
 
-Il flusso richiesto è il seguente:
+Questo è il tipo di immagine che richiede il maggior numero di elaborazioni. I file caricati dagli autori devono infatti essere validati (per evitare che qualcuno carichi un *.exe*), ridimensionati (in varie "taglie", adatte alla home page, ai listati, all'articolo o alla visualizzazione ingrandita di una singola immagine), minimizzati, dotati di watermark ecc.
 
-1. l'autore sceglie il file immagine -alla massima risoluzione e senza watermark- dal proprio PC e la carica all'interno dell'articolo
+Il flusso di lavoro è il seguente:
+
+1. l'autore sceglie il file-immagine dal proprio PC e lo carica all'interno dell'articolo - l'autore deve caricare il file alla massima risoluzione di cui dispone, e senza watermark
 2. il server di TurboLab.it salva il file originale ricevuto *as is*
-3. tramite PHP, il server processa il file originale e ne deriva diverse copie, con dimensioni e formati diversi
-4. le copie processate vengono salvate in un percorso raggiungibile pubblicamente via web
-5. alla richiesta di visualizzazione di un'immagine da parte di un client, il server web eroga direttamente l'appropriata copia generata in precedenza, senza più bisogno di attivare l'interprete PHP ad ogni accesso
+3. tramite PHP, il server processa il file originale e ne deriva molteplici copie, ognuna con un set di dimensioni diverse
+4. i file vengono ri-compressi in AVIF, che offre la migliore compressione ed [è supportato](https://caniuse.com/avif) da tutti i browser web moderni
+5. viene applicato il *watermark*
+5. i file così generati vengono salvati in un percorso raggiungibile pubblicamente via web
+6. alla richiesta di visualizzazione di un'immagine da parte di un client, il server web eroga direttamente il file appropriato generato ai passi precedenti, senza più bisogno di attivare l'interprete PHP ad ogni accesso
+
+Il processo di elaborazione via PHP avviene la prima volta che viene richiesta una determinata immagine (dall'autore stesso, presumibilmente).
+
+---
+
+L'URL canonico delle immagini è `https://turbolab.it/immagini/med/2/nome-file-7654.avif`. Non appena Nginx riceve la richiesta, prova quindi a servire direttamente il file che si trova nel percorso `public/immagini/med/2/nome-file-7654.avif`. Se lo trova, significa che il file è stato già elaborato via PHP e salvato in precedenza. Il file viene dunque fornito al client.
+
+La cartella `public/immagini/`, in verità, non esiste. Si tratta di un symlink (Git-versionato) che punta a `var/uploaded-asset/images/cache/`.
+
+Se il file non esiste, è necessario processare "al volo" l'immagine originale caricata dall'autore (precedentemente salvata in `var/uploaded-asset/images/`), salvarla nel percorso appena indicato e ritornarla al client. Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php).
