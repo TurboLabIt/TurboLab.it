@@ -1,4 +1,4 @@
-## Immagini di esempio
+# Immagini di esempio
 
 | **Descr**                                 | **Med**                                            | **Max**                                            |
 |-------------------------------------------|----------------------------------------------------|----------------------------------------------------|
@@ -14,3 +14,9 @@
 | 👻 alpha PNG sfondo nero (Firefox/Android) | [med](https://dev0.turbolab.it/immagini/7697/med)  | [max](https://dev0.turbolab.it/immagini/7697/max)  |
 
 🧰 [markdown_tables](https://www.tablesgenerator.com/markdown_tables)
+
+
+## Percorsi legacy
+
+- [/portmaster-firewall-blocker-molto-altro-24255.img](https://dev0.turbolab.it/immagini/med/portmaster-firewall-blocker-molto-altro-24255.img)
+- [/24184/med/](https://dev0.turbolab.it/immagini/24184/med/)

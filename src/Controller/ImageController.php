@@ -21,6 +21,8 @@ class ImageController extends BaseController
     #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
     public function index($size, $imageFolderMod, $imageSlugDashId, $format) : Response
     {
+        $format = str_ireplace(['img'], 'png', $format);
+
         // try direct filesystem access, without db
         $entityId = substr($imageSlugDashId, strrpos($imageSlugDashId, '-') + 1);
         $entity =
