@@ -62,10 +62,31 @@ Il flusso di lavoro è il seguente:
 
 Il processo di elaborazione via PHP avviene la prima volta che viene richiesta una determinata immagine (dall'autore stesso, presumibilmente).
 
----
 
-L'URL canonico delle immagini è `https://turbolab.it/immagini/med/2/nome-file-7654.avif`. Non appena Nginx riceve la richiesta, prova quindi a servire direttamente il file che si trova nel percorso `public/immagini/med/2/nome-file-7654.avif`. Se lo trova, significa che il file è stato già elaborato via PHP e salvato in precedenza. Il file viene dunque fornito al client.
+### Trasferimento diretto delle immagini via Nginx
 
-La cartella `public/immagini/`, in verità, non esiste. Si tratta di un symlink (Git-versionato) che punta a `var/uploaded-asset/images/cache/`.
+L'URL canonico delle immagini è `https://turbolab.it/immagini/med/2/nome-file-7654.avif`. Non appena Nginx riceve la richiesta, prova a servire direttamente il file che si trova nel percorso `public/immagini/med/2/nome-file-7654.avif`. Se lo trova, significa che il file è stato già elaborato via PHP e salvato in precedenza. Il file viene dunque restituito direttamente al client, senza attivare nuovamente PHP.
 
-Se il file non esiste, è necessario processare "al volo" l'immagine originale caricata dall'autore (precedentemente salvata in `var/uploaded-asset/images/`), salvarla nel percorso appena indicato e ritornarla al client. Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php).
+La cartella `public/immagini/`, in verità, non esiste. Si tratta piuttosto di un symlink (Git-versionato) che punta a `var/uploaded-asset/images/cache/`. Il reale percorso dal quale Nginx tenta di leggere l'immagine è dunque `var/uploaded-asset/images/cache/med/2/nome-file-7654.avif`.
+
+
+### Elaborazione delle immagini via PHP
+
+Se il file non esiste, è necessario:
+
+1. processare "al volo" l'immagine originale caricata dall'autore (precedentemente salvata in `var/uploaded-asset/images/`)
+2. salvarla nel percorso `var/uploaded-asset/images/cache/`
+3. restituirla al client
+
+Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php) (route: `app_image`).
+
+
+### X-Sendfile
+
+Per il trasferimento del file al client, lo script PHP usa [X-Sendfile](https://www.nginx.com/resources/wiki/start/topics/examples/xsendfile/):
+
+1. l'applicazione PHP termina settando l'header `X-Accel-Redirect` valorizzato a `/xsend-uploaded-assets/images/cache/med/2/nome-file-7654.avif`
+2. tale header fa scattare un *redirect interno* (invisibile al client) alla omonima location configurata in [nginx.conf](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/nginx.conf)
+3. il client riceve il file in modo trasparente
+
+Questo libera il processo PHP dall'onere di trasferire il file, che torna ad essere totalmente a carico di Nginx (come è giusto che sia).
