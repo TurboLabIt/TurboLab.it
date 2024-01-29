@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block htmlArticleContent %}
+    <h1>{{ Article.title }}</h1>
+
+    <div>
+        {% if Article.Authors is not empty %}
+            <span>
+                a cura di
+                {% for Author in Article.Authors %}
+                    <a href="">{{ Author.User.username }}</a>
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+                 |
+            </span>
+        {% endif %}
+
+        <span>ultimo aggiornamento: {{ Article.updatedAt|friendlyDate }} | </span>
+
+        {% if Article.Tags is not empty %}
+            <span>
+                {% for Tag in Article.Tags %}
+                    <a href="">{{ Tag.Tag.title }}</a>
+                    {% if not loop.last %} • {% endif %}
+                {% endfor %}
+                 |
+            </span>
+        {% endif %}
+
+        {% if Article.views > 1 %}
+            <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
+        {% endif %}
+    </div>
+
+    <div>{{ Article.body|raw }}</div>
+{% endblock %}

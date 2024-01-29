@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="it">
+<!-- Source: https://github.com/TurboLabIt/html-pages/blob/master/html5.html -->
+
+<!-- Quick page preview with Twig
+{% set metaTitle = "##Test metaTitle##" %}
+{% set metaTitleSuffix = "##Test metaTitleSuffix##" %}
+{% set metaDescription = "##Test metaDescription##" %}
+{% set metaCanonicalUrl = "##Test metaCanonicalUrl##" %}
+{% set pageImage = "##Test pageImage##" %}
+{% set gtm = "##Test gtm##" %}
+{% set twitterHandleAuthor = "##Test twitterHandle##" %}
+{% set twitterHandleAuthor = "##Test twitterHandleAuthor##" %}
+-->
+
+<head>
+{% block htmlHeadContent %}
+    <meta charset="utf-8">
+
+    <title>{% block metaTitle %}{{ metaTitle }}{{ metaTitleSuffix ?? "" }}{% endblock %}</title>
+    <meta property="og:title" content="{{ metaOgTitle ?? metaTitle }}">
+    <meta name="twitter:title" content="{{ metaTwitterTitle ?? metaTitle }}">
+
+    <meta name="description" content="{{ metaDescription }}">
+    <meta property="og:description" content="{{ metaOgDescription ?? metaDescription }}">
+    <meta name="twitter:description" content="{{ metaTwitterDescription ?? metaDescription }}">
+
+    <link rel="canonical" href="{{ metaCanonicalUrl }}">
+    <meta property="og:url" content="{{ metaOgUrl ?? metaCanonicalUrl }}">
+
+    <meta property="og:type" content="{{ metaOgType ?? "website" }}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <meta property="og:image" content="{{ metaOgImage ?? pageImage }}">
+    <meta name="twitter:image" content="{{ metaTwitterImage ?? pageImage }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="robots" content="{{ metaRobots ?? "index, follow" }}" />
+
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <link rel="alternate" type="application/rss+xml" title="Feed" href="{{ url('app_feed') }}" />
+
+    {% if Paginator is defined and Paginator.PreviousPage is not empty %}
+        <link rel="prev" href="{{ Paginator.PreviousPage.url }}">
+    {% endif %}
+
+    {% if Paginator is defined and Paginator.NextPage is not empty %}
+        <link rel="next" href="{{ Paginator.NextPage.url }}">
+    {% endif %}
+
+    {% block fonts %}
+        <link rel="preload" href="/fonts/Pacifico-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    {% endblock %}
+
+    {% block gtmHead %}
+        {% if gtm is defined %}
+        <!-- Google Tag Manager (GTM) -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{ gtm }}');</script>
+        <!-- End Google Tag Manager (GTM) -->
+        {% endif %}
+    {% endblock %}
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="css/styles.css?v=1.0">
+        {#{ encore_entry_link_tags('app') }#}
+    {% endblock %}
+
+    {% block javascripts %}
+        {#{ encore_entry_script_tags('app') }#}
+    {% endblock %}
+
+    {% if twitterHandle is defined %}<meta name="twitter:site" content="@{{ twitterHandle }}">{% endif %}
+    {% if twitterHandleAuthor is defined %}<meta name="twitter:creator" content="@{{ twitterHandleAuthor }}">{% endif %}
+
+{% endblock %}
+</head>
+
+<body>
+{% block htmlBodyContent %}
+
+    {% block gtmBody %}
+        {% if gtm is defined %}
+            <!-- Google Tag Manager (GTM) -->
+            <noscript>
+                <iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm }}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+            </noscript>
+            <!-- End Google Tag Manager (GTM) -->
+        {% endif %}
+    {% endblock %}
+
+    {# 📚 https://www.w3schools.com/html/html5_semantic_elements.asp #}
+
+    {% block htmlHeader %}<header>{% block htmlHeaderContent %}Test htmlHeaderContent{% endblock %}</header>{% endblock %}
+
+    {% block htmlNav %}<nav>{% block htmlNavContent %}Test htmlNavContent{% endblock %}</nav>{% endblock %}
+
+    {% block htmlSection %}<section>{% block htmlSectionContent %}Test htmlSectionContent{% endblock %}</section>{% endblock %}
+
+    {% block htmlArticle %}<article>{% block htmlArticleContent %}Test htmlArticleContent{% endblock %}</article>{% endblock %}
+
+    {% block htmlAside %}<aside>{% block htmlAsideContent %}Test htmlAsideContent{% endblock %}</aside>{% endblock %}
+
+    {% block htmlFooter %}<footer>{% block htmlFooterContent %}Test htmlFooterContent{% endblock %}</footer>{% endblock %}
+
+    {% block javascriptss %}
+        {# 📚 https://releases.jquery.com #}
+        {# 📚 https://developers.google.com/speed/libraries #}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+        <script src="js/scripts.js"></script>
+    {% endblock %}
+
+{% endblock %}
+</body>
+</html>
