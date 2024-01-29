@@ -18,7 +18,12 @@ abstract class BaseRepository extends ServiceEntityRepository
 
     protected function sqlQueryExecute(string $sqlQuery, array $arrParams = []) : void
     {
-        $this->getEntityManager()->getConnection()->prepare($sqlQuery)->executeStatement($arrParams);
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sqlQuery);
+        foreach($arrParams as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        $stmt->executeStatement();
     }
 
 
