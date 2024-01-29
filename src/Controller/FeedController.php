@@ -19,7 +19,7 @@ class FeedController extends BaseController
     }
 
 
-    #[Route('/feed', name: 'app_feed_main')]
+    #[Route('/feed', name: 'app_feed')]
     public function main() : Response
     {
         $arrData    = [
