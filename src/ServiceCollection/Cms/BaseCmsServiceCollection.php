@@ -14,20 +14,14 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
 
     public function loadById(int $entityId) : BaseService
     {
-        $this->clear();
-
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($entityId);
-
-        if( empty($entity) ) {
+        $arrServices = $this->loadByIds([$entityId]);
+        if( empty($arrServices) ) {
 
             $exceptionClass = static::NOT_FOUND_EXCEPTION;
             throw new $exceptionClass($entityId);
         }
 
-        $service    = $this->createService($entity);
-        $id         = (string)$entity->getId();
-        $this->arrData[$id] = $service;
-
+        $service = reset($arrServices);
         return $service;
     }
 
@@ -38,6 +32,24 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
         return $this->loadById($entityId);
     }
 
+
+    public function loadByIds(array $arrIds) : array
+    {
+        $this->clear();
+
+        $arrEntities =
+            $this->em->getRepository(static::ENTITY_CLASS)
+                ->findBy(["id" => $arrIds], ["updatedAt" => 'DESC']);
+
+        foreach($arrEntities as $entity) {
+
+            $service    = $this->createService($entity);
+            $id         = (string)$entity->getId();
+            $this->arrData[$id] = $service;
+        }
+
+        return $this->arrData;
+    }
 
 
     public function createService(?BaseEntity $entity = null) : BaseService

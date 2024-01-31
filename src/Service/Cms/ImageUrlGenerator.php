@@ -7,30 +7,28 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ImageUrlGenerator extends UrlGenerator
 {
-    public function generateUrl(Image $image, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateUrl(Image $image, Article $article, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $imageSlugDashId = $this->buildSlugDashIdString($image);
         $imageUrl =
             $this->symfonyUrlGenerator->generate('app_image', [
                 "size"              => $size,
                 "imageFolderMod"    => $image->getFolderMod(),
-                "imageSlugDashId"   => $imageSlugDashId,
-                "format"            => $image->getFormat()
+                "slugDashId"        => $article->getSlug() . "-" . $image->getId(),
+                "format"            => Image::getClientSupportedBestFormat(),
             ], $urlType);
 
         return $imageUrl;
     }
 
 
-    public function generateShortUrl(Image $image, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateShortUrl(Image $image, string $size = Image::SIZE_MAX, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $imageShortUrl =
+        $imageUrl =
             $this->symfonyUrlGenerator->generate('app_image_shorturl', [
-                "id"        => $image->getId(),
-                "size"      => $size,
-                "format"    => $image->getFormat()
+                "id"    => $image->getId(),
+                "size"  => $size
             ], $urlType);
 
-        return $imageShortUrl;
+        return $imageUrl;
     }
 }

@@ -57,9 +57,10 @@ class Image extends BaseCmsEntity
     }
 
 
-    public function getFormats() : array
+    public static function getFormats() : array
     {
-        return [static::FORMAT_JPG, static::FORMAT_PNG, static::FORMAT_WEBP, static::FORMAT_AVIF];
+        // from best to worst
+        return [static::FORMAT_AVIF, static::FORMAT_WEBP, static::FORMAT_PNG, static::FORMAT_JPG];
     }
 
     public function getFormat(): ?string
@@ -69,7 +70,7 @@ class Image extends BaseCmsEntity
 
     public function setFormat(string $format): static
     {
-        if( !in_array($format, $this->getFormats()) ) {
+        if( !in_array($format, static::getFormats() ) ) {
             throw new InvalidEnumException("Invalid image format");
         }
 

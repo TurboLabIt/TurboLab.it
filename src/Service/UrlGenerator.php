@@ -19,10 +19,17 @@ class UrlGenerator
     }
 
 
-    protected function buildSlugDashIdString(BaseCmsService $service) : string
+    public function buildSlug(BaseCmsService $service) : string
     {
         $title      = $service->getTitle();
-        $builtValue = $this->slugify($title) . "-" . $service->getId();
+        $builtValue = $this->slugify($title);
+        return $builtValue;
+    }
+
+
+    protected function buildSlugDashIdString(BaseCmsService $service) : string
+    {
+        $builtValue = $this->buildSlug($service) . "-" . $service->getId();
         return $builtValue;
     }
 

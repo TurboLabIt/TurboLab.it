@@ -14,7 +14,7 @@ trait ArticleFormatableEntityTrait
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $format = null;
 
-    public function getFormats() : array
+    public static function getFormats() : array
     {
         return [static::FORMAT_ARTICLE, static::FORMAT_NEWS];
     }
@@ -26,7 +26,7 @@ trait ArticleFormatableEntityTrait
 
     public function setFormat(int $format): static
     {
-        if( !in_array($format, $this->getFormats()) ) {
+        if( !in_array($format, static::getFormats() ) ) {
             throw new InvalidEnumException("Invalid format for the article");
         }
 

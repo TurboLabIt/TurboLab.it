@@ -4,6 +4,7 @@ namespace App\Factory\Cms;
 use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\ArticleUrlGenerator;
+use App\Service\Cms\HtmlProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 
 
@@ -11,14 +12,14 @@ class ArticleFactory extends BaseCmsFactory
 {
     public function __construct(
         protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em,
-        protected ImageFactory $imageFactory
+        protected ImageFactory $imageFactory, protected HtmlProcessor $htmlProcessor
     )
     { }
 
 
     public function create(?ArticleEntity $entity = null) : ArticleService
     {
-        $service = new ArticleService($this->urlGenerator, $this->em, $this->imageFactory);
+        $service = new ArticleService($this->urlGenerator, $this->em, $this->imageFactory, $this->htmlProcessor);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

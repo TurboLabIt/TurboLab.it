@@ -4,6 +4,7 @@ namespace App\Service\Cms;
 use App\Entity\BaseEntity;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
+use App\Exception\ImageNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
@@ -67,7 +68,7 @@ class Image extends BaseCmsService
     {
         $this->entity = new ImageEntity();
         if( empty(static::$buildFileExtension) ) {
-            static::setBestFormatFromBrowserSupport();
+            static::$buildFileExtension = static::getClientSupportedBestFormat();
         }
     }
 
@@ -113,6 +114,10 @@ class Image extends BaseCmsService
             static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"
         );
 
+        if( !file_exists($imageFilePath) ) {
+            throw new ImageNotFoundException("Original image file not found");
+        }
+
         return $imageFilePath;
     }
 
@@ -132,25 +137,22 @@ class Image extends BaseCmsService
     public function getBuiltFileName() : string
     {
         $fileName = $this->getOriginalFileName();
-
-        if( !empty(static::$buildFileExtension) ) {
-            $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
-        }
-
+        $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
         return $fileName;
     }
 
 
-    protected function getBuiltFilePath(string $size) : string
+    protected function getBuiltFilePath(string $size, bool $createBuildFolder) : string
     {
         $this->checkSize($size);
 
-        $imageFolderMod = $this->getFolderMod();
-        $fileName       = $this->getBuiltFileName();
-
-        $imageFilePath = $this->projectDir->createVarDirFromFilePath(
-            static::UPLOADED_IMAGES_FOLDER_NAME . "/cache/$size/$imageFolderMod/$fileName"
-        );
+        $imageFolderMod     = $this->getFolderMod();
+        $fileName           = $this->getBuiltFileName();
+        $relativeFilePath   = static::UPLOADED_IMAGES_FOLDER_NAME . "/cache/$size/$imageFolderMod/$fileName";
+        $imageFilePath      =
+            $createBuildFolder
+                ? $this->projectDir->createVarDirFromFilePath($relativeFilePath)
+                : $this->projectDir->getVarDirFromFilePath($relativeFilePath);
 
         return $imageFilePath;
     }
@@ -158,7 +160,7 @@ class Image extends BaseCmsService
 
     public function tryPreBuilt(string $size) : bool
     {
-        $builtFilePath = $this->getBuiltFilePath($size);
+        $builtFilePath = $this->getBuiltFilePath($size, false);
         $exists = file_exists($builtFilePath) && static::BUILD_CACHE_ENABLED;
         $this->lastBuiltImageMimeType = $exists ? mime_content_type($builtFilePath) : null;
         return $exists;
@@ -188,7 +190,7 @@ class Image extends BaseCmsService
         $width  = (int)round($width);
         $height = (int)round($height);
 
-        // resize (down only, never "up")
+        // resize (down only, no upscaling)
         if($iwidth > $width || $iheight > $height ) {
 
             $phpImagine->resize(new Box($width, $height), ImageInterface::FILTER_MITCHELL);
@@ -203,7 +205,7 @@ class Image extends BaseCmsService
         $outputFilePath =
             $this
                 ->applyWatermark($phpImagine, $size)
-                ->getBuiltFilePath($size);
+                ->getBuiltFilePath($size, true);
 
         $phpImagine->save($outputFilePath, [
             'flatten'               => true,
@@ -333,31 +335,34 @@ class Image extends BaseCmsService
             $this->build($size);
         }
 
-        $filePath   = $this->getBuiltFilePath($size);
+        $filePath   = $this->getBuiltFilePath($size, false);
         $data       = file_get_contents($filePath);
         return $data;
     }
 
 
-    public static function setBestFormatFromBrowserSupport() : ?string
+    public static function getClientSupportedBestFormat() : string
     {
         if( !empty(static::BUILD_FORMAT_FORCED) ) {
-            return static::$buildFileExtension = static::BUILD_FORMAT_FORCED;
+            return static::BUILD_FORMAT_FORCED;
         }
 
         $httpAccept = $_SERVER['HTTP_ACCEPT'] ?? '';
 
-        foreach([ImageEntity::FORMAT_AVIF, ImageEntity::FORMAT_WEBP] as $format) {
+        $arrImageFormats = ImageEntity::getFormats();
+        foreach($arrImageFormats as $format) {
 
             $bestFormatMimeType = 'image/' . $format;
             $isSupported = stripos($httpAccept, $bestFormatMimeType) !== false;
 
             if($isSupported) {
-                return static::$buildFileExtension = $format;
+                return $format;
             }
         }
 
-        return static::$buildFileExtension = null;
+        // the client doesn't support ANY graphic format! Maybe it's running from CLI?
+        // let's just return the best format we have
+        return reset($arrImageFormats);
     }
 
 
@@ -371,6 +376,6 @@ class Image extends BaseCmsService
     public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
-    public function getUrl(string $size) : string { return $this->urlGenerator->generateUrl($this, $size); }
+    public function getUrl(Article $article, string $size) : string { return $this->urlGenerator->generateUrl($this, $article, $size); }
     public function getShortUrl(string $size) : string { return $this->urlGenerator->generateShortUrl($this, $size); }
 }

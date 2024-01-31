@@ -21,10 +21,17 @@ class ImageCollection extends BaseCmsServiceCollection
     { }
 
 
-    public function get404(string $size) : ImageService
+    public function get404() : ImageService
     {
         // 👀 https://turbolab.it/immagini/24297/med
-        return $this->loadById(24297);
+
+        $entity =
+            (new ImageEntity())
+                ->setId(24297)
+                ->setFormat( Image::getClientSupportedBestFormat() );
+
+        $image404 = $this->createService($entity);
+        return $image404;
     }
 
 

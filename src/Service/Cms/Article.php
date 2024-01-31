@@ -19,7 +19,7 @@ class Article extends BaseCmsService
 
     public function __construct(
         protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em,
-        protected ImageFactory $imageFactory
+        protected ImageFactory $imageFactory, protected HtmlProcessor $htmlProcessor
     )
     {
         $this->entity = new ArticleEntity();
@@ -103,16 +103,24 @@ class Article extends BaseCmsService
     }
 
 
+    public function getBodyForDisplay() : ?string
+    {
+        $txtBody        = $this->entity->getBody();
+        $txtRealHtml    =  $this->htmlProcessor->processArticleBodyForDisplay($txtBody, $this);
+        return $txtRealHtml;
+    }
+
+
     public function getEntity() : ArticleEntity { return parent::getEntity(); }
 
     public function getTitle() : ?string { return $this->entity->getTitle(); }
+    public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
     public function getTags() : Collection { return $this->entity->getTags(); }
     public function getPublishedAt() : ?\DateTime { return $this->entity->getPublishedAt(); }
     public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
-    public function getBody() : ?string { return $this->entity->getBody(); }
 
     public function getViews() : int { return $this->localViewCount; }
     public function getUrl() : string { return $this->urlGenerator->generateUrl($this); }

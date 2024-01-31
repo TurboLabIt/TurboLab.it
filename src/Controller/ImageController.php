@@ -18,17 +18,28 @@ class ImageController extends BaseController
     { }
 
 
-    #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
-    public function index($size, $imageFolderMod, $imageSlugDashId, $format) : Response
+    #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
+    public function index($size, $slugDashId) : Response
     {
-        $format = str_ireplace(['img'], 'png', $format);
+        return $this->build($size, $slugDashId);
+    }
 
+
+    #[Route('/immagini/{id<[1-9]+[0-9]*>}/{size<min|med|max>}', name: 'app_image_shorturl')]
+    public function shortUrl($id, $size = Image::SIZE_MAX) : Response
+    {
+        return $this->build($size, "image-$id");
+    }
+
+
+    protected function build($size, $slugDashId) : Response
+    {
         // try direct filesystem access, without db
-        $entityId = substr($imageSlugDashId, strrpos($imageSlugDashId, '-') + 1);
+        $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
         $entity =
             (new ImageEntity())
                 ->setId($entityId)
-                ->setFormat($format);
+                ->setFormat( Image::getClientSupportedBestFormat() );
 
         $imageNoDb  = $this->imageCollection->createService($entity);
         $result     = $imageNoDb->tryPreBuilt($size);
@@ -39,26 +50,26 @@ class ImageController extends BaseController
 
         //
         try {
-            $image = $this->imageCollection->loadBySlugDashId($imageSlugDashId);
+            $image = $this->imageCollection->loadBySlugDashId($slugDashId);
+
+            // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to... reasons?)
+            $result = $image->tryPreBuilt($size);
+            if($result) {
+                return $this->xSendImage($image, $size);
+            }
+
+            $image->build($size);
 
         } catch(ImageNotFoundException $ex) {
 
-            $image404 = $this->imageCollection->get404($size);
-            // can't use X-Sendfile: the status code MUST be 404, not 200
+            $image404 = $this->imageCollection->get404();
+            // can't use X-Sendfile: it always returns 200, but the status code here MUST be 404
             return
                 new Response($image404->getContent($size), Response::HTTP_NOT_FOUND, [
                     'Content-Type' => $image404->getBuiltImageMimeType()
                 ]);
         }
 
-        // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to the requested format being wrong)
-        $result = $image->tryPreBuilt($size);
-
-        if($result) {
-            return $this->xSendImage($image, $size);
-        }
-
-        $image->build($size);
         return $this->xSendImage($image, $size);
     }
 
@@ -79,17 +90,9 @@ class ImageController extends BaseController
     }
 
 
-    #[Route('/immagini/{size<min|med|max>}/{imageSlugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no_folder_mod')]
-    public function legacyNoFolderMod($size, $imageSlugDashId, $format) : Response
+    #[Route('/immagini/{size<min|med|max>}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
+    public function legacyNoFolderMod($size, $slugDashId) : Response
     {
-        return $this->index($size, 0, $imageSlugDashId, $format);
-    }
-
-
-    #[Route('/immagini/{imageId<[1-9]+[0-9]*>}/{size<min|med|max>}', name: 'app_image_legacy_id_size_only')]
-    public function legacyIdAndSize($imageId, $size) : Response
-    {
-        // the format here is ignored, but it must be a valid one
-        return $this->index($size, 0, "image-$imageId", ImageEntity::FORMAT_PNG);
+        return $this->build($size, $slugDashId);
     }
 }
