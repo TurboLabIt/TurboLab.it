@@ -114,10 +114,6 @@ class Image extends BaseCmsService
             static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"
         );
 
-        if( !file_exists($imageFilePath) ) {
-            throw new ImageNotFoundException("Original image file not found");
-        }
-
         return $imageFilePath;
     }
 
@@ -170,6 +166,10 @@ class Image extends BaseCmsService
     public function build(string $size) : static
     {
         $originalFilePath = $this->getOriginalFilePath();
+
+        if( !file_exists($originalFilePath) ) {
+            throw new ImageNotFoundException("Original image file not found! The expected path was ##$originalFilePath##");
+        }
 
         // 📚 https://symfony.com/doc/current/the-fast-track/en/23-imagine.html#optimizing-images-with-imagine
         // 📚 https://github.com/php-imagine/Imagine
