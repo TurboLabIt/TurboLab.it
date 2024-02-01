@@ -28,7 +28,7 @@ class ImageCollection extends BaseCmsServiceCollection
         $entity =
             (new ImageEntity())
                 ->setId(24297)
-                ->setFormat( Image::getClientSupportedBestFormat() );
+                ->setFormat(ImageEntity::FORMAT_JPG);
 
         $image404 = $this->createService($entity);
         return $image404;

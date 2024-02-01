@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\ServiceCollection\Cms\ImageCollection;
+use App\Entity\Cms\Image as ImageEntity;
 
 
 class HtmlProcessor
@@ -43,7 +44,12 @@ class HtmlProcessor
 
                 if( empty($srvImage) ) {
 
-                    $imgUrl = $this->imageCollection->get404()->getUrl($article, Image::SIZE_MED);
+                    // this will display an error, but we want to keep the original image URL
+                    $fakeImageEntity =
+                        (new ImageEntity())
+                            ->setId($imgId);
+
+                    $imgUrl = $this->imageCollection->createService($fakeImageEntity)->getUrl($article, Image::SIZE_MED);
                     $imageAltText = 'Immagine non trovata';
 
                 } else {

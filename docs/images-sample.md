@@ -1,5 +1,8 @@
 # Immagini di esempio
 
+🔗 Vedi anche: [Gestione delle immagini caricate negli articoli](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-articles.md)
+
+
 | **Descr**                                 | **Med**                                            | **Max**                                            |
 |-------------------------------------------|----------------------------------------------------|----------------------------------------------------|
 | 🖼 standard                                | [med](https://dev0.turbolab.it/immagini/24206/med) | [max](https://dev0.turbolab.it/immagini/24206/max) |

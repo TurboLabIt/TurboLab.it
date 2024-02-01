@@ -43,9 +43,8 @@ class ImageController extends BaseController
 
         $imageNoDb  = $this->imageCollection->createService($entity);
         $result     = $imageNoDb->tryPreBuilt($size);
-
         if($result) {
-            return $this->xSendImage($imageNoDb, $size);
+            return $this->xSendImage($imageNoDb, $size, '1-tryPreBuilt');
         }
 
         //
@@ -55,7 +54,7 @@ class ImageController extends BaseController
             // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to... reasons?)
             $result = $image->tryPreBuilt($size);
             if($result) {
-                return $this->xSendImage($image, $size);
+                return $this->xSendImage($image, $size, '2-tryPreBuilt-again');
             }
 
             $image->build($size);
@@ -70,11 +69,11 @@ class ImageController extends BaseController
                 ]);
         }
 
-        return $this->xSendImage($image, $size);
+        return $this->xSendImage($image, $size, '99-build');
     }
 
 
-    protected function xSendImage(Image $image, string $size) : Response
+    protected function xSendImage(Image $image, string $size, string $originHeader) : Response
     {
         $response =
             // 📕 the HTTP Status code here is IGNORED by the X-Sendfile location
@@ -85,6 +84,9 @@ class ImageController extends BaseController
         // https://stackoverflow.com/a/44323940/1204976
         $xSendPath = $image->getXSendPath($size);
         $response->headers->set('X-Accel-Redirect', $xSendPath);
+
+        // this doesn't work (it doesn't survive the internal redirect of X-Sendfile)
+        $response->headers->set('x-tli-image', $originHeader);
 
         return $response;
     }
