@@ -322,8 +322,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Article(int $articleId, array $arrArticle)
     {
-        $title          = $arrArticle["titolo"];
-        $abstract       = $arrArticle["abstract"];
+        $title          = $this->convertValueFromTli1ToTli2( $arrArticle["titolo"] );
+        $abstract       = $this->convertValueFromTli1ToTli2( $arrArticle["abstract"] );
         $pubStatus      = match( $arrArticle["finito"] ) {
             0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
             1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
@@ -334,7 +334,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $rating         = (int)$arrArticle["rating"];
         $ads            = (bool)$arrArticle["ads"];
         $commentsTopic  = $this->repoTopics->selectOrNull($arrArticle["id_commenti_phpbb"]);
-        $body           = $arrArticle["corpo"];
+        $body           = $this->convertValueFromTli1ToTli2( $arrArticle["corpo"] );
         $createdAt      = $arrArticle["data_creazione"] ?: null;
         $updatedAt      = $arrArticle["data_update"] ?: null;
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
@@ -433,10 +433,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Image(int $imageId, array $arrImage)
     {
-        $title = $arrImage["titolo"];
-        $format = mb_strtolower($arrImage["formato"]);
-        $createdAt = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
-        $watermark = match ($arrImage["watermarked"]) {
+        $title      = $this->convertValueFromTli1ToTli2( $arrImage["titolo"] );
+        $format     = mb_strtolower($arrImage["formato"]);
+        $createdAt  = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
+        $watermark  = match ($arrImage["watermarked"]) {
             0 => ImageEntity::WATERMARK_DISABLED,
             1 => ImageEntity::WATERMARK_BOTTOM_LEFT
         };
@@ -569,7 +569,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
-        $title      = $arrTag["tag"];
+        $title      = $this->convertValueFromTli1ToTli2( $arrTag["tag"] );
         $ranking    = (int)$arrTag["peso"];
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
@@ -722,7 +722,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1File(int $fileId, array $arrFile)
     {
-        $title      = $arrFile["titolo"];
+        $title      = $this->convertValueFromTli1ToTli2( $arrFile["titolo"] );
         $views      = (int)$arrFile["visite"];
         $url        = $arrFile["url"] ?: null;
         $format     = $arrFile["formato"] ?: null;
@@ -872,9 +872,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $entityTli2Badge =
             $this->em->getRepository(BadgeEntity::class)
                 ->selectOrNew($badgeId)
-                ->setTitle( $arrBadge["titolo"] )
-                ->setAbstract( $arrBadge["testo_breve"] )
-                ->setBody( $arrBadge["testo_esteso"] )
+                ->setTitle( $this->convertValueFromTli1ToTli2($arrBadge["titolo"]) )
+                ->setAbstract( $this->convertValueFromTli1ToTli2($arrBadge["testo_breve"]) )
+                ->setBody( $this->convertValueFromTli1ToTli2($arrBadge["testo_esteso"]) )
                 ->setImageUrl( $arrBadge["spotlight"] )
                 ->setUserSelectable(false)
                 ->setCreatedAt($createdAt)
@@ -942,5 +942,17 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->em->persist($badge);
 
         return $this;
+    }
+
+
+    protected function convertValueFromTli1ToTli2($value) : mixed
+    {
+        if( !is_string($value) ) {
+            return $value;
+        }
+
+        $valueConverted = trim($value);
+        $valueConverted = html_entity_decode($valueConverted, ENT_HTML5);
+        return $valueConverted;
     }
 }
