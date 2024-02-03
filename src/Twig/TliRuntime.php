@@ -24,7 +24,7 @@ class TliRuntime implements RuntimeExtensionInterface
 
         $stopFriendlyness = $oneDayInSec * 2;
         if( $secDiff < 0 || $secDiff > $stopFriendlyness ) {
-            return $date->format('d/m/Y') . ' alle ' . $date->format('H:i');
+            return $date->format('d/m/Y') . ', ' . $date->format('H:i');
         }
 
         if( $secDiff >= $oneDayInSec ) {
