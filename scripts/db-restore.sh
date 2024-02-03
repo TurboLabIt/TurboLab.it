@@ -5,7 +5,7 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 
 DAY_NUM=$(date +'%u')
 ## temporary, for TLI2 dev while TLI1 is still live
-DAY_NUM=4
+#DAY_NUM=6
 
 DB_DUMP_FILE_PATH=${DB_DUMP_DIR}thundercracker_turbolab_it_${DAY_NUM}.sql.7z
 ## local database name to import into
