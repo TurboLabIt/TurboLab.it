@@ -28,15 +28,21 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
-    public function findLatestPublished(int $num) : array
+    public function findLatestPublished(?int $num = null) : array
     {
-        return
+        $qb =
             $this->getQueryBuilder()
                 ->andWhere('t.publishingStatus = :published')
                     ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
-                ->orderBy('t.publishedAt', 'DESC')
-                ->setMaxResults($num)
-            ->getQuery()
-            ->getResult();
+                ->orderBy('t.publishedAt', 'DESC');
+
+        if( !empty($num) ) {
+            $qb->setMaxResults($num);
+        }
+
+        return
+            $qb
+                ->getQuery()
+                ->getResult();
     }
 }
