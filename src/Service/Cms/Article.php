@@ -4,6 +4,9 @@ namespace App\Service\Cms;
 use App\Entity\BaseEntity;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Factory\Cms\ImageFactory;
+use App\Factory\Cms\TagFactory;
+use App\Trait\UrlableServiceTrait;
+use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -12,17 +15,23 @@ use App\Service\Cms\Image as ImageService;
 
 class Article extends BaseCmsService
 {
+    const ENTITY_CLASS          = ArticleEntity::class;
+    const NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
+
+    use ViewableServiceTrait { countOneView as protected traitCountOneView; }
+    use UrlableServiceTrait;
+
     protected ArticleEntity $entity;
-    protected int $localViewCount = 0;
     protected ?ImageService $spotlight;
+    protected HtmlProcessor $htmlProcessor;
 
 
     public function __construct(
         protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em,
-        protected ImageFactory $imageFactory, protected HtmlProcessor $htmlProcessor
+        protected ImageFactory $imageFactory, protected TagFactory $tagFactory
     )
     {
-        $this->entity = new ArticleEntity();
+        $this->clear();
     }
 
 
@@ -48,10 +57,7 @@ class Article extends BaseCmsService
             return $this;
         }
 
-        $this->localViewCount ++;
-
-        $this->em->getRepository(ArticleEntity::class)->countOneView( $this->getId() );
-        return $this;
+        return $this->traitCountOneView();
     }
 
 
@@ -103,11 +109,33 @@ class Article extends BaseCmsService
     }
 
 
+    public function getTags() : array
+    {
+        $tagJunctionEntities = $this->entity->getTags();
+        $arrTags = [];
+        foreach($tagJunctionEntities as $junctionEntity) {
+
+            $tagEntity  = $junctionEntity->getTag();
+            $tagId      = $tagEntity->getId();
+            $arrTags[$tagId] = [
+                "Tag"   => $this->tagFactory->create($tagEntity)
+            ];
+        }
+
+        return $arrTags;
+    }
+
+
+    public function setHtmlProcessor(HtmlProcessor $htmlProcessor) : static
+    {
+        $this->htmlProcessor = $htmlProcessor;
+        return $this;
+    }
+
+
     public function getBodyForDisplay() : ?string
     {
-        $txtBody        = $this->entity->getBody();
-        $txtRealHtml    =  $this->htmlProcessor->processArticleBodyForDisplay($txtBody, $this);
-        return $txtRealHtml;
+        return $this->htmlProcessor->processArticleBodyForDisplay($this);
     }
 
 
@@ -116,13 +144,11 @@ class Article extends BaseCmsService
     public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
-    public function getTags() : Collection { return $this->entity->getTags(); }
     public function getPublishedAt() : ?\DateTime { return $this->entity->getPublishedAt(); }
     public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
+    public function getBody() : ?string { return $this->entity->getBody(); }
 
-    public function getViews() : int { return $this->localViewCount; }
-    public function getUrl() : string { return $this->urlGenerator->generateUrl($this); }
     public function getCommentsUrl() : ?string { return $this->urlGenerator->generateArticleCommentsUrl($this); }
 }

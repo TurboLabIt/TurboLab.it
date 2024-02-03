@@ -13,8 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class ImageCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS          = ImageEntity::class;
-    const NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
+    const ENTITY_CLASS = ImageService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected ImageFactory $factory)
@@ -34,9 +33,6 @@ class ImageCollection extends BaseCmsServiceCollection
         return $image404;
     }
 
-
-    public function loadById(int $entityId) : ImageService { return parent::loadById($entityId); }
-    public function loadBySlugDashId(string $slugDashId) : ImageService { return parent::loadBySlugDashId($slugDashId); }
 
     /**
      * @param ImageEntity|null $entity

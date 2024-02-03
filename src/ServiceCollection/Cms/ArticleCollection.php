@@ -10,8 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ArticleCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS          = ArticleEntity::class;
-    const NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
+    const ENTITY_CLASS = ArticleService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected ArticleFactory $factory)
@@ -29,11 +28,8 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
-    public function loadById(int $entityId) : ArticleService { return parent::loadById($entityId); }
-    public function loadBySlugDashId(string $slugDashId) : ArticleService { return parent::loadBySlugDashId($slugDashId); }
-
     /**
-     * @param ArticleService|null $entity
+     * @param ArticleEntity|null $entity
      */
     public function createService(?BaseEntity $entity = null) : ArticleService { return parent::createService($entity); }
 }

@@ -18,6 +18,9 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
+    const ENTITY_CLASS          = ImageEntity::class;
+    const NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
+
     const BUILD_CACHE_ENABLED = true;
     const BUILD_FORMAT_FORCED = null;
 
@@ -66,7 +69,8 @@ class Image extends BaseCmsService
         protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
     )
     {
-        $this->entity = new ImageEntity();
+        $this->clear();
+
         if( empty(static::$buildFileExtension) ) {
             static::$buildFileExtension = static::getClientSupportedBestFormat();
         }

@@ -20,7 +20,7 @@
         {% if Article.Tags is not empty %}
             <span>
                 {% for Tag in Article.Tags %}
-                    <a href="">{{ Tag.Tag.title }}</a>
+                    <a href="{{ Tag.Tag.url }}">{{ Tag.Tag.title }}</a>
                     {% if not loop.last %} • {% endif %}
                 {% endfor %}
                  |

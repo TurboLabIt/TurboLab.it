@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class ImageController extends BaseController
 {
-    public function __construct(protected ImageCollection $imageCollection)
+    public function __construct(protected Image $image, protected ImageCollection $imageCollection)
     { }
 
 
@@ -41,7 +41,7 @@ class ImageController extends BaseController
                 ->setId($entityId)
                 ->setFormat( Image::getClientSupportedBestFormat() );
 
-        $imageNoDb  = $this->imageCollection->createService($entity);
+        $imageNoDb  = $this->image->setEntity($entity);
         $result     = $imageNoDb->tryPreBuilt($size);
         if($result) {
             return $this->xSendImage($imageNoDb, $size, '1-tryPreBuilt');
@@ -49,7 +49,7 @@ class ImageController extends BaseController
 
         //
         try {
-            $image = $this->imageCollection->loadBySlugDashId($slugDashId);
+            $image = $this->image->loadBySlugDashId($slugDashId);
 
             // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to... reasons?)
             $result = $image->tryPreBuilt($size);
