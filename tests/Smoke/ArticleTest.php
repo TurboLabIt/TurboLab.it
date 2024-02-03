@@ -111,17 +111,21 @@ class ArticleTest extends BaseT
         $article = $arrData["service"];
 
         $shortUrl = $article->getShortUrl();
-        $this->assertStringEndsWith("/" . $entity->getId(), $shortUrl);
+        $assertFailureMessage = "Failing URL: $shortUrl";
+        $this->assertStringEndsWith("/" . $entity->getId(), $shortUrl, $assertFailureMessage);
 
         $url = $article->getUrl();
-        $this->assertStringEndsWith("-" . $entity->getId(), $url);
+        $this->assertStringEndsWith("-" . $entity->getId(), $url, $assertFailureMessage);
 
         $this->expectRedirect($shortUrl, $url);
 
         $domHtml = $this->fetchDomNode($url);
 
         $title = $article->getTitle();
-        $this->assertNotEmpty($title);
-        $this->assertEquals($title, $domHtml->filter('body h1')->html() );
+        $this->assertNotEmpty($title, $assertFailureMessage);
+
+        // https://github.com/symfony/symfony/issues/35354#issuecomment-1925415323
+        $htmlTitle = $domHtml->filter('body h1')->getNode(0)->nodeValue;
+        $this->assertEquals($title, $htmlTitle, $assertFailureMessage);
     }
 }
