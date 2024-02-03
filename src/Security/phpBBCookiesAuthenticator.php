@@ -59,7 +59,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
         $arrLoginData = [];
         foreach(["sid", "u", 'k'] as $oneCookieName) {
 
-            $value = trim( $request->cookies->get(self::COOKIE_BASENAME_PHPBB . $oneCookieName) );
+            $value = trim( $request->cookies->get(self::COOKIE_BASENAME_PHPBB . $oneCookieName) ?? '' );
             if( empty($value) || $value == 1 ) {
                 return null;
             }
