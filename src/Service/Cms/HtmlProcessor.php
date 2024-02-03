@@ -1,18 +1,24 @@
 <?php
 namespace App\Service\Cms;
 
+use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\Entity\Cms\Image as ImageEntity;
+use App\ServiceCollection\Cms\TagCollection;
 
 
 class HtmlProcessor
 {
-    public function __construct(protected ImageCollection $imageCollection)
+    public function __construct(
+        protected ImageCollection $imageCollection, protected ArticleCollection $articleCollection,
+        protected TagCollection $tagCollection
+    )
     { }
 
 
-    public function processArticleBodyForDisplay(string $text, Article $article): string
+    public function processArticleBodyForDisplay(Article $article) : string
     {
+        $text   = $article->getBody();
         $domDoc = $this->parseHTML($text);
         if( $domDoc === false ) {
             return $text;
@@ -20,59 +26,24 @@ class HtmlProcessor
 
         return
             $this
-                ->imagesFromCodeToHtml($domDoc, $article)
-                //->articlesFromCodeToHTML($domDoc)
-                //->tagsFromCodeToHTML($domDoc)
-                //->youtubeFromCodeToHTML($domDoc)
+                ->imagesFromCodeToHTML($domDoc, $article)
+                ->articlesFromCodeToHTML($domDoc)
+                ->tagsFromCodeToHTML($domDoc)
+                ->youTubeFromCodeToHTML($domDoc)
                 ->renderDomDocAsHTML($domDoc);
-    }
-
-
-    protected function imagesFromCodeToHtml(\DOMDocument $domDoc, Article $article): static
-    {
-        $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
-        $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);
-        $this->imageCollection->loadByIds( array_keys($arrImgNodes) );
-
-        $index = 1;
-        foreach($arrImgNodes as $imgId => $arrThisImgDomOccurrences) {
-
-            foreach($arrThisImgDomOccurrences as $oneImgNode) {
-
-                /** @var Image $srvImage */
-                $srvImage = $this->imageCollection->get($imgId);
-
-                if( empty($srvImage) ) {
-
-                    // this will display an error, but we want to keep the original image URL
-                    $fakeImageEntity =
-                        (new ImageEntity())
-                            ->setId($imgId);
-
-                    $imgUrl = $this->imageCollection->createService($fakeImageEntity)->getUrl($article, Image::SIZE_MED);
-                    $imageAltText = 'Immagine non trovata';
-
-                } else {
-
-                    $imgUrl = $srvImage->getUrl($article, Image::SIZE_MED);
-                    $imageAltText = "Immagine " . $index . " " . $srvImage->getTitle();
-                }
-
-                $oneImgNode->setAttribute('src', $imgUrl);
-                $oneImgNode->setAttribute('title', $imageAltText);
-                $oneImgNode->setAttribute('alt', $imageAltText);
-
-                $index++;
-            }
-        }
-
-        return $this;
     }
 
 
     protected function parseHTML(string $text): \DOMDocument|bool
     {
         $domDoc = new \DOMDocument();
+
+        /**
+         * Workaround for unescaped &, as in HTML5, break the parser
+         * DOMDocument::loadHTML(): htmlParseEntityRef: no name in Entity
+         * https://stackoverflow.com/a/26853864/1204976
+         */
+        libxml_use_internal_errors(true);
 
         /**
          * xml encoding="utf-8":
@@ -99,6 +70,130 @@ class HtmlProcessor
 
         $domDoc->encoding = 'UTF-8'; // insert proper
         return $domDoc;
+    }
+
+
+    protected function imagesFromCodeToHTML(\DOMDocument $domDoc, Article $article): static
+    {
+        $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
+        $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);
+        $this->imageCollection->load( array_keys($arrImgNodes) );
+
+        $index = 1;
+        foreach($arrImgNodes as $imgId => $arrThisImgDomOccurrences) {
+
+            foreach($arrThisImgDomOccurrences as $oneImgNode) {
+
+                /** @var Image $srvImage */
+                $srvImage = $this->imageCollection->get($imgId);
+
+                if( empty($srvImage) ) {
+
+                    // this will display an error, but we want to keep the original image URL
+                    $fakeImageEntity    = (new ImageEntity())->setId($imgId);
+                    $imgUrl             = $this->imageCollection->createService($fakeImageEntity)->getUrl($article, Image::SIZE_MED);
+                    $imageAltText       = 'Immagine non trovata';
+
+                } else {
+
+                    $imgUrl         = $srvImage->getUrl($article, Image::SIZE_MED);
+                    $imageAltText   = "Immagine " . $index . " " . $srvImage->getTitle();
+                }
+
+                $oneImgNode->setAttribute('src', $imgUrl);
+                $oneImgNode->setAttribute('title', $imageAltText);
+                $oneImgNode->setAttribute('alt', $imageAltText);
+
+                $index++;
+            }
+        }
+
+        return $this;
+    }
+
+
+    protected function articlesFromCodeToHTML(\DOMDocument $domDoc) : static
+    {
+        $artRegEx       = '/(?<=(==###contenuto::id::))[1-9]+[0-9]*(?=(###==))/';
+        $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $artRegEx);
+        $this->articleCollection->load( array_keys($arrLinkNodes) );
+
+        foreach($arrLinkNodes as $artId => $arrLinksToThisId) {
+
+            foreach($arrLinksToThisId as $oneLinkNode) {
+
+                $srvArticle = $this->articleCollection->get($artId);
+                if( empty($srvArticle) ) {
+
+                    $artUrl         = '#';
+                    $articleAltText = '';
+
+                }  else {
+
+                    $artUrl         = $srvArticle->getUrl();
+                    $articleAltText = $srvArticle->getTitle();
+                }
+
+                $oneLinkNode->setAttribute('href', $artUrl);
+                $oneLinkNode->setAttribute('title', $articleAltText);
+            }
+        }
+
+        return $this;
+    }
+
+
+    protected function tagsFromCodeToHTML(\DOMDocument $domDoc)
+    {
+        $tagRegEx       = '/(?<=(==###tag::id::))[1-9]+[0-9]*(?=(###==))/';
+        $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $tagRegEx);
+        $this->tagCollection->load( array_keys($arrLinkNodes) );
+
+        foreach($arrLinkNodes as $tagId => $arrLinksToThisId) {
+
+            foreach($arrLinksToThisId as $oneLinkNode) {
+
+                $srvTag = $this->tagCollection->get($tagId);
+                if( empty($srvTag) ) {
+
+                    $tagUrl     = '#';
+                    $tagAltText = '';
+
+                }  else {
+
+                    $tagUrl     = $srvTag->getUrl();
+                    $tagAltText = $srvTag->getTitle() . ": guide e articoli";
+                }
+
+                $oneLinkNode->setAttribute('href', $tagUrl);
+                $oneLinkNode->setAttribute('title', $tagAltText);
+            }
+        }
+
+        return $this;
+    }
+
+
+    protected function youTubeFromCodeToHTML(\DOMDocument $domDoc) : static
+    {
+        $ytRegEx        = '/(?<=(==###youtube::code::))[a-zA-z0-9-_]+(?=(###==))/';
+        $arrLinkNodes   = $this->extractNodes($domDoc, 'iframe', 'src', $ytRegEx);
+
+        foreach($arrLinkNodes as $ytVideoCode => $arrIframesWithThisCode) {
+
+            foreach($arrIframesWithThisCode as $oneIframe) {
+
+                $url = '//www.youtube-nocookie.com/embed/' . $ytVideoCode . '?&rel=0';
+                $oneIframe->setAttribute('src', $url);
+                $oneIframe->setAttribute('frameborder', 0);
+                $oneIframe->setAttribute('width', '100%');
+                $oneIframe->setAttribute('height', '540px');
+                $oneIframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                $oneIframe->setAttribute('allowfullscreen', 'allowfullscreen');
+            }
+        }
+
+        return $this;
     }
 
 
