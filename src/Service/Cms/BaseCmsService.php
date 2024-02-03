@@ -13,9 +13,8 @@ abstract class BaseCmsService extends BaseService
 
     public function load(int $id) : static
     {
-        $this
-            ->clear()
-            ->entity = $this->em->getRepository(static::ENTITY_CLASS)->find($id);
+        $this->clear();
+        $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($id);
 
         if( empty($this->entity) ) {
 
@@ -23,7 +22,7 @@ abstract class BaseCmsService extends BaseService
             throw new $exceptionClass($id);
         }
 
-        return $this;
+        return $this->setEntity($entity);
     }
 
 
