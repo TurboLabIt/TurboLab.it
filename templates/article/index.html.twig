@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block htmlArticleContent %}
-    <h1>{{ Article.title }}</h1>
+    <h1>{{ Article.title|raw }}</h1>
 
     <div>
         {% if Article.Authors is not empty %}

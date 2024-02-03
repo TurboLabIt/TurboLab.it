@@ -15,9 +15,69 @@ class ArticleTest extends BaseT
     public function testSpecialArticle()
     {
         // 👀 https://turbolab.it/1939
-        $article = static::getService("App\\Service\\Cms\\Article")->load(1939);
+
+        /** @var Article $article */
+        $article = static::getService("App\\Service\\Cms\\Article");
+        $article->load(1939);
+
         $url = $article->getUrl();
-        $domHtml = $this->fetchDomNode($url);
+        $domHtml = $this->fetchDomNode($url, 'article');
+
+        // H2
+        $countH2 = $domHtml->filter('h2')->count();
+        $this->assertGreaterThan(3, $countH2);
+
+        // intro paragraph
+        $firstPContent = $domHtml->filter('p')->first()->text();
+        $this->assertStringContainsString('Questo è un articolo di prova,', $firstPContent);
+
+        // summary
+        $summaryLi = $domHtml->filter('ul')->first()->filter('ul')->filter('li');
+        $arrUnmatchedUlContent = [
+            'video da YouTube', 'formattazione',
+            'link ad altri articoli', 'link a pagine di tag', 'link a file',
+            'link alle pagine degli autori', 'caratteri "delicati"',
+            'tutte le immagini'
+        ];
+
+        foreach($summaryLi as $li) {
+
+            $liText = $li->textContent;
+
+            foreach($arrUnmatchedUlContent as $k => $textToSearch) {
+
+                if( stripos($liText, $textToSearch) !== false ) {
+
+                    unset($arrUnmatchedUlContent[$k]);
+                    break;
+                }
+            }
+        }
+
+        $this->assertEmpty($arrUnmatchedUlContent);
+
+        // YouTube
+        $iframes = $domHtml->filter('iframe');
+        $countYouTubeIframe = 0;
+        foreach($iframes as $iframe) {
+
+            $src = $iframe->getAttribute("src");
+            if( stripos($src, 'youtube-nocookie.com/embed') !== false ) {
+                $countYouTubeIframe++;
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
+
+        // formatting styles
+        $formattingStylesOl = $domHtml->filter('ol')->first()->filter('li');
+        $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 'code', 4 => 'ins'];
+        foreach($arrExpectedNodes as $index => $expectedTagName) {
+
+            $nodeTagName = $formattingStylesOl->getNode($index - 1)->firstChild->tagName;
+            $this->assertEquals($expectedTagName, $nodeTagName);
+        }
+
     }
 
 
@@ -45,6 +105,8 @@ class ArticleTest extends BaseT
      */
     public function testOpenAllArticles(array $arrData)
     {
+        static::$client = null;
+
         $entity  = $arrData["entity"];
         $article = $arrData["service"];
 
@@ -61,7 +123,5 @@ class ArticleTest extends BaseT
         $title = $article->getTitle();
         $this->assertNotEmpty($title);
         $this->assertEquals($title, $domHtml->filter('body h1')->html() );
-
-        static::$client = null;
     }
 }
