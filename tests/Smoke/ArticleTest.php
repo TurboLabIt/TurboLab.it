@@ -5,6 +5,7 @@ use App\Entity\Cms\Article as ArticleEntity;
 use App\Factory\Cms\ArticleFactory;
 use App\Service\Cms\Article;
 use App\Tests\BaseT;
+use Symfony\Component\DomCrawler\Crawler;
 
 
 class ArticleTest extends BaseT
@@ -21,18 +22,19 @@ class ArticleTest extends BaseT
         $article->load(1939);
 
         $url = $article->getUrl();
-        $domHtml = $this->fetchDomNode($url, 'article');
+        $crawler = $this->fetchDomNode($url, 'article');
 
         // H2
-        $countH2 = $domHtml->filter('h2')->count();
+        $H2s = $crawler->filter('h2');
+        $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);
 
         // intro paragraph
-        $firstPContent = $domHtml->filter('p')->first()->text();
+        $firstPContent = $crawler->filter('p')->first()->text();
         $this->assertStringContainsString('Questo è un articolo di prova,', $firstPContent);
 
         // summary
-        $summaryLi = $domHtml->filter('ul')->first()->filter('ul')->filter('li');
+        $summaryLi = $crawler->filter('ul')->first()->filter('ul')->filter('li');
         $arrUnmatchedUlContent = [
             'video da YouTube', 'formattazione',
             'link ad altri articoli', 'link a pagine di tag', 'link a file',
@@ -57,7 +59,7 @@ class ArticleTest extends BaseT
         $this->assertEmpty($arrUnmatchedUlContent);
 
         // YouTube
-        $iframes = $domHtml->filter('iframe');
+        $iframes = $crawler->filter('iframe');
         $countYouTubeIframe = 0;
         foreach($iframes as $iframe) {
 
@@ -70,7 +72,7 @@ class ArticleTest extends BaseT
         $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
 
         // formatting styles
-        $formattingStylesOl = $domHtml->filter('ol')->first()->filter('li');
+        $formattingStylesOl = $crawler->filter('ol')->first()->filter('li');
         $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 'code', 4 => 'ins'];
         foreach($arrExpectedNodes as $index => $expectedTagName) {
 
@@ -78,6 +80,21 @@ class ArticleTest extends BaseT
             $this->assertEquals($expectedTagName, $nodeTagName);
         }
 
+        //
+        $this->internalLinksChecker($crawler);
+
+        // fragile chars
+        $fragileCharsH2Text = 'Caratteri "delicati"';
+        $fragileCharsActualValue = null;
+        foreach($H2s as $h2) {
+
+            $h2Content = $h2->textContent;
+            if( $h2Content === $fragileCharsH2Text) {
+                $fragileCharsActualValue = $h2->nextSibling->nodeValue;
+            }
+        }
+
+        $this->assertEquals('@ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine', $fragileCharsActualValue);
     }
 
 
@@ -119,13 +136,51 @@ class ArticleTest extends BaseT
 
         $this->expectRedirect($shortUrl, $url);
 
-        $domHtml = $this->fetchDomNode($url);
+        $crawler = $this->fetchDomNode($url);
 
         $title = $article->getTitle();
         $this->assertNotEmpty($title, $assertFailureMessage);
 
         // https://github.com/symfony/symfony/issues/35354#issuecomment-1925415323
-        $htmlTitle = $domHtml->filter('body h1')->getNode(0)->nodeValue;
+        $htmlTitle = $crawler->filter('body h1')->getNode(0)->nodeValue;
         $this->assertEquals($title, $htmlTitle, $assertFailureMessage);
+    }
+
+
+
+    protected function internalLinksChecker(Crawler $crawler)
+    {
+        $aNodes = $crawler->filter('a');
+        foreach($aNodes as $a) {
+
+            $href = $a->getAttribute("href");
+            if( empty($href) || empty(trim($href)) ) {
+                continue;
+            }
+
+            $checkIt = false;
+
+            // file
+            if( stripos($href, "/scarica/") !== false ) {
+
+
+
+            // author
+            } elseif( stripos($href, "/utenti/") !== false ) {
+
+
+
+            // article
+            } elseif(
+                static::getService('App\\Service\\Cms\\ArticleUrlGenerator')->isUrl($href) ||
+                static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
+            ) {
+                $checkIt = true;
+            }
+
+            if($checkIt) {
+                $this->fetchHtml($href);
+            }
+        }
     }
 }

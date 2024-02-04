@@ -45,4 +45,20 @@ class ArticleUrlGenerator extends UrlGenerator
         $url = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/viewtopic.php?t=$topicId";
         return $url;
     }
+
+
+    public function isUrl(string $urlCandidate) : bool
+    {
+        if( !$this->isInternalUrl($urlCandidate) ) {
+            return false;
+        }
+
+        $urlPath = $this->removeDomainFromUrl($urlCandidate);
+        if( empty($urlPath) ) {
+            return false;
+        }
+
+        $match = preg_match('/^\/[^\/]+-[1-9]+[0-9]*\/[^\/]+-[1-9]+[0-9]*$/', $urlPath);
+        return (bool)$match;
+    }
 }

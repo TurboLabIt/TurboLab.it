@@ -8,6 +8,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class UrlGenerator
 {
+    const INTERNAL_DOMAINS = ['localhost', 'dev0.turbolab.it', 'next.turbolab.it', 'turbolab.it'];
     const DEFAULT_TAG_SLUG_DASH_ID = "pc-642";
 
     protected AsciiSlugger $slugger;
@@ -42,5 +43,29 @@ class UrlGenerator
         $slug   = $this->slugger->slug($slug);
         $slug   = mb_strtolower($slug);
         return $slug;
+    }
+
+
+    public function isInternalUrl(string $urlCandidate) : bool
+    {
+        if (
+            stripos($urlCandidate, 'http://') !== 0 &&
+            stripos($urlCandidate, 'https://') !== 0
+        ) {
+            return true;
+        }
+
+        $arrUrlComponents = parse_url($urlCandidate);
+        $urlDomain = $arrUrlComponents["host"] ?? null;
+
+        $isInternal = !empty($urlDomain) && in_array($urlDomain, static::INTERNAL_DOMAINS);
+        return $isInternal;
+    }
+
+
+    protected function removeDomainFromUrl(string $url) : ?string
+    {
+        $arrUrlComponents = parse_url($url);
+        return $arrUrlComponents["path"] ?? null;
     }
 }
