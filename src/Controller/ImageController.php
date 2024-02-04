@@ -75,6 +75,22 @@ class ImageController extends BaseController
 
     protected function xSendImage(Image $image, string $size, string $originHeader) : Response
     {
+        $webserverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? '';
+        if( stripos( $webserverSoftware, 'nginx') === false ) {
+
+            // the app is NOT running on Nginx => can't use X-Sendfile
+            // we are likely in a test, running on Symfony integrated web server
+            $response = new Response($image->getContent($size), Response::HTTP_OK, [
+                'Content-Type' => $image->getBuiltImageMimeType()
+            ]);
+
+            $response->headers->set('x-tli-image', $originHeader . '-no-xsendfile');
+
+            return $response;
+        }
+
+        // running on Nginx => use XSendfile
+
         $response =
             // 📕 the HTTP Status code here is IGNORED by the X-Sendfile location
             new Response('', Response::HTTP_OK, [
