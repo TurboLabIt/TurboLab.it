@@ -6,8 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -37,18 +36,31 @@ abstract class BaseT extends WebTestCase
     }
 
 
-    protected function fetchHtml(string $url, string $method = 'GET', bool $toLower = true) : string
+    protected function fetchHtml(string $url, string $method = Request::METHOD_GET, bool $toLower = true) : string
     {
         $this->browse($url, $method);
         $this->assertResponseIsSuccessful("Failing URL: " . $url);
 
         $html = static::$client->getResponse()->getContent();
+        $this->assertNotEmpty($html, "Failing URL: " . $url);
 
         if($toLower) {
-            $html =  mb_strtolower($html);
+            $html = mb_strtolower($html);
         }
 
         return $html;
+    }
+
+
+    protected function fetchImage(string $url, string $contentType = 'image/avif') : string
+    {
+        $image = $this->fetchHtml($url, Request::METHOD_GET, false);
+
+        if( !empty($contentType) ) {
+            $this->assertResponseHeaderSame('content-type', $contentType);
+        }
+
+        return $image;
     }
 
 

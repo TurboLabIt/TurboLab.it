@@ -95,6 +95,9 @@ class ArticleTest extends BaseT
         }
 
         $this->assertEquals('@ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine', $fragileCharsActualValue);
+
+        //
+        $this->internalImagesChecker($crawler);
     }
 
 
@@ -148,7 +151,7 @@ class ArticleTest extends BaseT
 
 
 
-    protected function internalLinksChecker(Crawler $crawler)
+    protected function internalLinksChecker(Crawler $crawler) : void
     {
         $aNodes = $crawler->filter('a');
         foreach($aNodes as $a) {
@@ -181,6 +184,21 @@ class ArticleTest extends BaseT
             if($checkIt) {
                 $this->fetchHtml($href);
             }
+        }
+    }
+
+
+    protected function internalImagesChecker(Crawler $crawler) : void
+    {
+        $imgNodes = $crawler->filter('img');
+        foreach($imgNodes as $img) {
+
+            $src = $img->getAttribute("src");
+            if( empty($src) || empty(trim($src)) ) {
+                continue;
+            }
+
+            $this->fetchImage($src);
         }
     }
 }
