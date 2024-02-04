@@ -16,6 +16,29 @@ class HtmlProcessor
     { }
 
 
+    public function convertEntitiesToUtf8Chars(?string $text) : ?string
+    {
+        // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
+
+        if( empty($text) ) {
+            return $text;
+        }
+
+        $entityToKeep = [
+            htmlentities('<')     => '==##LT###==',
+            htmlentities('>')     => '==##GT###==',
+            htmlentities('&')     => '==##AND###==',
+            htmlentities('"')     => '==##DQUOTE###==',
+            htmlentities("'")     => '==##SQUOTE###=='
+        ];
+
+        $processedText = str_ireplace( array_keys($entityToKeep), $entityToKeep, $text);
+        $processedText = html_entity_decode($processedText, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+        $processedText = str_ireplace( $entityToKeep, array_keys($entityToKeep), $processedText);
+        return $processedText;
+    }
+
+
     public function processArticleBodyForDisplay(Article $article) : string
     {
         $text   = $article->getBody();
@@ -24,19 +47,25 @@ class HtmlProcessor
             return $text;
         }
 
-        return
+        $processedText =
             $this
                 ->imagesFromCodeToHTML($domDoc, $article)
                 ->articlesFromCodeToHTML($domDoc)
                 ->tagsFromCodeToHTML($domDoc)
                 ->youTubeFromCodeToHTML($domDoc)
                 ->renderDomDocAsHTML($domDoc);
+
+        return $processedText;
     }
 
 
     protected function parseHTML(string $text): \DOMDocument|bool
     {
         $domDoc = new \DOMDocument();
+
+        // pretty output https://www.php.net/manual/en/class.domdocument.php
+        // doesn't work
+        // $domDoc->preserveWhiteSpace = false;
 
         /**
          * Workaround for unescaped &, as in HTML5, break the parser
@@ -221,9 +250,13 @@ class HtmlProcessor
 
     protected function renderDomDocAsHTML(\DOMDocument $domDoc): string
     {
+        // pretty output https://www.php.net/manual/en/class.domdocument.php
+        // doesn't work, likely due to "whitespace nodes being created by the load
+        // https://www.php.net/manual/en/domdocument.savexml.php#76867
+        //$domDoc->formatOutput = true;
+
         $text = $domDoc->saveHTML();
-        // restore accented chars
-        $text = html_entity_decode($text, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+        $text = $this->convertEntitiesToUtf8Chars($text);
         return $text;
     }
 }

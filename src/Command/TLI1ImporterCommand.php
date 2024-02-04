@@ -19,6 +19,7 @@ use App\Entity\PhpBB\User;
 use App\Factory\Cms\ImageFactory;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
+use App\Service\Cms\HtmlProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -56,7 +57,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
-        protected ImageFactory $imageFactory
+        protected ImageFactory $imageFactory, protected HtmlProcessor $htmlProcessor
     )
     {
         parent::__construct();
@@ -952,7 +953,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $valueConverted = trim($value);
-        $valueConverted = html_entity_decode($valueConverted, ENT_HTML5);
+        $valueConverted = $this->htmlProcessor->convertEntitiesToUtf8Chars($valueConverted);
         return $valueConverted;
     }
 }
