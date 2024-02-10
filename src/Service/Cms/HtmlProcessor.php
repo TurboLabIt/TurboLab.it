@@ -9,6 +9,10 @@ use App\ServiceCollection\Cms\TagCollection;
 
 class HtmlProcessor
 {
+    // this is not needed here, but it can be used elsewhere
+    const ACCENTED_LETTERS = ['ì', 'è', 'é', 'ò', 'à', 'ù', 'á', 'í', 'ó', 'ú'];
+
+
     public function __construct(
         protected ImageCollection $imageCollection, protected ArticleCollection $articleCollection,
         protected TagCollection $tagCollection
@@ -24,6 +28,10 @@ class HtmlProcessor
             return $text;
         }
 
+        // replace U+00A0 : NO-BREAK SPACE [NBSP] with an actual goddamn space
+        $text = preg_replace('/\xc2\xa0/', ' ', $text);
+
+        //
         $entityToKeep = [
             htmlentities('<')     => '==##LT###==',
             htmlentities('>')     => '==##GT###==',

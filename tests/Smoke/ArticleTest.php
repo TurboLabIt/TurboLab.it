@@ -4,13 +4,25 @@ namespace Smoke;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Factory\Cms\ArticleFactory;
 use App\Service\Cms\Article;
+use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use Symfony\Component\DomCrawler\Crawler;
 
 
 class ArticleTest extends BaseT
 {
-    protected static array $arrEntities;
+    protected static array $arrArticleEntity;
+
+    public function testingPlayground()
+    {
+        /** @var Article $article */
+        $article = static::getService("App\\Service\\Cms\\Article");
+        $article->load(488);
+
+        $url = $article->getUrl();
+        $crawler = $this->fetchDomNode($url);
+        $this->articleTitleAsH1Checker($article, $crawler);
+    }
 
 
     public function testSpecialArticle()
@@ -22,9 +34,13 @@ class ArticleTest extends BaseT
         $article->load(1939);
 
         $url = $article->getUrl();
-        $crawler = $this->fetchDomNode($url, 'article');
+        $crawler = $this->fetchDomNode($url);
+
+        // H1
+        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica &amp; collaudo)');
 
         // H2
+        $crawler = $this->fetchDomNode($url, 'article');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);
@@ -103,15 +119,15 @@ class ArticleTest extends BaseT
 
     public static function articleToTestProvider()
     {
-        if( empty(static::$arrEntities) ) {
-            static::$arrEntities = static::getEntityManager()->getRepository(ArticleEntity::class)->findLatestPublished();
+        if( empty(static::$arrArticleEntity) ) {
+            static::$arrArticleEntity = static::getEntityManager()->getRepository(ArticleEntity::class)->findLatestPublished();
         }
 
         /** @var ArticleFactory $articleFactory */
         $articleFactory = static::getService("App\\Factory\\Cms\\ArticleFactory");
 
         /** @var ArticleEntity $entity */
-        foreach(static::$arrEntities as $entity) {
+        foreach(static::$arrArticleEntity as $entity) {
             yield [[
                 "entity"    => $entity,
                 "service"   => $articleFactory->create($entity)
@@ -141,13 +157,33 @@ class ArticleTest extends BaseT
 
         $crawler = $this->fetchDomNode($url);
 
+        //
+        $this->articleTitleAsH1Checker($article, $crawler);
+    }
+
+
+    protected function articleTitleAsH1Checker(Article $article, Crawler $crawler, ?string $expectedH1 = null) : void
+    {
+        $assertFailureMessage = "Failing URL: " . $article->getShortUrl();
+
         $title = $article->getTitle();
         $this->assertNotEmpty($title, $assertFailureMessage);
 
-        $htmlTitle = $crawler->filter('body h1')->html();
-        $this->assertEquals($title, $htmlTitle, $assertFailureMessage);
-    }
+        foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
 
+            $accentedLetterEntity = htmlentities($accentedLetter);
+            $this->assertStringNotContainsString($accentedLetterEntity, $title);
+        }
+
+        $this->assertStringNotContainsString('&nbsp;', $title);
+
+        $H1FromCrawler = $crawler->filter('body h1')->html();
+        $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
+
+        if( $expectedH1 !== null ) {
+            $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
+        }
+    }
 
 
     protected function internalLinksChecker(Crawler $crawler) : void

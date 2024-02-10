@@ -13,7 +13,14 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class BaseT extends WebTestCase
 {
     protected static ?KernelBrowser $client = null;
-    protected static Crawler $crawler;
+    protected static ?Crawler $crawler;
+
+
+    protected function tearDown() : void
+    {
+        self::ensureKernelShutdown();
+        static::$crawler = null;
+    }
 
 
     protected static function getService(string $name)
@@ -66,21 +73,20 @@ abstract class BaseT extends WebTestCase
 
     public function browse(string $url, string $method = 'GET') : Crawler
     {
+        // prevent "Kernel has already been booted"
         if( empty(static::$client) ) {
 
-            // prevent "Kernel has already been booted"
             static::$client = static::createClient();
 
+        // prevent add the path twice on second call
         } else {
 
-            // prevent add the path twice on second call
             static::$client->restart();
         }
 
         static::$crawler = static::$client->request($method, $url);
         return static::$crawler;
     }
-
 
 
     public function fetchDomNode(string $url, string $selector = "html") : Crawler
