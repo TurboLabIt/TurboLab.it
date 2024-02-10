@@ -144,8 +144,7 @@ class ArticleTest extends BaseT
         $title = $article->getTitle();
         $this->assertNotEmpty($title, $assertFailureMessage);
 
-        // https://github.com/symfony/symfony/issues/35354#issuecomment-1925415323
-        $htmlTitle = $crawler->filter('body h1')->getNode(0)->nodeValue;
+        $htmlTitle = $crawler->filter('body h1')->html();
         $this->assertEquals($title, $htmlTitle, $assertFailureMessage);
     }
 
