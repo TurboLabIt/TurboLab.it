@@ -18,6 +18,11 @@ Eventuali "originali" in formato PSD, PDN, ... dovrebbero essere caricati insiem
 1. [turbolab.it-2013-finale.pdn](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/images/logo/2013/turbolab.it-2013-finale.pdn): originale PDN
 2. [turbolab.it-2013-finale-tiny.png](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/images/logo/2013/turbolab.it-2013-finale-tiny.png): PNG processata partendo dal PDN
 
+Alcune immagini speciali, come [https://turbolab.it/favicon.ico](https://turbolab.it/favicon.ico) oppure [apple-touch-icon.png](https://turbolab.it/apple-touch-icon.png), in realtà vengono lette da `public/images/logo/` tramite [rewrite in nginx.conf](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/nginx.conf) allo scopo di mantenere i percorsi di default ma, allo stesso tempo, non accatastare decine di file nella cartella `public`. Detti file sono a loro volta *symlink* al file finale:
+
+- `public/favicon.ico` ➡ `public/images/logo/favicon.ico` ➡ `public/images/logo/2013/favicon.ico`
+- `public/apple-touch-icon.png` ➡ `public/images/logo/apple-touch-icon.png` ➡ `public/images/logo/2013/ttt-tiny.png`
+
 
 ## 🏟 Immagini di phpBB
 
