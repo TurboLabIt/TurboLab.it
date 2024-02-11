@@ -1,10 +1,9 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
-use App\Entity\BaseEntity;
-use App\Factory\Cms\ArticleFactory;
 use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Service\Cms\CmsFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
 
@@ -13,7 +12,7 @@ class ArticleCollection extends BaseCmsServiceCollection
     const ENTITY_CLASS = ArticleService::ENTITY_CLASS;
 
 
-    public function __construct(protected EntityManagerInterface $em, protected ArticleFactory $factory)
+    public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)
     { }
 
 
@@ -28,8 +27,5 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
-    /**
-     * @param ArticleEntity|null $entity
-     */
-    public function createService(?BaseEntity $entity = null) : ArticleService { return parent::createService($entity); }
+    public function createService(?ArticleEntity $entity = null) : ArticleService { return $this->factory->createArticle($entity); }
 }

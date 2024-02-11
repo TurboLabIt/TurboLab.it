@@ -1,9 +1,8 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
-use App\Entity\BaseEntity;
-use App\Factory\Cms\ImageFactory;
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\CmsFactory;
 use App\Service\Cms\Image as ImageService;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,7 +15,7 @@ class ImageCollection extends BaseCmsServiceCollection
     const ENTITY_CLASS = ImageService::ENTITY_CLASS;
 
 
-    public function __construct(protected EntityManagerInterface $em, protected ImageFactory $factory)
+    public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)
     { }
 
 
@@ -34,8 +33,5 @@ class ImageCollection extends BaseCmsServiceCollection
     }
 
 
-    /**
-     * @param ImageEntity|null $entity
-     */
-    public function createService(?BaseEntity $entity = null) : ImageService { return parent::createService($entity); }
+    public function createService(?ImageEntity $entity = null) : ImageService { return $this->factory->createImage($entity); }
 }

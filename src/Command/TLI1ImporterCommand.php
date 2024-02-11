@@ -16,9 +16,9 @@ use App\Entity\Cms\TagAuthor;
 use App\Entity\Cms\TagBadge;
 use App\Entity\PhpBB\Topic;
 use App\Entity\PhpBB\User;
-use App\Factory\Cms\ImageFactory;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
+use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -57,7 +57,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
-        protected ImageFactory $imageFactory, protected HtmlProcessor $htmlProcessor
+        protected CmsFactory $cmsFactory, protected HtmlProcessor $htmlProcessor
     )
     {
         parent::__construct();
@@ -502,7 +502,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->arrNewImages[$imageId] = $entityTli2Image;
 
         // file copy
-        $imageService   = $this->imageFactory->create($entityTli2Image);
+        $imageService   = $this->cmsFactory->createImage($entityTli2Image);
         $filename       = $imageService->getOriginalFileName();
         $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/images/$filename");
         $destFilePath   = $imageService->getOriginalFilePath();

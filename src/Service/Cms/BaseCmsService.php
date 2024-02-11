@@ -1,7 +1,6 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Entity\BaseEntity;
 use App\Service\BaseService;
 
 
@@ -40,13 +39,9 @@ abstract class BaseCmsService extends BaseService
     }
 
 
-    public function setEntity(BaseEntity $entity) : static
-    {
-        $this->entity = $entity;
-        return $this;
-    }
+    // 🔥 Implement these abstract method as if they were uncommented! (different types in signature make them unusable)
+    // abstract public function setEntity(?BaseEntity $entity = null) : static;
+    // abstract public function getEntity() : ?BaseEntity;
 
-
-    public function getEntity() : BaseEntity { return $this->entity; }
     public function getId() : ?int { return $this->entity->getId(); }
 }

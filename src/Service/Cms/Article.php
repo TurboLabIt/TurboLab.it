@@ -1,10 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Entity\BaseEntity;
 use App\Entity\Cms\Article as ArticleEntity;
-use App\Factory\Cms\ImageFactory;
-use App\Factory\Cms\TagFactory;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
@@ -21,28 +18,25 @@ class Article extends BaseCmsService
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait;
 
-    protected ArticleEntity $entity;
+    protected ?ArticleEntity $entity = null;
     protected ?ImageService $spotlight;
     protected HtmlProcessor $htmlProcessor;
 
 
-    public function __construct(
-        protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em,
-        protected ImageFactory $imageFactory, protected TagFactory $tagFactory
-    )
+    public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)
     {
         $this->clear();
     }
 
 
-    /**
-     * @param ArticleEntity $entity
-     */
-    public function setEntity(BaseEntity $entity) : static
+    public function setEntity(?ArticleEntity $entity = null) : static
     {
         $this->localViewCount = $entity->getViews();
-        return parent::setEntity($entity);
+        $this->entity = $entity;
+        return $this;
     }
+
+    public function getEntity() : ?ArticleEntity { return $this->entity; }
 
 
     public function getTopTag()
@@ -82,6 +76,12 @@ class Article extends BaseCmsService
     }
 
 
+    public function getSpotlightOrDefaultUrl(string $size) : string
+    {
+        return $this->getSpotlightOrDefault()->getUrl($this, $size);
+    }
+
+
     public function getSpotlight() : ?ImageService
     {
         if( !empty($this->spotlight) ) {
@@ -93,7 +93,7 @@ class Article extends BaseCmsService
             return null;
         }
 
-        $this->spotlight = $this->imageFactory->create($spotlightEntity);
+        $this->spotlight = $this->factory->createImage($spotlightEntity);
         return $this->spotlight;
     }
 
@@ -105,7 +105,7 @@ class Article extends BaseCmsService
             return $spotlight;
         }
 
-        return $this->imageFactory->createDefaultSpotlight();
+        return $this->factory->createDefaultSpotlight();
     }
 
 
@@ -118,7 +118,7 @@ class Article extends BaseCmsService
             $tagEntity  = $junctionEntity->getTag();
             $tagId      = $tagEntity->getId();
             $arrTags[$tagId] = [
-                "Tag"   => $this->tagFactory->create($tagEntity)
+                "Tag" => $this->factory->createTag($tagEntity)
             ];
         }
 
@@ -138,8 +138,6 @@ class Article extends BaseCmsService
         return $this->htmlProcessor->processArticleBodyForDisplay($this);
     }
 
-
-    public function getEntity() : ArticleEntity { return parent::getEntity(); }
 
     public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }

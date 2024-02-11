@@ -1,7 +1,6 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Entity\BaseEntity;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
@@ -60,14 +59,12 @@ class Image extends BaseCmsService
 
     const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
-    protected ImageEntity $entity;
+    protected ?ImageEntity $entity = null;
     protected static ?string $buildFileExtension    = null;
     protected ?string $lastBuiltImageMimeType       = null;
 
 
-    public function __construct(
-        protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
-    )
+    public function __construct(protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir)
     {
         $this->clear();
 
@@ -75,6 +72,15 @@ class Image extends BaseCmsService
             static::$buildFileExtension = static::getClientSupportedBestFormat();
         }
     }
+
+
+    public function setEntity(?ImageEntity $entity = null) : static
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?ImageEntity { return $this->entity; }
 
 
     public function getSizes() : array
@@ -369,13 +375,6 @@ class Image extends BaseCmsService
         return reset($arrImageFormats);
     }
 
-
-    public function getEntity() : ImageEntity { return parent::getEntity(); }
-
-    /**
-     * @param ImageEntity $entity
-     */
-    public function setEntity(BaseEntity $entity) : static { return parent::setEntity($entity); }
 
     public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getFormat() : ?string { return $this->entity->getFormat(); }

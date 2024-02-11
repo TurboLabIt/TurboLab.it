@@ -1,8 +1,6 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
-use App\Entity\BaseEntity;
-use App\Service\BaseService;
 use App\ServiceCollection\BaseServiceCollection;
 
 
@@ -18,8 +16,8 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
         $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->findBy(["id" => $arrIds], ["updatedAt" => 'DESC']);
         foreach($arrEntities as $entity) {
 
-            $service    = $this->createService($entity);
-            $id         = (string)$entity->getId();
+            $id = (string)$entity->getId();
+            $service = $this->createService($entity);
             $this->arrData[$id] = $service;
         }
 
@@ -27,8 +25,6 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
     }
 
 
-    public function createService(?BaseEntity $entity = null) : BaseService
-    {
-        return $this->factory->create($entity);
-    }
+    // 🔥 Implement these abstract method as if they were uncommented! (different types in signature make them unusable)
+    // abstract public function createService(?BaseEntity $entity = null) : BaseService;
 }

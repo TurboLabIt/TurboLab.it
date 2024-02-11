@@ -2,7 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Entity\Cms\Tag as TagEntity;
-use App\Factory\Cms\TagFactory;
+use App\Service\Cms\CmsFactory;
 use App\Service\Cms\Tag;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
@@ -160,14 +160,14 @@ class TagTest extends BaseT
             static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest();
         }
 
-        /** @var TagFactory $tagFactory */
-        $tagFactory = static::getService("App\\Factory\\Cms\\TagFactory");
+        /** @var CmsFactory $cmsFactory */
+        $cmsFactory = static::getService("App\\Service\\Cms\\CmsFactory");
 
         /** @var TagEntity $entity */
         foreach(static::$arrTagEntity as $entity) {
             yield [[
                 "entity"    => $entity,
-                "service"   => $tagFactory->create($entity)
+                "service"   => $cmsFactory->createTag($entity)
             ]];
         }
     }
