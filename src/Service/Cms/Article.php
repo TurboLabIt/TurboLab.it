@@ -61,7 +61,7 @@ class Article extends BaseCmsService
     }
 
 
-    public function checkRealUrl($tagSlugDashId, $articleSlugDashId) : ?string
+    public function checkRealUrl(string $tagSlugDashId, string $articleSlugDashId) : ?string
     {
         $candidateUrl   = '/' . $tagSlugDashId . '/' . $articleSlugDashId;
         $realUrl        = $this->urlGenerator->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
