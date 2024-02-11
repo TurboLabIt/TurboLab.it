@@ -1,5 +1,5 @@
 <?php
-namespace Smoke;
+namespace App\Tests\Smoke;
 
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Factory\Cms\ArticleFactory;
@@ -236,17 +236,5 @@ class ArticleTest extends BaseT
 
             $this->fetchImage($src);
         }
-    }
-
-    protected function encodeQuotes(string $H1FromCrawler) : string
-    {
-        // workaround for: the quotes are decoded automatically by the crawler - this is unacceptable in a test!
-        $arrQuoteEncodeMap = [
-            '"' => '&quot;',
-            "'" => '&apos;'
-        ];
-
-        $H1FromCrawler = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $H1FromCrawler);
-        return $H1FromCrawler;
     }
 }
