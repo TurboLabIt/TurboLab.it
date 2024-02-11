@@ -36,7 +36,7 @@ class ArticleController extends BaseController
             'metaDescription'   => $article->getAbstract(),
             'metaCanonicalUrl'  => $article->getUrl(),
             'metaOgType'        => 'article',
-            'pageImage'         => $article->getSpotlightOrDefault()->getUrl($article, Image::SIZE_MAX),
+            'pageImage'         => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
             'Article'           => $article
         ]);
     }
