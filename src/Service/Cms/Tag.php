@@ -36,12 +36,28 @@ class Tag extends BaseCmsService
     }
 
 
-    public function checkRealUrl($tagSlugDashId) : ?string
+    public function checkRealUrl(string $tagSlugDashId, ?int $page = null) : ?string
     {
-        $candidateUrl   = '/' . $tagSlugDashId;
-        $realUrl        = $this->urlGenerator->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
+        $pageSlug       = empty($page) || $page < 2 ? null : ("/$page");
+        $candidateUrl   = '/' . $tagSlugDashId . $pageSlug;
+        $realUrl        = $this->urlGenerator->generateUrl($this, $page, UrlGeneratorInterface::ABSOLUTE_PATH);
         $result         = $candidateUrl == $realUrl ? null : $this->getUrl();
         return $result;
+    }
+
+
+    public function loadByTitle(string $title) : static
+    {
+        $this->clear();
+        $entity = $this->em->getRepository(static::ENTITY_CLASS)->findByTitle($title);
+
+        if( empty($this->entity) ) {
+
+            $exceptionClass = static::NOT_FOUND_EXCEPTION;
+            throw new $exceptionClass($title);
+        }
+
+        return $this->setEntity($entity);
     }
 
 
@@ -52,5 +68,5 @@ class Tag extends BaseCmsService
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
     public function getArticles() : Collection { return $this->entity->getArticles(); }
 
-    public function getUrl() : string { return $this->urlGenerator->generateUrl($this); }
+    public function getUrl(?int $page = null) : string { return $this->urlGenerator->generateUrl($this, $page); }
 }
