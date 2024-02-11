@@ -10,7 +10,7 @@ use App\ServiceCollection\Cms\TagCollection;
 class HtmlProcessor
 {
     // this is not needed here, but it can be used elsewhere
-    const ACCENTED_LETTERS = ['ì', 'è', 'é', 'ò', 'à', 'ù', 'á', 'í', 'ó', 'ú'];
+    const ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
 
 
     public function __construct(
