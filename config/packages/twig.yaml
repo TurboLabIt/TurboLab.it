@@ -4,6 +4,7 @@ twig:
     globals:
         siteUrl: '%env(APP_SITE_URL)%'
         metaTitleSuffix: ' | TurboLab.it'
+        twitterHandle: 'TurboLabIt'
 
 when@test:
     twig:

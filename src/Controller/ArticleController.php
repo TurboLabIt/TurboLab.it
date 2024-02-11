@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 
+
+use App\Service\Cms\Image;
 use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,9 @@ class ArticleController extends BaseController
         return $this->render('article/index.html.twig', [
             'metaTitle'         => $article->getTitle(),
             'metaDescription'   => $article->getAbstract(),
+            'metaCanonicalUrl'  => $article->getUrl(),
+            'metaOgType'        => 'article',
+            'pageImage'         => $article->getSpotlightOrDefault()->getUrl($article, Image::SIZE_MAX),
             'Article'           => $article
         ]);
     }
