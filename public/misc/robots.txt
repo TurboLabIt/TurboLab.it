@@ -1,0 +1,6 @@
+User-agent: *
+Sitemap: http://turbolab.it/sitemap/sitemap.xml.gz
+Disallow: /scarica/*
+
+User-agent: PetalBot
+Disallow: /
