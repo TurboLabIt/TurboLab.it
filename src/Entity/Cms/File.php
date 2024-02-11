@@ -1,7 +1,6 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Exception\InvalidEnumException;
 use App\Repository\Cms\FileRepository;
 use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;

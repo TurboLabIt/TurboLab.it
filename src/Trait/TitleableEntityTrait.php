@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TitleableEntityTrait
 {
-    #[ORM\Column(length: 250)]
+    #[ORM\Column(length: 512)]
     protected ?string $title = null;
 
     public function getTitle() : ?string
