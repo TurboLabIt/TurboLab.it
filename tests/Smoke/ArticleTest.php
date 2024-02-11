@@ -37,7 +37,7 @@ class ArticleTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica &amp; collaudo)');
+        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell&apos;impianto &amp; &quot;collaudo&quot;) | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine');
 
         // H2
         $crawler = $this->fetchDomNode($url, 'article');
@@ -46,8 +46,8 @@ class ArticleTest extends BaseT
         $this->assertGreaterThan(3, $countH2);
 
         // intro paragraph
-        $firstPContent = $crawler->filter('p')->first()->text();
-        $this->assertStringContainsString('Questo è un articolo di prova,', $firstPContent);
+        $firstPContent = $crawler->filter('p')->first()->html();
+        $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
         // summary
         $summaryLi = $crawler->filter('ul')->first()->filter('ul')->filter('li');
@@ -178,6 +178,7 @@ class ArticleTest extends BaseT
         $this->assertStringNotContainsString('&nbsp;', $title);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
+        $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
         $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {
@@ -235,5 +236,17 @@ class ArticleTest extends BaseT
 
             $this->fetchImage($src);
         }
+    }
+
+    protected function encodeQuotes(string $H1FromCrawler) : string
+    {
+        // workaround for: the quotes are decoded automatically by the crawler - this is unacceptable in a test!
+        $arrQuoteEncodeMap = [
+            '"' => '&quot;',
+            "'" => '&apos;'
+        ];
+
+        $H1FromCrawler = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $H1FromCrawler);
+        return $H1FromCrawler;
     }
 }

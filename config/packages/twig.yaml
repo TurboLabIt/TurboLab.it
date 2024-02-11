@@ -3,6 +3,7 @@ twig:
     strict_variables: true
     globals:
         siteUrl: '%env(APP_SITE_URL)%'
+        metaTitleSuffix: ' | TurboLab.it'
 
 when@test:
     twig:

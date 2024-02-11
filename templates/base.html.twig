@@ -3,9 +3,9 @@
 <!-- Source: https://github.com/TurboLabIt/html-pages/blob/master/html5.html -->
 
 <!-- Quick page preview with Twig
-{% set metaTitle = "##Test metaTitle##" %}
-{% set metaTitleSuffix = "##Test metaTitleSuffix##" %}
-{% set metaDescription = "##Test metaDescription##" %}
+{#% set metaTitle = "##Test metaTitle##" %#}
+{#% set metaTitleSuffix = "##Test metaTitleSuffix##" %#}
+{#% set metaDescription = "##Test metaDescription##" %#}
 {% set metaCanonicalUrl = "##Test metaCanonicalUrl##" %}
 {% set pageImage = "##Test pageImage##" %}
 {% set gtm = "##Test gtm##" %}
@@ -17,13 +17,13 @@
 {% block htmlHeadContent %}
     <meta charset="utf-8">
 
-    <title>{% block metaTitle %}{{ metaTitle }}{{ metaTitleSuffix ?? "" }}{% endblock %}</title>
-    <meta property="og:title" content="{{ metaOgTitle ?? metaTitle }}">
-    <meta name="twitter:title" content="{{ metaTwitterTitle ?? metaTitle }}">
+    <title>{% block metaTitle %}{{ metaTitle|raw }}{{ (metaTitleSuffix ?? "")|raw }}{% endblock %}</title>
+    <meta property="og:title" content="{{ (metaOgTitle ?? metaTitle)|raw }}">
+    <meta name="twitter:title" content="{{ (metaTwitterTitle ?? metaTitle)|raw }}">
 
-    <meta name="description" content="{{ metaDescription }}">
-    <meta property="og:description" content="{{ metaOgDescription ?? metaDescription }}">
-    <meta name="twitter:description" content="{{ metaTwitterDescription ?? metaDescription }}">
+    <meta name="description" content="{% block metaDescription %}{{ metaDescription|raw }}{% endblock %}">
+    <meta property="og:description" content="{{ (metaOgDescription ?? metaDescription)|raw }}">
+    <meta name="twitter:description" content="{{ (metaTwitterDescription ?? metaDescription)|raw }}">
 
     <link rel="canonical" href="{{ metaCanonicalUrl }}">
     <meta property="og:url" content="{{ metaOgUrl ?? metaCanonicalUrl }}">

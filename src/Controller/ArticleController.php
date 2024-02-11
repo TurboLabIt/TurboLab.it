@@ -30,7 +30,9 @@ class ArticleController extends BaseController
             ->setHtmlProcessor($htmlProcessor);
 
         return $this->render('article/index.html.twig', [
-            'Article' => $article
+            'metaTitle'         => $article->getTitle(),
+            'metaDescription'   => $article->getAbstract(),
+            'Article'           => $article
         ]);
     }
 

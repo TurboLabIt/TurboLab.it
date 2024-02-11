@@ -18,11 +18,22 @@ Gli unici caratteri a dover essere trasformati in entity, **quando figurano nel 
 Questo è il set assolutamente minimo: se non vengono trasformati in entity, il parser non è poi in grado di capire se costituiscono istruzioni di markup oppure testo. Ad esempio:
 
 - `<a>` oppure `1 < 3 > 2`
-- `Barnes & Noble` oppure `il simbolo di maggiore: &lt;`
+- `Barnes & Noble` oppure `il simbolo < in HTML si scrive &lt;`
 
 *Single-quote* e *double-quote* vanno invece trasformate per poterle inserire negli attributi. Ad esempio: `<img src="..." title="The sign says &quot;Matt's Stuff&quot;">`.
 
 Rispettando queste specifiche, l'HTML generato supera la [validazione W3C](https://validator.w3.org)
+
+
+## 💣 Caso speciale
+
+**Il corpo** degli articoli importati da TLI1 utilizza *single-quote* e *double-quote* letterali sia per indicare gli attributi (`<img src="..">`) sia per il testo (`il sistema dell'anno 2001 fu chiamato "Windows XP"`).
+
+Per essere conformi alle specifiche indicate sopra, dovrabbe invece essere `<img src=".."> il sistema dell&apos;anno 2001 fu chiamato &quot;Windows XP&quot;`.
+
+Questa ambiguità impedisce di correggere il problema in fase di importazione, ma non crea problemi: l'HTML rimane infatti valido **fino a quando non lo si utilizza in un attributo**, situazione che al momento non si presenta.
+
+Il difetto è presente anche nel titolo e nell'*abstract* degli articoli di TLI1. Ma, poiché questi campi non contengono HTML, possiamo tranquillamente auto-convertire *single-quote* e *double-quote* nelle relative entities durante l'importazione.
 
 
 ## Conversione e archiviazione

@@ -28,7 +28,9 @@ class TagController extends BaseController
             ->countOneView();
 
         return $this->render('tag/index.html.twig', [
-            'Tag' => $tag
+            'metaTitle'         => "#" . $tag->getTitle() . ": articoli, guide e news",
+            'metaDescription'   => "Articoli, guide, notizie che riguardano: " . $tag->getTitle(),
+            'Tag'               => $tag
         ]);
     }
 

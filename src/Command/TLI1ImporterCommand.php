@@ -323,8 +323,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Article(int $articleId, array $arrArticle)
     {
-        $title          = $this->convertValueFromTli1ToTli2( $arrArticle["titolo"] );
-        $abstract       = $this->convertValueFromTli1ToTli2( $arrArticle["abstract"] );
+        $title          = $this->convertValueFromTli1ToTli2($arrArticle["titolo"], true);
+        $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
         $pubStatus      = match( $arrArticle["finito"] ) {
             0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
             1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
@@ -335,7 +335,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $rating         = (int)$arrArticle["rating"];
         $ads            = (bool)$arrArticle["ads"];
         $commentsTopic  = $this->repoTopics->selectOrNull($arrArticle["id_commenti_phpbb"]);
-        $body           = $this->convertValueFromTli1ToTli2( $arrArticle["corpo"] );
+        $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
         $createdAt      = $arrArticle["data_creazione"] ?: null;
         $updatedAt      = $arrArticle["data_update"] ?: null;
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
@@ -434,7 +434,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Image(int $imageId, array $arrImage)
     {
-        $title      = $this->convertValueFromTli1ToTli2( $arrImage["titolo"] );
+        $title      = $this->convertValueFromTli1ToTli2($arrImage["titolo"], true);
         $format     = mb_strtolower($arrImage["formato"]);
         $createdAt  = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark  = match ($arrImage["watermarked"]) {
@@ -570,7 +570,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
-        $title      = $this->convertValueFromTli1ToTli2( $arrTag["tag"] );
+        $title      = $this->convertValueFromTli1ToTli2($arrTag["tag"], true);
         $ranking    = (int)$arrTag["peso"];
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
@@ -723,7 +723,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1File(int $fileId, array $arrFile)
     {
-        $title      = $this->convertValueFromTli1ToTli2( $arrFile["titolo"] );
+        $title      = $this->convertValueFromTli1ToTli2($arrFile["titolo"], true);
         $views      = (int)$arrFile["visite"];
         $url        = $arrFile["url"] ?: null;
         $format     = $arrFile["formato"] ?: null;
@@ -873,7 +873,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $entityTli2Badge =
             $this->em->getRepository(BadgeEntity::class)
                 ->selectOrNew($badgeId)
-                ->setTitle( $this->convertValueFromTli1ToTli2($arrBadge["titolo"]) )
+                ->setTitle( $this->convertValueFromTli1ToTli2($arrBadge["titolo"], true) )
                 ->setAbstract( $this->convertValueFromTli1ToTli2($arrBadge["testo_breve"]) )
                 ->setBody( $this->convertValueFromTli1ToTli2($arrBadge["testo_esteso"]) )
                 ->setImageUrl( $arrBadge["spotlight"] )
@@ -946,13 +946,24 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function convertValueFromTli1ToTli2($value) : mixed
+    protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : mixed
     {
         if( !is_string($value) ) {
             return $value;
         }
 
         $valueConverted = trim($value);
+
+        if($encodeQuotes) {
+
+            $arrQuoteEncodeMap = [
+                '"' => '&quot;',
+                "'" => '&apos;'
+            ];
+
+            $valueConverted = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $valueConverted);
+        }
+
         $valueConverted = $this->htmlProcessor->convertEntitiesToUtf8Chars($valueConverted);
         return $valueConverted;
     }
