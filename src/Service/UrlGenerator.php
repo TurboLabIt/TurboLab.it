@@ -38,10 +38,18 @@ class UrlGenerator
     public function slugify(?string $text) : string
     {
         $slug   = strip_tags($text);
-        $slug   = $this->stopWords->process($slug);
+        $slug   = html_entity_decode($slug, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $slug   = $this->stopWords->removeFromSting($slug);
         $slug   = trim($slug);
         $slug   = $this->slugger->slug($slug);
         $slug   = mb_strtolower($slug);
+
+        $arrReplaceMap = [
+            'turbolab-it'   => 'turbolab.it'
+        ];
+
+        $slug = str_ireplace(array_keys($arrReplaceMap), $arrReplaceMap, $slug);
+
         return $slug;
     }
 
