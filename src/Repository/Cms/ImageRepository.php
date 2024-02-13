@@ -21,4 +21,11 @@ class ImageRepository extends BaseRepository
     {
         parent::__construct($registry, Image::class);
     }
+
+
+    public function findComplete(int $id) : ?Image
+    {
+        // ATM there is no need to load it with all the related data
+        return $this->find($id);
+    }
 }
