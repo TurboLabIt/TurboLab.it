@@ -22,9 +22,10 @@ class StopWords
         $this->deleteStaleCacheFiles();
 
         //
-        $processedStringCacheAdapter = $this->getCacheAdapter( $this->getProcessedStringCacheFilePath() );
-        $processedStringCacheItem = $processedStringCacheAdapter->getItem($text);
-        $cachedValue = $processedStringCacheItem->get();
+        $processedStringCacheFilePath   = $this->getProcessedStringCacheFilePath();
+        $processedStringCacheAdapter    = $this->getCacheAdapter($processedStringCacheFilePath);
+        $processedStringCacheItem       = $processedStringCacheAdapter->getItem($text);
+        $cachedValue                    = $processedStringCacheItem->get();
         if( !empty($cachedValue) ) {
             return $cachedValue;
         }
@@ -46,6 +47,11 @@ class StopWords
         $text = preg_replace('/\s+/', ' ', $text);
         $text = trim($text);
 
+        $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
+        if( !file_exists($processedStringCacheFilePath) ) {
+            $this->getCacheAdapter($processedStringCacheFilePath)->warmUp([static::FILENAME => 'init']);
+        }
+
         $processedStringCacheItem->set($text);
         $processedStringCacheAdapter->save($processedStringCacheItem);
 
@@ -61,15 +67,14 @@ class StopWords
         $wordsCacheFilePath = $this->getWordsCacheFilePath();
         $wordsCacheFileModTime = file_exists($wordsCacheFilePath) ? filemtime($wordsCacheFilePath) : 0;
 
-        $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
-        $processedStringCacheFileModTime = file_exists($processedStringCacheFilePath) ? filemtime($processedStringCacheFilePath) : 0;
-
         if( $wordsCacheFileModTime > 0 && $sourceFileModTime >= $wordsCacheFileModTime ) {
-            unlink($wordsCacheFilePath);
-        }
 
-        if( $processedStringCacheFileModTime > 0 && $sourceFileModTime >= $processedStringCacheFileModTime ) {
-            unlink($processedStringCacheFilePath);
+            $this->getCacheAdapter($wordsCacheFileModTime)->clear();
+
+            $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
+            $this->getCacheAdapter($processedStringCacheFilePath)->clear();
+
+            unlink($wordsCacheFilePath);
         }
     }
 
@@ -83,22 +88,25 @@ class StopWords
 
     protected function getWordsCacheFilePath() : string
     {
-        $cacheFilePath = $this->projectDir->getVarDir(['cache']) . static::FILENAME . '_map.cache';
+        $cacheFilePath = $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
         return $cacheFilePath;
     }
 
 
     protected function getProcessedStringCacheFilePath() : string
     {
-        $cacheFilePath = $this->projectDir->getVarDir(['cache']) . static::FILENAME . '_processed.cache';
+        $cacheFilePath = $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
         return $cacheFilePath;
     }
 
 
     public function getCacheAdapter(string $cacheFilePath) : PhpArrayAdapter
     {
+        $symfonyCacheDirPath = $this->projectDir->getVarDir('cache');
+
         // 📚 https://symfony.com/doc/current/components/cache/adapters/php_array_cache_adapter.html
-        $cacheAdapter = new PhpArrayAdapter($cacheFilePath, new FilesystemAdapter());
+        $cacheAdapter = new PhpArrayAdapter($cacheFilePath, new FilesystemAdapter(static::FILENAME, 0, $symfonyCacheDirPath));
+
         return $cacheAdapter;
     }
 
@@ -118,7 +126,7 @@ class StopWords
 
         //
         $fileContent = file_get_contents( $this->getSourceFilePath() );
-        static::$arrStopWords = explode(PHP_EOL, $fileContent);
+        static::$arrStopWords = array_unique( explode(PHP_EOL, $fileContent) );
         foreach(static::$arrStopWords as $key => $value) {
 
             $value = trim($value);
@@ -132,9 +140,8 @@ class StopWords
             static::$arrStopWords[$key] = $value;
         }
 
+        usort(static::$arrStopWords, fn($a, $b) => mb_strlen($b) - mb_strlen($a));
+
         $this->getCacheAdapter($cacheFilePath)->warmUp([static::FILENAME => static::$arrStopWords]);
     }
-
-
-
 }
