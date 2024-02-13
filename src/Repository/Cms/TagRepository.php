@@ -29,6 +29,22 @@ class TagRepository extends BaseCmsRepository
     }
 
 
+    public function findComplete(int $id) : ?Tag
+    {
+        return
+            $this->getQueryBuilder()
+                //
+                ->leftJoin('t.articles', 'articlesJunction')
+                ->leftJoin('articlesJunction.article', 'article')
+                ->addSelect('articlesJunction', 'article')
+                //
+                ->andWhere('t.id = :id')
+                    ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+    }
+
+
     public function findLatest(?int $num = null) : array
     {
         $qb =

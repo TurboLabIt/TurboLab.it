@@ -15,7 +15,7 @@ abstract class BaseCmsService extends BaseService
         $this->clear();
         $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($id);
 
-        if( empty($this->entity) ) {
+        if( empty($entity) ) {
 
             $exceptionClass = static::NOT_FOUND_EXCEPTION;
             throw new $exceptionClass($id);
@@ -28,7 +28,17 @@ abstract class BaseCmsService extends BaseService
     public function loadBySlugDashId(string $slugDashId) : static
     {
         $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
-        return $this->load($entityId);
+
+        $this->clear();
+        $entity = $this->em->getRepository(static::ENTITY_CLASS)->findComplete($entityId);
+
+        if( empty($entity) ) {
+
+            $exceptionClass = static::NOT_FOUND_EXCEPTION;
+            throw new $exceptionClass($entityId);
+        }
+
+        return $this->setEntity($entity);
     }
 
 

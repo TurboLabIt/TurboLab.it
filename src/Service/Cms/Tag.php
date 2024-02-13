@@ -62,7 +62,7 @@ class Tag extends BaseCmsService
 
     public function getArticles() : array
     {
-        $articleJunctionEntities = $this->entity->getArticles();
+        $articleJunctionEntities = $this->entity->getArticles()->getValues();
         $arrArticles = [];
         foreach($articleJunctionEntities as $junctionEntity) {
 

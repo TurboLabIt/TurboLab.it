@@ -29,6 +29,28 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
+    public function findComplete(int $id) : ?Article
+    {
+        return
+            $this->getQueryBuilder()
+                // authors
+                ->leftJoin('t.authors', 'authorsJunction')
+                ->leftJoin('authorsJunction.user', 'user')
+                // tags
+                ->leftJoin('t.tags', 'tagsJunction')
+                ->leftJoin('tagsJunction.tag', 'tag')
+                // files
+                ->leftJoin('t.files', 'filesJunction')
+                ->leftJoin('filesJunction.file', 'file')
+                //
+                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file')
+                ->andWhere('t.id = :id')
+                    ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+    }
+
+
     public function findLatestPublished(?int $num = null) : array
     {
         $qb =
