@@ -7,7 +7,7 @@ use Twig\TwigFilter;
 
 class TliExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters() : array
     {
         return [
             new TwigFilter('friendlyNum', [TliRuntime::class, 'friendlyNum'], ['is_safe' => ['html']]),
