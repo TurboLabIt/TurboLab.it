@@ -1,7 +1,7 @@
 <?php
 namespace App\Repository\Cms;
 
-use App\Entity\ArticleAuthor;
+use App\Entity\Cms\ArticleAuthor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

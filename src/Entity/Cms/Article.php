@@ -2,7 +2,6 @@
 namespace App\Entity\Cms;
 
 use App\Entity\PhpBB\Topic;
-use App\Interface\ArticleInterface;
 use App\Repository\Cms\ArticleRepository;
 use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;

@@ -2,7 +2,6 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Tag as TagEntity;
-use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,8 +15,9 @@ class Tag extends BaseCmsService
 
     use ViewableServiceTrait;
 
-    protected ?TagEntity $entity    = null;
-    protected ?array $arrArticles   = null;
+    protected ?TagEntity $entity        = null;
+    protected ?array $arrArticles       = null;
+    protected ?Article $firstArticle    = null;
 
 
     public function __construct(protected TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)

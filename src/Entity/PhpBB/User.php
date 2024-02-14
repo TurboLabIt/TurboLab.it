@@ -73,12 +73,12 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->articles         = new ArrayCollection();
-        $this->images           = new ArrayCollection();
-        $this->tags             = new ArrayCollection();
-        $this->articlesTagged   = new ArrayCollection();
-        $this->files            = new ArrayCollection();
-        $this->fileTags         = new ArrayCollection();
+        $this->articles                 = new ArrayCollection();
+        $this->images                   = new ArrayCollection();
+        $this->tags                     = new ArrayCollection();
+        $this->articlesTagged           = new ArrayCollection();
+        $this->files                    = new ArrayCollection();
+        $this->articlesAttachedToFiles  = new ArrayCollection();
     }
 
     public function getId(): ?int

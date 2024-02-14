@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests;
 
-use App\Comparabile\Entity\Opportunity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
