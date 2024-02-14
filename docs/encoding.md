@@ -29,7 +29,7 @@ Rispettando queste specifiche, l'HTML generato supera la [validazione W3C](https
 
 **Il corpo** degli articoli importati da TLI1 utilizza *single-quote* e *double-quote* letterali sia per indicare gli attributi (`<img src="..">`) sia per il testo (`il sistema dell'anno 2001 fu chiamato "Windows XP"`).
 
-Per essere conformi alle specifiche indicate sopra, dovrabbe invece essere `<img src=".."> il sistema dell&apos;anno 2001 fu chiamato &quot;Windows XP&quot;`.
+Per essere conformi alle specifiche indicate sopra, dovrebbe invece essere `<img src=".."> il sistema dell&apos;anno 2001 fu chiamato &quot;Windows XP&quot;`.
 
 Questa ambiguità impedisce di correggere il problema in fase di importazione, ma non crea problemi: l'HTML rimane infatti valido **fino a quando non lo si utilizza in un attributo**, situazione che al momento non si presenta.
 
