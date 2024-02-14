@@ -6,8 +6,8 @@ use App\Repository\BaseRepository;
 
 abstract class BaseCmsRepository extends BaseRepository
 {
-    public function countOneView(int $entityId)
+    public function countOneView(int $entityId) : void
     {
-        return $this->increase("views", $entityId);
+        $this->increase("views", $entityId);
     }
 }

@@ -14,7 +14,7 @@ class Tag extends BaseCmsService
     const ENTITY_CLASS          = TagEntity::class;
     const NOT_FOUND_EXCEPTION   = 'App\Exception\TagNotFoundException';
 
-    use ViewableServiceTrait, UrlableServiceTrait;
+    use ViewableServiceTrait;
 
     protected ?TagEntity $entity    = null;
     protected ?array $arrArticles   = null;
@@ -103,7 +103,11 @@ class Tag extends BaseCmsService
     }
 
 
-    public function getAuthors() : Collection { return $this->entity->getAuthors(); }
+    public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return $this->urlGenerator->generateUrl($this, $page, $urlType);
+    }
 
-    public function getUrl(?int $page = null) : string { return $this->urlGenerator->generateUrl($this, $page); }
+
+    public function getAuthors() : Collection { return $this->entity->getAuthors(); }
 }

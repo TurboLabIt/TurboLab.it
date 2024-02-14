@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait IdableEntityTrait
 {
-    #[ORM\Id()]
+    #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ['unsigned' => true])]
     protected ?int $id = null;

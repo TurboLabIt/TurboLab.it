@@ -21,7 +21,7 @@ use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -283,7 +283,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $this->em
                 ->getClassMetadata($className)
-                ->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
+                ->setIdGeneratorType(ClassMetadataInfo::GENERATOR_TYPE_NONE);
         }
 
         return $this;
@@ -515,6 +515,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         if( $copyResult !== true ) {
             return $this->endWithError("Failed to copy image file ##$sourceFilePath## to ##$destFilePath##");
         }
+
+        return $this;
     }
 
 
@@ -681,6 +683,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setUpdatedAt($createdAt);
 
         $article->addTag($articleTag);
+
+        return $this;
     }
 
 
@@ -790,6 +794,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         if( $copyResult !== true ) {
             return $this->endWithError("Failed to copy file file ##$sourceFilePath## to ##$destFilePath##");
         }
+
+        return $this;
     }
 
 
@@ -859,6 +865,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setUpdatedAt($createdAt);
 
         $article->addFile($articleFile);
+
+        return $this;
     }
 
 
