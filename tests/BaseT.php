@@ -102,7 +102,7 @@ abstract class BaseT extends WebTestCase
     public function expectRedirect(string $urlFirst, string $expectedUrlRedirectTo, int $expectedHttpStatus = Response::HTTP_MOVED_PERMANENTLY)
     {
         $crawler = $this->browse($urlFirst);
-        $this->assertResponseRedirects($expectedUrlRedirectTo, $expectedHttpStatus);
+        $this->assertResponseRedirects($expectedUrlRedirectTo, $expectedHttpStatus, 'Redirect failed! URL: ' . $urlFirst);
     }
 
 

@@ -47,8 +47,10 @@ class TagController extends BaseController
 
 
     #[Route('/tag/{tag<[^/]+>}/{page<[0-9]*>}', name: 'app_tag_legacy')]
-    public function legacyUrl(string $tag, ?int $page = null) : Response
+    public function legacyUrl(string $tag, ?string $page = null) : Response
     {
+        $page = empty($page) ? null : (int)$page;
+
         /** @var Tag $tag */
         $tag = $this->tag->loadByTitle($tag);
         return $this->redirect($tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
