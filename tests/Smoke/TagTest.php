@@ -75,7 +75,7 @@ class TagTest extends BaseT
         $this->tagTitleAsH1Checker($tag, $crawler, '#turbolab.it: articoli, guide e news');
 
         // H2
-        $crawler = $this->fetchDomNode($url, 'tag');
+        $crawler = $this->fetchDomNode($url, 'article');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);

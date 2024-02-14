@@ -64,7 +64,9 @@ class Image extends BaseCmsService
     protected ?string $lastBuiltImageMimeType       = null;
 
 
-    public function __construct(protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir)
+    public function __construct(
+        protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
+    )
     {
         $this->clear();
 
@@ -376,7 +378,6 @@ class Image extends BaseCmsService
     }
 
 
-    public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
     public function getUrl(Article $article, string $size) : string { return $this->urlGenerator->generateUrl($this, $article, $size); }

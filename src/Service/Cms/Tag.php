@@ -103,8 +103,6 @@ class Tag extends BaseCmsService
     }
 
 
-    public function getTitle() : ?string { return $this->entity->getTitle(); }
-    public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
 
     public function getUrl(?int $page = null) : string { return $this->urlGenerator->generateUrl($this, $page); }

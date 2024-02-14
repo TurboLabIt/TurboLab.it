@@ -7,6 +7,7 @@ use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class ArticleTest extends BaseT
@@ -197,12 +198,38 @@ class ArticleTest extends BaseT
                 continue;
             }
 
-            $checkIt = false;
+            // local file: Windows Bootable DVD Generator || Estensioni video HEVC (appx 64 bit)
+            if(
+                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                str_ends_with($href, "/scarica/1")
+            ) {
+                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
+                $this->assertNotEmpty($file);
+                $this->assertResponseHeaderSame('content-type', 'application/zip');
 
-            // file
-            if( stripos($href, "/scarica/") !== false ) {
+            // local file: Estensioni video HEVC (appx 64 bit)
+            } else if(
+                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                str_ends_with($href, "/scarica/400") !== false
+            ) {
+                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
+                $this->assertNotEmpty($file);
+                $this->assertResponseHeaderSame('content-type', 'application/zip');
 
+            // local file: Batch configurazione macOS in VirtualBox
+            } else if(
+                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                str_ends_with($href, "/scarica/362") !== false
+            ) {
+                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
+                $this->assertNotEmpty($file);
+                $this->assertResponseHeaderSame('content-type', 'text/x-msdos-batch; charset=UTF-8');
 
+            // remote file (must redirect... somewhere)
+            } else if( static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) ) {
+
+                $this->browse($href);
+                $this->assertResponseRedirects();
 
             // author
             } elseif( stripos($href, "/utenti/") !== false ) {
@@ -214,10 +241,6 @@ class ArticleTest extends BaseT
                 static::getService('App\\Service\\Cms\\ArticleUrlGenerator')->isUrl($href) ||
                 static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
             ) {
-                $checkIt = true;
-            }
-
-            if($checkIt) {
                 $this->fetchHtml($href);
             }
         }

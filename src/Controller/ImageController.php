@@ -97,12 +97,12 @@ class ImageController extends BaseController
                 'Content-Type' => $image->getBuiltImageMimeType()
             ]);
 
+        // this doesn't work (it doesn't survive the internal redirect of X-Sendfile)
+        $response->headers->set('x-tli-image', $originHeader);
+
         // https://stackoverflow.com/a/44323940/1204976
         $xSendPath = $image->getXSendPath($size);
         $response->headers->set('X-Accel-Redirect', $xSendPath);
-
-        // this doesn't work (it doesn't survive the internal redirect of X-Sendfile)
-        $response->headers->set('x-tli-image', $originHeader);
 
         return $response;
     }

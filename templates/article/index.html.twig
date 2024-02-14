@@ -9,8 +9,7 @@
             <span>
                 a cura di
                 {% for Author in Article.Authors %}
-                    <a href="">{{ Author.User.username }}</a>
-                    {% if not loop.last %}, {% endif %}
+                    <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                 {% endfor %}
                  |
             </span>
@@ -21,7 +20,7 @@
         {% if Article.Tags is not empty %}
             <span>
                 {% for Tag in Article.Tags %}
-                    <a href="{{ Tag.Tag.url }}">{{ Tag.Tag.title }}</a>
+                    <a href="{{ Tag.url }}">{{ Tag.title|raw }}</a>
                     {% if not loop.last %} • {% endif %}
                 {% endfor %}
                  |
@@ -32,6 +31,16 @@
             <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
         {% endif %}
     </div>
+
+    {% if Article.files is not empty %}
+        <span>
+            {% for File in Article.files %}
+                <a href="{{ File.url }}">{{ File.title|raw }}</a>
+                {% if not loop.last %} • {% endif %}
+            {% endfor %}
+            |
+        </span>
+    {% endif %}
 
     <div>{{ Article.bodyForDisplay|raw }}</div>
 

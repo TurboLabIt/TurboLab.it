@@ -109,23 +109,6 @@ class Article extends BaseCmsService
     }
 
 
-    public function getTags() : array
-    {
-        $tagJunctionEntities = $this->entity->getTags();
-        $arrTags = [];
-        foreach($tagJunctionEntities as $junctionEntity) {
-
-            $tagEntity  = $junctionEntity->getTag();
-            $tagId      = $tagEntity->getId();
-            $arrTags[$tagId] = [
-                "Tag" => $this->factory->createTag($tagEntity)
-            ];
-        }
-
-        return $arrTags;
-    }
-
-
     public function setHtmlProcessor(HtmlProcessor $htmlProcessor) : static
     {
         $this->htmlProcessor = $htmlProcessor;
@@ -139,11 +122,38 @@ class Article extends BaseCmsService
     }
 
 
-    public function getTitle() : ?string { return $this->entity->getTitle(); }
-    public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
+    public function getTags() : array
+    {
+        $tagJunctionEntities = $this->entity->getTags();
+        $arrTags = [];
+        foreach($tagJunctionEntities as $junctionEntity) {
+
+            $tagEntity  = $junctionEntity->getTag();
+            $tagId      = $tagEntity->getId();
+            $arrTags[$tagId] = $this->factory->createTag($tagEntity);
+        }
+
+        return $arrTags;
+    }
+
+
+    public function getFiles() : array
+    {
+        $fileJunctionEntities = $this->entity->getFiles();
+        $arrFiles = [];
+        foreach($fileJunctionEntities as $junctionEntity) {
+
+            $fileEntity = $junctionEntity->getFile();
+            $fileId     = $fileEntity->getId();
+            $arrFiles[$fileId] = $this->factory->createFile($fileEntity);
+        }
+
+        return $arrFiles;
+    }
+
+
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
     public function getPublishedAt() : ?\DateTime { return $this->entity->getPublishedAt(); }
-    public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
     public function getBody() : ?string { return $this->entity->getBody(); }

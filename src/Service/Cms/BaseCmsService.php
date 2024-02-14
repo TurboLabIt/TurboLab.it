@@ -54,4 +54,7 @@ abstract class BaseCmsService extends BaseService
     // abstract public function getEntity() : ?BaseEntity;
 
     public function getId() : ?int { return $this->entity->getId(); }
+    public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
+    public function getTitle() : ?string { return $this->entity->getTitle(); }
+    public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 }

@@ -9,6 +9,9 @@ use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Service\Cms\Image as ImageService;
+use App\Entity\Cms\File as FileEntity;
+use App\Service\Cms\File as FileService;
+
 
 class CmsFactory
 {
@@ -19,7 +22,8 @@ class CmsFactory
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
         protected ArticleUrlGenerator $articleUrlGenerator,
         protected TagUrlGenerator $tagUrlGenerator,
-        protected ImageUrlGenerator $imageUrlGenerator
+        protected ImageUrlGenerator $imageUrlGenerator,
+        protected FileUrlGenerator $fileUrlGenerator
     )
     { }
 
@@ -72,5 +76,16 @@ class CmsFactory
 
         $this->defaultSpotlight = $this->createImage($entity);
         return $this->defaultSpotlight;
+    }
+
+
+    public function createFile(?FileEntity $entity = null) : FileService
+    {
+        $service = new FileService($this->fileUrlGenerator, $this->em, $this, $this->projectDir);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
     }
 }

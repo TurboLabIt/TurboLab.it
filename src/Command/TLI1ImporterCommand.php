@@ -570,7 +570,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
-        $title      = $this->convertValueFromTli1ToTli2($arrTag["tag"], true);
+        $title      = str_ireplace('&', '&amp;', $arrTag["tag"]);
+        $title      = $this->convertValueFromTli1ToTli2($title, true);
         $ranking    = (int)$arrTag["peso"];
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
@@ -769,6 +770,26 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->em->persist($entityTli2File);
         $this->arrNewFiles[$fileId] = $entityTli2File;
+
+
+        $fileService = $this->cmsFactory->createFile($entityTli2File);
+        if( !$fileService->isLocal() ) {
+            return $this;
+        }
+
+        // file copy
+        $filename       = $fileService->getOriginalFileName();
+        $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/files/$filename");
+        $destFilePath   = $fileService->getOriginalFilePath();
+
+        if( !file_exists($sourceFilePath) ) {
+            return $this->fxWarning("The related file is missing: " . print_r($arrFile, true) );
+        }
+
+        $copyResult = copy($sourceFilePath, $destFilePath);
+        if( $copyResult !== true ) {
+            return $this->endWithError("Failed to copy file file ##$sourceFilePath## to ##$destFilePath##");
+        }
     }
 
 
