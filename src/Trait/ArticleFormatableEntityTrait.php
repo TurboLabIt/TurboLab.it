@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait ArticleFormatableEntityTrait
 {
-    const FORMAT_ARTICLE    = 1;
-    const FORMAT_NEWS       = 2;
+    const int FORMAT_ARTICLE    = 1;
+    const int FORMAT_NEWS       = 2;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $format = null;

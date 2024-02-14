@@ -11,10 +11,10 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 class File extends BaseCmsService
 {
-    const ENTITY_CLASS          = FileEntity::class;
-    const NOT_FOUND_EXCEPTION   = 'App\Exception\FileNotFoundException';
+    const string ENTITY_CLASS          = FileEntity::class;
+    const string NOT_FOUND_EXCEPTION   = 'App\Exception\FileNotFoundException';
 
-    const UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
+    const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
     use ViewableServiceTrait;
     use UrlableServiceTrait;

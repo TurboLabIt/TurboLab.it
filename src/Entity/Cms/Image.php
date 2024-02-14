@@ -14,16 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 class Image extends BaseCmsEntity
 {
-    const WATERMARK_DISABLED        = 0;
-    const WATERMARK_TOP_LEFT        = 1;
-    const WATERMARK_TOP_RIGHT       = 2;
-    const WATERMARK_BOTTOM_RIGHT    = 3;
-    const WATERMARK_BOTTOM_LEFT     = 4;
+    const int WATERMARK_DISABLED        = 0;
+    const int WATERMARK_TOP_LEFT        = 1;
+    const int WATERMARK_TOP_RIGHT       = 2;
+    const int WATERMARK_BOTTOM_RIGHT    = 3;
+    const int WATERMARK_BOTTOM_LEFT     = 4;
 
-    const FORMAT_JPG    = 'jpg';
-    const FORMAT_PNG    = 'png';
-    const FORMAT_WEBP   = 'webp';
-    const FORMAT_AVIF   = 'avif';
+    const string FORMAT_JPG    = 'jpg';
+    const string FORMAT_PNG    = 'png';
+    const string FORMAT_WEBP   = 'webp';
+    const string FORMAT_AVIF   = 'avif';
 
     use IdableEntityTrait, TitleableEntityTrait;
 

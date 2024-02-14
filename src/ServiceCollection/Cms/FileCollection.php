@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FileCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS = FileService::ENTITY_CLASS;
+    const string ENTITY_CLASS = FileService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)

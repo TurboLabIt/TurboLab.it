@@ -12,8 +12,8 @@ use App\Service\Cms\Image as ImageService;
 
 class Article extends BaseCmsService
 {
-    const ENTITY_CLASS          = ArticleEntity::class;
-    const NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
+    const string ENTITY_CLASS          = ArticleEntity::class;
+    const string NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait;
@@ -153,7 +153,7 @@ class Article extends BaseCmsService
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
-    public function getPublishedAt() : ?\DateTime { return $this->entity->getPublishedAt(); }
+    public function getPublishedAt() : ?\DateTimeInterface { return $this->entity->getPublishedAt(); }
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
     public function getBody() : ?string { return $this->entity->getBody(); }

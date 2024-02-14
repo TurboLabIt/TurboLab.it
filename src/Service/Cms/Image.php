@@ -17,32 +17,32 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const ENTITY_CLASS          = ImageEntity::class;
-    const NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
+    const string ENTITY_CLASS          = ImageEntity::class;
+    const string NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
 
-    const BUILD_CACHE_ENABLED = true;
+    const bool BUILD_CACHE_ENABLED = true;
     const BUILD_FORMAT_FORCED = null;
 
-    const WIDTH  = 'width';
-    const HEIGHT = 'height';
+    const string WIDTH  = 'width';
+    const string HEIGHT = 'height';
 
-    const WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
-    const WATERMARK_WIDTH_PERCENT   = 25;
-    const WATERMARK_OPACITY         = 100;
-    const WATERMARK_FORCED_POSITION = null;
-    const WATERMARK_MIN_SIZE        = 175;
-    const MIN_WATERMARKABLE_SIZES   = [
+    const string WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
+    const int WATERMARK_WIDTH_PERCENT   = 25;
+    const int WATERMARK_OPACITY         = 100;
+    const null WATERMARK_FORCED_POSITION = null;
+    const int WATERMARK_MIN_SIZE        = 175;
+    const array MIN_WATERMARKABLE_SIZES   = [
         self::WIDTH     => 300,
         self::HEIGHT    => 300,
     ];
 
-    const HOW_MANY_FILES_PER_FOLDER = 5000;
+    const int HOW_MANY_FILES_PER_FOLDER = 5000;
 
-    const SIZE_MIN  = 'min';
-    const SIZE_MED  = 'med';
-    const SIZE_MAX  = 'max';
+    const string SIZE_MIN  = 'min';
+    const string SIZE_MED  = 'med';
+    const string SIZE_MAX  = 'max';
 
-    const SIZE_DIMENSIONS = [
+    const array SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [
             self::WIDTH     => 480,
             self::HEIGHT    => 270,
@@ -57,7 +57,7 @@ class Image extends BaseCmsService
         ]
     ];
 
-    const UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
+    const string UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
     protected ?ImageEntity $entity = null;
     protected static ?string $buildFileExtension    = null;

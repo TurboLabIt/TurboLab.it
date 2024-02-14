@@ -8,11 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait PublishableEntityTrait
 {
-    const PUBLISHING_STATUS_DRAFT               = 0;
-    const PUBLISHING_STATUS_READY_FOR_REVIEW    = 3;
-    const PUBLISHING_STATUS_PUBLISHED           = 5;
-    const PUBLISHING_STATUS_REJECTED            = 7;
-    const PUBLISHING_STATUS_REMOVED             = 9;
+    const int PUBLISHING_STATUS_DRAFT               = 0;
+    const int PUBLISHING_STATUS_READY_FOR_REVIEW    = 3;
+    const int PUBLISHING_STATUS_PUBLISHED           = 5;
+    const int PUBLISHING_STATUS_REJECTED            = 7;
+    const int PUBLISHING_STATUS_REMOVED             = 9;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $publishingStatus = 0; // default to PUBLISHING_STATUS_DRAFT;

@@ -8,8 +8,8 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class UrlGenerator
 {
-    const INTERNAL_DOMAINS = ['localhost', 'dev0.turbolab.it', 'next.turbolab.it', 'turbolab.it'];
-    const DEFAULT_TAG_SLUG_DASH_ID = "pc-642";
+    const array INTERNAL_DOMAINS = ['localhost', 'dev0.turbolab.it', 'next.turbolab.it', 'turbolab.it'];
+    const string DEFAULT_TAG_SLUG_DASH_ID = "pc-642";
 
     protected AsciiSlugger $slugger;
 

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ArticleCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS = ArticleService::ENTITY_CLASS;
+    const string ENTITY_CLASS = ArticleService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)

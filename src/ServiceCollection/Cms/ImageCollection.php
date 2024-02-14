@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class ImageCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS = ImageService::ENTITY_CLASS;
+    const string ENTITY_CLASS = ImageService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)

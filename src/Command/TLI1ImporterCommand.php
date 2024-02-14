@@ -33,11 +33,11 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
 #[AsCommand(name: 'TLI1 Importer', description: 'Import data from TLI1 to TLI2', aliases: ['tli1'])]
 class TLI1ImporterCommand extends AbstractBaseCommand
 {
-    const OPT_SKIP_ARTICLES = "skip-articles";
-    const OPT_SKIP_IMAGES   = "skip-images";
-    const OPT_SKIP_TAGS     = "skip-tags";
-    const OPT_SKIP_FILES    = "skip-files";
-    const OPT_SKIP_BADGES   = "skip-badges";
+    const string OPT_SKIP_ARTICLES = "skip-articles";
+    const string OPT_SKIP_IMAGES   = "skip-images";
+    const string OPT_SKIP_TAGS     = "skip-tags";
+    const string OPT_SKIP_FILES    = "skip-files";
+    const string OPT_SKIP_BADGES   = "skip-badges";
 
     protected bool $allowDryRunOpt = true;
 

@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class TagCollection extends BaseCmsServiceCollection
 {
-    const ENTITY_CLASS = TagService::ENTITY_CLASS;
+    const string ENTITY_CLASS = TagService::ENTITY_CLASS;
 
 
     public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)

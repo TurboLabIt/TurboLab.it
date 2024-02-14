@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
  */
 class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSubscriberInterface
 {
-    const COOKIE_BASENAME_PHPBB = 'turbocookie_2021_';
+    const string COOKIE_BASENAME_PHPBB = 'turbocookie_2021_';
 
 
     public function __construct(protected Security $security, protected UserRepository $userRepository)

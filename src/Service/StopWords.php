@@ -8,7 +8,7 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 class StopWords
 {
-    const FILENAME = 'stopwords-it';
+    const string FILENAME = 'stopwords-it';
 
     protected static array $arrStopWords = [];
 
