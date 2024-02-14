@@ -16,7 +16,8 @@ class Tag extends BaseCmsService
 
     use ViewableServiceTrait, UrlableServiceTrait;
 
-    protected ?TagEntity $entity = null;
+    protected ?TagEntity $entity    = null;
+    protected ?array $arrArticles   = null;
 
 
     public function __construct(protected TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)
@@ -62,18 +63,20 @@ class Tag extends BaseCmsService
 
     public function getArticles() : array
     {
-        $articleJunctionEntities = $this->entity->getArticles()->getValues();
-        $arrArticles = [];
+        if( is_array($this->arrArticles) ) {
+            return $this->arrArticles;
+        }
+
+        $articleJunctionEntities = $this->entity->getArticles();
+        $this->arrArticles = [];
         foreach($articleJunctionEntities as $junctionEntity) {
 
             $articleEntity  = $junctionEntity->getArticle();
             $articleId      = $articleEntity->getId();
-            $arrArticles[$articleId] = [
-                "Article" => $this->factory->createArticle($articleEntity)
-            ];
+            $this->arrArticles[$articleId] = $this->factory->createArticle($articleEntity);
         }
 
-        return $arrArticles;
+        return $this->arrArticles;
     }
 
 
@@ -84,8 +87,7 @@ class Tag extends BaseCmsService
         }
 
         $arrArticles        = $this->getArticles();
-        $arrFirstArticle    = reset($arrArticles);
-        $this->firstArticle = $arrFirstArticle["Article"] ?? null;
+        $this->firstArticle = reset($arrArticles);
         return $this->firstArticle;
     }
 

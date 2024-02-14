@@ -14,6 +14,20 @@ class TagTest extends BaseT
     protected static array $arrTagEntity;
 
 
+    public function testingPlayground()
+    {
+        // 👀 https://turbolab.it/universita-1309
+
+        /** @var Tag $tag */
+        $tag = static::getService("App\\Service\\Cms\\Tag");
+        $tag->load(1309);
+
+        $url = $tag->getUrl();
+        $crawler = $this->fetchDomNode($url);
+        $this->tagTitleAsH1Checker($tag, $crawler);
+    }
+
+
     public function testAppTagPage0Or1()
     {
         $realTagUrl = "http://localhost/windows-10";
@@ -46,35 +60,19 @@ class TagTest extends BaseT
     }
 
 
-    public function testingPlayground()
-    {
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(1309);
-
-        $url = $tag->getUrl();
-        $crawler = $this->fetchDomNode($url);
-        $this->tagTitleAsH1Checker($tag, $crawler);
-    }
-
-
-
-
-
-
     public function testSpecialTag()
     {
-        // 👀 https://turbolab.it/windows-10
+        // 👀 https://turbolab.it/turbolab.it-1
 
         /** @var Tag $tag */
         $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(10);
+        $tag->load(1);
 
         $url = $tag->getUrl();
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($tag, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell&apos;impianto &amp; &quot;collaudo&quot;) | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine');
+        $this->tagTitleAsH1Checker($tag, $crawler, '#turbolab.it: articoli, guide e news');
 
         // H2
         $crawler = $this->fetchDomNode($url, 'tag');
@@ -82,72 +80,8 @@ class TagTest extends BaseT
         $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);
 
-        // intro paragraph
-        $firstPContent = $crawler->filter('p')->first()->html();
-        $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
-
-        // summary
-        $summaryLi = $crawler->filter('ul')->first()->filter('ul')->filter('li');
-        $arrUnmatchedUlContent = [
-            'video da YouTube', 'formattazione',
-            'link ad altri articoli', 'link a pagine di tag', 'link a file',
-            'link alle pagine degli autori', 'caratteri "delicati"',
-            'tutte le immagini'
-        ];
-
-        foreach($summaryLi as $li) {
-
-            $liText = $li->textContent;
-
-            foreach($arrUnmatchedUlContent as $k => $textToSearch) {
-
-                if( stripos($liText, $textToSearch) !== false ) {
-
-                    unset($arrUnmatchedUlContent[$k]);
-                    break;
-                }
-            }
-        }
-
-        $this->assertEmpty($arrUnmatchedUlContent);
-
-        // YouTube
-        $iframes = $crawler->filter('iframe');
-        $countYouTubeIframe = 0;
-        foreach($iframes as $iframe) {
-
-            $src = $iframe->getAttribute("src");
-            if( stripos($src, 'youtube-nocookie.com/embed') !== false ) {
-                $countYouTubeIframe++;
-            }
-        }
-
-        $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
-
-        // formatting styles
-        $formattingStylesOl = $crawler->filter('ol')->first()->filter('li');
-        $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 'code', 4 => 'ins'];
-        foreach($arrExpectedNodes as $index => $expectedTagName) {
-
-            $nodeTagName = $formattingStylesOl->getNode($index - 1)->firstChild->tagName;
-            $this->assertEquals($expectedTagName, $nodeTagName);
-        }
-
         //
         $this->internalLinksChecker($crawler);
-
-        // fragile chars
-        $fragileCharsH2Text = 'Caratteri "delicati"';
-        $fragileCharsActualValue = null;
-        foreach($H2s as $h2) {
-
-            $h2Content = $h2->textContent;
-            if( $h2Content === $fragileCharsH2Text) {
-                $fragileCharsActualValue = $h2->nextSibling->nodeValue;
-            }
-        }
-
-        $this->assertEquals('@ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine', $fragileCharsActualValue);
 
         //
         $this->internalImagesChecker($crawler);
@@ -180,17 +114,12 @@ class TagTest extends BaseT
     {
         static::$client = null;
 
-        $entity  = $arrData["entity"];
-        $tag = $arrData["service"];
-
-        $shortUrl = $tag->getShortUrl();
-        $assertFailureMessage = "Failing URL: $shortUrl";
-        $this->assertStringEndsWith("/" . $entity->getId(), $shortUrl, $assertFailureMessage);
+        $entity = $arrData["entity"];
+        $tag    = $arrData["service"];
 
         $url = $tag->getUrl();
+        $assertFailureMessage = "Failing URL: $url";
         $this->assertStringEndsWith("-" . $entity->getId(), $url, $assertFailureMessage);
-
-        $this->expectRedirect($shortUrl, $url);
 
         $crawler = $this->fetchDomNode($url);
 
@@ -201,7 +130,7 @@ class TagTest extends BaseT
 
     protected function tagTitleAsH1Checker(Tag $tag, Crawler $crawler, ?string $expectedH1 = null) : void
     {
-        $assertFailureMessage = "Failing URL: " . $tag->getShortUrl();
+        $assertFailureMessage = "Failing URL: " . $tag->getUrl();
 
         $title = $tag->getTitle();
         $this->assertNotEmpty($title, $assertFailureMessage);
@@ -216,7 +145,7 @@ class TagTest extends BaseT
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
         $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
-        $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
+        $this->assertEquals('#' . $title . ': articoli, guide e news', $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {
             $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);

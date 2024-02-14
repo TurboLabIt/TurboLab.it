@@ -36,10 +36,22 @@ class TagRepository extends BaseCmsRepository
                 //
                 ->leftJoin('t.articles', 'articlesJunction')
                 ->leftJoin('articlesJunction.article', 'article')
-                ->addSelect('articlesJunction', 'article')
+                // articles authors
+                ->leftJoin('article.authors', 'articleAuthorsJunction')
+                ->leftJoin('articleAuthorsJunction.user', 'articleUser')
+                // articles tags
+                ->leftJoin('article.tags', 'articleTagsJunction')
+                ->leftJoin('articleTagsJunction.tag', 'articleTag')
+                //
+                ->addSelect(
+                    'articlesJunction', 'article',
+                    'articleAuthorsJunction', 'articleUser',
+                    'articleTagsJunction', 'articleTag'
+                )
                 //
                 ->andWhere('t.id = :id')
                     ->setParameter('id', $id)
+                ->orderBy('article.updatedAt', 'DESC')
                 ->getQuery()
                 ->getOneOrNullResult();
     }

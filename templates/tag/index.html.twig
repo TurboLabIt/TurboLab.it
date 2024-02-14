@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block htmlArticleContent %}
+
+    <h1>{{ metaTitle|raw }}</h1>
+
+    {% if Tag.articles is not empty %}
+
+        <div>
+            {% for Article in Tag.articles %}
+
+                <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
+
+                {% if Article.Authors is not empty %}
+                    <span>
+                        a cura di
+                        {% for Author in Article.Authors %}
+                            <a href="">{{ Author.User.username }}</a>
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                         |
+                    </span>
+                {% endif %}
+
+                {% if Article.Tags is not empty %}
+                    <span>
+                        {% for Tag in Article.Tags %}
+                            <a href="{{ Tag.Tag.url }}">{{ Tag.Tag.title }}</a>
+                            {% if not loop.last %} • {% endif %}
+                        {% endfor %}
+                         |
+                    </span>
+                {% endif %}
+
+                {% if Article.views > 1 %}
+                    <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <p>Nessun contenuto trovato.</p>
+
+    {% endif %}
+
+{% endblock %}
