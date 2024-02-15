@@ -69,6 +69,10 @@ class TagTest extends BaseT
         $tag->load(1);
 
         $url = $tag->getUrl();
+
+        $wrongTagUrl = 'http://localhost/wrong-tag-slug-1';
+        $this->expectRedirect($wrongTagUrl, $url);
+
         $crawler = $this->fetchDomNode($url);
 
         // H1
@@ -85,6 +89,12 @@ class TagTest extends BaseT
 
         //
         $this->internalImagesChecker($crawler);
+    }
+
+
+    public function test404()
+    {
+        $this->expect404('http://localhost/turbolab.it-9999');
     }
 
 

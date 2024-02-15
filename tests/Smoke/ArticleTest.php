@@ -35,6 +35,16 @@ class ArticleTest extends BaseT
         $article->load(1939);
 
         $url = $article->getUrl();
+
+        $wrongTagUrl = 'http://localhost/pc-642/come-svolgere-test-automatici-turbolab.it-verifica-impianto-collaudo-oaueei-gbp-double-quoted-single-quoted-fine-1939';
+        $this->expectRedirect($wrongTagUrl, $url);
+
+        $wrongTagUrl = 'http://localhost/undefined-tag-99999999/come-svolgere-test-automatici-turbolab.it-verifica-impianto-collaudo-oaueei-gbp-double-quoted-single-quoted-fine-1939';
+        $this->expectRedirect($wrongTagUrl, $url);
+
+        $wrongArticleTitleUrl = 'http://localhost/turbolab.it-1/bao-1939';
+        $this->expectRedirect($wrongArticleTitleUrl, $url);
+
         $crawler = $this->fetchDomNode($url);
 
         // H1
@@ -115,6 +125,12 @@ class ArticleTest extends BaseT
 
         //
         $this->internalImagesChecker($crawler);
+    }
+
+
+    public function test404()
+    {
+        $this->expect404('http://localhost/turbolab.it-1/bao-9999');
     }
 
 

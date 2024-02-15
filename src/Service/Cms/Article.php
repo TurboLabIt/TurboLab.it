@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Service\Cms\Image as ImageService;
+use App\Service\Cms\Tag as TagService;
 
 
 class Article extends BaseCmsService
@@ -21,6 +22,7 @@ class Article extends BaseCmsService
     protected ?ArticleEntity $entity = null;
     protected ?ImageService $spotlight;
     protected HtmlProcessor $htmlProcessor;
+    protected ?TagService $topTag = null;
 
 
     public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)
@@ -39,9 +41,28 @@ class Article extends BaseCmsService
     public function getEntity() : ?ArticleEntity { return $this->entity; }
 
 
-    public function getTopTag()
+    public function getTopTag() : ?TagService
     {
-        return null;
+        if( !empty($this->topTag) ) {
+            return $this->topTag;
+        }
+
+        $arrTags = $this->getTags();
+        if( empty($arrTags) ) {
+            return null;
+        }
+
+        $this->topTag = reset($arrTags);
+
+        /** @var TagService $topTagCandidate */
+        foreach($arrTags as $topTagCandidate) {
+
+            if( $topTagCandidate->getRanking() > $this->topTag->getRanking() ) {
+                $this->topTag = $topTagCandidate;
+            }
+        }
+
+        return $this->topTag;
     }
 
 

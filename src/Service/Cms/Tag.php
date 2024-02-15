@@ -110,4 +110,5 @@ class Tag extends BaseCmsService
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
+    public function getRanking() : ?int { return $this->entity->getRanking(); }
 }
