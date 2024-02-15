@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -70,6 +71,21 @@ abstract class BaseT extends WebTestCase
     }
 
 
+    public function fetchFormByName(string $url, string $formName) : Form
+    {
+        return $this->fetchForm($url, "[name=" . $formName . "]");
+    }
+
+
+    public function fetchForm(string $url, string $formSelector) : Form
+    {
+        $crawler = $this->browse($url);
+        $this->assertResponseIsSuccessful("Failure before extracting form from $url");
+        $form = $crawler->filter("form" . $formSelector)->form();
+        return $form;
+    }
+
+
     public function browse(string $url, string $method = 'GET') : Crawler
     {
         // prevent "Kernel has already been booted"
@@ -101,7 +117,19 @@ abstract class BaseT extends WebTestCase
     public function expectRedirect(string $urlFirst, string $expectedUrlRedirectTo, int $expectedHttpStatus = Response::HTTP_MOVED_PERMANENTLY)
     {
         $crawler = $this->browse($urlFirst);
-        $this->assertResponseRedirects($expectedUrlRedirectTo, $expectedHttpStatus, 'Redirect failed! URL: ' . $urlFirst);
+        $this->assertResponseRedirects(
+            $expectedUrlRedirectTo, $expectedHttpStatus,
+            'Redirect failed! URL: ##' . $urlFirst . '## doesn\'t redirect to ##' . $expectedUrlRedirectTo . "##"
+        );
+    }
+
+
+    public function expect404(string $url)
+    {
+        $crawler = $this->browse($url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND,
+            'Expected 404 check failed! URL: ##' . $url . '## doesn\'t return ' . Response::HTTP_NOT_FOUND
+        );
     }
 
 

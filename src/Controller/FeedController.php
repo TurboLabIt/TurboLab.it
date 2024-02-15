@@ -73,7 +73,12 @@ class FeedController extends BaseController
     protected function responseAsRss(array $arrData)
     {
         $response = $this->render('feed/rss.xml.twig', $arrData);
-        //$response->headers->set('Content-Type', 'application/rss+xml');
+        /**
+         * 📚 https://validator.w3.org/feed/docs/warning/UnexpectedContentType.html
+         * RSS feeds should be served as application/rss+xml. Alternatively,
+         * for compatibility with widely-deployed web browsers, [...] application/xml
+         */
+        $response->headers->set('Content-Type', 'application/xml');
         return $response;
     }
 }

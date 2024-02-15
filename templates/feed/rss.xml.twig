@@ -4,7 +4,7 @@
         <title>{{ title }}</title>
         <link>{{ siteUrl|trim('/') }}</link>
         <description>{{ description }}</description>
-        <language>it-it</language>
+        <language>it-IT</language>
         <copyright>Copyright 2013-{{ 'now'|date('Y') }}, TurboLab.it</copyright>
         <managingEditor>info@turbolab.it (TurboLab.it)</managingEditor>
         <webMaster>info@turbolab.it (TurboLab.it)</webMaster>
@@ -33,21 +33,17 @@
 
         {% for Article in Articles %}
             <item>
-                <title>{{ Article.title }}</title>
-                <link>{{ Article.url }}</link>
+                <title>{{ Article.title|raw }}</title>
+                <link>{{ Article.url|raw }}</link>
                 {% if fullFeed %}
                     <content:encoded><![CDATA[{{ Article.body|raw }}]]></content:encoded>
                 {% else %}
                     <description><![CDATA[
-                        {% if Article.Spotlight is not null  %}
-                            <p>
-                                <a href="{{ Article.url }}">
-                                    <img style="border: 0; display: block; margin-left: auto; margin-right: auto" src="{{ Article.Spotlight.url('med') }}">
-                                 </a>
-                            </p>
-                        {% endif %}
-                        <p>{{ Article.abstract }}</p>
-                        <p>&rsaquo;&rsaquo; <a href="{{ Article.url }}">Leggi tutto</a></p>
+                        <a href="{{ Article.url }}">
+                            <img style="border: 0; display: block;" src="{{ Article.spotlightOrDefaultUrl('med') }}">
+                         </a>
+                        <p>{{ Article.abstract|raw }}</p>
+                        <p>» <a href="{{ Article.url }}">Leggi tutto</a></p>
                     ]]>
                     </description>
                 {% endif %}

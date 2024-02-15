@@ -10,6 +10,7 @@
             {% for Article in Tag.articles %}
 
                 <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
+                <img src="{{ Article.spotlightOrDefaultUrl('med') }}">
 
                 {% if Article.Authors is not empty %}
                     <span>
