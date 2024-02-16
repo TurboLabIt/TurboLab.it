@@ -14,6 +14,14 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
         $this->clear();
 
         $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->findBy(["id" => $arrIds], ["updatedAt" => 'DESC']);
+        $this->setEntities($arrEntities);
+
+        return $this->arrData;
+    }
+
+
+    public function setEntities(array $arrEntities) : static
+    {
         foreach($arrEntities as $entity) {
 
             $id = (string)$entity->getId();
@@ -21,7 +29,7 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
             $this->arrData[$id] = $service;
         }
 
-        return $this->arrData;
+        return $this;
     }
 
 

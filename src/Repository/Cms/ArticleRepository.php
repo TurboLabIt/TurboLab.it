@@ -68,4 +68,21 @@ class ArticleRepository extends BaseCmsRepository
                 ->getQuery()
                 ->getResult();
     }
+
+
+    public function findLatestReadyForReview() : array
+    {
+        $qb =
+            $this->getQueryBuilder()
+                ->andWhere('t.publishingStatus = :readyForReview')
+                    ->setParameter('readyForReview', Article::PUBLISHING_STATUS_READY_FOR_REVIEW)
+                ->andWhere('t.updatedAt >= :dateLimit')
+                    ->setParameter('dateLimit', (new \DateTime())->modify('-30 days') )
+                ->orderBy('t.updatedAt', 'ASC');
+
+        return
+            $qb
+                ->getQuery()
+                ->getResult();
+    }
 }

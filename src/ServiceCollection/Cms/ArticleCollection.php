@@ -19,11 +19,14 @@ class ArticleCollection extends BaseCmsServiceCollection
     public function loadLatestPublished(int $num) : static
     {
         $arrArticles = $this->em->getRepository(ArticleEntity::class)->findLatestPublished($num);
-        foreach($arrArticles as $articleId => $articleEntity) {
-            $this->arrData[$articleId] = $this->createService($articleEntity);
-        }
+        return $this->setEntities($arrArticles);
+    }
 
-        return $this;
+
+    public function loadLatestReadyForReview() : static
+    {
+        $arrArticles = $this->em->getRepository(ArticleEntity::class)->findLatestReadyForReview();
+        return $this->setEntities($arrArticles);
     }
 
 

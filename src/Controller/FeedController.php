@@ -41,7 +41,7 @@ class FeedController extends BaseController
             "title"         => "TurboLab.it | Nuovi contenuti completati, in attesa di pubblicazione",
             "selfUrl"       => $this->getSelfUrl(),
             "fullFeed"      => false,
-            "Articles"      => $this->articleCollection->loadNewUnpublished(1),
+            "Articles"      => $this->articleCollection->loadLatestReadyForReview(),
             "description"   => 'Questo feed eroga i contenuti che gli autori hanno indicato come "finiti", ma non ancora pubblicati',
         ];
 
