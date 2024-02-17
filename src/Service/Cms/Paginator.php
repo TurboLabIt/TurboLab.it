@@ -34,7 +34,7 @@ class Paginator
 
         } elseif( $this->currentPageNum == 2 ) {
 
-            $prevPageUrl = $this->urlGenerator->generate($routeName, $arrRouteParam, true);
+            $prevPageUrl = $this->urlGenerator->generate($routeName, $arrRouteParam, UrlGeneratorInterface::ABSOLUTE_URL);
             $currPageUrl = $this->urlGenerator->generate($routeWithNumName, array_merge($arrRouteWithNumParam, ["page" => $this->currentPageNum]), UrlGeneratorInterface::ABSOLUTE_URL);
 
         } else {

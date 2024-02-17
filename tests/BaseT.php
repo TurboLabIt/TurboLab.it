@@ -276,7 +276,7 @@ abstract class BaseT extends WebTestCase
             $this->assertStringContainsString('prev', $paginatorHtml);
             $prevLink = $paginator->filter('.pagination-prev > a');
             $prevHref = $prevLink->attr('href');
-            $this->assertEquals($nextPagePrevLinkUrl, 'http://localhost' . $prevHref);
+            $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
 
             // next checks
             $this->assertStringContainsString('successiv', $paginatorHtml);
