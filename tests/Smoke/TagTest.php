@@ -7,11 +7,13 @@ use App\Service\Cms\Tag;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Response;
 
 
 class TagTest extends BaseT
 {
+    // 👀 https://turbolab.it/something-12600
+    const int NO_ARTICLES_TAG_ID = 12600;
+
     protected static array $arrTagEntity;
 
 
@@ -62,9 +64,9 @@ class TagTest extends BaseT
 
 
 
-    public function specialTagToTestProvider()
+    public static function specialTagToTestProvider() : \Generator
     {
-        $arrFilesToTest = [
+        yield [
             // 👀 https://turbolab.it/turbolab.it-1
             [
                 "id"            => 1,
@@ -78,13 +80,11 @@ class TagTest extends BaseT
                 "totalPageNum"  => 61
             ],
         ];
-
-        yield $arrFilesToTest;
     }
 
 
     /**
-     * @dataProvider tagToTestProvider
+     * @dataProvider specialTagToTestProvider
      */
     public function testSpecialTag(array $arrSpecialTag)
     {
@@ -114,6 +114,23 @@ class TagTest extends BaseT
     }
 
 
+    public function testNoArticlesTag()
+    {
+        /** @var Tag $tag */
+        $tag = static::getService("App\\Service\\Cms\\Tag");
+        $tag->load( static::NO_ARTICLES_TAG_ID );
+        $url = $tag->getUrl();
+
+        $crawler = $this->fetchDomNode($url);
+
+        // H1
+        $this->tagTitleAsH1Checker($tag, $crawler, "#tli test tag | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine: articoli, guide e news");
+
+        $html = $this->fetchHtml($url);
+        $this->assertStringContainsString('nessun contenuto trovato', $html);
+    }
+
+
     public function test404()
     {
         // 👀 https://turbolab.it/turbolab.it-9999
@@ -121,7 +138,7 @@ class TagTest extends BaseT
     }
 
 
-    public static function tagToTestProvider()
+    public static function tagToTestProvider(): \Generator
     {
         if( empty(static::$arrTagEntity) ) {
             static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest();
