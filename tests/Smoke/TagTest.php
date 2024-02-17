@@ -174,8 +174,6 @@ class TagTest extends BaseT
                 continue;
             }
 
-            $checkIt = false;
-
             // file
             if( stripos($href, "/scarica/") !== false ) {
 
@@ -191,10 +189,6 @@ class TagTest extends BaseT
                 static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href) ||
                 static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
             ) {
-                $checkIt = true;
-            }
-
-            if($checkIt) {
                 $this->fetchHtml($href);
             }
         }
