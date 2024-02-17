@@ -54,14 +54,14 @@ class TagTest extends BaseT
         // 👀 https://turbolab.it/tag/windows
         // 👀 https://turbolab.it/tag/windows/
 
-        $this->expectRedirect("http://localhost/tag/windows", $realTagUrl);
-        $this->expectRedirect("http://localhost/tag/windows/", $realTagUrl);
+        $this->expectRedirect("/tag/windows", $realTagUrl);
+        $this->expectRedirect("/tag/windows/", $realTagUrl);
 
         // 👀 https://turbolab.it/tag/windows/0
         // 👀 https://turbolab.it/tag/windows/1
 
         foreach([0, 1] as $pageNum) {
-            $this->expectRedirect("http://localhost/tag/windows/$pageNum", $realTagUrl);
+            $this->expectRedirect("/tag/windows/$pageNum", $realTagUrl);
         }
     }
 
@@ -73,7 +73,7 @@ class TagTest extends BaseT
         $tag->load(static::SPECIAL_TAG_ID);
         $url = $tag->getUrl();
 
-        $wrongTagUrl = 'http://localhost/wrong-tag-slug-' . static::SPECIAL_TAG_ID;
+        $wrongTagUrl = '/wrong-tag-slug-' . static::SPECIAL_TAG_ID;
         $this->expectRedirect($wrongTagUrl, $url);
 
         $crawler = $this->fetchDomNode($url);
@@ -124,7 +124,8 @@ class TagTest extends BaseT
 
     public function test404()
     {
-        $this->expect404('http://localhost/turbolab.it-9999');
+        // 👀 https://turbolab.it/turbolab.it-9999
+        $this->expect404('/turbolab.it-9999');
     }
 
 

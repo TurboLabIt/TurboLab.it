@@ -173,7 +173,7 @@ abstract class BaseT extends WebTestCase
                 continue;
             }
 
-            // local file: Windows Bootable DVD Generator || Estensioni video HEVC (appx 64 bit)
+            // local file: Windows Bootable DVD Generator
             if(
                 static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
                 str_ends_with($href, "/scarica/1")
