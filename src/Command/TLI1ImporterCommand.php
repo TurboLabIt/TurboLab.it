@@ -540,20 +540,27 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 tags...");
         $stmt = $this->dbTli1->query("
+            ## note: this will discard any unassigned tag
             SELECT
-                tag.*, COUNT(1) AS usageCount
+              tag.*, COUNT(1) AS usageCount
             FROM
-                tag
+              tag
             LEFT JOIN
-                etichette
+              etichette
             ON
-                tag.id_tag = etichette.id_tag
+              tag.id_tag = etichette.id_tag
             WHERE
-                etichette.tipo = 'contenuto'
+              etichette.tipo = 'contenuto'
             GROUP BY
-                etichette.id_tag
+              etichette.id_tag
+            UNION
+              ## this is a special tag, needed for testing. It must be imported even if it's unassigned
+              SELECT
+                tag.*, 0 AS usageCount
+                FROM tag
+                WHERE id_tag = 12600
             ORDER BY
-                tag.id_tag ASC
+              id_tag ASC
         ");
         $arrTli1Tags = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Tags) . " items loaded");
@@ -572,8 +579,17 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
-        $title      = str_ireplace('&', '&amp;', $arrTag["tag"]);
-        $title      = $this->convertValueFromTli1ToTli2($title, true);
+        // this is a special tag, needed for testing. It's already encoded correctly
+        if( $tagId == 12600 ) {
+
+            $title = $arrTag["tag"];
+
+        } else {
+
+            $title = str_ireplace('&', '&amp;', $arrTag["tag"]);
+            $title = $this->convertValueFromTli1ToTli2($title, true);
+        }
+
         $ranking    = (int)$arrTag["peso"];
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
@@ -697,19 +713,19 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->io->text("Loading TLI1 files...");
         $stmt = $this->dbTli1->query("
             SELECT
-                file.*, COUNT(1) AS usageCount
+              file.*, COUNT(1) AS usageCount
             FROM
-                file
+              file
             LEFT JOIN
-                allegati
+              allegati
             ON
-                file.id_file = allegati.id_file
+              file.id_file = allegati.id_file
             WHERE
-                allegati.tipo = 'contenuto'
+              allegati.tipo = 'contenuto'
             GROUP BY
-                allegati.id_file
+              allegati.id_file
             ORDER BY
-                file.id_file ASC
+              file.id_file ASC
         ");
         $arrTli1Files = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Files) . " items loaded");
