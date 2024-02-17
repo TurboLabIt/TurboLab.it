@@ -43,7 +43,7 @@ class ArticleCollection extends BaseCmsServiceCollection
     public function loadByTag(TagEntity|TagService $tag, ?int $page = 1) : static
     {
         $tag = $tag instanceof TagService ? $tag->getEntity() : $tag;
-        $paginator = $this->em->getRepository(ArticleEntity::class)->findByTag($tag, $page);
+        $paginator = $this->em->getRepository(ArticleEntity::class)->findByTag($tag, $page) ?? [];
         return $this->setEntities($paginator);
     }
 
