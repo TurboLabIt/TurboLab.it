@@ -43,9 +43,9 @@ class Paginator
             $currPageUrl = $this->urlGenerator->generate($routeWithNumName, array_merge($arrRouteWithNumParam, ["page" => $this->currentPageNum]), UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
-        $this->arrPreviousPage  = [ "url" => $prevPageUrl ];
-        $this->arrCurrentPage   = [ "url" => $currPageUrl ];
-        $this->arrNextPage      = [ "url" => $this->urlGenerator->generate($routeWithNumName, array_merge($arrRouteWithNumParam, ["page" => $this->currentPageNum + 1]), UrlGeneratorInterface::ABSOLUTE_URL) ];
+        $this->arrPreviousPage  = ["url" => $prevPageUrl];
+        $this->arrCurrentPage   = ["url" => $currPageUrl];
+        $this->arrNextPage      = ["url" => $this->urlGenerator->generate($routeWithNumName, array_merge($arrRouteWithNumParam, ["page" => $this->currentPageNum + 1]), UrlGeneratorInterface::ABSOLUTE_URL) ];
 
         return $this;
     }
