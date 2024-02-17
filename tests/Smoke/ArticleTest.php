@@ -7,7 +7,6 @@ use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request;
 
 
 class ArticleTest extends BaseT
@@ -200,80 +199,6 @@ class ArticleTest extends BaseT
 
         if( $expectedH1 !== null ) {
             $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
-        }
-    }
-
-
-    protected function internalLinksChecker(Crawler $crawler) : void
-    {
-        $aNodes = $crawler->filter('a');
-        foreach($aNodes as $a) {
-
-            $href = $a->getAttribute("href");
-            if( empty($href) || empty(trim($href)) ) {
-                continue;
-            }
-
-            // local file: Windows Bootable DVD Generator || Estensioni video HEVC (appx 64 bit)
-            if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
-                str_ends_with($href, "/scarica/1")
-            ) {
-                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
-                $this->assertNotEmpty($file);
-                $this->assertResponseHeaderSame('content-type', 'application/zip');
-
-            // local file: Estensioni video HEVC (appx 64 bit)
-            } else if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
-                str_ends_with($href, "/scarica/400") !== false
-            ) {
-                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
-                $this->assertNotEmpty($file);
-                $this->assertResponseHeaderSame('content-type', 'application/zip');
-
-            // local file: Batch configurazione macOS in VirtualBox
-            } else if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
-                str_ends_with($href, "/scarica/362") !== false
-            ) {
-                $file = $this->fetchHtml($href, Request::METHOD_GET, false);
-                $this->assertNotEmpty($file);
-                $this->assertResponseHeaderSame('content-type', 'text/x-msdos-batch; charset=UTF-8');
-
-            // remote file (must redirect... somewhere)
-            } else if( static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) ) {
-
-                $this->browse($href);
-                $this->assertResponseRedirects();
-
-            // author
-            } elseif( stripos($href, "/utenti/") !== false ) {
-
-
-
-            // article
-            } elseif(
-                static::getService('App\\Service\\Cms\\ArticleUrlGenerator')->isUrl($href) ||
-                static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
-            ) {
-                $this->fetchHtml($href);
-            }
-        }
-    }
-
-
-    protected function internalImagesChecker(Crawler $crawler) : void
-    {
-        $imgNodes = $crawler->filter('img');
-        foreach($imgNodes as $img) {
-
-            $src = $img->getAttribute("src");
-            if( empty($src) || empty(trim($src)) ) {
-                continue;
-            }
-
-            $this->fetchImage($src);
         }
     }
 }
