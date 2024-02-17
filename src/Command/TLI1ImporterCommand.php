@@ -21,7 +21,7 @@ use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -283,7 +283,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $this->em
                 ->getClassMetadata($className)
-                ->setIdGeneratorType(ClassMetadataInfo::GENERATOR_TYPE_NONE);
+                ->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
         }
 
         return $this;
