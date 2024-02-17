@@ -22,7 +22,7 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
     }
 
 
-    public function setEntities(\Traversable $arrEntities) : static
+    public function setEntities(iterable $arrEntities) : static
     {
         foreach($arrEntities as $entity) {
 
