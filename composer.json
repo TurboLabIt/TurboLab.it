@@ -14,7 +14,7 @@
         "ext-pdo": "*",
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
-        "doctrine/orm": "^3.0",
+        "doctrine/orm": "^2.0",
         "imagine/imagine": "*",
         "stof/doctrine-extensions-bundle": "^1.10",
         "symfony/asset": "7.0.*",
