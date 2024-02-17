@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FileTest extends BaseT
 {
-    public static function localFileToTestProvider()
+    public static function localFileToTestProvider(): \Generator
     {
-        $arrFilesToTest = [
+        yield [
             // 👀 https://turbolab.it/scarica/1
             [
                 "id"            => 1,
@@ -33,8 +33,6 @@ class FileTest extends BaseT
                 "format"        => "appx"
             ],
         ];
-
-        yield $arrFilesToTest;
     }
 
 
