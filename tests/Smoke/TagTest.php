@@ -12,11 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TagTest extends BaseT
 {
-    // 👀 https://turbolab.it/turbolab.it-1
-    const SPECIAL_TAG_ID                = 1;
-    const TOTAL_PAGE_NUM_OF_SPECIAL_TAG = 3;
-    const TOTAL_PAGE_NUM_WINDOWS_TAG    = 61;
-
     protected static array $arrTagEntity;
 
 
@@ -66,48 +61,45 @@ class TagTest extends BaseT
     }
 
 
-    public function testSpecialTag()
+
+    public function specialTagToTestProvider()
+    {
+        $arrFilesToTest = [
+            // 👀 https://turbolab.it/turbolab.it-1
+            [
+                "id"            => 1,
+                "title"         => "turbolab.it",
+                "totalPageNum"  => 3
+            ],
+            // 👀 https://turbolab.it/windows-10
+            [
+                "id"            => 10,
+                "title"         => "windows",
+                "totalPageNum"  => 61
+            ],
+        ];
+
+        yield $arrFilesToTest;
+    }
+
+
+    /**
+     * @dataProvider tagToTestProvider
+     */
+    public function testSpecialTag(array $arrSpecialTag)
     {
         /** @var Tag $tag */
         $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(static::SPECIAL_TAG_ID);
+        $tag->load( $arrSpecialTag["id"] );
         $url = $tag->getUrl();
 
-        $wrongTagUrl = '/wrong-tag-slug-' . static::SPECIAL_TAG_ID;
+        $wrongTagUrl = '/wrong-tag-slug-' . $arrSpecialTag["id"];
         $this->expectRedirect($wrongTagUrl, $url);
 
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($tag, $crawler, '#turbolab.it: articoli, guide e news');
-
-        // H2
-        $crawler = $this->fetchDomNode($url, 'article');
-        $H2s = $crawler->filter('h2');
-        $countH2 = $H2s->count();
-        $this->assertGreaterThan(3, $countH2);
-
-        $this
-            ->internalLinksChecker($crawler)
-            ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($url, static::TOTAL_PAGE_NUM_OF_SPECIAL_TAG);
-    }
-
-
-
-    public function testWindowsTag()
-    {
-        // 👀 https://turbolab.it/windows-10
-
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(10);
-        $url = $tag->getUrl();
-
-        $crawler = $this->fetchDomNode($url);
-
-        // H1
-        $this->tagTitleAsH1Checker($tag, $crawler, '#windows: articoli, guide e news');
+        $this->tagTitleAsH1Checker($tag, $crawler, "#" . $arrSpecialTag["title"] . ": articoli, guide e news");
 
         // H2
         $crawler = $this->fetchDomNode($url, 'article');
@@ -118,7 +110,7 @@ class TagTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($url, static::TOTAL_PAGE_NUM_WINDOWS_TAG);
+            ->internalPaginatorChecker($url, $arrSpecialTag["totalPageNum"]);
     }
 
 
