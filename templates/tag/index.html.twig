@@ -4,10 +4,12 @@
 
     <h1>{{ metaTitle|raw }}</h1>
 
-    {% if Tag.articles is not empty %}
+    {% if TaggedArticles is not empty %}
+
+        {% include 'components/pagination.html.twig' %}
 
         <div>
-            {% for Article in Tag.articles %}
+            {% for Article in TaggedArticles %}
 
                 <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
                 <img src="{{ Article.spotlightOrDefaultUrl('med') }}">

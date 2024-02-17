@@ -36,7 +36,7 @@
                 <title>{{ Article.title|raw }}</title>
                 <link>{{ Article.url|raw }}</link>
                 {% if fullFeed %}
-                    <content:encoded><![CDATA[{{ Article.body|raw }}]]></content:encoded>
+                    <content:encoded><![CDATA[{{ Article.bodyForDisplay|raw }}]]></content:encoded>
                 {% else %}
                     <description><![CDATA[
                         <a href="{{ Article.url }}">

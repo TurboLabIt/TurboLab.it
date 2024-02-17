@@ -2,6 +2,8 @@
 namespace App\Repository\Cms;
 
 use App\Entity\Cms\Article;
+use App\Entity\Cms\Tag;
+use App\Service\Cms\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,11 +27,13 @@ class ArticleRepository extends BaseCmsRepository
 
     protected function getQueryBuilder() : QueryBuilder
     {
-        return $this->createQueryBuilder('t', 't.id');
+        return
+            $this->createQueryBuilder('t', 't.id')
+                ->orderBy('t.updatedAt', 'DESC');
     }
 
 
-    public function findComplete(int $id) : ?Article
+    protected function getQueryBuilderComplete() : QueryBuilder
     {
         return
             $this->getQueryBuilder()
@@ -43,7 +47,14 @@ class ArticleRepository extends BaseCmsRepository
                 ->leftJoin('t.files', 'filesJunction')
                 ->leftJoin('filesJunction.file', 'file')
                 //
-                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file')
+                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file');
+    }
+
+
+    public function findComplete(int $id) : ?Article
+    {
+        return
+            $this->getQueryBuilderComplete()
                 ->andWhere('t.id = :id')
                     ->setParameter('id', $id)
                 ->getQuery()
@@ -72,17 +83,32 @@ class ArticleRepository extends BaseCmsRepository
 
     public function findLatestReadyForReview() : array
     {
-        $qb =
+        return
             $this->getQueryBuilder()
                 ->andWhere('t.publishingStatus = :readyForReview')
                     ->setParameter('readyForReview', Article::PUBLISHING_STATUS_READY_FOR_REVIEW)
                 ->andWhere('t.updatedAt >= :dateLimit')
                     ->setParameter('dateLimit', (new \DateTime())->modify('-30 days') )
-                ->orderBy('t.updatedAt', 'ASC');
-
-        return
-            $qb
+                ->orderBy('t.updatedAt', 'ASC')
                 ->getQuery()
                 ->getResult();
+    }
+
+
+    public function findByTag(Tag $tag, ?int $page = 1) : \Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page       = $page ?: 1;
+        $startAt    = Paginator::ITEMS_PER_PAGE * ($page - 1);
+
+        $query =
+            $this->getQueryBuilderComplete()
+                ->andWhere('tag = :tag')
+                    ->setParameter('tag', $tag)
+                ->setFirstResult($startAt)
+                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->getQuery();
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $paginator;
     }
 }

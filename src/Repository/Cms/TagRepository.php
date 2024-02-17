@@ -30,7 +30,7 @@ class TagRepository extends BaseCmsRepository
 
 
     public function findComplete(int $id) : ?Tag
-    {
+    { return $this->find($id);
         return
             $this->getQueryBuilder()
                 //

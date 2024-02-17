@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
+use App\ServiceCollection\Cms\ArticleCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\Cms\Article as ArticleEntity;
@@ -36,6 +37,12 @@ class CmsFactory
         }
 
         return $service;
+    }
+
+
+    public function createArticleCollection() : ArticleCollection
+    {
+        return new ArticleCollection($this->em, $this);
     }
 
 

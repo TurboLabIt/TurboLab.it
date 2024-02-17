@@ -26,21 +26,21 @@ class Image extends BaseCmsService
     const string WIDTH  = 'width';
     const string HEIGHT = 'height';
 
-    const string WATERMARK_FILEPATH        = 'images/logo/turbolab.it.png';
+    const string WATERMARK_FILEPATH     = 'images/logo/turbolab.it.png';
     const int WATERMARK_WIDTH_PERCENT   = 25;
     const int WATERMARK_OPACITY         = 100;
-    const null WATERMARK_FORCED_POSITION = null;
+    const null WATERMARK_FORCED_POSITION= null;
     const int WATERMARK_MIN_SIZE        = 175;
-    const array MIN_WATERMARKABLE_SIZES   = [
+    const array MIN_WATERMARKABLE_SIZES = [
         self::WIDTH     => 300,
         self::HEIGHT    => 300,
     ];
 
     const int HOW_MANY_FILES_PER_FOLDER = 5000;
 
-    const string SIZE_MIN  = 'min';
-    const string SIZE_MED  = 'med';
-    const string SIZE_MAX  = 'max';
+    const string SIZE_MIN = 'min';
+    const string SIZE_MED = 'med';
+    const string SIZE_MAX = 'max';
 
     const array SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [

@@ -8,6 +8,8 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
 {
     const ENTITY_CLASS = null;
 
+    protected int $countTotalBeforePagination = 0;
+
 
     public function load(array $arrIds) : array
     {
@@ -20,7 +22,7 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
     }
 
 
-    public function setEntities(array $arrEntities) : static
+    public function setEntities(\Traversable $arrEntities) : static
     {
         foreach($arrEntities as $entity) {
 
@@ -29,7 +31,16 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
             $this->arrData[$id] = $service;
         }
 
+        $this->countTotalBeforePagination =
+            $arrEntities instanceof \Doctrine\ORM\Tools\Pagination\Paginator ? $arrEntities->count() : $this->count();
+
         return $this;
+    }
+
+
+    public function countTotalBeforePagination(): int
+    {
+        return $this->countTotalBeforePagination;
     }
 
 

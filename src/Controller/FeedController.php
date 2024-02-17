@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\HtmlProcessor;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -50,13 +51,13 @@ class FeedController extends BaseController
 
 
     #[Route('/feed/fullfeed', name: 'app_feed_fullfeed')]
-    public function fullFeed(): Response
+    public function fullFeed(HtmlProcessor $htmlProcessor): Response
     {
         $arrData    = [
             "title"         => "TurboLab.it | Full Feed",
             "selfUrl"       => $this->getSelfUrl(),
             "fullFeed"      => true,
-            "Articles"      => $this->articleCollection->loadHome(1),
+            "Articles"      => $this->articleCollection->loadLatestPublished(20)->setHtmlProcessor($htmlProcessor),
             "description"   => 'Questo feed eroga integralmente i contenuti che appaiono in home page'
         ];
 

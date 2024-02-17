@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Tag as TagEntity;
+use App\ServiceCollection\Cms\ArticleCollection;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,9 +16,9 @@ class Tag extends BaseCmsService
 
     use ViewableServiceTrait;
 
-    protected ?TagEntity $entity        = null;
-    protected ?array $arrArticles       = null;
-    protected ?Article $firstArticle    = null;
+    protected ?TagEntity $entity                    = null;
+    protected ?ArticleCollection $articlesTagged    = null;
+    protected ?Article $firstArticle                = null;
 
 
     public function __construct(protected TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)
@@ -61,22 +62,14 @@ class Tag extends BaseCmsService
     }
 
 
-    public function getArticles() : array
+    public function getArticles(?int $page = 1) : ArticleCollection
     {
-        if( is_array($this->arrArticles) ) {
-            return $this->arrArticles;
+        if( $this->articlesTagged !== null ) {
+            return $this->articlesTagged;
         }
 
-        $articleJunctionEntities = $this->entity->getArticles();
-        $this->arrArticles = [];
-        foreach($articleJunctionEntities as $junctionEntity) {
-
-            $articleEntity  = $junctionEntity->getArticle();
-            $articleId      = $articleEntity->getId();
-            $this->arrArticles[$articleId] = $this->factory->createArticle($articleEntity);
-        }
-
-        return $this->arrArticles;
+        $this->articlesTagged = $this->factory->createArticleCollection()->loadByTag($this, $page);
+        return $this->articlesTagged;
     }
 
 
@@ -86,8 +79,7 @@ class Tag extends BaseCmsService
             return $this->firstArticle;
         }
 
-        $arrArticles        = $this->getArticles();
-        $this->firstArticle = reset($arrArticles);
+        $this->firstArticle = $this->factory->createArticleCollection()->loadByTag($this, 1)->first();
         return $this->firstArticle;
     }
 
