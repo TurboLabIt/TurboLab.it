@@ -26,6 +26,14 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
+    public function load(array $arrIds) : array
+    {
+        $arrEntities = $this->em->getRepository(ArticleEntity::class)->findMultipleComplete($arrIds);
+        $this->setEntities($arrEntities);
+
+        return $this->arrData;
+    }
+
     public function loadLatestPublished(?int $page = 1) : static
     {
         $arrArticles = $this->em->getRepository(ArticleEntity::class)->findLatestPublished($page);

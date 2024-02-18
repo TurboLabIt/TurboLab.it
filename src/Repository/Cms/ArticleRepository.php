@@ -30,9 +30,20 @@ class ArticleRepository extends BaseCmsRepository
         return
             $this->getQueryBuilderComplete()
                 ->andWhere('t.id = :id')
-                ->setParameter('id', $id)
+                    ->setParameter('id', $id)
                 ->getQuery()
                 ->getOneOrNullResult();
+    }
+
+
+    public function findMultipleComplete(array $arrIds) : array
+    {
+        return
+            $this->getQueryBuilderComplete()
+                ->andWhere('t.id IN(:ids)')
+                    ->setParameter('ids', $arrIds)
+                ->getQuery()
+                ->getResult();
     }
 
 
