@@ -2,6 +2,9 @@
 namespace App\Service\Cms;
 
 use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\Cms\FileCollection;
+use App\ServiceCollection\Cms\ImageCollection;
+use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\Cms\Article as ArticleEntity;
@@ -57,6 +60,12 @@ class CmsFactory
     }
 
 
+    public function createTagCollection() : TagCollection
+    {
+        return new TagCollection($this->em, $this);
+    }
+
+
     public function createImage(?ImageEntity $entity = null) : ImageService
     {
         $service = new ImageService($this->imageUrlGenerator, $this->em, $this->projectDir);
@@ -86,6 +95,12 @@ class CmsFactory
     }
 
 
+    public function createImageCollection() : ImageCollection
+    {
+        return new ImageCollection($this->em, $this);
+    }
+
+
     public function createFile(?FileEntity $entity = null) : FileService
     {
         $service = new FileService($this->fileUrlGenerator, $this->em, $this, $this->projectDir);
@@ -94,5 +109,11 @@ class CmsFactory
         }
 
         return $service;
+    }
+
+
+    public function createFileCollection() : FileCollection
+    {
+        return new FileCollection($this->em, $this);
     }
 }

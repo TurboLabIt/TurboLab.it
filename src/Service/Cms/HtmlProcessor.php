@@ -1,10 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
-use App\ServiceCollection\Cms\ArticleCollection;
-use App\ServiceCollection\Cms\ImageCollection;
 use App\Entity\Cms\Image as ImageEntity;
-use App\ServiceCollection\Cms\TagCollection;
 
 
 class HtmlProcessor
@@ -13,11 +10,8 @@ class HtmlProcessor
     const array ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
 
 
-    public function __construct(
-        protected ImageCollection $imageCollection, protected ArticleCollection $articleCollection,
-        protected TagCollection $tagCollection
-    )
-    { }
+    public function __construct(protected CmsFactory $factory)
+    {}
 
 
     public function convertEntitiesToUtf8Chars(?string $text) : ?string
@@ -114,7 +108,9 @@ class HtmlProcessor
     {
         $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);
-        $this->imageCollection->load( array_keys($arrImgNodes) );
+
+        $imageCollection = $this->factory->createImageCollection();
+        $imageCollection->load( array_keys($arrImgNodes) );
 
         $index = 1;
         foreach($arrImgNodes as $imgId => $arrThisImgDomOccurrences) {
@@ -122,13 +118,13 @@ class HtmlProcessor
             foreach($arrThisImgDomOccurrences as $oneImgNode) {
 
                 /** @var Image $srvImage */
-                $srvImage = $this->imageCollection->get($imgId);
+                $srvImage = $imageCollection->get($imgId);
 
                 if( empty($srvImage) ) {
 
                     // this will display an error, but we want to keep the original image URL
                     $fakeImageEntity    = (new ImageEntity())->setId($imgId);
-                    $imgUrl             = $this->imageCollection->createService($fakeImageEntity)->getUrl($article, Image::SIZE_MED);
+                    $imgUrl             = $this->factory->createImage($fakeImageEntity)->getUrl($article, Image::SIZE_MED);
                     $imageAltText       = 'Immagine non trovata';
 
                 } else {
@@ -153,13 +149,15 @@ class HtmlProcessor
     {
         $artRegEx       = '/(?<=(==###contenuto::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $artRegEx);
-        $this->articleCollection->load( array_keys($arrLinkNodes) );
+
+        $articleCollection = $this->factory->createArticleCollection();
+        $articleCollection->load( array_keys($arrLinkNodes) );
 
         foreach($arrLinkNodes as $artId => $arrLinksToThisId) {
 
             foreach($arrLinksToThisId as $oneLinkNode) {
 
-                $srvArticle = $this->articleCollection->get($artId);
+                $srvArticle = $articleCollection->get($artId);
                 if( empty($srvArticle) ) {
 
                     $artUrl         = '#';
@@ -184,13 +182,15 @@ class HtmlProcessor
     {
         $tagRegEx       = '/(?<=(==###tag::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $tagRegEx);
-        $this->tagCollection->load( array_keys($arrLinkNodes) );
+
+        $tagCollection = $this->factory->createTagCollection();
+        $tagCollection->load( array_keys($arrLinkNodes) );
 
         foreach($arrLinkNodes as $tagId => $arrLinksToThisId) {
 
             foreach($arrLinksToThisId as $oneLinkNode) {
 
-                $srvTag = $this->tagCollection->get($tagId);
+                $srvTag = $tagCollection->get($tagId);
                 if( empty($srvTag) ) {
 
                     $tagUrl     = '#';
