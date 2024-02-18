@@ -26,9 +26,9 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
-    public function loadLatestPublished(int $num) : static
+    public function loadLatestPublished(?int $page = 1) : static
     {
-        $arrArticles = $this->em->getRepository(ArticleEntity::class)->findLatestPublished($num);
+        $arrArticles = $this->em->getRepository(ArticleEntity::class)->findLatestPublished($page);
         return $this->setEntities($arrArticles);
     }
 

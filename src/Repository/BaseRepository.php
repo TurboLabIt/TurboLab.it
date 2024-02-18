@@ -2,6 +2,7 @@
 namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Result;
 
 
 abstract class BaseRepository extends ServiceEntityRepository
@@ -16,18 +17,19 @@ abstract class BaseRepository extends ServiceEntityRepository
     }
 
 
-    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = []) : void
+    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = []) : Result
     {
         $stmt = $this->getEntityManager()->getConnection()->prepare($sqlQuery);
         foreach($arrParams as $param => $value) {
             $stmt->bindValue($param, $value);
         }
 
-        $stmt->executeStatement();
+        $result = $stmt->executeQuery();
+        return $result;
     }
 
 
-    protected function increase(string $fieldName, int $entityId, int $increaseOf = 1)
+    protected function increase(string $fieldName, int $entityId, int $increaseOf = 1) : void
     {
         $sqlQuery =
             "UPDATE " . $this->getTableName() . " SET `" . $fieldName . "` = `" . $fieldName . "` + $increaseOf " .

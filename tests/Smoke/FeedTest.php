@@ -11,9 +11,7 @@ class FeedTest extends BaseT
 {
     public static function feedToTestProvider()
     {
-        yield ['/feed'];
-        yield ['/feed/nuovi-finiti'];
-        yield ['/feed/fullfeed'];
+        yield ['/feed', '/feed/nuovi-finiti', '/feed/fullfeed'];
     }
 
 

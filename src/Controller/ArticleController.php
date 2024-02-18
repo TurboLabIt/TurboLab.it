@@ -1,23 +1,31 @@
 <?php
 namespace App\Controller;
 
-
 use App\Service\Cms\Image;
 use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Twig\Environment;
 
 
 class ArticleController extends BaseController
 {
-    public function __construct(protected Article $article)
-    {}
+    public function __construct(
+        protected Article $article, protected HtmlProcessor $htmlProcessor,
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
+        protected Environment $twig
+    )
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]+-[1-9]+[0-9]*>}', name: 'app_article')]
-    public function index(string $tagSlugDashId, string $articleSlugDashId, HtmlProcessor $htmlProcessor, Request $request) : Response
+    public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {
         $article = $this->article->loadBySlugDashId($articleSlugDashId);
 
@@ -27,9 +35,9 @@ class ArticleController extends BaseController
         }
 
         $article
-            ->setClientIpAddress( $request->getClientIp() )
+            ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView()
-            ->setHtmlProcessor($htmlProcessor);
+            ->setHtmlProcessor($this->htmlProcessor);
 
         return $this->render('article/index.html.twig', [
             'metaTitle'         => $article->getTitle(),

@@ -79,7 +79,7 @@ class Tag extends BaseCmsService
             return $this->firstArticle;
         }
 
-        $this->firstArticle = $this->factory->createArticleCollection()->loadByTag($this, 1)->first();
+        $this->firstArticle = $this->articlesTagged->first();
         return $this->firstArticle;
     }
 

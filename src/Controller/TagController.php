@@ -4,15 +4,24 @@ namespace App\Controller;
 use App\Service\Cms\Image;
 use App\Service\Cms\Paginator;
 use App\Service\Cms\Tag;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Twig\Environment;
 
 
 class TagController extends BaseController
 {
-    public function __construct(protected Tag $tag)
-    { }
+    public function __construct(
+        protected Tag $tag, protected Paginator $paginator,
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
+        protected Environment $twig
+    )
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{page<0|1>}', name: 'app_tag_page_0-1')]
@@ -23,7 +32,7 @@ class TagController extends BaseController
 
 
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{page<[1-9]+[0-9]*>}', name: 'app_tag')]
-    public function index(string $tagSlugDashId, Request $request, Paginator $paginator, ?int $page = null) : Response
+    public function index(string $tagSlugDashId, ?int $page = null) : Response
     {
         $tag = $this->tag->loadBySlugDashId($tagSlugDashId);
 
@@ -34,12 +43,12 @@ class TagController extends BaseController
 
         $taggedArticles = $tag->getArticles($page);
 
-        $paginator
+        $this->paginator
             ->setTotalElementsNum( $taggedArticles->countTotalBeforePagination() )
             ->setCurrentPageNum($page)
             ->build('app_tag', ['tagSlugDashId' => $tagSlugDashId]);
 
-        $lastPageNum = $paginator->isPageOutOfRange();
+        $lastPageNum = $this->paginator->isPageOutOfRange();
         if( $lastPageNum !== false ) {
 
             $lastPageNum = in_array($lastPageNum, [0, 1]) ? null : $lastPageNum;
@@ -47,7 +56,7 @@ class TagController extends BaseController
         }
 
         $tag
-            ->setClientIpAddress( $request->getClientIp() )
+            ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
         return $this->render('tag/index.html.twig', [
@@ -58,7 +67,7 @@ class TagController extends BaseController
             'pageImage'         => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
             'Tag'               => $tag,
             'TaggedArticles'    => $taggedArticles,
-            'Paginator'         => $paginator
+            'Paginator'         => $this->paginator
         ]);
     }
 

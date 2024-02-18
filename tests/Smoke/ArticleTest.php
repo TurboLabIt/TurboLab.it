@@ -11,7 +11,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ArticleTest extends BaseT
 {
-    protected static array $arrArticleEntity;
+    protected static iterable $arrArticleEntity;
 
     public function testingPlayground()
     {

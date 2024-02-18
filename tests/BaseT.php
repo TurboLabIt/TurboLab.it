@@ -244,7 +244,6 @@ abstract class BaseT extends WebTestCase
     protected function internalPaginatorChecker(string $url, ?int $expectedTotalPageNum) : static
     {
         // first page
-        $basePageUrl    = $url;
         $crawler        = $this->fetchDomNode($url, 'article');
         $paginator      = $crawler->filter('div.pagination-container');
         $paginatorHtml  = mb_strtolower($paginator->html());
@@ -307,6 +306,7 @@ abstract class BaseT extends WebTestCase
         $this->assertStringNotContainsString('successiv', $paginatorHtml);
 
         // requesting an over-limit page must redirect to the last page
+        $basePageUrl = substr($lastPageUrl, 0, strrpos($lastPageUrl, "/")) . "/";
         foreach([1, 2, 3, 50, 99, 175, 7948] as $lastPageMultiplier)
         {
             $overlimitPageNum =
@@ -315,7 +315,7 @@ abstract class BaseT extends WebTestCase
                     : ( $expectedTotalPageNum * $lastPageMultiplier );
 
 
-            $overlimitUrl = $basePageUrl . "/" . $overlimitPageNum;
+            $overlimitUrl = $basePageUrl . $overlimitPageNum;
             $this->expectRedirect($overlimitUrl, $lastPageUrl, Response::HTTP_FOUND);
         }
 

@@ -3,10 +3,13 @@ namespace App\Controller;
 
 use App\Service\Cms\HtmlProcessor;
 use App\ServiceCollection\Cms\ArticleCollection;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Twig\Environment;
 
 
 class FeedController extends BaseController
@@ -14,9 +17,13 @@ class FeedController extends BaseController
     protected Request $httpRequest;
 
 
-    public function __construct(RequestStack $request, protected ArticleCollection $articleCollection)
+    public function __construct(
+        protected ArticleCollection $articleCollection,
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
+        protected Environment $twig
+    )
     {
-        $this->httpRequest = $request->getCurrentRequest();
+        $this->httpRequest = $requestStack->getCurrentRequest();
     }
 
 
@@ -27,7 +34,7 @@ class FeedController extends BaseController
             "title"         => "TurboLab.it | Feed Principale",
             "selfUrl"       => $this->getSelfUrl(),
             "fullFeed"      => false,
-            "Articles"      => $this->articleCollection->loadLatestPublished(20),
+            "Articles"      => $this->articleCollection->loadLatestPublished(),
             "description"   => 'Questo feed eroga i più recenti contenuti pubblicati in home page'
         ];
 
@@ -57,7 +64,7 @@ class FeedController extends BaseController
             "title"         => "TurboLab.it | Full Feed",
             "selfUrl"       => $this->getSelfUrl(),
             "fullFeed"      => true,
-            "Articles"      => $this->articleCollection->loadLatestPublished(20)->setHtmlProcessor($htmlProcessor),
+            "Articles"      => $this->articleCollection->loadLatestPublished()->setHtmlProcessor($htmlProcessor),
             "description"   => 'Questo feed eroga integralmente i contenuti che appaiono in home page'
         ];
 

@@ -20,9 +20,10 @@ abstract class BaseCmsServiceCollection extends BaseServiceCollection
     }
 
 
-    public function setEntities(iterable $arrEntities) : static
+    public function setEntities(?iterable $arrEntities) : static
     {
         $this->clear();
+        $arrEntities = empty($arrEntities) ? [] : $arrEntities;
 
         foreach($arrEntities as $entity) {
 

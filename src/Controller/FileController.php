@@ -2,24 +2,26 @@
 namespace App\Controller;
 
 use App\Service\Cms\File;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
 class FileController extends BaseController
 {
-    public function __construct(protected File $file)
-    {}
+    public function __construct(protected File $file, RequestStack $requestStack)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     #[Route('/scarica/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
-    public function index(int $fileId, Request $request) : Response
+    public function index(int $fileId) : Response
     {
         $file = $this->file->load($fileId);
 
         $file
-            ->setClientIpAddress( $request->getClientIp() )
+            ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
         if( $file->isLocal() ) {
