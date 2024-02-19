@@ -7,12 +7,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseController extends AbstractController
 {
-    const CACHE_DEFAULT_EXPIRY = 60 * 5;
+    const int CACHE_DEFAULT_EXPIRY = 60 * 5;
+
+    protected bool $cacheIsDisabled = false;
     protected Request $request;
 
 
     protected function isCachable() : bool
     {
+        if( $this->cacheIsDisabled ) {
+           return false;
+        }
+
         $isLogged           = !empty($this->getUser() ?? null);
         $currentUserIp      = $this->request->getClientIp();
         $currentUserIsLocal =
