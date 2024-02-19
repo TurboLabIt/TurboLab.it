@@ -39,6 +39,7 @@ class HomeController extends BaseController
             $this->cache->get("app_home", function(CacheItem $cache) use($that) {
 
                 $cache->tag(["app_home", "app_home",  "app_home_1", "loadLatestPublished", "loadLatestPublished_1"]);
+                $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                 return $that->buildHtml(1);
         });
 
