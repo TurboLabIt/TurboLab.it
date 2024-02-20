@@ -17,9 +17,9 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 )]
 class NewsletterCommand extends AbstractBaseCommand
 {
-    const string CLI_ARG_ACTION    = 'action';
-    const string CLI_ACTION_TEST   = 'test';
-    const string CLI_ACTION_CRON   = 'cron';
+    const string CLI_ARG_ACTION     = 'action';
+    const string CLI_ACTION_TEST    = 'test';
+    const string CLI_ACTION_CRON    = 'cron';
     const array CLI_ARG_ACTIONS     = [self::CLI_ACTION_TEST, self::CLI_ACTION_CRON];
 
 
@@ -29,7 +29,7 @@ class NewsletterCommand extends AbstractBaseCommand
             static::CLI_ARG_ACTION, InputArgument::OPTIONAL,
             'Action to execute: test (default), cron',
             static::CLI_ACTION_TEST,
-            [static::CLI_ACTION_TEST, static::CLI_ACTION_CRON]
+            static::CLI_ARG_ACTIONS
         );
     }
 
