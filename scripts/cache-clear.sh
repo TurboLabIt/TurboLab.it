@@ -38,4 +38,7 @@ fxLink ${PROJECT_DIR}src/Forum/ext-turbolabit ${WEBROOT_DIR}forum/ext/turbolabit
 fxTitle "🧹 Deleting the forum cache folder..."
 rm -rf "${WEBROOT_DIR}forum/cache/production"
 
+fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
+bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
+
 source "${SCRIPT_DIR}script_end.sh"
