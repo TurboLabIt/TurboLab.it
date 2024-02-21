@@ -3,6 +3,7 @@ namespace App\Entity\PhpBB;
 
 use App\Entity\Cms\Article;
 use App\Repository\PhpBB\TopicRepository;
+use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "turbolab_it_forum.phpbb_topics")]
 class Topic
 {
+    use ViewableEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "topic_id", options: ['unsigned' => true])]
@@ -46,6 +49,9 @@ class Topic
 
     #[ORM\Column(name: "topic_delete_time", options: ['unsigned' => true])]
     protected ?int $deleteTime = null;
+
+    #[ORM\Column(name: "topic_views", options: ['unsigned' => true])]
+    protected int $views = 0;
 
     #[ORM\OneToMany(mappedBy: 'commentsTopic', targetEntity: Article::class)]
     protected Collection $articles;
@@ -169,6 +175,18 @@ class Topic
     public function setDeleteTime(int $deleteTime): static
     {
         $this->deleteTime = $deleteTime;
+        return $this;
+    }
+
+
+    public function getViews(): int
+    {
+        return $this->views;
+    }
+
+    public function setViews(int $views): static
+    {
+        $this->views = $views;
         return $this;
     }
 
