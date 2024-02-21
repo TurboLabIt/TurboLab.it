@@ -70,9 +70,12 @@ class ArticleRepository extends BaseCmsRepository
 
     public function findLatestPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
-        $sqlSelect = "SELECT id FROM article WHERE publishing_status = :statusPublished AND published_at <= NOW()";
-        $arrParams = [ "statusPublished" => Article::PUBLISHING_STATUS_PUBLISHED ];
-        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, $arrParams, $page);
+        $sqlSelect = "
+          SELECT id FROM article
+          WHERE
+            publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND published_at <= NOW()";
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, [], $page);
 
         if( empty($qb) ) {
             return null;
@@ -97,6 +100,29 @@ class ArticleRepository extends BaseCmsRepository
                     ->setParameter('readyForReview', Article::PUBLISHING_STATUS_READY_FOR_REVIEW)
                 ->andWhere('t.updatedAt >= :dateLimit')
                     ->setParameter('dateLimit', (new \DateTime())->modify('-30 days') )
+                ->getQuery()
+                ->getResult();
+    }
+
+
+    public function findLatestForNewsletter() : array
+    {
+        $sqlSelect = "
+            SELECT id FROM article
+            WHERE
+              publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
+              published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
+            ";
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect);
+
+        if( empty($qb) ) {
+            return [];
+        }
+
+        return
+            $qb
+                ->orderBy('t.views', 'DESC')
                 ->getQuery()
                 ->getResult();
     }

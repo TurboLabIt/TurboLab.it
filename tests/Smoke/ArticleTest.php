@@ -3,8 +3,8 @@ namespace App\Tests\Smoke;
 
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Article;
-use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
+use App\Service\CmsFactory;
 use App\Tests\BaseT;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -141,7 +141,7 @@ class ArticleTest extends BaseT
         }
 
         /** @var CmsFactory $cmsFactory */
-        $cmsFactory = static::getService("App\\Service\\Cms\\CmsFactory");
+        $cmsFactory = static::getService("App\\Service\\Factory");
 
         /** @var ArticleEntity $entity */
         foreach(static::$arrArticleEntity as $entity) {
