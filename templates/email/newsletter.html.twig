@@ -1,0 +1,79 @@
+{#% apply inky_to_html|inline_css(source('@styles/email/foundation-emails.css'), source('@styles/email/email.css'), source('@styles/email/newsletter.css')) %#}
+
+    <wrapper class="header" bgcolor="#8a8a8a">
+        <container>
+            <row class="collapse">
+                <columns small="6" valign="middle">
+                    <a href="{{ url('app_home') }}"><img src="{{ absolute_url(asset('build/images/logo/logo.png')) }}" alt="TurboLab.it" title="TurboLab.it"></a>
+                </columns>
+                <columns small="6" valign="middle">
+                    <p class="text-right">{{ date }}</p>
+                </columns>
+            </row>
+        </container>
+    </wrapper>
+
+    <container>
+        <row>
+            <columns>
+                <p>Ciao {{ Email.To.name }}! 👋🏻 Queste sono le novità pubblicate da TurboLab.it nel corso della settimana.</p>
+
+                <p>
+                    <p class="unsubscribe">
+                        🛑 Non vuoi più ricevere queste email? 👉 <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a>
+                    </p>
+                </p>
+
+                <p>Problemi di visualizzazione? <a href="{{ newsletterOnSiteUrl }}">Guarda la newsletter nel browser web</a></p>
+
+                <h2>Articoli e news</h2>
+                {% if Articles is not empty %}
+
+                    {% for Article in Articles %}
+                        <a href="{{ Article.url }}">
+                            <div>
+                                <h3>{{ Article.title }}</h3>
+                                <img src="{{ Article.SpotlightOrDefaultUrl('med') }}">
+                                <p class="abstract">{{ Article.abstract }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+
+                {% else %}
+                    <p>🌴 Questa settimana non sono stati pubblicati nuovi articoli.</p>
+                {% endif %}
+
+
+                <h2>Dal forum</h2>
+                {% if Topics is not empty %}
+
+                    <ul>
+                        {% for Item in Topics %}
+                            <li><a href="{{ Item.url }}">{{ Item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+
+                {% else %}
+                    <p>🏄 Nessuna novità dal forum.</p>
+                {% endif %}
+
+            </columns>
+        </row>
+    </container>
+
+    <wrapper class="header" bgcolor="#8a8a8a">
+        <container>
+            <row class="collapse">
+                <columns>
+                    <p>
+                    <p class="unsubscribe">
+                        Email inviata a {{ Email.To.address }} 🛑 Non vuoi più ricevere queste email?
+                        <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a>
+                    </p>
+                    </p>
+                </columns>
+            </row>
+        </container>
+    </wrapper>
+
+{#% endapply %#}
