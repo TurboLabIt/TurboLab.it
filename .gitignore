@@ -106,7 +106,5 @@ drivers/geckodriver
 .phpunit
 .phpunit.result.cache
 /phpunit.xml
+/bin/phpunit
 ###< symfony/phpunit-bridge ###
-
-
-/wordpress/
