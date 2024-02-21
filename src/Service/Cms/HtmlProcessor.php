@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Factory;
 
 
 class HtmlProcessor
@@ -10,7 +11,7 @@ class HtmlProcessor
     const array ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
 
 
-    public function __construct(protected CmsFactory $factory)
+    public function __construct(protected Factory $factory)
     {}
 
 

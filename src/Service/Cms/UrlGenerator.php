@@ -1,7 +1,7 @@
 <?php
-namespace App\Service;
+namespace App\Service\Cms;
 
-use App\Service\Cms\BaseCmsService;
+use App\Service\StopWords;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 

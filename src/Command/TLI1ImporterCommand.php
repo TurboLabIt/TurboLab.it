@@ -18,8 +18,8 @@ use App\Entity\PhpBB\Topic;
 use App\Entity\PhpBB\User;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
-use App\Service\Cms\CmsFactory;
 use App\Service\Cms\HtmlProcessor;
+use App\Service\Factory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -57,7 +57,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
-        protected CmsFactory $cmsFactory, protected HtmlProcessor $htmlProcessor
+        protected Factory $Factory, protected HtmlProcessor $htmlProcessor
     )
     {
         parent::__construct();
@@ -502,7 +502,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->arrNewImages[$imageId] = $entityTli2Image;
 
         // file copy
-        $imageService   = $this->cmsFactory->createImage($entityTli2Image);
+        $imageService   = $this->Factory->createImage($entityTli2Image);
         $filename       = $imageService->getOriginalFileName();
         $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/images/$filename");
         $destFilePath   = $imageService->getOriginalFilePath();
@@ -792,7 +792,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->arrNewFiles[$fileId] = $entityTli2File;
 
 
-        $fileService = $this->cmsFactory->createFile($entityTli2File);
+        $fileService = $this->Factory->createFile($entityTli2File);
         if( !$fileService->isLocal() ) {
             return $this;
         }

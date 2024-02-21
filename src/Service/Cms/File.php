@@ -1,10 +1,11 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Entity\Cms\File as FileEntity;
 use App\Exception\FileLogicException;
+use App\Service\Factory;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
-use App\Entity\Cms\File as FileEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
@@ -23,7 +24,7 @@ class File extends BaseCmsService
 
 
     public function __construct(
-        protected FileUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory,
+        protected FileUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory,
         protected ProjectDir $projectDir
     )
     {

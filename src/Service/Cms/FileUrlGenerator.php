@@ -1,7 +1,6 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Service\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 

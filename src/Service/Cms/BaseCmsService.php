@@ -1,28 +1,13 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Service\BaseService;
+use App\Service\BaseServiceEntity;
 
 
-abstract class BaseCmsService extends BaseService
+abstract class BaseCmsService extends BaseServiceEntity
 {
-    const ENTITY_CLASS          = null;
-    const NOT_FOUND_EXCEPTION   = null;
-
-
-    public function load(int $id) : static
-    {
-        $this->clear();
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($id);
-
-        if( empty($entity) ) {
-
-            $exceptionClass = static::NOT_FOUND_EXCEPTION;
-            throw new $exceptionClass($id);
-        }
-
-        return $this->setEntity($entity);
-    }
+    const string UPLOADED_ASSET_FOLDER_NAME = 'uploaded-assets';
+    const string UPLOADED_ASSET_XSEND_PATH  = 'xsend-uploaded-assets';
 
 
     public function loadBySlugDashId(string $slugDashId) : static
@@ -42,19 +27,6 @@ abstract class BaseCmsService extends BaseService
     }
 
 
-    public function clear() : static
-    {
-        $entity = new (static::ENTITY_CLASS)();
-        return $this->setEntity($entity);
-    }
-
-
-    // 🔥 Implement these abstract method as if they were uncommented! (different types in signature make them unusable)
-    // abstract public function setEntity(?BaseEntity $entity = null) : static;
-    // abstract public function getEntity() : ?BaseEntity;
-
-    public function getId() : ?int { return $this->entity->getId(); }
     public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
-    public function getTitle() : ?string { return $this->entity->getTitle(); }
     public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 }

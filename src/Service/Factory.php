@@ -1,23 +1,31 @@
 <?php
-namespace App\Service\Cms;
+namespace App\Service;
 
+use App\Entity\Cms\Article as ArticleEntity;
+use App\Entity\Cms\File as FileEntity;
+use App\Entity\Cms\Image as ImageEntity;
+use App\Entity\Cms\Tag as TagEntity;
+use App\Entity\PhpBB\Topic as TopicEntity;
+use App\Service\Cms\Article as ArticleService;
+use App\Service\Cms\ArticleUrlGenerator;
+use App\Service\Cms\File as FileService;
+use App\Service\Cms\FileUrlGenerator;
+use App\Service\Cms\Image as ImageService;
+use App\Service\Cms\ImageUrlGenerator;
+use App\Service\Cms\Tag as TagService;
+use App\Service\Cms\TagUrlGenerator;
+use App\Service\Cms\TopicCollection;
+use App\Service\PhpBB\ForumUrlGenerator;
+use App\Service\PhpBB\Topic as TopicService;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
-use App\Entity\Cms\Article as ArticleEntity;
-use App\Service\Cms\Article as ArticleService;
-use App\Entity\Cms\Tag as TagEntity;
-use App\Service\Cms\Tag as TagService;
-use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Cms\Image as ImageService;
-use App\Entity\Cms\File as FileEntity;
-use App\Service\Cms\File as FileService;
 
 
-class CmsFactory
+class Factory
 {
     protected ?ImageService $defaultSpotlight;
 
@@ -27,7 +35,8 @@ class CmsFactory
         protected ArticleUrlGenerator $articleUrlGenerator,
         protected TagUrlGenerator $tagUrlGenerator,
         protected ImageUrlGenerator $imageUrlGenerator,
-        protected FileUrlGenerator $fileUrlGenerator
+        protected FileUrlGenerator $fileUrlGenerator,
+        protected ForumUrlGenerator $forumUrlGenerator
     )
     { }
 
@@ -115,5 +124,22 @@ class CmsFactory
     public function createFileCollection() : FileCollection
     {
         return new FileCollection($this->em, $this);
+    }
+
+
+    public function createTopic(?TopicEntity $entity = null) : TopicService
+    {
+        $service = new TopicService($this->forumUrlGenerator, $this->em, $this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+
+
+    public function createTopicCollection() : TopicCollection
+    {
+        return new TopicCollection($this->em, $this);
     }
 }

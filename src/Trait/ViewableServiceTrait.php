@@ -40,6 +40,4 @@ trait ViewableServiceTrait
 
 
     public function getViews() : int { return $this->localViewCount; }
-
-
 }

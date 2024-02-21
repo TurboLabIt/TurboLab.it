@@ -2,13 +2,14 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Service\Cms\Image as ImageService;
+use App\Service\Cms\Tag as TagService;
+use App\Service\Factory;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use App\Service\Cms\Image as ImageService;
-use App\Service\Cms\Tag as TagService;
 
 
 class Article extends BaseCmsService
@@ -25,7 +26,7 @@ class Article extends BaseCmsService
     protected ?TagService $topTag = null;
 
 
-    public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected CmsFactory $factory)
+    public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
     {
         $this->clear();
     }

@@ -2,9 +2,7 @@
 namespace App\ServiceCollection\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Cms\CmsFactory;
 use App\Service\Cms\Image as ImageService;
-use Doctrine\ORM\EntityManagerInterface;
 
 
 /**
@@ -13,10 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 class ImageCollection extends BaseCmsServiceCollection
 {
     const string ENTITY_CLASS = ImageService::ENTITY_CLASS;
-
-
-    public function __construct(protected EntityManagerInterface $em, protected CmsFactory $factory)
-    { }
 
 
     public function get404() : ImageService
