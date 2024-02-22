@@ -33,7 +33,7 @@ class TagTest extends BaseT
 
     public function testAppTagPage0Or1()
     {
-        $realTagUrl = "http://localhost/windows-10";
+        $realTagUrl = $_ENV["APP_SITE_URL"] . "windows-10";
 
         // 👀 https://turbolab.it/windows-10/0
         // 👀 https://turbolab.it/windows-10/1
@@ -46,7 +46,7 @@ class TagTest extends BaseT
 
     public function testAppTagLegacy()
     {
-        $realTagUrl = "http://localhost/windows-10";
+        $realTagUrl = $_ENV["APP_SITE_URL"] . "windows-10";
 
         // 👀 https://turbolab.it/tag/windows
         // 👀 https://turbolab.it/tag/windows/

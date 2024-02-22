@@ -28,7 +28,10 @@ abstract class BaseT extends WebTestCase
         // boots the kernel and prevents LogicException:
         // Booting the kernel before calling "WebTestCase::createClient()" is not supported, the kernel should only be booted once.
         if( empty(static::$client) ) {
+
             static::$client = static::createClient();
+            static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
+            static::$client->setServerParameter('HTTPS', 'https');
         }
 
         $container = static::getContainer();
@@ -92,6 +95,8 @@ abstract class BaseT extends WebTestCase
         if( empty(static::$client) ) {
 
             static::$client = static::createClient();
+            static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
+            static::$client->setServerParameter('HTTPS', 'https');
 
         // prevent add the path twice on second call
         } else {

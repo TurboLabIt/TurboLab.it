@@ -22,7 +22,7 @@ class HomeTest extends BaseT
      */
     public function testPaginationRedirectToHome(string $url)
     {
-        $this->expectRedirect($url, 'http://localhost');
+        $this->expectRedirect($url, $_ENV["APP_SITE_URL"]);
     }
 
 
@@ -44,7 +44,7 @@ class HomeTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker("http://localhost/", static::HOME_TOTAL_PAGES);
+            ->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::HOME_TOTAL_PAGES);
     }
 
 
