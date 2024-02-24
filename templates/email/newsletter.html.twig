@@ -4,7 +4,7 @@
         <container>
             <row class="collapse">
                 <columns small="6" valign="middle">
-                    <a href="{{ url('app_home') }}"><img src="{{ absolute_url(asset('build/images/logo/logo.png')) }}" alt="TurboLab.it" title="TurboLab.it"></a>
+                    <a href="{{ url('app_home') }}"><img src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it"></a>
                 </columns>
                 <columns small="6" valign="middle">
                     <p class="text-right">{{ date }}</p>
@@ -17,7 +17,6 @@
         <row>
             <columns>
                 <p>Ciao {{ Email.To.name }}! 👋🏻 Queste sono le novità pubblicate da TurboLab.it nel corso della settimana.</p>
-
                 <p>
                     <p class="unsubscribe">
                         🛑 Non vuoi più ricevere queste email? 👉 <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a>
@@ -30,13 +29,11 @@
                 {% if Articles is not empty %}
 
                     {% for Article in Articles %}
-                        <a href="{{ Article.url }}">
-                            <div>
-                                <h3>{{ Article.title }}</h3>
-                                <img src="{{ Article.SpotlightOrDefaultUrl('med') }}">
-                                <p class="abstract">{{ Article.abstract }}</p>
-                            </div>
-                        </a>
+                        <div>
+                            <h3><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
+                            <a href="{{ Article.url }}"><img src="{{ Article.SpotlightOrDefaultUrl('med') }}"></a>
+                            <a href="{{ Article.url }}"><p class="abstract">{{ Article.abstract }}</p></a>
+                        </div>
                     {% endfor %}
 
                 {% else %}

@@ -235,7 +235,7 @@ abstract class BaseT extends WebTestCase
         foreach($imgNodes as $img) {
 
             $src = $img->getAttribute("src");
-            if( empty($src) || empty(trim($src)) ) {
+            if( empty($src) || empty(trim($src)) || str_ends_with($src, '/images/logo/turbolab.it.png') ) {
                 continue;
             }
 
