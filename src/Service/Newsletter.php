@@ -1,0 +1,114 @@
+<?php
+namespace App\Service;
+
+use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\PhpBB\TopicCollection;
+use App\ServiceCollection\UserCollection;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
+use TurboLabIt\Encryptor\Encryptor;
+
+
+class Newsletter extends Mailer
+{
+    protected string $newsletterOnSiteUrl;
+    protected string $subject       = "Questa settimana su TurboLab.it";
+    protected array $arrRecipients  = [];
+
+
+    public function __construct(
+        protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
+        protected UserCollection $userCollection,
+        protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
+        //
+        MailerInterface $mailer, ProjectDir $projectDir
+    )
+    {
+        $this->newsletterOnSiteUrl = $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
+        parent::__construct($mailer, $projectDir, [
+            "from" => [
+                "name"      => "TurboLab.it",
+                "address"   => "info@turbolab.it"
+            ]
+        ]);
+    }
+
+
+    public function loadContent() : static
+    {
+        $this->articleCollection->loadLatestForNewsletter();
+        $this->topicCollection->loadLatestForNewsletter();
+
+        $firstArticleTitle = $this->articleCollection->first()?->getTitle();
+        if( !empty($firstArticleTitle) ) {
+            $this->subject = $firstArticleTitle . " e le altre novità della settimana su TurboLab.it";
+
+        }
+
+        $this->subject .= " (" . $this->getDateString() . ")";
+
+        return $this;
+    }
+
+
+    public function loadTestRecipient() : static
+    {
+        $this->arrRecipients =
+            $this->userCollection
+                ->loadNewsletterTestRecipient()
+                ->getAll();
+
+        return $this;
+    }
+
+
+    public function countArticles()     : int { return $this->articleCollection->count(); }
+    public function countTopics()       : int { return $this->topicCollection->count(); }
+    public function countRecipients()   : int { return $this->userCollection->count(); }
+    public function getRecipients()     : array { return $this->arrRecipients; }
+
+
+    public function buildNextRecipient() : static
+    {
+        /** @var User $user */
+        $user = reset($this->arrRecipients);
+        return
+            $this->buildForOne(
+                $user->getUsername(), $user->getEmail(), $user->getNewsletterUnsubscribeUrl()
+            );
+    }
+
+
+    protected function buildForOne(string $recipientName, string $recipientAddress, string $unsubscribeUrl) : static
+    {
+        $arrTemplateParams = [
+            "Articles"  => $this->articleCollection,
+            "Topics"    => $this->topicCollection,
+            "Email"     => [
+                "To" => [
+                    "name"      => $recipientName,
+                    "address"   => $recipientAddress
+                ]
+            ],
+            'unsubscribeUrl'        => $unsubscribeUrl,
+            'newsletterOnSiteUrl'   => $this->newsletterOnSiteUrl
+        ];
+
+        return
+            $this->build(
+                $this->subject, "email/newsletter.html.twig", $arrTemplateParams,
+                [[ "name" => $recipientName, "address" => $recipientAddress ]]
+            );
+    }
+
+
+    protected function getDateString() : string
+    {
+        $text =
+            (new \IntlDateFormatter('it_IT', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, NULL, NULL, "dd MMMM y"))
+                ->format( new \DateTime() );
+
+        return $text;
+    }
+}

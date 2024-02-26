@@ -6813,16 +6813,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-encryptor.git",
-                "reference": "f69bb3ab1ff35c452e742af176f5bb59c3e4eb2c"
+                "reference": "c8b4efa4990ff0a0b9a6f6ba18510164b20ba3d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-encryptor/zipball/f69bb3ab1ff35c452e742af176f5bb59c3e4eb2c",
-                "reference": "f69bb3ab1ff35c452e742af176f5bb59c3e4eb2c",
+                "url": "https://api.github.com/repos/TurboLabIt/php-encryptor/zipball/c8b4efa4990ff0a0b9a6f6ba18510164b20ba3d9",
+                "reference": "c8b4efa4990ff0a0b9a6f6ba18510164b20ba3d9",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.3"
+                "ext-openssl": "*",
+                "php": "^8.2"
             },
             "require-dev": {
                 "phpunit/phpunit": "@stable",
@@ -6850,7 +6851,7 @@
                 "issues": "https://github.com/TurboLabIt/php-encryptor/issues",
                 "source": "https://github.com/TurboLabIt/php-encryptor/tree/main"
             },
-            "time": "2024-02-25T23:28:54+00:00"
+            "time": "2024-02-26T08:57:05+00:00"
         },
         {
             "name": "turbolabit/php-foreachable",
