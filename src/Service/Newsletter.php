@@ -43,7 +43,6 @@ class Newsletter extends Mailer
         $firstArticleTitle = $this->articleCollection->first()?->getTitle();
         if( !empty($firstArticleTitle) ) {
             $this->subject = $firstArticleTitle . " e le altre novità della settimana su TurboLab.it";
-
         }
 
         $this->subject .= " (" . $this->getDateString() . ")";
@@ -52,11 +51,11 @@ class Newsletter extends Mailer
     }
 
 
-    public function loadTestRecipient() : static
+    public function loadTestRecipients() : static
     {
         $this->arrRecipients =
             $this->userCollection
-                ->loadNewsletterTestRecipient()
+                ->loadNewsletterTestRecipients()
                 ->getAll();
 
         return $this;
@@ -67,20 +66,10 @@ class Newsletter extends Mailer
     public function countTopics()       : int { return $this->topicCollection->count(); }
     public function countRecipients()   : int { return $this->userCollection->count(); }
     public function getRecipients()     : array { return $this->arrRecipients; }
+    public function getSubject()        : string { return $this->subject; }
 
 
-    public function buildNextRecipient() : static
-    {
-        /** @var User $user */
-        $user = reset($this->arrRecipients);
-        return
-            $this->buildForOne(
-                $user->getUsername(), $user->getEmail(), $user->getNewsletterUnsubscribeUrl()
-            );
-    }
-
-
-    protected function buildForOne(string $recipientName, string $recipientAddress, string $unsubscribeUrl) : static
+    public function buildForOne(string $recipientName, string $recipientAddress, string $unsubscribeUrl) : static
     {
         $arrTemplateParams = [
             "Articles"  => $this->articleCollection,

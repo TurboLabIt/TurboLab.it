@@ -10,7 +10,7 @@ class UserCollection extends BaseServiceEntityCollection
     const string ENTITY_CLASS = UserService::ENTITY_CLASS;
 
 
-    public function loadNewsletterTestRecipient() : static
+    public function loadNewsletterTestRecipients() : static
     {
         // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=2
         $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(2);

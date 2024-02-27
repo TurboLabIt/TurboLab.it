@@ -1,14 +1,17 @@
 <?php
 namespace App\Command;
 
-use App\Service\Mailer;
+use App\Service\Newsletter;
+use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
+use TurboLabIt\BaseCommand\Service\Options;
 
 
 #[AsCommand(
@@ -27,7 +30,7 @@ class NewsletterCommand extends AbstractBaseCommand
 
     public function __construct(
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
-        protected Mailer $mailer
+        protected Newsletter $newsletter
     )
     {
         parent::__construct();
@@ -42,6 +45,8 @@ class NewsletterCommand extends AbstractBaseCommand
             static::CLI_ACTION_TEST,
             static::CLI_ARG_ACTIONS
         );
+
+        parent::configure();
     }
 
 
@@ -56,44 +61,96 @@ class NewsletterCommand extends AbstractBaseCommand
             return $this->endWithError("Invalid " . static::CLI_ARG_ACTION . ". Allowed values: " . implode(' | ', static::CLI_ARG_ACTIONS) );
         }
 
+        $this->fxTitle("Email delivery check");
+        if( $this->isDryRun() ) {
+            $this->fxWarning("Email delivery is BLOCKED");
+        } else {
+            $this->fxWarning("📨🔥 Emails are HOT! 🔥📨");
+        }
+
+        $this->newsletter->block( $this->isDryRun(true) );
+
 
         $this
-            ->selectArticles()
-            ->selectForumTopics()
-//            ->createWebArticle()
-//            ->selectRecipients()
-            ->sendNewsletter()
-        ;
+            ->fxTitle("Loading newsletter content...")
+            ->newsletter->loadContent();
+
+        $countArticles  = $this->newsletter->countArticles();
+        $countTopics    = $this->newsletter->countTopics();
+        $this->fxOK("$countArticles articles(s) and $countTopics topic(s) loaded");
+        $this->fxInfo( $this->newsletter->getSubject() );
+
+
+        $this->fxTitle("Generating article...");
+        if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
+            $this->newsletter->saveOnTheWeb();
+        } else {
+            $this->fxWarning('Skipped due to mode: ##' .  static::CLI_ACTION_TEST . "## or --" . Options::CLI_OPT_DRY_RUN);
+        }
+
+
+        if( $argAction == static::CLI_ACTION_TEST ) {
+
+            $this
+                ->fxTitle("Loading test recipients...")
+                ->newsletter->loadTestRecipients();
+
+        } else {
+
+            $this
+                ->fxTitle("Loading recipients...")
+                ->newsletter->loadAllRecipients();
+        }
+
+        $recipientsCount = $this->newsletter->countRecipients();
+        $this->fxOK("$recipientsCount recipient(s) loaded");
+
+        $this->fxTitle("Processing every recipient...");
+        $arrRecipients = $this->newsletter->getRecipients();
+        $this->processItems($arrRecipients, [$this, 'sendOne'], null, [$this, 'buildItemTitle']);
+
+        $this->fxTitle("Error report");
+        $arrErrorReport = $this->newsletter->getFailingReport();
+        if( empty($arrErrorReport) ) {
+
+            $this->fxOK("No errors");
+
+        } else {
+
+            $this->bashFx->fxError("Some items are FAILING!");
+
+            $arrHeader = array_keys( reset($arrErrorReport));
+            (new Table($output))
+                ->setHeaders($arrHeader)
+                ->setRows($arrErrorReport)
+                ->render();
+
+            $this->io->newLine();
+        }
 
         return $this->endWithSuccess();
     }
 
 
-    protected function selectArticles() : static
+    protected function buildItemTitle($key, $item) : string
     {
-        $this->fxTitle('Selecting articles....');
-        $this->articleCollection->loadLatestForNewsletter();
-        return $this->fxOK("##" . $this->articleCollection->count() . "## article(s) loaded");
+        return "[$key] " . $item->getUsername() . " <" . $item->getEmail() . ">";
     }
 
 
-    protected function selectForumTopics() : static
+    protected function sendOne(int $key, User $recipient)
     {
-        $this->fxTitle('Selecting new forum topics....');
-        $this->topicCollection->loadLatestForNewsletter();
-        return $this->fxOK("##" . $this->topicCollection->count() . "## topic(s) loaded");
-    }
+        $username       = $recipient->getUsername();
+        $userEmail      = $recipient->getEmail();
+        $unsubscribeUrl = $recipient->getNewsletterUnsubscribeUrl();
 
+        try {
+            $this->newsletter
+                ->buildForOne($username, $userEmail, $unsubscribeUrl)
+                ->send();
 
-    protected function createWebArticle() : static
-    {
-        // TODO zaneee!!! createWebArticle in newsletter
-        return $this;
-    }
-
-
-    protected function sendNewsletter() : static
-    {
-
+        } catch(\Exception $ex) {
+            $this->fxWarning("Sending error! " .  $ex->getMessage());
+        }
     }
 }
