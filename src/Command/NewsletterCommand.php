@@ -128,6 +128,10 @@ class NewsletterCommand extends AbstractBaseCommand
             $this->io->newLine();
         }
 
+        $this
+            ->fxTitle("📄 Check the newsletter preview!")
+            ->fxOK( $this->newsletter->getPreviewUrl() );
+
         return $this->endWithSuccess();
     }
 

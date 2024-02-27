@@ -92,6 +92,12 @@ class Newsletter extends Mailer
     }
 
 
+    public function getPreviewUrl() : string
+    {
+        return $this->urlGenerator->generate("app_newsletter_preview", [], UrlGeneratorInterface::ABSOLUTE_URL);
+    }
+
+
     protected function getDateString() : string
     {
         $text =
