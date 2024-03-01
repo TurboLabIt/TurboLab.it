@@ -12,9 +12,7 @@ class ForumUrlGenerator
 
     public function generateHomeUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL)
     {
-        $websiteHomeUrl = $this->symfonyUrlGenerator->generate('app_home', [], $urlType);
-        $websiteHomeUrl = trim($websiteHomeUrl, '/') . '/';
-        $forumHomeUrl   = $websiteHomeUrl . 'forum/';
+        $forumHomeUrl = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . 'forum/';
         return $forumHomeUrl;
     }
 

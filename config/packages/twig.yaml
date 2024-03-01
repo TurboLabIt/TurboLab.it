@@ -2,9 +2,14 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     strict_variables: true
     globals:
+        siteDomain: '%env(APP_SITE_DOMAIN)%'
         siteUrl: '%env(APP_SITE_URL)%'
-        metaTitleSuffix: ' | TurboLab.it'
-        twitterHandle: 'TurboLabIt'
+        siteName: '%env(APP_SITE_NAME)%'
+        metaTitle: '%env(APP_HEADLINE)%'
+        metaTitleSuffix: '%env(APP_META_TITLE_SUFFIX)%'
+        metaDescription: '%env(APP_DESCRIPTION)%'
+        metaPageImageUrl: '%env(APP_SITE_URL)%%env(APP_SITE_LOGO_PATH)%'
+        websiteTwitterHandle: '%env(APP_TWITTER_HANDLE)%'
 
 when@test:
     twig:

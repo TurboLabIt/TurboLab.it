@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block htmlArticleContent %}
+{% block bodyMainContent %}
 
-    <h1>{{ Article.title|raw }}</h1>
+    <h1>{{ metaTitle|raw }}</h1>
 
     <div>
         {% if Article.Authors is not empty %}

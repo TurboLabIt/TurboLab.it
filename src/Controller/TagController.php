@@ -64,7 +64,7 @@ class TagController extends BaseController
             'metaDescription'   => "Articoli, guide, notizie che riguardano: " . $tag->getTitle(),
             'metaCanonicalUrl'  => $tag->getUrl($page),
             'metaOgType'        => 'article',
-            'pageImage'         => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
+            'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
             'Tag'               => $tag,
             'TaggedArticles'    => $taggedArticles,
             'Paginator'         => $this->paginator

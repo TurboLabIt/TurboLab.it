@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Twig\Environment;
 
@@ -24,7 +25,6 @@ class HomeController extends BaseController
     }
 
 
-
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
@@ -38,7 +38,7 @@ class HomeController extends BaseController
         $buildHtmlResult =
             $this->cache->get("app_home", function(CacheItem $cache) use($that) {
 
-                $cache->tag(["app_home", "app_home",  "app_home_1", "loadLatestPublished", "loadLatestPublished_1"]);
+                $cache->tag(["app_home"]);
                 $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                 return $that->buildHtml(1);
         });
@@ -106,14 +106,21 @@ class HomeController extends BaseController
             return $this->redirectToRoute("app_home_paginated", ["page" => $lastPageNum]);
         }
 
+        $metaCanonicalUrl =
+            empty($page) || $page < 2
+                ? $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL)
+                : $this->generateUrl('app_home_paginated', ['page' => $page], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        /**
+         * no trailing slash for the canonical homepage URL, even if this is not really needed:
+         * "Rest assured that for your root URL specifically, https://example.com is equivalent to https://example.com/
+         *   and can't be redirected even if you're Chuck Norris."
+         * 📚 https://developers.google.com/search/blog/2010/04/to-slash-or-not-to-slash
+         */
+        $metaCanonicalUrl = trim($metaCanonicalUrl, '/');
+
         return $this->twig->render('home/index.html.twig', [
-            'metaTitle'         => "Guide PC, Windows, Android, Linux e Bitcoin",
-            'metaDescription'   => "Siamo il punto di incontro italiano per apassionati di informatica. " .
-                "Pubblichiamo ogni giorno tutorial per Windows, Android, Linux e Bitcoin, oltre a " .
-                "guide e consigli pratici per scegliere i migliori PC, portatili e smartphone disponibili sul mercato.",
-            'metaCanonicalUrl'  => strtok($this->request->getUri(), '?'),
-            'metaOgType'        => 'article',
-            'pageImage'         => '',
+            'metaCanonicalUrl'  => $metaCanonicalUrl,
             'Articles'          => $this->articleCollection,
             'Paginator'         => $this->paginator
         ]);

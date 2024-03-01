@@ -2,10 +2,12 @@
 namespace App\Service;
 
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 abstract class BaseServiceEntity
 {
     const ENTITY_CLASS          = null;
-    const NOT_FOUND_EXCEPTION   = null;
+    const NOT_FOUND_EXCEPTION   = NotFoundHttpException::class;
 
 
     public function clear() : static
