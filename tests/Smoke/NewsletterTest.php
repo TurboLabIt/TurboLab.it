@@ -2,6 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Service\Cms\Article;
+use App\Service\User;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\Depends;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,9 +12,10 @@ class NewsletterTest extends BaseT
 {
     public function testAppNewsletterIndex()
     {
+        // 👀 https://turbolab.it/402
+
         /** @var Article $article */
         $article = static::getService("App\\Service\\Cms\\Article");
-        // 👀 https://turbolab.it/402
         $articleUrl = $article->load(402)->getUrl();
         $this->expectRedirect('/newsletter', $articleUrl, Response::HTTP_FOUND);
     }
@@ -113,5 +115,50 @@ class NewsletterTest extends BaseT
     }
 
 
+    protected function getUserSystem() : User
+    {
+        // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
 
+        /** @var User $user */
+        $user = static::getService("App\\Service\\User");
+        return $user->load(5103);
+    }
+
+
+    public function testUnsubscribeAlreadyUnsubscribedError()
+    {
+        $user = $this->getUserSystem();
+        $user->unsubscribeFromNewsletter();
+        $this->getEntityManager()->flush();
+
+        $unsubscribeUrl = $user->getNewsletterUnsubscribeUrl();
+        $this->browse($unsubscribeUrl);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $subscribeUrl = $user->getNewsletterSubscribeUrl();
+        $this->fetchHtml($subscribeUrl);
+
+        // system must not receive the newsletter
+        $user->unsubscribeFromNewsletter();
+        $this->getEntityManager()->flush();
+    }
+
+
+    public function testSubscribeAlreadySubscribedError()
+    {
+        $user = $this->getUserSystem();
+        $user->subscribeToNewsletter();
+        $this->getEntityManager()->flush();
+
+        $subscribeUrl = $user->getNewsletterSubscribeUrl();
+        $this->browse($subscribeUrl);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $unsubscribeUrl = $user->getNewsletterUnsubscribeUrl();
+        $this->fetchHtml($unsubscribeUrl);
+
+        // system must not receive the newsletter
+        $user->unsubscribeFromNewsletter();
+        $this->getEntityManager()->flush();
+    }
 }
