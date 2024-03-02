@@ -80,6 +80,14 @@ class NewsletterCommand extends AbstractBaseCommand
         $this->fxOK("$countArticles articles(s) and $countTopics topic(s) loaded");
         $this->fxInfo( $this->newsletter->getSubject() );
 
+        if( $countArticles == 0 && $countTopics == 0 ) {
+
+            $this->newsletter->lowContentNotification();
+            return
+                $this->endWithError(
+                    "There isn't enough content! You can still check the preview on " . $this->newsletter->getPreviewUrl()
+                );
+        }
 
         $this->fxTitle("Generating article...");
         if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
