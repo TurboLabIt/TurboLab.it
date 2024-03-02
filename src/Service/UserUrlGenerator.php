@@ -49,6 +49,20 @@ class UserUrlGenerator extends UrlGenerator
     }
 
 
+    public function generateNewsletterSubscribeUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        $subscribeUrl =
+            $this->symfonyUrlGenerator->generate('app_newsletter_subscribe', [
+                "encryptedSubscriberData" => $this->encryptor->encrypt([
+                    "userId"    => $user->getId(),
+                    "email"     => $user->getEmail()
+                ])
+            ], $urlType);
+
+        return $subscribeUrl;
+    }
+
+
     public function isUrl(string $urlCandidate) : bool
     {
         if( !$this->isInternalUrl($urlCandidate) ) {

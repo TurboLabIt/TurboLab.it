@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block metaTitle %}Iscrizione alla newsletter{% endblock %}
+{% block metaRobots %}noindex,follow{% endblock %}
+
+{% block bodyMainContent %}
+    {% if error ?? null == constant('App\\Controller\\Newsletter::ERROR_BAD_ACCESS_KEY') %}
+
+        <p>Errore durante la decodifica dell'iscrizione.</p>
+
+    {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_NOT_FOUND') %}
+
+        <p>
+            L'utente numero <samp>{{ SubscriberData.userId }}</samp>,
+            associato all'indirizzo email <samp>{{ SubscriberData.email }}</samp>,
+            non esiste.
+        </p>
+
+    {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_IS_SUBSCRIBED') %}
+
+        <p>
+
+            L'indirizzo email <samp>{{ SubscriberData.email }}</samp>
+            è già iscritto alla newsletter.
+        </p>
+
+    {% elseif error is defined %}
+
+        <p>
+            Si è verificato un errore imprevisto.
+        </p>
+
+    {% else %}
+
+        <p><strong>✅ Iscrizione alla newsletter avvenuta con successo!</strong></p>
+        <p>L'indirizzo email {{ User.email }} riceverà ora la newsletter settimanale.</p>
+        <p>
+            Ti sei iscritto per sbaglio? Puoi dis-iscriverti subito
+            👉 <a href="{{ User.newsletterUnsubscribeUrl }}">cliccando qui</a>.
+        </p>
+
+    {% endif %}
+
+    {% if error ?? false %}
+
+        <hr>
+        <p>
+            Se hai problemi con l'iscrizione alla newsletter, per favore
+            scrivici all'indirizzo <a href="mailto:info@turbolab.it?subject=Problema iscrizione newsletter">info@turbolab.it</a>
+            e ti aiuteremo a iscriverti.
+        </p>
+
+    {% endif %}
+
+{% endblock %}
