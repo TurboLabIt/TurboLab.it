@@ -30,6 +30,9 @@ class Newsletter extends Mailer
             "from" => [
                 "name"      => "TurboLab.it",
                 "address"   => "newsletter@turbolab.it"
+            ],
+            "subject" => [
+                "tag" => "[TLI]"
             ]
         ]);
     }
@@ -74,12 +77,6 @@ class Newsletter extends Mailer
         $arrTemplateParams = [
             "Articles"  => $this->articleCollection,
             "Topics"    => $this->topicCollection,
-            "Email"     => [
-                "To" => [
-                    "name"      => $recipientName,
-                    "address"   => $recipientAddress
-                ]
-            ],
             'unsubscribeUrl'        => $unsubscribeUrl,
             'newsletterOnSiteUrl'   => $this->newsletterOnSiteUrl
         ];

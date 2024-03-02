@@ -16,11 +16,15 @@
     <container>
         <row>
             <columns>
-                <p>Ciao {{ Email.To.name }}! 👋🏻 Queste sono le novità pubblicate da TurboLab.it nel corso della settimana.</p>
+                <p>Ciao {{ ToFirst.name }}! 👋🏻 Queste sono le novità pubblicate da TurboLab.it nel corso della settimana.</p>
                 <p class="unsubscribe">
                     🛑 Non vuoi più ricevere queste email? 👉 <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a>
                 </p>
                 <p>Problemi di visualizzazione? <a href="{{ newsletterOnSiteUrl }}">Guarda la newsletter nel browser web</a></p>
+                <p>
+                    🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla tua rubrica per
+                    evitare che la newsletter finisca nello spam!
+                </p>
 
                 <h2>Articoli e news</h2>
                 {% if Articles is not empty %}
@@ -61,7 +65,7 @@
                 <columns>
                     <p>
                     <p class="unsubscribe">
-                        Email inviata a {{ Email.To.address }} 🛑 Non vuoi più ricevere queste email?
+                        Email inviata a {{ ToFirst.address }} 🛑 Non vuoi più ricevere queste email?
                         <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a>
                     </p>
                     </p>

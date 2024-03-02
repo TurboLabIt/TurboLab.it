@@ -1026,16 +1026,16 @@
         },
         {
             "name": "doctrine/migrations",
-            "version": "3.7.2",
+            "version": "3.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations.git",
-                "reference": "47af29eef49f29ebee545947e8b2a4b3be318c8a"
+                "reference": "ebb383e8e689767ac719bbb6fbf32f6293e899b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/migrations/zipball/47af29eef49f29ebee545947e8b2a4b3be318c8a",
-                "reference": "47af29eef49f29ebee545947e8b2a4b3be318c8a",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/ebb383e8e689767ac719bbb6fbf32f6293e899b0",
+                "reference": "ebb383e8e689767ac719bbb6fbf32f6293e899b0",
                 "shasum": ""
             },
             "require": {
@@ -1108,7 +1108,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/migrations/issues",
-                "source": "https://github.com/doctrine/migrations/tree/3.7.2"
+                "source": "https://github.com/doctrine/migrations/tree/3.7.3"
             },
             "funding": [
                 {
@@ -1124,20 +1124,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-05T11:35:05+00:00"
+            "time": "2024-03-01T12:07:17+00:00"
         },
         {
             "name": "doctrine/orm",
-            "version": "2.18.1",
+            "version": "2.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "e6eef1a97d41f1ee244b6e69d7359d00cb3e4c4a"
+                "reference": "52a6a21387380b09419a66a7ec1c66f6cab69b20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/e6eef1a97d41f1ee244b6e69d7359d00cb3e4c4a",
-                "reference": "e6eef1a97d41f1ee244b6e69d7359d00cb3e4c4a",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/52a6a21387380b09419a66a7ec1c66f6cab69b20",
+                "reference": "52a6a21387380b09419a66a7ec1c66f6cab69b20",
                 "shasum": ""
             },
             "require": {
@@ -1166,14 +1166,14 @@
                 "doctrine/annotations": "^1.13 || ^2",
                 "doctrine/coding-standard": "^9.0.2 || ^12.0",
                 "phpbench/phpbench": "^0.16.10 || ^1.0",
-                "phpstan/phpstan": "~1.4.10 || 1.10.35",
+                "phpstan/phpstan": "~1.4.10 || 1.10.59",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6",
                 "psr/log": "^1 || ^2 || ^3",
                 "squizlabs/php_codesniffer": "3.7.2",
                 "symfony/cache": "^4.4 || ^5.4 || ^6.4 || ^7.0",
                 "symfony/var-exporter": "^4.4 || ^5.4 || ^6.2 || ^7.0",
                 "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
-                "vimeo/psalm": "4.30.0 || 5.16.0"
+                "vimeo/psalm": "4.30.0 || 5.22.2"
             },
             "suggest": {
                 "ext-dom": "Provides support for XSD validation for XML mapping files",
@@ -1223,22 +1223,22 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.18.1"
+                "source": "https://github.com/doctrine/orm/tree/2.18.2"
             },
-            "time": "2024-02-22T12:22:44+00:00"
+            "time": "2024-03-01T09:47:18+00:00"
         },
         {
             "name": "doctrine/persistence",
-            "version": "3.2.0",
+            "version": "3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/persistence.git",
-                "reference": "63fee8c33bef740db6730eb2a750cd3da6495603"
+                "reference": "b6fd1f126b13c1f7e7321f7338b14a19116b5de4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/persistence/zipball/63fee8c33bef740db6730eb2a750cd3da6495603",
-                "reference": "63fee8c33bef740db6730eb2a750cd3da6495603",
+                "url": "https://api.github.com/repos/doctrine/persistence/zipball/b6fd1f126b13c1f7e7321f7338b14a19116b5de4",
+                "reference": "b6fd1f126b13c1f7e7321f7338b14a19116b5de4",
                 "shasum": ""
             },
             "require": {
@@ -1307,7 +1307,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/persistence/issues",
-                "source": "https://github.com/doctrine/persistence/tree/3.2.0"
+                "source": "https://github.com/doctrine/persistence/tree/3.3.1"
             },
             "funding": [
                 {
@@ -1323,7 +1323,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-17T18:32:04+00:00"
+            "time": "2024-03-01T19:53:13+00:00"
         },
         {
             "name": "doctrine/sql-formatter",
@@ -3505,16 +3505,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v2.4.4",
+            "version": "v2.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "bec213c39511eda66663baa2ee7440c65f89c695"
+                "reference": "b0a405f40614c9f584b489d54f91091817b0e26e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/bec213c39511eda66663baa2ee7440c65f89c695",
-                "reference": "bec213c39511eda66663baa2ee7440c65f89c695",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/b0a405f40614c9f584b489d54f91091817b0e26e",
+                "reference": "b0a405f40614c9f584b489d54f91091817b0e26e",
                 "shasum": ""
             },
             "require": {
@@ -3550,7 +3550,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v2.4.4"
+                "source": "https://github.com/symfony/flex/tree/v2.4.5"
             },
             "funding": [
                 {
@@ -3566,7 +3566,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-05T18:04:53+00:00"
+            "time": "2024-03-02T08:16:47+00:00"
         },
         {
             "name": "symfony/form",
@@ -6897,7 +6897,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "f8c93a4f64412af6800de5f228123d6fa08a9268"
+                "reference": "9d853990f09112116595f5144c2a317961e4d705"
             },
             "require": {
                 "league/csv": "@stable",
@@ -6932,7 +6932,7 @@
                 }
             ],
             "description": "A minimal Symfony bundle to build your own CLI commands even faster",
-            "time": "2024-02-27T17:54:48+00:00"
+            "time": "2024-03-02T15:01:02+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
@@ -7510,16 +7510,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "11.0.0",
+            "version": "11.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "5e238e4b982cb272bf9faeee6f33af83d465d0e2"
+                "reference": "89702be0ad026873ef3a1605fe8726254eef4e2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/5e238e4b982cb272bf9faeee6f33af83d465d0e2",
-                "reference": "5e238e4b982cb272bf9faeee6f33af83d465d0e2",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/89702be0ad026873ef3a1605fe8726254eef4e2c",
+                "reference": "89702be0ad026873ef3a1605fe8726254eef4e2c",
                 "shasum": ""
             },
             "require": {
@@ -7576,7 +7576,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.0"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.1"
             },
             "funding": [
                 {
@@ -7584,7 +7584,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-02T06:03:46+00:00"
+            "time": "2024-03-02T07:34:25+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -7833,16 +7833,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.0.3",
+            "version": "11.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "de24e7e7c67fbf437f7b6cd7bc919f2dc6fd89d4"
+                "reference": "3f4261269c91370e9b2b3f64cc76c617c442c35a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/de24e7e7c67fbf437f7b6cd7bc919f2dc6fd89d4",
-                "reference": "de24e7e7c67fbf437f7b6cd7bc919f2dc6fd89d4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3f4261269c91370e9b2b3f64cc76c617c442c35a",
+                "reference": "3f4261269c91370e9b2b3f64cc76c617c442c35a",
                 "shasum": ""
             },
             "require": {
@@ -7913,7 +7913,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.0.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.0.4"
             },
             "funding": [
                 {
@@ -7929,20 +7929,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-10T06:31:16+00:00"
+            "time": "2024-02-29T16:21:10+00:00"
         },
         {
             "name": "sebastian/cli-parser",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/cli-parser.git",
-                "reference": "efd6ce5bb8131fe981e2f879dbd47605fbe0cc6f"
+                "reference": "00a74d5568694711f0222e54fb281e1d15fdf04a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/cli-parser/zipball/efd6ce5bb8131fe981e2f879dbd47605fbe0cc6f",
-                "reference": "efd6ce5bb8131fe981e2f879dbd47605fbe0cc6f",
+                "url": "https://api.github.com/repos/sebastianbergmann/cli-parser/zipball/00a74d5568694711f0222e54fb281e1d15fdf04a",
+                "reference": "00a74d5568694711f0222e54fb281e1d15fdf04a",
                 "shasum": ""
             },
             "require": {
@@ -7978,7 +7978,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/cli-parser/issues",
                 "security": "https://github.com/sebastianbergmann/cli-parser/security/policy",
-                "source": "https://github.com/sebastianbergmann/cli-parser/tree/3.0.0"
+                "source": "https://github.com/sebastianbergmann/cli-parser/tree/3.0.1"
             },
             "funding": [
                 {
@@ -7986,7 +7986,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-02T05:48:04+00:00"
+            "time": "2024-03-02T07:26:58+00:00"
         },
         {
             "name": "sebastian/code-unit",
@@ -8238,16 +8238,16 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "6.0.0",
+            "version": "6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "3e3f502419518897a923aa1c64d51f9def2e0aff"
+                "reference": "ab83243ecc233de5655b76f577711de9f842e712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/3e3f502419518897a923aa1c64d51f9def2e0aff",
-                "reference": "3e3f502419518897a923aa1c64d51f9def2e0aff",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/ab83243ecc233de5655b76f577711de9f842e712",
+                "reference": "ab83243ecc233de5655b76f577711de9f842e712",
                 "shasum": ""
             },
             "require": {
@@ -8293,7 +8293,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/diff/issues",
                 "security": "https://github.com/sebastianbergmann/diff/security/policy",
-                "source": "https://github.com/sebastianbergmann/diff/tree/6.0.0"
+                "source": "https://github.com/sebastianbergmann/diff/tree/6.0.1"
             },
             "funding": [
                 {
@@ -8301,7 +8301,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-02T05:56:35+00:00"
+            "time": "2024-03-02T07:30:33+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -8369,16 +8369,16 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "6.0.0",
+            "version": "6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "d0c0a93fc746b0c066037f1e7d09104129e868ff"
+                "reference": "f291e5a317c321c0381fa9ecc796fa2d21b186da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/d0c0a93fc746b0c066037f1e7d09104129e868ff",
-                "reference": "d0c0a93fc746b0c066037f1e7d09104129e868ff",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/f291e5a317c321c0381fa9ecc796fa2d21b186da",
+                "reference": "f291e5a317c321c0381fa9ecc796fa2d21b186da",
                 "shasum": ""
             },
             "require": {
@@ -8435,7 +8435,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/exporter/issues",
                 "security": "https://github.com/sebastianbergmann/exporter/security/policy",
-                "source": "https://github.com/sebastianbergmann/exporter/tree/6.0.0"
+                "source": "https://github.com/sebastianbergmann/exporter/tree/6.0.1"
             },
             "funding": [
                 {
@@ -8443,20 +8443,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-02T05:58:52+00:00"
+            "time": "2024-03-02T07:28:20+00:00"
         },
         {
             "name": "sebastian/global-state",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "590e7cbc6565fa2e26c3df4e629a34bb0bc00c17"
+                "reference": "c3a307e832f2e69c7ef869e31fc644fde0e7cb3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/590e7cbc6565fa2e26c3df4e629a34bb0bc00c17",
-                "reference": "590e7cbc6565fa2e26c3df4e629a34bb0bc00c17",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/c3a307e832f2e69c7ef869e31fc644fde0e7cb3e",
+                "reference": "c3a307e832f2e69c7ef869e31fc644fde0e7cb3e",
                 "shasum": ""
             },
             "require": {
@@ -8497,7 +8497,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/global-state/issues",
                 "security": "https://github.com/sebastianbergmann/global-state/security/policy",
-                "source": "https://github.com/sebastianbergmann/global-state/tree/7.0.0"
+                "source": "https://github.com/sebastianbergmann/global-state/tree/7.0.1"
             },
             "funding": [
                 {
@@ -8505,7 +8505,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-02T05:59:33+00:00"
+            "time": "2024-03-02T07:32:10+00:00"
         },
         {
             "name": "sebastian/lines-of-code",
