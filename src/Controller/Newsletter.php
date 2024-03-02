@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Exception\UserNotFoundException;
+use App\Service\Cms\Article;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,10 +14,25 @@ use TurboLabIt\Encryptor\Encryptor;
 
 class Newsletter extends BaseController
 {
-    const ERROR_BAD_ACCESS_KEY      = 1;
-    const ERROR_USER_NOT_FOUND      = 3;
-    const ERROR_USER_NOT_SUBSCRIBED = 5;
-    const ERROR_USER_IS_SUBSCRIBED  = 7;
+    const int ERROR_BAD_ACCESS_KEY      = 1;
+    const int ERROR_USER_NOT_FOUND      = 3;
+    const int ERROR_USER_NOT_SUBSCRIBED = 5;
+    const int ERROR_USER_IS_SUBSCRIBED  = 7;
+
+
+    public function __construct(
+        protected Encryptor $encryptor, protected User $user, protected EntityManagerInterface $entityManager
+    )
+    {}
+
+
+    #[Route('/newsletter', name: 'app_newsletter')]
+    public function index(Article $article) : Response
+    {
+        // 👀 https://turbolab.it/402
+        $url = $article->load(402)->getUrl();
+        return $this->redirect($url);
+    }
 
 
     #[Route('/newsletter/anteprima', name: 'app_newsletter_preview')]
@@ -43,10 +59,10 @@ class Newsletter extends BaseController
 
 
     #[Route('/newsletter/disiscrizione/{encryptedSubscriberData}', name: 'app_newsletter_unsubscribe')]
-    public function unsubscribe(string $encryptedSubscriberData, Encryptor $encryptor, User $user, EntityManagerInterface $entityManager) : Response
+    public function unsubscribe(string $encryptedSubscriberData) : Response
     {
         try {
-            $arrDecodedSubscriberData = $encryptor->decrypt($encryptedSubscriberData);
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
 
         } catch(EncryptionException) {
             return $this->unsubscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);
@@ -55,46 +71,46 @@ class Newsletter extends BaseController
         $userId = $arrDecodedSubscriberData["userId"];
 
         try {
-            $user->load($userId);
+            $this->user->load($userId);
         } catch(UserNotFoundException) {
             return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_FOUND, $arrDecodedSubscriberData);
         }
 
-        if( !$user->isSubscribedToNewsletter() ) {
-            return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_SUBSCRIBED, $arrDecodedSubscriberData, $user);
+        if( !$this->user->isSubscribedToNewsletter() ) {
+            return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_SUBSCRIBED, $arrDecodedSubscriberData);
         }
 
-        $user->unsubscribeFromNewsletter();
-        $entityManager->flush();
+        $this->user->unsubscribeFromNewsletter();
+        $this->entityManager->flush();
 
         if( $userId == 2 ) {
 
-            $user->subscribeToNewsletter();
-            //$entityManager->flush();
+            $this->user->subscribeToNewsletter();
+            $this->entityManager->flush();
         }
 
         return $this->render('newsletter/unsubscribe.html.twig', [
-            "User"  => $user
+            "User"  => $this->user
         ]);
     }
 
 
-    protected function unsubscribeErrorResponse(string $errorConstant, ?array $arrDecodedSubscriberData = null, ?User $user = null) : Response
+    protected function unsubscribeErrorResponse(int $errorConstant, ?array $arrDecodedSubscriberData = null) : Response
     {
         return
             $this->render('newsletter/unsubscribe.html.twig', [
                 "error"             => $errorConstant,
                 "SubscriberData"    => $arrDecodedSubscriberData,
-                "User"              => $user
+                "User"              => $this->user
             ], new Response(null, Response::HTTP_BAD_REQUEST));
     }
 
 
     #[Route('/newsletter/iscrizione/{encryptedSubscriberData}', name: 'app_newsletter_subscribe')]
-    public function subscribe(string $encryptedSubscriberData, Encryptor $encryptor, User $user, EntityManagerInterface $entityManager) : Response
+    public function subscribe(string $encryptedSubscriberData) : Response
     {
         try {
-            $arrDecodedSubscriberData = $encryptor->decrypt($encryptedSubscriberData);
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
 
         } catch(EncryptionException) {
             return $this->subscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);
@@ -103,37 +119,37 @@ class Newsletter extends BaseController
         $userId = $arrDecodedSubscriberData["userId"];
 
         try {
-            $user->load($userId);
+            $this->user->load($userId);
         } catch(UserNotFoundException) {
             return $this->subscribeErrorResponse(static::ERROR_USER_NOT_FOUND, $arrDecodedSubscriberData);
         }
 
         if( $userId == 2 ) {
 
-            $user->unsubscribeFromNewsletter();
-            $entityManager->flush();
+            $this->user->unsubscribeFromNewsletter();
+            $this->entityManager->flush();
         }
 
-        if( $user->isSubscribedToNewsletter() ) {
-            return $this->subscribeErrorResponse(static::ERROR_USER_IS_SUBSCRIBED, $arrDecodedSubscriberData, $user);
+        if( $this->user->isSubscribedToNewsletter() ) {
+            return $this->subscribeErrorResponse(static::ERROR_USER_IS_SUBSCRIBED, $arrDecodedSubscriberData);
         }
 
-        $user->subscribeToNewsletter();
-        $entityManager->flush();
+        $this->user->subscribeToNewsletter();
+        $this->entityManager->flush();
 
         return $this->render('newsletter/subscribe.html.twig', [
-            "User" => $user
+            "User" => $this->user
         ]);
     }
 
 
-    protected function subscribeErrorResponse(string $errorConstant, ?array $arrDecodedSubscriberData = null, ?User $user = null) : Response
+    protected function subscribeErrorResponse(int $errorConstant, ?array $arrDecodedSubscriberData = null) : Response
     {
         return
             $this->render('newsletter/subscribe.html.twig', [
                 "error"             => $errorConstant,
                 "SubscriberData"    => $arrDecodedSubscriberData,
-                "User"              => $user
+                "User"              => $this->user
             ], new Response(null, Response::HTTP_BAD_REQUEST));
     }
 }
