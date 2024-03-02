@@ -29,7 +29,7 @@ class Newsletter extends Mailer
         parent::__construct($mailer, $projectDir, [
             "from" => [
                 "name"      => "TurboLab.it",
-                "address"   => "info@turbolab.it"
+                "address"   => "newsletter@turbolab.it"
             ]
         ]);
     }
