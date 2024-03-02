@@ -111,7 +111,8 @@ class ArticleRepository extends BaseCmsRepository
             SELECT id FROM article
             WHERE
               publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
-              published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
+              published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
+              title NOT LIKE 'Questa settimana su TLI%'
             ";
 
         $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect);

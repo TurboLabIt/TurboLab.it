@@ -45,7 +45,7 @@ class Newsletter extends Mailer
 
         $firstArticleTitle = $this->articleCollection->first()?->getTitle();
         if( !empty($firstArticleTitle) ) {
-            $this->subject = $firstArticleTitle . " e le altre novità della settimana su TurboLab.it";
+            $this->subject = '"' . $firstArticleTitle . '" e altre novità su TurboLab.it';
         }
 
         $this->subject .= " (" . $this->getDateString() . ")";
@@ -102,5 +102,16 @@ class Newsletter extends Mailer
                 ->format( new \DateTime() );
 
         return $text;
+    }
+
+
+    public function lowContentNotification()
+    {
+        $this
+            ->build(
+            "📭 Contenuti insufficienti per generare la newsletter", "email/newsletter-skipped-notification.html.twig", [],
+            [[ "name" => 'Manager', "address" => "info@turbolab.it" ]]
+            )
+            ->send();
     }
 }

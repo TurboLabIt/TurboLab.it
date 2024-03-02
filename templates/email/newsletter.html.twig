@@ -20,7 +20,7 @@
                 <p class="unsubscribe">🛑 Non vuoi più ricevere queste email? 👉 <a href="{{ unsubscribeUrl }}">Dis-iscriviti con un solo click</a></p>
                 <p>Problemi di visualizzazione? <a href="{{ newsletterOnSiteUrl }}">Guarda la newsletter nel browser web</a></p>
                 <p>
-                    🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla tua rubrica per
+                    🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla rubrica per
                     evitare che la newsletter finisca nello spam!
                 </p>
 
@@ -29,9 +29,9 @@
 
                     {% for Article in Articles %}
                         <div>
-                            <h3><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
+                            <h3><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
                             <a href="{{ Article.url }}"><img src="{{ Article.SpotlightOrDefaultUrl('med') }}"></a>
-                            <a href="{{ Article.url }}"><p class="abstract">{{ Article.abstract }}</p></a>
+                            <a href="{{ Article.url }}"><p class="abstract">{{ Article.abstract|raw }}</p></a>
                         </div>
                     {% endfor %}
 
@@ -45,7 +45,7 @@
 
                     <ul>
                         {% for Item in Topics %}
-                            <li><a href="{{ Item.url }}">{{ Item.title }}</a></li>
+                            <li><a href="{{ Item.url }}">{{ Item.title|raw }}</a></li>
                         {% endfor %}
                     </ul>
 
