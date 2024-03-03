@@ -3,9 +3,11 @@ namespace App\Controller;
 
 use App\Exception\UserNotFoundException;
 use App\Service\Cms\Article;
+use App\Service\Cms\UrlGenerator;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\Encryptor\EncryptionException;
@@ -21,9 +23,12 @@ class Newsletter extends BaseController
 
 
     public function __construct(
-        protected Encryptor $encryptor, protected User $user, protected EntityManagerInterface $entityManager
+        protected Encryptor $encryptor, protected User $user, protected EntityManagerInterface $entityManager,
+        RequestStack $requestStack
     )
-    {}
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     #[Route('/newsletter', name: 'app_newsletter')]
@@ -44,17 +49,37 @@ class Newsletter extends BaseController
                 ->loadTestRecipients()
                 ->getRecipients();
 
-        $recipient      = reset($arrTestRecipients);
-        $username       = $recipient->getUsername();
-        $userEmail      = $recipient->getEmail();
-        $unsubscribeUrl = $recipient->getNewsletterUnsubscribeUrl();
+        $user = reset($arrTestRecipients);
 
         $email =
             $newsletter
-                ->buildForOne($username, $userEmail, $unsubscribeUrl)
+                ->buildForOne($user)
                 ->getEmail();
 
         return $this->render( $email->getHtmlTemplate(), $email->getContext() );
+    }
+
+
+    #[Route('/newsletter/open', name: 'app_newsletter_opener')]
+    public function opener() : Response
+    {
+        $goToUrl        = $this->request->get("url");
+        $arrParsedUrl   = parse_url($goToUrl);
+        // prevent open redirection
+        if( !in_array($arrParsedUrl["host"], UrlGenerator::INTERNAL_DOMAINS) ) {
+            throw new \Exception("Bad redirection hostname");
+        }
+
+        $encryptedUserData = $this->request->get("opener");
+
+        try {
+            $arrUserData = $this->encryptor->decrypt($encryptedUserData);
+            //$this->user->load($arrUserData["userId"])->setNewsletterOpened();
+            //$this->entityManager->flush();
+
+        } catch(\Exception) {}
+
+        return $this->redirect($goToUrl);
     }
 
 

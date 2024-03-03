@@ -41,7 +41,8 @@ class UserUrlGenerator extends UrlGenerator
             $this->symfonyUrlGenerator->generate('app_newsletter_unsubscribe', [
                 "encryptedSubscriberData" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
-                    "email"     => $user->getEmail()
+                    "email"     => $user->getEmail(),
+                    "scope"     => "newsletterUnsubscribeUrl"
                 ])
             ], $urlType);
 
@@ -55,7 +56,8 @@ class UserUrlGenerator extends UrlGenerator
             $this->symfonyUrlGenerator->generate('app_newsletter_subscribe', [
                 "encryptedSubscriberData" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
-                    "email"     => $user->getEmail()
+                    "email"     => $user->getEmail(),
+                    "scope"     => "newsletterSubscribeUrl"
                 ])
             ], $urlType);
 
@@ -75,7 +77,8 @@ class UserUrlGenerator extends UrlGenerator
             $this->symfonyUrlGenerator->generate('app_newsletter_opener', [
                 "opener" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
-                    "email"     => $user->getEmail()
+                    "email"     => $user->getEmail(),
+                    "scope"     => "newsletterOpenerUrl"
                 ])
             ], $urlType) . "&url=" . $redirectToUrl;
 
