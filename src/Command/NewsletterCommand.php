@@ -107,7 +107,7 @@ class NewsletterCommand extends AbstractBaseCommand
 
             $this
                 ->fxTitle("Loading recipients...")
-                ->newsletter->loadAllRecipients();
+                ->newsletter->loadRecipients();
         }
 
         $recipientsCount = $this->newsletter->countRecipients();

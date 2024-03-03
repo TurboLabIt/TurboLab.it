@@ -72,6 +72,17 @@ class Newsletter extends Mailer
     }
 
 
+    public function loadRecipients() : static
+    {
+        $this->arrRecipients =
+            $this->userCollection
+                ->loadNewsletterSubscribers()
+                ->getAll();
+
+        return $this;
+    }
+
+
     public function countArticles()     : int { return $this->articleCollection->count(); }
     public function countTopics()       : int { return $this->topicCollection->count(); }
     public function countRecipients()   : int { return $this->userCollection->count(); }

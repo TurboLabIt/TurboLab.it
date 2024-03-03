@@ -20,6 +20,13 @@ class UserCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadNewsletterSubscribers() : static
+    {
+        $arrSubscribers = $this->em->getRepository(static::ENTITY_CLASS)->findNewsletterSubscribers();
+        return $this->setEntities($arrSubscribers);
+    }
+
+
     public function getTopEmailProviders(?int $limitTo = 3) : array
     {
         if( !empty($this->arrTopEmailProviders) ) {

@@ -58,7 +58,7 @@ class UserRepository extends BaseRepository
             WHERE
                 users.user_id			= :userId AND
                 ## forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
-                users.user_type			IN(1, 3) AND
+                users.user_type			IN(0, 3) AND
                 sessions.session_id		= :sessionId AND
                 sessions_keys.key_id	= :sessionKey
         ";
@@ -87,5 +87,17 @@ class UserRepository extends BaseRepository
                 ->setAllowMassEmail( $arrUser["user_allow_massemail"] );
 
         return $user;
+    }
+
+
+    public function findNewsletterSubscribers() : array
+    {
+        return
+            $this->createQueryBuilder('t', 't.user_id')
+                // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
+                ->andWhere('t.user_type IN(0,3)')
+                ->andWhere('t.user_allow_massemail = 1')
+                ->getQuery()
+                ->getResult();
     }
 }

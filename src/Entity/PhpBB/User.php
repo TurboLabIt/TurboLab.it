@@ -49,6 +49,9 @@ class User implements UserInterface
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $user_allow_massemail = 1;
 
+    #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
+    protected ?int $user_type = 0;
+
     //#[ORM\Column]
     protected array $roles = [];
 
