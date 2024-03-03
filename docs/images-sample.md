@@ -1,4 +1,4 @@
-# Immagini di esempio
+# [Immagini di esempio](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-samples.md)
 
 🔗 Vedi anche: [Gestione delle immagini caricate negli articoli](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-articles.md)
 

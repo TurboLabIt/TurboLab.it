@@ -1,4 +1,4 @@
-# Configurazione server
+# [Configurazione server](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/server.md)
 
 1. installare Ubuntu Server (ultima LTS). Installazione `standard`, non `minimal`. Sistema operativo in inglese, layout tastiera Italiano, attivare SSH
 2. eseguire [ssh-keys](https://github.com/ZaneCEO/ssh-keys)

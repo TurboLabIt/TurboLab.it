@@ -1,4 +1,4 @@
-# Gestione delle immagini caricate negli articoli
+# [Gestione delle immagini caricate negli articoli](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-articles.md)
 
 Questo documento tratta, nello specifico, la gestione degli screenshot, foto e altre grafiche caricate dagli autori negli articoli.
 

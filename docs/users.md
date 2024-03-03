@@ -1,4 +1,4 @@
-# Gestione utenti
+# [Gestione utenti](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/users.md)
 
 Gli utenti registrati a TurboLab.it sono conservati nella tabella `phpbb_users`, all'interno del database dedicato al forum (`turbolab_it_forum`). Quando un utente "si registra al sito", in realtà, si "registra al forum" tramite il flusso di registrazione proprio di phpBB. Il sito deve quindi integrare la tabella `phpbb_users` di phpBB e il relativo sistema di login.
 

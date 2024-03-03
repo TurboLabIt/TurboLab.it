@@ -1,4 +1,4 @@
-# Encoding dei caratteri
+# [Encoding dei caratteri](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md)
 
 L'applicazione deve utilizzare **UTF-8** e **HTML5** ovunque sia possibile.
 

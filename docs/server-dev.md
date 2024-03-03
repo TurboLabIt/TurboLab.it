@@ -1,4 +1,4 @@
-# Server di sviluppo
+# [Server di sviluppo](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/server-dev.md)
 
 Il "server di sviluppo" è una macchina virtuale Hyper-V, fisicamente separata dal server di produzione. Ogni sviluppatore utilizza un proprio dominio dedicato:
 
