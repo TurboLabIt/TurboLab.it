@@ -156,13 +156,8 @@ class NewsletterCommand extends AbstractBaseCommand
         $userEmail      = $recipient->getEmail();
         $unsubscribeUrl = $recipient->getNewsletterUnsubscribeUrl();
 
-        try {
-            $this->newsletter
-                ->buildForOne($username, $userEmail, $unsubscribeUrl)
-                ->send();
-
-        } catch(\Exception $ex) {
-            $this->fxWarning("Sending error! " .  $ex->getMessage());
-        }
+        $this->newsletter
+            ->buildForOne($username, $userEmail, $unsubscribeUrl)
+            ->send();
     }
 }
