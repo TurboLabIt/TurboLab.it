@@ -14,6 +14,9 @@ use TurboLabIt\Encryptor\EncryptionException;
 use TurboLabIt\Encryptor\Encryptor;
 
 
+/**
+ * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md
+ */
 class Newsletter extends BaseController
 {
     const int ERROR_BAD_ACCESS_KEY      = 1;

@@ -13,7 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use TurboLabIt\BaseCommand\Service\Options;
 
-
+/**
+ * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md
+ */
 #[AsCommand(
     name: 'Newsletter',
     description: 'Generate and send the weekly newsletter',

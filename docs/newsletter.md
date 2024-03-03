@@ -107,3 +107,11 @@ Una routine successiva della stessa procedura si occupa poi di:
 3. impostare a `<null>` il campo `newsletter_last_link_clicked_at`
 4. impostare a `<null>` il campo `newsletter_inactive_warning_sent_at`
 5. inviare un'ultima email di cortesia che notifica la dis-iscrizione automatica dalla newsletter
+
+
+## Tecnologie utilizzate per il template HTML
+
+- il template della newsletter ([email/newsletter.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/email/newsletter.html.twig)) utilizza il CSS fornito da [📚 Foundation for Emails](https://get.foundation/emails.html)
+- il markup del template HTML è scritto in [📚 Inky](https://get.foundation/emails/docs/inky.html)
+- il CSS viene spostato *in-line* tramite il filtro `inline_css`, fornito da `twig/cssinliner-extra`
+- il post-processing ("building") di Inky in HTML viene svolto dal filtro Twig `inky_to_html`, fornito da `twig/inky-extra`
