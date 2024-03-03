@@ -15,6 +15,7 @@ class Newsletter extends Mailer
     protected string $newsletterOnSiteUrl;
     protected string $subject       = "Questa settimana su TurboLab.it";
     protected array $arrRecipients  = [];
+    protected string $privacyUrl;
 
 
     public function __construct(
@@ -25,7 +26,10 @@ class Newsletter extends Mailer
         MailerInterface $mailer, ProjectDir $projectDir
     )
     {
-        $this->newsletterOnSiteUrl = $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
+        // init to homepage (failsafe)
+        $this->newsletterOnSiteUrl = $this->privacyUrl =
+            $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
+
         parent::__construct($mailer, $projectDir, [
             "from" => [
                 "name"      => "TurboLab.it",
@@ -40,6 +44,9 @@ class Newsletter extends Mailer
 
     public function loadContent() : static
     {
+        // 👀 https://turbolab.it/617
+        $this->privacyUrl = $this->articleCollection->createService()->load(617)->getUrl();
+
         $this->articleCollection->loadLatestForNewsletter();
         $this->topicCollection->loadLatestForNewsletter();
 
@@ -72,19 +79,28 @@ class Newsletter extends Mailer
     public function getSubject()        : string { return $this->subject; }
 
 
-    public function buildForOne(string $recipientName, string $recipientAddress, string $unsubscribeUrl) : static
+    public function buildForOne(User $user) : static
     {
+        $homeUrl = $this->urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $arrTemplateParams = [
-            "Articles"  => $this->articleCollection,
-            "Topics"    => $this->topicCollection,
-            'unsubscribeUrl'        => $unsubscribeUrl,
-            'newsletterOnSiteUrl'   => $this->newsletterOnSiteUrl
+            "Articles"                      => $this->articleCollection,
+            "Topics"                        => $this->topicCollection,
+            "openerUrl"                     => $user->getNewsletterOpenerUrl(),
+            "homeWithOpenerUrl"             => $user->getNewsletterOpenerUrl($homeUrl),
+            "forumWithOpenerUrl"            => $user->getNewsletterOpenerUrl( $homeUrl . "forum/" ),
+            "privacyWithOpenerUrl"          => $user->getNewsletterOpenerUrl($this->privacyUrl),
+            "unsubscribeWithOpenerUrl"      => $user->getNewsletterOpenerUrl( $user->getNewsletterUnsubscribeUrl() ),
+            "newsletterOnSiteWithOpenerUrl" => $user->getNewsletterOpenerUrl($this->newsletterOnSiteUrl),
+            "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl( $homeUrl . "forum/posting.php?mode=reply&t=12749" ),
+            "subscriberCount"               => $this->userCollection->count(),
+            "TopEmailProviders"             => $this->userCollection->getTopEmailProviders(),
         ];
 
         return
             $this->build(
                 $this->subject, "email/newsletter.html.twig", $arrTemplateParams,
-                [[ "name" => $recipientName, "address" => $recipientAddress ]]
+                [[ "name" => $user->getUsername(), "address" => $user->getEmail() ]]
             );
     }
 

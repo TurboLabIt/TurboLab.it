@@ -1,0 +1,33 @@
+#tli-email-logo {
+    width: 70%;
+}
+
+.tli-alert-warning {
+    color:#856404;
+    background-color:#fff3cd;
+    border-color:#ffeeba;
+    padding: .75rem 1.25rem;
+}
+
+h2.tli-group-title {
+    margin-bottom: 0px;
+}
+
+.tli-article-title {
+    margin-bottom: 0px;
+}
+
+.tli-article-abstract {
+    margin-top: 15px;
+}
+
+.tli-article-abstract a {
+    color: #0a0a0a;
+}
+
+.tli-code {
+    font-family: monospace;
+    font-size: 14px;
+    background-color: #D3D3D3;
+    padding: 3px;
+}

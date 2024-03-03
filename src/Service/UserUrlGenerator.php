@@ -63,6 +63,26 @@ class UserUrlGenerator extends UrlGenerator
     }
 
 
+    public function generateNewsletterOpenerUrl(
+        User $user, ?string $redirectToUrl = null, bool $requiresUrlEncode = true, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL
+    ) : string
+    {
+        if( !empty($redirectToUrl) && $requiresUrlEncode ) {
+            $redirectToUrl = urlencode($redirectToUrl);
+        }
+
+        $subscribeUrl =
+            $this->symfonyUrlGenerator->generate('app_newsletter_opener', [
+                "opener" => $this->encryptor->encrypt([
+                    "userId"    => $user->getId(),
+                    "email"     => $user->getEmail()
+                ])
+            ], $urlType) . "&url=" . $redirectToUrl;
+
+        return $subscribeUrl;
+    }
+
+
     public function isUrl(string $urlCandidate) : bool
     {
         if( !$this->isInternalUrl($urlCandidate) ) {

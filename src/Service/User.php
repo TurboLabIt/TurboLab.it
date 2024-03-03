@@ -77,6 +77,12 @@ class User extends BaseServiceEntity
     }
 
 
+    public function getNewsletterOpenerUrl(?string $redirectToUrl = null, bool $requiresUrlEncode = true, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return $this->urlGenerator->generateNewsletterOpenerUrl($this, $redirectToUrl, $requiresUrlEncode, $urlType);
+    }
+
+
     public function getUsername() : string { return $this->entity->getUsername(); }
     public function getEmail() : string { return $this->entity->getEmail(); }
 }

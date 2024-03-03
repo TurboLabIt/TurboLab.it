@@ -53,6 +53,9 @@ class Topic
     #[ORM\Column(name: "topic_views", options: ['unsigned' => true])]
     protected int $views = 0;
 
+    #[ORM\Column(name: "topic_status", options: ['unsigned' => true])]
+    protected int $status = 0;
+
     #[ORM\OneToMany(mappedBy: 'commentsTopic', targetEntity: Article::class)]
     protected Collection $articles;
 

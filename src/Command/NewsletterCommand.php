@@ -21,9 +21,9 @@ use TurboLabIt\BaseCommand\Service\Options;
 class NewsletterCommand extends AbstractBaseCommand
 {
     const string CLI_ARG_ACTION     = 'action';
-    const string CLI_ACTION_TEST    = 'test';
-    const string CLI_ACTION_CRON    = 'cron';
-    const array CLI_ARG_ACTIONS     = [self::CLI_ACTION_TEST, self::CLI_ACTION_CRON];
+    const null CLI_ACTION_TEST      = null;
+    const string CLI_ACTION_DOIT    = 'DOIT';
+    const array CLI_ARG_ACTIONS     = [self::CLI_ACTION_TEST, self::CLI_ACTION_DOIT];
 
     protected bool $allowDryRunOpt  = true;
 
@@ -41,7 +41,7 @@ class NewsletterCommand extends AbstractBaseCommand
     {
         $this->addArgument(
             static::CLI_ARG_ACTION, InputArgument::OPTIONAL,
-            'Action to execute: test (default), cron',
+            'Action to execute',
             static::CLI_ACTION_TEST,
             static::CLI_ARG_ACTIONS
         );
@@ -93,7 +93,7 @@ class NewsletterCommand extends AbstractBaseCommand
         if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
             $this->newsletter->saveOnTheWeb();
         } else {
-            $this->fxWarning('Skipped due to mode: ##' .  static::CLI_ACTION_TEST . "## or --" . Options::CLI_OPT_DRY_RUN);
+            $this->fxWarning('Skipped due to test mode or --' . Options::CLI_OPT_DRY_RUN);
         }
 
 
@@ -150,14 +150,10 @@ class NewsletterCommand extends AbstractBaseCommand
     }
 
 
-    protected function sendOne(int $key, User $recipient)
+    protected function sendOne(int $key, User $user)
     {
-        $username       = $recipient->getUsername();
-        $userEmail      = $recipient->getEmail();
-        $unsubscribeUrl = $recipient->getNewsletterUnsubscribeUrl();
-
         $this->newsletter
-            ->buildForOne($username, $userEmail, $unsubscribeUrl)
+            ->buildForOne($user)
             ->send();
     }
 }

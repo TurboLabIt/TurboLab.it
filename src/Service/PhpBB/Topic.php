@@ -36,4 +36,7 @@ class Topic extends BaseServiceEntity
     {
         return $this->urlGenerator->generateTopicViewUrl($this, $urlType);
     }
+
+
+    public function getPostNum() : ?int { return $this->entity->getPostNum(); }
 }

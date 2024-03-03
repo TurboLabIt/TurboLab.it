@@ -66,6 +66,7 @@ class TopicRepository extends BaseRepository
                 ->andWhere('t.forumId NOT IN (' . implode(',', self::OFFLIMITS_FORUM_IDS) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
+                ->andWhere('t.status = 0')
                 ->orderBy('t.lastPostTime', 'DESC');
     }
     //</editor-fold>
