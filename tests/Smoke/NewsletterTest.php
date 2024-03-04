@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Entity\phpBB\User as UserEntity;
 use App\Service\Cms\Article;
 use App\Service\User;
 use App\Tests\BaseT;
@@ -31,18 +32,19 @@ class NewsletterTest extends BaseT
     {
         $url  = $this->getPreviewUrl();
         $html = $this->fetchHtml($url);
-        $this->assertStringContainsStringIgnoringCase('Ciao Zane', $html);
+        $this->assertStringContainsStringIgnoringCase('Ciao System', $html);
         $this->assertStringContainsStringIgnoringCase('Non vuoi più ricevere queste email', $html);
-        $this->assertStringContainsStringIgnoringCase('Email inviata a info@turbolab.it', $html);
+        $this->assertStringContainsStringIgnoringCase('abbiamo inviato questa email a', $html);
+        $this->assertStringContainsStringIgnoringCase('info+system@turbolab.it', $html);
         $this->assertStringContainsStringIgnoringCase('Articoli e news', $html);
         $this->assertStringContainsStringIgnoringCase('Dal forum', $html);
 
         // H2
 
         $crawler = $this->fetchDomNode($url, 'body');
-        $H2s = $crawler->filter('h3');
-        $countH2 = $H2s->count();
-        //$this->assertGreaterThanOrEqual(2, $countH2);
+        $H4s = $crawler->filter('h4');
+        $countH4 = $H4s->count();
+        $this->assertGreaterThanOrEqual(2, $countH4);
     }
 
 
@@ -115,19 +117,19 @@ class NewsletterTest extends BaseT
     }
 
 
-    protected function getUserSystem() : User
+    protected function getTestUser() : User
     {
         // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
 
         /** @var User $user */
         $user = static::getService("App\\Service\\User");
-        return $user->load(5103);
+        return $user->load(UserEntity::TESTER_USER_ID);
     }
 
 
     public function testUnsubscribeAlreadyUnsubscribedError()
     {
-        $user = $this->getUserSystem();
+        $user = $this->getTestUser();
         $user->unsubscribeFromNewsletter();
         $this->getEntityManager()->flush();
 
@@ -146,7 +148,7 @@ class NewsletterTest extends BaseT
 
     public function testSubscribeAlreadySubscribedError()
     {
-        $user = $this->getUserSystem();
+        $user = $this->getTestUser();
         $user->subscribeToNewsletter();
         $this->getEntityManager()->flush();
 
