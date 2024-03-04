@@ -1,5 +1,5 @@
 {# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md #}
-{% apply inky_to_html|inline_css(source('@styles/email/foundation-emails.css'), source('@styles/email/email.css'), source('@styles/email/newsletter.css')) %}
+{% apply inky_to_html|inline_css( source('@styles/email/foundation-emails.css'), source('@styles/email/email.css') ) %}
 <container>
     <row>
         <columns>
@@ -79,10 +79,10 @@
     </row>
     <row>
         <columns>
-            Questa newsletter viene spedita a {{ subscriberCount|friendlyNum }} iscritti (fra i quali ci sei anche tu!).<br>
+            Questa newsletter viene recapitata a {{ subscriberCount|friendlyNum }} iscritti, fra i quali ci sei anche tu!<br>
             I domini più usati sono
             {% for domain,Provider in TopEmailProviders %}
-                @{{ domain }} ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
+                <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
             {% endfor %}
         </columns>
     </row>
@@ -94,7 +94,7 @@
     <row>
         <columns>
             👍 Ti è piaciuta questa email? 👎 NON ti è piaciuta? Manca qualcosa che vorresti oppure hai problemi di visualizzazione?
-            <strong>Siamo super-interessati a conoscere la tua opinione su questa newsletter</strong>! Raccontaci tutto partecipando alla discussione sul forum:
+            <strong>Siamo super-interessati a conoscere la tua opinione</strong>! Raccontaci tutto partecipando alla discussione sul forum:
         </columns>
     </row>
 

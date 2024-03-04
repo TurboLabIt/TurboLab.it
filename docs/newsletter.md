@@ -8,9 +8,9 @@ La newsletter di TurboLab.it, chiamata *Questa settimana su TLI*, è una email i
 Ogni volta che viene spedita la newsletter, viene creato e pubblicato automaticamente un articolo sul sito con i medesimi contenuti.
 
 
-## Obbiettivi di gestione
+## Priorità
 
-Gli obbiettivi della gestione della newsletter sono:
+Le due priorità principali nella gestione della newsletter sono:
 
 - offrire a quanti più utenti possibile l'occasione di ricevere almeno una volta la newsletter per valutare se possa loro interessare
 - assicurarci che chi non vuole ricevere la newsletter non la riceva più, senza ostacoli o ritardi
@@ -21,7 +21,7 @@ La newsletter viene generata sul server di TurboLab.it e inviata direttamente al
 2. evitare i costi dei servizi esterni di invio mail, che oltretutto crescono con il numero di invii
 3. evitare di condividere gli indirizzi email degli iscritti con aziende terze
 
-Il mittente della newsletter è `TurboLab.it <newsletter@turbolab.it>`, un alias della mailbox `info@turbolab.it`.
+Il mittente della newsletter è `TurboLab.it <newsletter@turbolab.it>`, *alias* della mailbox `info@turbolab.it`.
 
 
 ## Informazioni per utenti finali

@@ -13,9 +13,11 @@ use TurboLabIt\Encryptor\Encryptor;
 class Newsletter extends Mailer
 {
     protected string $newsletterOnSiteUrl;
-    protected string $subject       = "Questa settimana su TurboLab.it";
-    protected array $arrRecipients  = [];
     protected string $privacyUrl;
+    protected string $subject               = "Questa settimana su TurboLab.it";
+    protected array $arrRecipients          = [];
+    protected int $totalSubscribersCount;
+    protected array $arrTopProviders;
 
 
     public function __construct(
@@ -63,6 +65,9 @@ class Newsletter extends Mailer
 
     public function loadTestRecipients() : static
     {
+        // count total subscribers and get top providers
+        $this->loadRecipients();
+
         $this->arrRecipients =
             $this->userCollection
                 ->loadNewsletterTestRecipients()
@@ -78,6 +83,9 @@ class Newsletter extends Mailer
             $this->userCollection
                 ->loadNewsletterSubscribers()
                 ->getAll();
+
+        $this->totalSubscribersCount    = $this->userCollection->count();
+        $this->arrTopProviders          = $this->userCollection->getTopEmailProviders();
 
         return $this;
     }
@@ -104,8 +112,8 @@ class Newsletter extends Mailer
             "unsubscribeWithOpenerUrl"      => $user->getNewsletterOpenerUrl( $user->getNewsletterUnsubscribeUrl() ),
             "newsletterOnSiteWithOpenerUrl" => $user->getNewsletterOpenerUrl($this->newsletterOnSiteUrl),
             "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl( $homeUrl . "forum/posting.php?mode=reply&t=12749" ),
-            "subscriberCount"               => $this->userCollection->count(),
-            "TopEmailProviders"             => $this->userCollection->getTopEmailProviders(),
+            "subscriberCount"               => $this->totalSubscribersCount,
+            "TopEmailProviders"             => $this->arrTopProviders,
         ];
 
         return
