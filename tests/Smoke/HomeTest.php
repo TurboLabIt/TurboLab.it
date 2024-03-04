@@ -3,6 +3,7 @@ namespace App\Tests\Smoke;
 
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 
@@ -17,9 +18,7 @@ class HomeTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider homeRedirectionProvider
-     */
+    #[DataProvider('homeRedirectionProvider')]
     public function testPaginationRedirectToHome(string $url)
     {
         $this->expectRedirect($url, $_ENV["APP_SITE_URL"]);
@@ -33,7 +32,7 @@ class HomeTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($crawler, "Guide PC, Windows, Android, Linux e Bitcoin");
+        $this->tagTitleAsH1Checker($crawler, "Guide PC, Windows, Linux, Android e Bitcoin");
 
         // H2
         $crawler = $this->fetchDomNode($url, 'article');
