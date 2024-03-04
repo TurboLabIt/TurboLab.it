@@ -46,13 +46,22 @@ class Newsletter extends BaseController
     #[Route('/newsletter/anteprima', name: 'app_newsletter_preview')]
     public function preview(NewsletterService $newsletter) : Response
     {
-        $arrTestRecipients =
-            $newsletter
-                ->loadContent()
-                ->loadTestRecipients()
-                ->getRecipients();
+        $newsletter->loadContent();
 
-        $user = reset($arrTestRecipients);
+        $currentUser = $this->getUser();
+        if( empty($currentUser) ) {
+
+            $arrTestRecipients =
+                $newsletter
+                    ->loadTestRecipients()
+                    ->getRecipients();
+
+            $user = reset($arrTestRecipients);
+
+        } else {
+
+            $user = $currentUser;
+        }
 
         $email =
             $newsletter
@@ -104,18 +113,17 @@ class Newsletter extends BaseController
             return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_FOUND, $arrDecodedSubscriberData);
         }
 
+        //
+        if( $userId == UserEntity::SYSTEM_USER_ID ) {
+            $this->user->subscribeToNewsletter();
+        }
+
         if( !$this->user->isSubscribedToNewsletter() ) {
             return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_SUBSCRIBED, $arrDecodedSubscriberData);
         }
 
         $this->user->unsubscribeFromNewsletter();
         $this->entityManager->flush();
-
-        if( $userId == 2 ) {
-
-            $this->user->subscribeToNewsletter();
-            $this->entityManager->flush();
-        }
 
         return $this->render('newsletter/unsubscribe.html.twig', [
             "User"  => $this->user
@@ -152,17 +160,23 @@ class Newsletter extends BaseController
             return $this->subscribeErrorResponse(static::ERROR_USER_NOT_FOUND, $arrDecodedSubscriberData);
         }
 
-        if( $userId == 2 ) {
-
+        //
+        if( $userId == UserEntity::SYSTEM_USER_ID ) {
             $this->user->unsubscribeFromNewsletter();
-            $this->entityManager->flush();
         }
+
 
         if( $this->user->isSubscribedToNewsletter() ) {
             return $this->subscribeErrorResponse(static::ERROR_USER_IS_SUBSCRIBED, $arrDecodedSubscriberData);
         }
 
         $this->user->subscribeToNewsletter();
+
+        //
+        if( $userId == UserEntity::SYSTEM_USER_ID ) {
+            $this->user->unsubscribeFromNewsletter();
+        }
+
         $this->entityManager->flush();
 
         return $this->render('newsletter/subscribe.html.twig', [

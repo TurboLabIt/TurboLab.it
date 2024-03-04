@@ -14,8 +14,7 @@ class UserCollection extends BaseServiceEntityCollection
 
     public function loadNewsletterTestRecipients() : static
     {
-        // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=2
-        $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(2);
+        $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(UserEntity::SYSTEM_USER_ID);
         return $this->setEntities([$testUser]);
     }
 
