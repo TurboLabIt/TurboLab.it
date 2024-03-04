@@ -35,7 +35,7 @@ class HomeTest extends BaseT
         $this->tagTitleAsH1Checker($crawler, "Guide PC, Windows, Linux, Android e Bitcoin");
 
         // H2
-        $crawler = $this->fetchDomNode($url, 'article');
+        $crawler = $this->fetchDomNode($url, 'body');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(24, $countH2);

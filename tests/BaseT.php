@@ -249,7 +249,7 @@ abstract class BaseT extends WebTestCase
     protected function internalPaginatorChecker(string $url, ?int $expectedTotalPageNum) : static
     {
         // first page
-        $crawler        = $this->fetchDomNode($url, 'article');
+        $crawler        = $this->fetchDomNode($url, 'body');
         $paginator      = $crawler->filter('div.pagination-container');
         $paginatorHtml  = mb_strtolower($paginator->html());
 
@@ -271,7 +271,7 @@ abstract class BaseT extends WebTestCase
             // this is the URL of the page to request and test now
             $url = $nextHref;
 
-            $crawler        = $this->fetchDomNode($url, 'article');
+            $crawler        = $this->fetchDomNode($url, 'body');
             $paginator      = $crawler->filter('div.pagination-container');
             $paginatorHtml  = mb_strtolower($paginator->html());
 
@@ -296,7 +296,7 @@ abstract class BaseT extends WebTestCase
         // this is the URL of the page to request and test now
         $lastPageUrl = $nextHref;
 
-        $crawler = $this->fetchDomNode($lastPageUrl, 'article');
+        $crawler = $this->fetchDomNode($lastPageUrl, 'body');
         $paginator = $crawler->filter('div.pagination-container');
         $paginatorHtml = mb_strtolower($paginator->html());
 
