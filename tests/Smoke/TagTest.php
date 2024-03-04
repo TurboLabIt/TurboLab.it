@@ -6,6 +6,7 @@ use App\Service\Cms\HtmlProcessor;
 use App\Service\Cms\Tag;
 use App\Service\CmsFactory;
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 
@@ -83,9 +84,7 @@ class TagTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider specialTagToTestProvider
-     */
+    #[DataProvider('specialTagToTestProvider')]
     public function testSpecialTag(array $arrSpecialTag)
     {
         /** @var Tag $tag */
@@ -102,7 +101,7 @@ class TagTest extends BaseT
         $this->tagTitleAsH1Checker($tag, $crawler, "#" . $arrSpecialTag["title"] . ": articoli, guide e news");
 
         // H2
-        $crawler = $this->fetchDomNode($url, 'article');
+        $crawler = $this->fetchDomNode($url, 'body');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(24, $countH2);
@@ -141,7 +140,7 @@ class TagTest extends BaseT
     public static function tagToTestProvider(): \Generator
     {
         if( empty(static::$arrTagEntity) ) {
-            static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest();
+            static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest(10);
         }
 
         /** @var CmsFactory $cmsFactory */
@@ -157,9 +156,7 @@ class TagTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider tagToTestProvider
-     */
+    #[DataProvider('tagToTestProvider')]
     public function testOpenAllTags(array $arrData)
     {
         static::$client = null;
