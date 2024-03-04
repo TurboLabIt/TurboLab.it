@@ -6,6 +6,7 @@ use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
 use App\Service\CmsFactory;
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 
@@ -50,7 +51,7 @@ class ArticleTest extends BaseT
         $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell&apos;impianto &amp; &quot;collaudo&quot;) | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine');
 
         // H2
-        $crawler = $this->fetchDomNode($url, 'article');
+        $crawler = $this->fetchDomNode($url, 'body');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);
@@ -153,9 +154,7 @@ class ArticleTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider articleToTestProvider
-     */
+    #[DataProvider('articleToTestProvider')]
     public function testOpenAllArticles(array $arrData)
     {
         static::$client = null;
