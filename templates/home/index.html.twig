@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block bodyMainContent %}
-
     <h1>{{ metaTitle|raw }}</h1>
 
     {% if Articles is not empty %}
@@ -10,36 +9,36 @@
 
         <div>
             {% for Article in Articles %}
+                <article>
+                    <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
+                    <div><a href="{{ Article.url }}"><img src="{{ Article.spotlightOrDefaultUrl('med') }}"></a></div>
 
-                <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
-                <div><a href="{{ Article.url }}"><img src="{{ Article.spotlightOrDefaultUrl('med') }}"></a></div>
+                    {% if Article.Authors is not empty %}
+                        <span>
+                            a cura di
+                            {% for Author in Article.Authors %}
+                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                             |
+                        </span>
+                    {% endif %}
 
-                {% if Article.Authors is not empty %}
-                    <span>
-                        a cura di
-                        {% for Author in Article.Authors %}
-                            <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                         |
-                    </span>
-                {% endif %}
+                    <span>ultimo aggiornamento: {{ Article.updatedAt|friendlyDate }} | </span>
 
-                <span>ultimo aggiornamento: {{ Article.updatedAt|friendlyDate }} | </span>
+                    {% if Article.Tags is not empty %}
+                        <span>
+                            {% for Tag in Article.Tags %}
+                                <a href="{{ Tag.url }}">{{ Tag.title|raw }}</a>
+                                {% if not loop.last %} • {% endif %}
+                            {% endfor %}
+                             |
+                        </span>
+                    {% endif %}
 
-                {% if Article.Tags is not empty %}
-                    <span>
-                        {% for Tag in Article.Tags %}
-                            <a href="{{ Tag.url }}">{{ Tag.title|raw }}</a>
-                            {% if not loop.last %} • {% endif %}
-                        {% endfor %}
-                         |
-                    </span>
-                {% endif %}
-
-                {% if Article.views > 1 %}
-                    <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
-                {% endif %}
-
+                    {% if Article.views > 1 %}
+                        <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
+                    {% endif %}
+                </article>
             {% endfor %}
         </div>
 
@@ -48,5 +47,4 @@
         <p>Nessun contenuto trovato.</p>
 
     {% endif %}
-
 {% endblock %}
