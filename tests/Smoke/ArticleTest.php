@@ -51,7 +51,7 @@ class ArticleTest extends BaseT
         $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell&apos;impianto &amp; &quot;collaudo&quot;) | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine');
 
         // H2
-        $crawler = $this->fetchDomNode($url, 'body');
+        $crawler = $this->fetchDomNode($url, 'article');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(3, $countH2);
@@ -61,7 +61,7 @@ class ArticleTest extends BaseT
         $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
         // summary
-        $summaryLi = $crawler->filter('ul')->first()->filter('ul')->filter('li');
+        $summaryLi = $crawler->filter('ul')->first()->filter('li');
         $arrUnmatchedUlContent = [
             'video da YouTube', 'formattazione',
             'link ad altri articoli', 'link a pagine di tag', 'link a file',
@@ -83,7 +83,7 @@ class ArticleTest extends BaseT
             }
         }
 
-        $this->assertEmpty($arrUnmatchedUlContent);
+        $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
 
         // YouTube
         $iframes = $crawler->filter('iframe');
@@ -193,7 +193,7 @@ class ArticleTest extends BaseT
 
         $this->assertStringNotContainsString('&nbsp;', $title);
 
-        $H1FromCrawler = $crawler->filter('body h1')->html();
+        $H1FromCrawler = $crawler->filter('article h1')->html();
         $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
         $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
 
