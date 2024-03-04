@@ -44,23 +44,21 @@ class Newsletter extends BaseController
 
 
     #[Route('/newsletter/anteprima', name: 'app_newsletter_preview')]
-    public function preview(NewsletterService $newsletter) : Response
+    public function preview(NewsletterService $newsletter, User $currentUser) : Response
     {
-        $newsletter->loadContent();
+        $newsletter
+            ->loadContent()
+            ->loadTestRecipients();
 
-        $currentUser = $this->getUser();
-        if( empty($currentUser) ) {
+        $currentUserId = $this->getUser()?->getId();
+        if( empty($currentUserId) ) {
 
-            $arrTestRecipients =
-                $newsletter
-                    ->loadTestRecipients()
-                    ->getRecipients();
-
+            $arrTestRecipients = $newsletter->getRecipients();
             $user = reset($arrTestRecipients);
 
         } else {
 
-            $user = $currentUser;
+            $user = $currentUser->load($currentUserId);
         }
 
         $email =
