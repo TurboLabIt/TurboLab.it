@@ -109,7 +109,7 @@ class Newsletter extends Mailer
             "homeWithOpenerUrl"             => $user->getNewsletterOpenerUrl($homeUrl),
             "forumWithOpenerUrl"            => $user->getNewsletterOpenerUrl( $homeUrl . "forum/" ),
             "privacyWithOpenerUrl"          => $user->getNewsletterOpenerUrl($this->privacyUrl),
-            "unsubscribeWithOpenerUrl"      => $user->getNewsletterOpenerUrl( $user->getNewsletterUnsubscribeUrl() ),
+            "unsubscribeUrl"                => $user->getNewsletterUnsubscribeUrl(),
             "newsletterOnSiteWithOpenerUrl" => $user->getNewsletterOpenerUrl($this->newsletterOnSiteUrl),
             "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl( $homeUrl . "forum/posting.php?mode=reply&t=12749" ),
             "subscriberCount"               => $this->totalSubscribersCount,

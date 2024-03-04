@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\Encryptor\EncryptionException;
 use TurboLabIt\Encryptor\Encryptor;
+use App\Entity\phpBB\User as UserEntity;
 
 
 /**

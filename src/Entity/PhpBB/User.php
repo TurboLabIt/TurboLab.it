@@ -26,6 +26,9 @@ class User implements UserInterface
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
     const int SYSTEM_USER_ID = 5103;
 
+    // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
+    const int TESTER_USER_ID = 4015;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ['unsigned' => true])]
