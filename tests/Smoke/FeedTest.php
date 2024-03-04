@@ -2,6 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,7 @@ class FeedTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider feedToTestProvider
-     */
+    #[DataProvider('feedToTestProvider')]
     public function testOpenAllFeeds(string $url)
     {
         $errorMessage = "Failing URL: " . $url;
