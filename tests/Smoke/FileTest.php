@@ -3,6 +3,7 @@ namespace App\Tests\Smoke;
 
 use App\Service\Cms\File;
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -36,9 +37,7 @@ class FileTest extends BaseT
     }
 
 
-    /**
-     * @dataProvider localFileToTestProvider
-     */
+    #[DataProvider('localFileToTestProvider')]
     public function testLocalFiles(array $arrFile)
     {
         /** @var File $file */
