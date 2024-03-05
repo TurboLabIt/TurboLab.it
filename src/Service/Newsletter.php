@@ -100,7 +100,8 @@ class Newsletter extends Mailer
 
     public function buildForOne(User $user) : static
     {
-        $homeUrl = $this->urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $homeUrl        = $this->urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $unsubscribeUrl = $user->getNewsletterUnsubscribeUrl();
 
         $arrTemplateParams = [
             "Articles"                      => $this->articleCollection,
@@ -109,7 +110,7 @@ class Newsletter extends Mailer
             "homeWithOpenerUrl"             => $user->getNewsletterOpenerUrl($homeUrl),
             "forumWithOpenerUrl"            => $user->getNewsletterOpenerUrl( $homeUrl . "forum/" ),
             "privacyWithOpenerUrl"          => $user->getNewsletterOpenerUrl($this->privacyUrl),
-            "unsubscribeUrl"                => $user->getNewsletterUnsubscribeUrl(),
+            "unsubscribeUrl"                => $unsubscribeUrl,
             "newsletterOnSiteWithOpenerUrl" => $user->getNewsletterOpenerUrl($this->newsletterOnSiteUrl),
             "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl( $homeUrl . "forum/posting.php?mode=reply&t=12749" ),
             "subscriberCount"               => $this->totalSubscribersCount,
@@ -117,7 +118,9 @@ class Newsletter extends Mailer
         ];
 
         return
-            $this->build(
+            $this
+                ->addUnsubscribeHeader($unsubscribeUrl, null)
+                ->build(
                 $this->subject, "email/newsletter.html.twig", $arrTemplateParams,
                 [[ "name" => $user->getUsername(), "address" => $user->getEmail() ]]
             );
