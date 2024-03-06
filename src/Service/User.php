@@ -12,6 +12,12 @@ class User extends BaseServiceEntity
     const string ENTITY_CLASS   = UserEntity::class;
     const NOT_FOUND_EXCEPTION   = UserNotFoundException::class;
 
+    // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
+    const int SYSTEM_USER_ID    = 5103;
+
+    // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
+    const int TESTER_USER_ID    = 4015;
+
     protected ?UserEntity $entity = null;
 
 

@@ -3,7 +3,7 @@
 La newsletter di TurboLab.it, chiamata *Questa settimana su TLI*, è una email inviata settimanalmente agli iscritti. Raccoglie i link a tutti i contenuti pubblicati sul sito durante la settimana. Nello specifico, contiene i link a:
 
 - articoli e notizie pubblicati o ri-pubblicati sul sito
-- discussioni dal forum che siano nuove oppure che abbiano ricevuto nuove risposte
+- discussioni del forum: iniziate, oppure che hanno ricevuto nuove risposte, durante la settimana
 
 Ogni volta che viene spedita la newsletter, viene creato e pubblicato automaticamente un articolo sul sito con i medesimi contenuti.
 

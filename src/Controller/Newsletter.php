@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\Encryptor\EncryptionException;
 use TurboLabIt\Encryptor\Encryptor;
-use App\Entity\phpBB\User as UserEntity;
 
 
 /**
@@ -113,7 +112,7 @@ class Newsletter extends BaseController
         }
 
         //
-        if( $userId == UserEntity::SYSTEM_USER_ID ) {
+        if( $userId == User::SYSTEM_USER_ID ) {
             $this->user->subscribeToNewsletter();
         }
 
@@ -160,7 +159,7 @@ class Newsletter extends BaseController
         }
 
         //
-        if( $userId == UserEntity::SYSTEM_USER_ID ) {
+        if( $userId == User::SYSTEM_USER_ID ) {
             $this->user->unsubscribeFromNewsletter();
         }
 
@@ -172,7 +171,7 @@ class Newsletter extends BaseController
         $this->user->subscribeToNewsletter();
 
         //
-        if( $userId == UserEntity::SYSTEM_USER_ID ) {
+        if( $userId == User::SYSTEM_USER_ID ) {
             $this->user->unsubscribeFromNewsletter();
         }
 

@@ -17,6 +17,9 @@ class Article extends BaseCmsService
     const string ENTITY_CLASS          = ArticleEntity::class;
     const string NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
 
+    const int FORMAT_ARTICLE    = ArticleEntity::FORMAT_ARTICLE;
+    const int FORMAT_NEWS       = ArticleEntity::FORMAT_NEWS;
+
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait;
 

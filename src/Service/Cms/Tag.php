@@ -15,6 +15,8 @@ class Tag extends BaseCmsService
     const string ENTITY_CLASS          = TagEntity::class;
     const string NOT_FOUND_EXCEPTION   = 'App\Exception\TagNotFoundException';
 
+    const int ID_NEWSLETTER_TLI        = 1349;
+
     use ViewableServiceTrait;
 
     protected ?TagEntity $entity                    = null;

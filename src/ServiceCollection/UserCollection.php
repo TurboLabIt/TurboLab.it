@@ -2,19 +2,17 @@
 namespace App\ServiceCollection;
 
 use App\Service\User;
-use App\Service\User as UserService;
-use App\Entity\PhpBB\User as UserEntity;
 
 
 class UserCollection extends BaseServiceEntityCollection
 {
-    const string ENTITY_CLASS = UserService::ENTITY_CLASS;
+    const string ENTITY_CLASS = User::ENTITY_CLASS;
     protected array $arrTopEmailProviders = [];
 
 
     public function loadNewsletterTestRecipients() : static
     {
-        $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(UserEntity::SYSTEM_USER_ID);
+        $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(User::SYSTEM_USER_ID);
         return $this->setEntities([$testUser]);
     }
 
@@ -63,5 +61,5 @@ class UserCollection extends BaseServiceEntityCollection
     }
 
 
-    public function createService(?UserEntity $entity = null) : UserService { return $this->factory->createUser($entity); }
+    public function createService(?UserEntity $entity = null) : User { return $this->factory->createUser($entity); }
 }
