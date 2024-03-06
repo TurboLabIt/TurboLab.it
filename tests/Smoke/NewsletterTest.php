@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Entity\phpBB\User as UserEntity;
 use App\Service\Cms\Article;
 use App\Service\User;
 use App\Tests\BaseT;
@@ -121,7 +120,7 @@ class NewsletterTest extends BaseT
 
         /** @var User $user */
         $user = static::getService("App\\Service\\User");
-        return $user->load(UserEntity::TESTER_USER_ID);
+        return $user->load(User::TESTER_USER_ID);
     }
 
 
