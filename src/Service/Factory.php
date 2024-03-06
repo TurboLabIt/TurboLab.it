@@ -7,6 +7,7 @@ use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\PhpBB\Topic as TopicEntity;
 use App\Service\Cms\Article as ArticleService;
+use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticleUrlGenerator;
 use App\Service\Cms\File as FileService;
 use App\Service\Cms\FileUrlGenerator;
@@ -51,6 +52,17 @@ class Factory
     public function createArticle(?ArticleEntity $entity = null) : ArticleService
     {
         $service = new ArticleService($this->articleUrlGenerator, $this->em, $this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+
+
+    public function createArticleEditor(?ArticleEntity $entity = null) : ArticleEditor
+    {
+        $service = new ArticleEditor($this->articleUrlGenerator, $this->em, $this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

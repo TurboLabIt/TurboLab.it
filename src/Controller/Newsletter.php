@@ -37,8 +37,7 @@ class Newsletter extends BaseController
     #[Route('/newsletter', name: 'app_newsletter')]
     public function index(Article $article) : Response
     {
-        // 👀 https://turbolab.it/402
-        $url = $article->load(402)->getUrl();
+        $url = $article->load(Article::ID_NEWSLETTER)->getUrl();
         return $this->redirect($url);
     }
 

@@ -57,7 +57,10 @@
             <columns>
                 <ul>
                     {% for Topic in Topics %}
-                        <li><a href="{{ openerUrl }}{{ Topic.url|url_encode }}">{{ Topic.title|raw }}</a> {{ Topic.postNum }} messaggi</li>
+                        <li>
+                            <a href="{{ openerUrl }}{{ Topic.url|url_encode }}">{{ Topic.title|raw }}</a>
+                            {{ Topic.postNum }} messaggi{% if Topic.postNum == 1 %}o{% endif %}
+                        </li>
                     {% endfor %}
                 </ul>
             </columns>

@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Tag extends BaseCmsService
 {
-    const string ENTITY_CLASS          = TagEntity::class;
-    const string NOT_FOUND_EXCEPTION   = 'App\Exception\TagNotFoundException';
+    const string ENTITY_CLASS           = TagEntity::class;
+    const string NOT_FOUND_EXCEPTION    = 'App\Exception\TagNotFoundException';
 
-    const int ID_NEWSLETTER_TLI        = 1349;
+    // 👀 https://turbolab.it/newsletter-turbolab.it-1349
+    const int ID_NEWSLETTER_TLI = 1349;
 
     use ViewableServiceTrait;
 

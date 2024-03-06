@@ -13,11 +13,9 @@ class NewsletterTest extends BaseT
 {
     public function testAppNewsletterIndex()
     {
-        // 👀 https://turbolab.it/402
-
         /** @var Article $article */
         $article = static::getService("App\\Service\\Cms\\Article");
-        $articleUrl = $article->load(402)->getUrl();
+        $articleUrl = $article->load(Article::ID_NEWSLETTER)->getUrl();
         $this->expectRedirect('/newsletter', $articleUrl, Response::HTTP_FOUND);
     }
 

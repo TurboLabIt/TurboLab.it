@@ -1,6 +1,9 @@
 <?php
 namespace App\Service;
 
+use App\Service\Cms\Article;
+use App\Service\Cms\Tag;
+use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
@@ -8,13 +11,15 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use TurboLabIt\Encryptor\Encryptor;
+use Twig\Environment;
 
 
 class Newsletter extends Mailer
 {
     protected string $newsletterOnSiteUrl;
     protected string $privacyUrl;
-    protected string $subject               = "Questa settimana su TurboLab.it";
+    protected string $newsletterName        = "Questa settimana su TLI";
+    protected string $subject;
     protected array $arrRecipients          = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;
@@ -22,8 +27,9 @@ class Newsletter extends Mailer
 
     public function __construct(
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
-        protected UserCollection $userCollection,
+        protected UserCollection $userCollection, protected Factory $factory,
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
+        protected Environment $twig,
         //
         MailerInterface $mailer, ProjectDir $projectDir
     )
@@ -31,6 +37,8 @@ class Newsletter extends Mailer
         // init to homepage (failsafe)
         $this->newsletterOnSiteUrl = $this->privacyUrl =
             $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $this->subject = $this->newsletterName;
 
         parent::__construct($mailer, $projectDir, [
             "from" => [
@@ -52,9 +60,13 @@ class Newsletter extends Mailer
         $this->articleCollection->loadLatestForNewsletter();
         $this->topicCollection->loadLatestForNewsletter();
 
+        //
+        $this->tagNewsletterTli = $this->factory->createTag()->load(Tag::ID_NEWSLETTER_TLI);
+        $this->userSystem       = $this->factory->createUser()->load(User::SYSTEM_USER_ID);
+
         $firstArticleTitle = $this->articleCollection->first()?->getTitle();
         if( !empty($firstArticleTitle) ) {
-            $this->subject = '"' . $firstArticleTitle . '" e altre novità su TurboLab.it';
+            $this->subject = '"' . $firstArticleTitle . '" e altre novità: ' . $this->newsletterName;
         }
 
         $this->subject .= " (" . $this->getDateString() . ")";
@@ -112,7 +124,9 @@ class Newsletter extends Mailer
             "privacyWithOpenerUrl"          => $user->getNewsletterOpenerUrl($this->privacyUrl),
             "unsubscribeUrl"                => $unsubscribeUrl,
             "newsletterOnSiteWithOpenerUrl" => $user->getNewsletterOpenerUrl($this->newsletterOnSiteUrl),
-            "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl( $homeUrl . "forum/posting.php?mode=reply&t=12749" ),
+            "feedbackTopicWithOpenerUrl"    => $user->getNewsletterOpenerUrl(
+                $homeUrl . "forum/posting.php?mode=reply&t=" . Topic::ID_NEWSLETTER_COMMENTS
+            ),
             "subscriberCount"               => $this->totalSubscribersCount,
             "TopEmailProviders"             => $this->arrTopProviders,
         ];
@@ -121,7 +135,7 @@ class Newsletter extends Mailer
             $this
                 ->addUnsubscribeHeader($unsubscribeUrl, null)
                 ->build(
-                $this->subject, "email/newsletter.html.twig", $arrTemplateParams,
+                $this->subject, "newsletter/email.html.twig", $arrTemplateParams,
                 [[ "name" => $user->getUsername(), "address" => $user->getEmail() ]]
             );
     }
@@ -143,7 +157,7 @@ class Newsletter extends Mailer
     }
 
 
-    public function lowContentNotification()
+    public function sendLowContentNotification()
     {
         $this
             ->build(
@@ -151,5 +165,41 @@ class Newsletter extends Mailer
             [[ "name" => 'Manager', "address" => "info@turbolab.it" ]]
             )
             ->send();
+    }
+
+
+    public function saveOnTheWeb() : string
+    {
+        $articleBody =
+            $this->twig->render('newsletter/article.html.twig', [
+                    "Articles"                      => $this->articleCollection,
+                    "Topics"                        => $this->topicCollection,
+                    "newsletterUrl"                 => $this->articleCollection->createService()->load(Article::ID_NEWSLETTER)->getUrl(),
+                    "subscriberCount"               => $this->totalSubscribersCount,
+                    "TopEmailProviders"             => $this->arrTopProviders,
+                ]
+            );
+
+        $title = $this->newsletterName . " (" . $this->getDateString() . ")";
+
+        $topicComment = $this->factory->createTopic()->load(Topic::ID_NEWSLETTER_COMMENTS);
+
+        $article =
+            $this->factory->createArticleEditor()
+                ->setTitle($title)
+                ->addAuthor($this->userSystem)
+                ->addTag($this->tagNewsletterTli, $this->userSystem)
+                ->setFormat(Article::FORMAT_ARTICLE)
+                ->setBody($articleBody)
+                ->setPublishedAt(
+                    ( new \DateTime() )
+                        ->modify('+1 day')
+                        ->setTime(0, 0)
+                )
+                ->setCommentsTopic($topicComment)
+                ->setPublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED)
+                ->save();
+
+        return $this->newsletterOnSiteUrl = $article->getUrl();
     }
 }

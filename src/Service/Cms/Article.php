@@ -5,6 +5,8 @@ use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
+use App\Trait\ArticleFormatsTrait;
+use App\Trait\PublishingStatusesTrait;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
@@ -14,14 +16,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Article extends BaseCmsService
 {
-    const string ENTITY_CLASS          = ArticleEntity::class;
-    const string NOT_FOUND_EXCEPTION   = 'App\Exception\ArticleNotFoundException';
+    const string ENTITY_CLASS           = ArticleEntity::class;
+    const string NOT_FOUND_EXCEPTION    = 'App\Exception\ArticleNotFoundException';
 
-    const int FORMAT_ARTICLE    = ArticleEntity::FORMAT_ARTICLE;
-    const int FORMAT_NEWS       = ArticleEntity::FORMAT_NEWS;
+    // 👀 https://turbolab.it/402
+    const int ID_NEWSLETTER = 402;
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use UrlableServiceTrait;
+    use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait;
 
     protected ?ArticleEntity $entity = null;
     protected ?ImageService $spotlight;
@@ -104,6 +106,12 @@ class Article extends BaseCmsService
     public function getSpotlightOrDefaultUrl(string $size) : string
     {
         return $this->getSpotlightOrDefault()->getUrl($this, $size);
+    }
+
+
+    public function getSpotlightUrl(string $size) : ?string
+    {
+        return $this->getSpotlight()?->getUrl($this, $size);
     }
 
 

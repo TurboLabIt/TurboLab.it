@@ -1,0 +1,49 @@
+<p>Non hai tempo di seguirci tutti i giorni? Nessun problema! Ecco a te il riepilogo di quanto proposto da <em>TurboLab.it</em> nel corso della settimana in conclusione.</p>
+<p>📬 Vuoi ricevere questo resoconto comodamente via email, una volta a settimana? Allora <a href="{{ newsletterUrl }}">iscriverti alla newsletter</a>!</p>
+
+{% if Articles is not empty %}
+
+    {% for Article in Articles %}
+        <h2>{{ Article.title|raw }}</h2>
+        {% if Article.Spotlight is not empty  %}
+            <p><a href="{{ Article.spotlightUrl('max') }}"><img src="{{ Article.spotlightUrl('med') }}"></a></p>
+        {% endif %}
+        <p>{{ Article.abstract|raw }}</p>
+        <p><strong>» Leggi:</strong> <a href="{{ Article.url }}">{{ Article.title|raw }}</a></p>
+    {% endfor %}
+
+{% else %}
+
+    <h2>Articoli e news</h2>
+    <p>🌴 Questa settimana non sono stati pubblicati nuovi articoli.</p>
+
+{% endif %}
+
+
+<h2>Messaggi dal forum</h2>
+{% if Topics is not empty %}
+
+    <ul>
+        {% for Topic in Topics %}
+            <li>
+                <a href="{{ Topic.url }}">{{ Topic.title|raw }}</a>
+                {{ Topic.postNum }} messaggi{% if Topic.postNum == 1 %}o{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+
+    <p>🏄 Nessuna novità dal forum.</p>
+
+{% endif %}
+
+
+<h2>Curiosità</h2>
+<p>Questa newsletter è stata recapitata a {{ subscriberCount|friendlyNum }} iscritti.</p>
+<p>
+    I domini più usati sono
+    {% for domain,Provider in TopEmailProviders %}
+        <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
+    {% endfor %}
+</p>
