@@ -84,18 +84,11 @@ class NewsletterCommand extends AbstractBaseCommand
 
         if( $countArticles == 0 && $countTopics == 0 ) {
 
-            $this->newsletter->lowContentNotification();
+            $this->newsletter->sendLowContentNotification();
             return
                 $this->endWithError(
                     "There isn't enough content! You can still check the preview on " . $this->newsletter->getPreviewUrl()
                 );
-        }
-
-        $this->fxTitle("Generating article...");
-        if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
-            $this->newsletter->saveOnTheWeb();
-        } else {
-            $this->fxWarning('Skipped due to test mode or --' . Options::CLI_OPT_DRY_RUN);
         }
 
 
@@ -114,6 +107,18 @@ class NewsletterCommand extends AbstractBaseCommand
 
         $recipientsCount = $this->newsletter->countRecipients();
         $this->fxOK("$recipientsCount recipient(s) loaded");
+
+
+        $this->fxTitle("Generating article...");
+        if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
+
+            $articleUrl = $this->newsletter->saveOnTheWeb();
+            $this->fxOK("Article ready: " . $articleUrl);
+
+        } else {
+
+            $this->fxWarning('Skipped due to test mode or --' . Options::CLI_OPT_DRY_RUN);
+        }
 
         $this->fxTitle("Processing every recipient...");
         $arrRecipients = $this->newsletter->getRecipients();
