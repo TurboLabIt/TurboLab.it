@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Service\Cms\HtmlProcessor;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -15,8 +14,6 @@ use Twig\Environment;
 class FeedController extends BaseController
 {
     const bool DISPLAY_AS_HTML = false;
-
-    protected ?HtmlProcessor $htmlProcessor = null;
 
 
     public function __construct(
@@ -42,15 +39,13 @@ class FeedController extends BaseController
 
 
     #[Route('/feed/fullfeed', name: 'app_feed_fullfeed')]
-    public function fullFeed(HtmlProcessor $htmlProcessor): Response
+    public function fullFeed(): Response
     {
         $arrData = [
             "title"         => "TurboLab.it | Full Feed",
             "description"   => "Questo feed eroga i nuovi articoli in forma completa",
             "fullFeed"      => true,
         ];
-
-        $this->htmlProcessor = $htmlProcessor;
 
         return $this->sendRssResponse( "app_feed_fullfeed", $arrData, $this->articleCollection->loadLatestPublished(...) );
     }
@@ -83,11 +78,6 @@ class FeedController extends BaseController
         if( !$this->isCachable() ) {
 
             $fxLoadArticle();
-
-            if( !empty($this->htmlProcessor) ) {
-                $this->articleCollection->setHtmlProcessor($this->htmlProcessor);
-            }
-
             $buildXmlResult = $this->buildXml($arrData);
 
         } else {
@@ -99,11 +89,6 @@ class FeedController extends BaseController
                     $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
 
                     $fxLoadArticle();
-
-                    if( !empty($this->htmlProcessor) ) {
-                        $this->articleCollection->setHtmlProcessor($this->htmlProcessor);
-                    }
-
                     return $this->buildXml($arrData);
                 });
         }

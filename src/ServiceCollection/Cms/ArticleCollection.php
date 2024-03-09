@@ -3,7 +3,6 @@ namespace App\ServiceCollection\Cms;
 
 use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
-use App\Service\Cms\HtmlProcessor;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
 
@@ -11,13 +10,6 @@ use App\Entity\Cms\Tag as TagEntity;
 class ArticleCollection extends BaseCmsServiceCollection
 {
     const string ENTITY_CLASS = ArticleService::ENTITY_CLASS;
-
-
-    public function setHtmlProcessor(HtmlProcessor $htmlProcessor) : static
-    {
-        $this->iterate( fn($item) => $item->setHtmlProcessor($htmlProcessor) );
-        return $this;
-    }
 
 
     public function load(array $arrIds) : array

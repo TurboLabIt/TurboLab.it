@@ -34,6 +34,7 @@ class Article extends BaseCmsService
     public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
     {
         $this->clear();
+        $this->htmlProcessor = new HtmlProcessor($factory);
     }
 
 
@@ -139,13 +140,6 @@ class Article extends BaseCmsService
         }
 
         return $this->factory->createDefaultSpotlight();
-    }
-
-
-    public function setHtmlProcessor(HtmlProcessor $htmlProcessor) : static
-    {
-        $this->htmlProcessor = $htmlProcessor;
-        return $this;
     }
 
 

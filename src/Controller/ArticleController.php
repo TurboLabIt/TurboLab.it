@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Service\Cms\Image;
 use App\Service\Cms\Article;
-use App\Service\Cms\HtmlProcessor;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,7 @@ use Twig\Environment;
 class ArticleController extends BaseController
 {
     public function __construct(
-        protected Article $article, protected HtmlProcessor $htmlProcessor,
+        protected Article $article,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
         protected Environment $twig
     )
@@ -36,8 +35,7 @@ class ArticleController extends BaseController
 
         $article
             ->setClientIpAddress( $this->request->getClientIp() )
-            ->countOneView()
-            ->setHtmlProcessor($this->htmlProcessor);
+            ->countOneView();
 
         return $this->render('article/index.html.twig', [
             'metaTitle'         => $article->getTitle(),
