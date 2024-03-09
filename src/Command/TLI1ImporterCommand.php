@@ -266,7 +266,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         if( !empty($arrInvalidPages) ) {
 
             return $this->endWithError(
-                "There are multiple pages relating to the same article on TLI1: " . print_r($arrInvalidPages, true)
+                "There are multiple pages related to the same article on TLI1: " . print_r($arrInvalidPages, true)
             );
         }
 
@@ -325,6 +325,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $title          = $this->convertValueFromTli1ToTli2($arrArticle["titolo"], true);
         $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
+        // fix grammar horror on newsletter
+        $abstract        = str_ireplace(
+            'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $abstract
+        );
+
         $pubStatus      = match( $arrArticle["finito"] ) {
             0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
             1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
@@ -336,6 +341,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $ads            = (bool)$arrArticle["ads"];
         $commentsTopic  = $this->repoTopics->selectOrNull($arrArticle["id_commenti_phpbb"]);
         $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
+
+        // fix grammar horror on newsletter
+        $body           = str_ireplace(
+            'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $body
+        );
+
         $createdAt      = $arrArticle["data_creazione"] ?: null;
         $updatedAt      = $arrArticle["data_update"] ?: null;
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
