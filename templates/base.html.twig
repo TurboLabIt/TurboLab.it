@@ -82,7 +82,7 @@
     {% block bodyNav %}
         <nav>
             <ul>
-                <li><a href="{{ absolute_url(path('app_home')) }}">{{ siteName ?? null }}</a></li>
+                <li><a href="{{ absolute_url(path('app_home')) }}">Home</a></li>
                 <li><a href="{{ absolute_url(path('app_home')) }}forum">Forum</a></li>
                 <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'windows-10'})) }}">Windows</a></li>
                 <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'linux-27'})) }}">Linux</a></li>
