@@ -82,8 +82,18 @@
     {% block bodyNav %}
         <nav>
             <ul>
-                <li><a href="/">{{ siteName ?? null }}</a></li>
-                <li><a href="{{ path('app_news') }}">News</a></li>
+                <li><a href="{{ absolute_url(path('app_home')) }}">{{ siteName ?? null }}</a></li>
+                <li><a href="{{ absolute_url(path('app_home')) }}forum">Forum</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'windows-10'})) }}">Windows</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'linux-27'})) }}">Linux</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'criptovalute-bitcoin-ethereum-litecoin-4904'})) }}">Bitcoin e Cripto</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'android-28'})) }}">Android</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'sicurezza-13'})) }}">Sicurezza</a></li>
+                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'guida-mercato-640'})) }}">Guida Mercato</a></li>
+                <li><a href="{{ absolute_url(path('app_news')) }}">News</a></li>
+                <li><a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1">YouTube</a></li>
+                <li><a href="https://t.me/turbolab">Telegram</a></li>
+                <li><a href="{{ absolute_url(path('app_feed')) }}">Feed</a></li>
             </ul>
         </nav>
     {% endblock %}
