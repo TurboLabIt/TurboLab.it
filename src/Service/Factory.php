@@ -48,6 +48,10 @@ class Factory
     //</editor-fold>
 
 
+    public function getEm() : EntityManagerInterface { return $this->em; }
+    public function getEntityManager() : EntityManagerInterface { return $this->em; }
+
+
     //<editor-fold defaultstate="collapsed" desc="*** Article ***">
     public function createArticle(?ArticleEntity $entity = null) : ArticleService
     {

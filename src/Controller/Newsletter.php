@@ -70,7 +70,7 @@ class Newsletter extends BaseController
 
 
     #[Route('/newsletter/open', name: 'app_newsletter_opener')]
-    public function opener() : Response
+    public function opener(NewsletterService $newsletter) : Response
     {
         $goToUrl        = $this->request->get("url");
         $arrParsedUrl   = parse_url($goToUrl);
@@ -83,8 +83,11 @@ class Newsletter extends BaseController
 
         try {
             $arrUserData = $this->encryptor->decrypt($encryptedUserData);
-            //$this->user->load($arrUserData["userId"])->setNewsletterOpened();
-            //$this->entityManager->flush();
+            if( $arrUserData["scope"] != 'newsletterOpenerUrl' ) {
+                throw new \Exception("Pretty Try (For a White Guy) | Invalid scope");
+            }
+
+            $newsletter->confirmOpener($arrUserData["userId"]);
 
         } catch(\Exception) {}
 
@@ -93,7 +96,7 @@ class Newsletter extends BaseController
 
 
     #[Route('/newsletter/disiscrizione/{encryptedSubscriberData}', name: 'app_newsletter_unsubscribe')]
-    public function unsubscribe(string $encryptedSubscriberData) : Response
+    public function unsubscribe(NewsletterService $newsletter, string $encryptedSubscriberData) : Response
     {
         try {
             $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
@@ -119,8 +122,7 @@ class Newsletter extends BaseController
             return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_SUBSCRIBED, $arrDecodedSubscriberData);
         }
 
-        $this->user->unsubscribeFromNewsletter();
-        $this->entityManager->flush();
+        $newsletter->unsubscribeUser($this->user);
 
         return $this->render('newsletter/unsubscribe.html.twig', [
             "User"  => $this->user

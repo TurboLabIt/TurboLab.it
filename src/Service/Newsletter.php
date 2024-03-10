@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 
+use App\Entity\NewsletterExpiringWarn;
+use App\Entity\NewsletterOpener;
 use App\Service\Cms\Article;
 use App\Service\Cms\Tag;
 use App\Service\PhpBB\Topic;
@@ -206,5 +208,37 @@ class Newsletter extends Mailer
         }
 
         return $this->newsletterOnSiteUrl;
+    }
+
+
+    public function confirmOpener(int $userId) : bool
+    {
+        try {
+            $em         = $this->factory->getEm();
+            $userEntity = $this->factory->createUser()->load($userId)->getEntity();
+            $opener     = $em->getRepository(NewsletterOpener::class)->getByUserOrNew($userEntity);
+            $opener->setUpdatedAt( new \DateTime() );
+
+            $em->getRepository(NewsletterExpiringWarn::class)->deleteByUserId($userId);
+
+            $em->persist($opener);
+            $em->flush();
+
+        } catch (\Exception) { return false; }
+
+        return true;
+    }
+
+
+    public function unsubscribeUser(User $user) : static
+    {
+        $user->unsubscribeFromNewsletter();
+        $em = $this->factory->getEm();
+        $userId = $user->getId();
+        $em->getRepository(NewsletterOpener::class)->deleteByUserId($userId);
+        $em->getRepository(NewsletterExpiringWarn::class)->deleteByUserId($userId);
+        $em->flush();
+
+        return $this;
     }
 }

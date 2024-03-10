@@ -29,6 +29,8 @@ final class Version20240105082853 extends AbstractMigration
         $this->addSql('DROP TABLE IF EXISTS tag');
         $this->addSql('DROP TABLE IF EXISTS tag_author');
         $this->addSql('DROP TABLE IF EXISTS tag_badge');
+        $this->addSql('DROP TABLE IF EXISTS newsletter_expiring_warn');
+        $this->addSql('DROP TABLE IF EXISTS newsletter_opener');
         $this->addSql('SET foreign_key_checks = 1');
     }
 
