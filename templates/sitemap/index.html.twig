@@ -1,0 +1,11 @@
+{# 📚 https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps #}
+{# 📚 https://www.sitemaps.org/protocol.html#index #}
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for url in Sitemap %}
+    <sitemap>
+        <loc>{{ url }}</loc>
+        <lastmod>{{ lastmod }}</lastmod>
+    </sitemap>
+{% endfor %}
+</sitemapindex>

@@ -9,7 +9,7 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
 
         ## TLI ignore views from phpBB
-        schema_filter: ~^(?!user|topic|post)~
+        schema_filter: ~^(?!user|topic|post|forum)~
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

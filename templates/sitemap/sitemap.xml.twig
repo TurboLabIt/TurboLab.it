@@ -1,0 +1,14 @@
+{# 📚 https://www.sitemaps.org/protocol.html #}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {% for Item in Items %}
+        <url>
+            <loc>{{ Item.url }}</loc>
+            <lastmod>{{ Item.lastmod }}</lastmod>
+            <changefreq>{{ Item.changefreq ?? 'daily' }}</changefreq>
+            {% if Item.priority is defined and Item.priority != 0.5 %}
+                <priority>{{ Item.priority }}</priority>
+            {% endif %}
+        </url>
+    {% endfor %}
+</urlset>

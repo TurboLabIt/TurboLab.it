@@ -35,6 +35,14 @@ class Topic extends BaseServiceEntity
     public function getEntity() : ?TopicEntity { return $this->entity; }
 
 
+    public function getLastPostDateTime() : \DateTime
+    {
+        $oDateTime = \DateTime::createFromFormat('U', $this->entity->getLastPostTime());
+        $oDateTime->setTimezone(new \DateTimeZone('Europe/Rome'));
+        return $oDateTime;
+    }
+
+
     public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         return $this->urlGenerator->generateTopicViewUrl($this, $urlType);
