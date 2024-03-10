@@ -48,5 +48,12 @@ class ArticleCollection extends BaseCmsServiceCollection
         return $this->setEntities($arrArticles);
     }
 
+
+    public function loadLatestNewsPublished(?int $page = 1) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestNewsPublished($page);
+        return $this->setEntities($arrArticles);
+    }
+
     public function createService(?ArticleEntity $entity = null) : ArticleService { return $this->factory->createArticle($entity); }
 }

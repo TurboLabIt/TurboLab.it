@@ -13,7 +13,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Twig\Environment;
 
 
-class HomeController extends BaseController
+class NewsController extends BaseController
 {
     public function __construct(
         protected ArticleCollection $articleCollection, protected Paginator $paginator,
@@ -25,7 +25,7 @@ class HomeController extends BaseController
     }
 
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/news', name: 'app_news')]
     public function index(): Response
     {
         if( !$this->isCachable() ) {
@@ -36,25 +36,25 @@ class HomeController extends BaseController
 
         $that = $this;
         $buildHtmlResult =
-            $this->cache->get("app_home", function(CacheItem $cache) use($that) {
+            $this->cache->get("app_news", function(CacheItem $cache) use($that) {
 
-                $cache->tag(["app_home"]);
+                $cache->tag(["app_news"]);
                 $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                 return $that->buildHtml(1);
-        });
+            });
 
         return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
     }
 
 
-    #[Route('/home/{page<0|1>}', name: 'app_home_page_0-1')]
-    public function appHomePage0Or1()
+    #[Route('/news/{page<0|1>}', name: 'app_news_page_0-1')]
+    public function appNewsPage0Or1()
     {
-        return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY);
+        return $this->redirectToRoute('app_news', [], Response::HTTP_MOVED_PERMANENTLY);
     }
 
 
-    #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
+    #[Route('/news/{page<[1-9]+[0-9]*>}', name: 'app_news_paginated')]
     public function indexPaginated(?int $page): Response
     {
         if( !$this->isCachable() ) {
@@ -64,7 +64,7 @@ class HomeController extends BaseController
         }
 
         $that = $this;
-        $cacheKey = 'app_home_page_' . $page;
+        $cacheKey = 'app_news_page_' . $page;
         $buildHtmlResult =
             $this->cache->get($cacheKey, function(CacheItem $cache) use($that, $page) {
 
@@ -72,7 +72,7 @@ class HomeController extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $cache->tag(["app_home_" . $page, "loadLatestPublished", "loadLatestPublished_" . $page]);
+                    $cache->tag(["app_news_" . $page, "loadLatestPublished", "loadLatestPublished_" . $page]);
                     $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
 
                 } else {
@@ -89,37 +89,30 @@ class HomeController extends BaseController
 
     protected function buildHtml(?int $page) : Response|string
     {
-        $this->articleCollection->loadLatestPublished($page);
+        $this->articleCollection->loadLatestNewsPublished($page);
 
         $this->paginator
             ->setTotalElementsNum( $this->articleCollection->countTotalBeforePagination() )
             ->setCurrentPageNum($page)
-            ->build('app_home', [], 'app_home_paginated', ['page' => $page]);
+            ->build('app_news', [], 'app_news_paginated', ['page' => $page]);
 
         $lastPageNum = $this->paginator->isPageOutOfRange();
 
         if( $lastPageNum !== false && in_array($lastPageNum, [0, 1])) {
-            return $this->redirectToRoute("app_home");
+            return $this->redirectToRoute("app_news");
         }
 
         if( $lastPageNum !== false ) {
-            return $this->redirectToRoute("app_home_paginated", ["page" => $lastPageNum]);
+            return $this->redirectToRoute("app_news_paginated", ["page" => $lastPageNum]);
         }
 
         $metaCanonicalUrl =
             empty($page) || $page < 2
-                ? $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL)
-                : $this->generateUrl('app_home_paginated', ['page' => $page], UrlGeneratorInterface::ABSOLUTE_URL);
+                ? $this->generateUrl('app_news', [], UrlGeneratorInterface::ABSOLUTE_URL)
+                : $this->generateUrl('app_news_paginated', ['page' => $page], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        /**
-         * no trailing slash for the canonical homepage URL, even if this is not really needed:
-         * "Rest assured that for your root URL specifically, https://example.com is equivalent to https://example.com/
-         *   and can't be redirected even if you're Chuck Norris."
-         * 📚 https://developers.google.com/search/blog/2010/04/to-slash-or-not-to-slash
-         */
-        $metaCanonicalUrl = trim($metaCanonicalUrl, '/');
-
-        return $this->twig->render('home/index.html.twig', [
+        return $this->twig->render('news/index.html.twig', [
+            'metaTitle'         => 'Ultime notizie di tecnologia, sicurezza e truffe su Internet',
             'metaCanonicalUrl'  => $metaCanonicalUrl,
             'Articles'          => $this->articleCollection,
             'Paginator'         => $this->paginator

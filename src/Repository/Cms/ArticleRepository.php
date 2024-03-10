@@ -129,6 +129,31 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
+    public function findLatestNewsPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $sqlSelect = "
+          SELECT id FROM article
+          WHERE
+            format = " . Article::FORMAT_NEWS . " AND
+            publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND published_at <= NOW()";
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, [], $page);
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $query =
+            $qb
+                ->orderBy('t.publishedAt', 'DESC')
+                ->addOrderBy('t.updatedAt', 'DESC')
+                ->getQuery();
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $paginator;
+    }
+
+
     //<editor-fold defaultstate="collapsed" desc="** INTERNAL METHODS **">
     protected function getQueryBuilder() : QueryBuilder
     {
