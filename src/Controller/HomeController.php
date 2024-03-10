@@ -48,7 +48,7 @@ class HomeController extends BaseController
 
 
     #[Route('/home/{page<0|1>}', name: 'app_home_page_0-1')]
-    public function appHomePage0Or1()
+    public function appHomePage0Or1(?int $page = null)
     {
         return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY);
     }
