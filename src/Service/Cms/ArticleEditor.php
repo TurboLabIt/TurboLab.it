@@ -116,14 +116,17 @@ class ArticleEditor extends Article
     }
 
 
-    public function save() : static
+    public function save(bool $persist = true) : static
     {
         if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
             $this->entity->setCommentTopicNeedsUpdate(static::COMMENT_TOPIC_UPDATE_YES);
         }
 
-        $this->em->persist($this->entity);
-        $this->em->flush();
+        if($persist) {
+
+            $this->em->persist($this->entity);
+            $this->em->flush();
+        }
 
         return $this;
     }

@@ -110,14 +110,13 @@ class NewsletterCommand extends AbstractBaseCommand
 
 
         $this->fxTitle("Generating article...");
-        if( $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true) ) {
+        $persist = $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true);
+        $articleUrl = $this->newsletter->saveOnTheWeb($persist);
 
-            $articleUrl = $this->newsletter->saveOnTheWeb();
+        if($persist) {
             $this->fxOK("Article ready: " . $articleUrl);
-
         } else {
-
-            $this->fxWarning('Skipped due to test mode or --' . Options::CLI_OPT_DRY_RUN);
+            $this->fxWarning('The article was NOT saved due to test mode or --' . Options::CLI_OPT_DRY_RUN);
         }
 
         $this->fxTitle("Processing every recipient...");

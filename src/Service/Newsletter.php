@@ -168,7 +168,7 @@ class Newsletter extends Mailer
     }
 
 
-    public function saveOnTheWeb() : string
+    public function saveOnTheWeb(bool $persist) : ?string
     {
         $articleBody =
             $this->twig->render('newsletter/article.html.twig', [
@@ -199,8 +199,12 @@ class Newsletter extends Mailer
                 ->setCommentsTopic($topicComment)
                 ->setPublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED)
                 ->setCommentTopicNeedsUpdate(Article::COMMENT_TOPIC_UPDATE_NEVER)
-                ->save();
+                ->save($persist);
 
-        return $this->newsletterOnSiteUrl = $article->getUrl();
+        if($persist) {
+            $this->newsletterOnSiteUrl = $article->getUrl();
+        }
+
+        return $this->newsletterOnSiteUrl;
     }
 }
