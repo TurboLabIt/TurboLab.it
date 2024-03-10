@@ -598,6 +598,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $title = $arrTag["tag"];
 
+        // change the tag title from "criptovalute (bitcoin/ethereum/litecoin)"
+        } elseif( $tagId == 4904 ) {
+
+            $title = 'bitcoin ethereum criptovalute';
+
         } else {
 
             $title = str_ireplace('&', '&amp;', $arrTag["tag"]);
