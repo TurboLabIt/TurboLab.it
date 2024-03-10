@@ -6,7 +6,7 @@
     {% for Article in Articles %}
         <h2>{{ Article.title|raw }}</h2>
         {% if Article.Spotlight is not empty  %}
-            <p><a href="{{ Article.spotlightUrl('max') }}"><img src="{{ Article.spotlightUrl('med') }}"></a></p>
+            <p><img src="{{ Article.spotlightUrl('med') }}"></p>
         {% endif %}
         <p>{{ Article.abstract|raw }}</p>
         <p><strong>» Leggi:</strong> <a href="{{ Article.url }}">{{ Article.title|raw }}</a></p>

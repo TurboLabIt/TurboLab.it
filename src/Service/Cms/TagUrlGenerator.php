@@ -21,16 +21,26 @@ class TagUrlGenerator extends UrlGenerator
 
     public function isUrl(string $urlCandidate) : bool
     {
-        if( !$this->isInternalUrl($urlCandidate) ) {
-            return false;
+        return !empty( $this->extractIdFromUrl($urlCandidate) );
+    }
+
+
+    public function extractIdFromUrl(string $url) : ?int
+    {
+        if( !$this->isInternalUrl($url) ) {
+            return null;
         }
 
-        $urlPath = $this->removeDomainFromUrl($urlCandidate);
-        if( empty($urlPath) ) {
-            return false;
+        $url = $this->removeDomainFromUrl($url);
+
+        $arrMatches = [];
+        $match = preg_match('/^\/[^\/]+-([1-9]+[0-9]*)$/', $url, $arrMatches);
+        if( $match === 1 ) {
+
+            $id = end($arrMatches);
+            return (int)$id;
         }
 
-        $match = preg_match('/^\/[^\/]+-[1-9]+[0-9]*$/', $urlPath);
-        return (bool)$match;
+        return null;
     }
 }

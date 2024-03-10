@@ -71,6 +71,9 @@ class Factory
     }
 
 
+    public function getArticleUrlGenerator() : ArticleUrlGenerator { return $this->articleUrlGenerator; }
+
+
     public function createArticleCollection() : ArticleCollection
     {
         return new ArticleCollection($this->em, $this);
@@ -88,6 +91,9 @@ class Factory
 
         return $service;
     }
+
+
+    public function getTagUrlGenerator() : TagUrlGenerator { return $this->tagUrlGenerator; }
 
 
     public function createTagCollection() : TagCollection
@@ -125,6 +131,9 @@ class Factory
 
         return $service;
     }
+
+
+    public function getImageUrlGenerator() : ImageUrlGenerator { return $this->imageUrlGenerator; }
 
 
     public function createImageCollection() : ImageCollection

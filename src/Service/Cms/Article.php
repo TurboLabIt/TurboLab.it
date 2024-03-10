@@ -6,6 +6,7 @@ use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
 use App\Trait\ArticleFormatsTrait;
+use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
@@ -23,7 +24,7 @@ class Article extends BaseCmsService
     const int ID_NEWSLETTER = 402;
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait;
+    use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
 
     protected ?ArticleEntity $entity = null;
     protected ?ImageService $spotlight;

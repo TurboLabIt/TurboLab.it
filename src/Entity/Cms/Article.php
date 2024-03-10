@@ -1,12 +1,12 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Entity\PhpBB\Topic;
 use App\Repository\Cms\ArticleRepository;
 use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;
 use App\Trait\ArticleFormatableEntityTrait;
 use App\Trait\BodyableEntityTrait;
+use App\Trait\CommentTopicableEntityTrait;
 use App\Trait\PublishableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
@@ -21,14 +21,10 @@ class Article extends BaseCmsEntity
     use
         AbstractableEntityTrait, AdsableEntityTrait, ArticleFormatableEntityTrait,
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,
-        ViewableEntityTrait;
+        ViewableEntityTrait, CommentTopicableEntityTrait;
 
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
     protected ?Image $spotlight = null;
-
-    #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn('comments_topic_id', 'topic_id')]
-    protected ?Topic $commentsTopic = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
@@ -61,17 +57,6 @@ class Article extends BaseCmsEntity
     public function setSpotlight(?Image $spotlight): static
     {
         $this->spotlight = $spotlight;
-        return $this;
-    }
-
-    public function getCommentsTopic(): ?Topic
-    {
-        return $this->commentsTopic;
-    }
-
-    public function setCommentsTopic(?Topic $commentsTopic): static
-    {
-        $this->commentsTopic = $commentsTopic;
         return $this;
     }
 

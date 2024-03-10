@@ -3,17 +3,21 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleTag;
+use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 class ArticleEditor extends Article
 {
-    public function save() : static
+    protected HtmlProcessorReverse $htmlProcessorReverse;
+
+
+    public function __construct(ArticleUrlGenerator $urlGenerator, EntityManagerInterface $em, Factory $factory)
     {
-        $this->em->persist($this->entity);
-        $this->em->flush();
-        return $this;
+        parent::__construct($urlGenerator, $em, $factory);
+        $this->htmlProcessorReverse = new HtmlProcessorReverse($factory);
     }
 
 
@@ -58,7 +62,28 @@ class ArticleEditor extends Article
 
     public function setBody(string $body) : static
     {
-        $this->entity->setBody($body);
+        $bodyForStorage = $this->htmlProcessorReverse->processArticleBodyForStorage($body);
+        $this->entity->setBody($bodyForStorage);
+
+        $spotlightId = $this->htmlProcessorReverse->getSpotlightId();
+        if( empty($spotlightId) ) {
+
+            $this->entity->setSpotlight(null);
+
+        } else {
+
+            try {
+                $spotlight = $this->factory->createImage()->load($spotlightId)->getEntity();
+                $this->entity->setSpotlight($spotlight);
+
+            } catch(\Exception) {
+                $this->entity->setSpotlight(null);
+            }
+        }
+
+        $abstract = $this->htmlProcessorReverse->getAbstract();
+        $this->entity->setAbstract($abstract);
+
         return $this;
     }
 
@@ -80,6 +105,26 @@ class ArticleEditor extends Article
     public function setPublishingStatus(int $status) : static
     {
         $this->entity->setPublishingStatus($status);
+        return $this;
+    }
+
+
+    public function setCommentTopicNeedsUpdate(int $status) : static
+    {
+        $this->entity->setCommentTopicNeedsUpdate($status);
+        return $this;
+    }
+
+
+    public function save() : static
+    {
+        if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
+            $this->entity->setCommentTopicNeedsUpdate(static::COMMENT_TOPIC_UPDATE_YES);
+        }
+
+        $this->em->persist($this->entity);
+        $this->em->flush();
+
         return $this;
     }
 }

@@ -56,17 +56,10 @@ class UrlGenerator
 
     public function isInternalUrl(string $urlCandidate) : bool
     {
-        if (
-            stripos($urlCandidate, 'http://') !== 0 &&
-            stripos($urlCandidate, 'https://') !== 0
-        ) {
-            return true;
-        }
-
         $arrUrlComponents = parse_url($urlCandidate);
         $urlDomain = $arrUrlComponents["host"] ?? null;
 
-        $isInternal = !empty($urlDomain) && in_array($urlDomain, static::INTERNAL_DOMAINS);
+        $isInternal = empty($urlDomain) || in_array($urlDomain, static::INTERNAL_DOMAINS);
         return $isInternal;
     }
 

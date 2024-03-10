@@ -347,6 +347,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $body
         );
 
+        $commentTopicNeedsUpdate = mb_stripos($body, 'tutti i giorni? Nessun problema! Ecco a te') !== false;
+
         $createdAt      = $arrArticle["data_creazione"] ?: null;
         $updatedAt      = $arrArticle["data_update"] ?: null;
         $publishedAt    = $arrArticle["data_pubblicazione"] ?: null;
@@ -387,6 +389,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setPublishedAt($publishedAt)
                     ->setShowAds($ads)
                     ->setCommentsTopic($commentsTopic)
+                    ->setCommentTopicNeedsUpdate($commentTopicNeedsUpdate)
                     ->setViews($views)
                     ->setAbstract($abstract)
                     ->setBody($body)

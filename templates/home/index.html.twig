@@ -11,7 +11,6 @@
             {% for Article in Articles %}
                 <article>
                     <h2><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
-                    <div><a href="{{ Article.url }}"><img src="{{ Article.spotlightOrDefaultUrl('med') }}"></a></div>
 
                     {% if Article.Authors is not empty %}
                         <span>
@@ -38,6 +37,11 @@
                     {% if Article.views > 1 %}
                         <span>visualizzato {{ Article.views|friendlyNum }} volte</span>
                     {% endif %}
+
+                    <div><a href="{{ Article.url }}"><img src="{{ Article.spotlightOrDefaultUrl('med') }}"></a></div>
+
+                    <div><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></div>
+
                 </article>
             {% endfor %}
         </div>

@@ -48,16 +48,36 @@ class ArticleUrlGenerator extends UrlGenerator
 
     public function isUrl(string $urlCandidate) : bool
     {
-        if( !$this->isInternalUrl($urlCandidate) ) {
-            return false;
+        return !empty( $this->extractIdFromUrl($urlCandidate) );
+    }
+
+
+    public function extractIdFromUrl(string $url) : ?int
+    {
+        if( !$this->isInternalUrl($url) ) {
+            return null;
         }
 
-        $urlPath = $this->removeDomainFromUrl($urlCandidate);
-        if( empty($urlPath) ) {
-            return false;
+        $url = $this->removeDomainFromUrl($url);
+
+        // short URL: https://turbolab.it/1939
+        $arrMatches = [];
+        $match = preg_match('/^\/[1-9]+[0-9]*$/', $url, $arrMatches);
+        if( $match === 1 ) {
+
+            $id = reset($arrMatches);
+            return (int)$id;
         }
 
-        $match = preg_match('/^\/[^\/]+-[1-9]+[0-9]*\/[^\/]+-[1-9]+[0-9]*$/', $urlPath);
-        return (bool)$match;
+        // long URL: https://turbolab.it/turbolab.it-1/come-svolgere-test-automatici-turbolab.it-1939
+        $arrMatches = [];
+        $match = preg_match('/^\/[^\/]+-[1-9]+[0-9]*\/[^\/]+-([1-9]+[0-9]*)$/', $url, $arrMatches);
+        if( $match === 1 ) {
+
+            $id = end($arrMatches);
+            return (int)$id;
+        }
+
+        return null;
     }
 }
