@@ -43,7 +43,7 @@ class NewsTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::NEWS_TOTAL_PAGES);
+            ->internalPaginatorChecker($_ENV["APP_SITE_URL"] . "news", static::NEWS_TOTAL_PAGES);
     }
 
 
