@@ -4,7 +4,9 @@
     {% for Item in Items %}
         <url>
             <loc>{{ Item.url }}</loc>
-            <lastmod>{{ Item.lastmod }}</lastmod>
+            {% if Item.lastmod is defined and Item.lastmod is not empty %}
+                <lastmod>{{ Item.lastmod }}</lastmod>
+            {% endif %}
             <changefreq>{{ Item.changefreq ?? 'daily' }}</changefreq>
             {% if Item.priority is defined and Item.priority != 0.5 %}
                 <priority>{{ Item.priority }}</priority>

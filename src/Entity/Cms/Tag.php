@@ -2,6 +2,7 @@
 namespace App\Entity\Cms;
 
 use App\Repository\Cms\TagRepository;
+use App\Trait\AbstractableEntityTrait;
 use App\Trait\RankableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 class Tag extends BaseCmsEntity
 {
-    use TitleableEntityTrait, RankableEntityTrait, ViewableEntityTrait;
+    use TitleableEntityTrait, AbstractableEntityTrait, RankableEntityTrait, ViewableEntityTrait;
 
     #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['ranking' => 'ASC'])]

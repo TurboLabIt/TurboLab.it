@@ -47,6 +47,18 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
+    public function findAllPublished() : array
+    {
+        return
+            $this->getQueryBuilderComplete()
+                ->andWhere('t.publishingStatus = :published')
+                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
+                ->orderBy('t.id', 'ASC')
+                ->getQuery()
+                ->getResult();
+    }
+
+
     public function findByTag(Tag $tag, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         // we need to extract "having at least this tag" first

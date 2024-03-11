@@ -28,6 +28,13 @@ abstract class BaseServiceEntityCollection implements \Iterator, \Countable, \Ar
     }
 
 
+    public function loadAll() : static
+    {
+        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findAll();
+        return $this->setEntities($arrTopics);
+    }
+
+
     public function setEntities(?iterable $arrEntities) : static
     {
         $this->clear();

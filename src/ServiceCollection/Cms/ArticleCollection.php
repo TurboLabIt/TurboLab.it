@@ -20,6 +20,14 @@ class ArticleCollection extends BaseCmsServiceCollection
         return $this->arrData;
     }
 
+
+    public function loadAllPublished() : static
+    {
+        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findAllPublished();
+        return $this->setEntities($arrTopics);
+    }
+
+
     public function loadLatestPublished(?int $page = 1) : static
     {
         $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestPublished($page);

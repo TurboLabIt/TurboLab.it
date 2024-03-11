@@ -18,12 +18,5 @@ class TopicCollection extends BaseServiceEntityCollection
     }
 
 
-    public function loadAll() : static
-    {
-        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findAll();
-        return $this->setEntities($arrTopics);
-    }
-
-
     public function createService(?TopicEntity $entity = null) : TopicService { return $this->factory->createTopic($entity); }
 }

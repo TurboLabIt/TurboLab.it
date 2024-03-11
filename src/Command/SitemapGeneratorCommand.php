@@ -2,8 +2,13 @@
 namespace App\Command;
 
 use App\Entity\PhpBB\Forum;
+use App\Service\Cms\Article;
+use App\Service\Cms\Paginator;
+use App\Service\Cms\Tag;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\PhpBB\Topic;
+use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\Cms\TagCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -42,6 +47,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ArticleCollection $articleCollection, protected TagCollection $tagCollection,
         protected TopicCollection $topicCollection,
         protected Environment $twig, protected ProjectDir $projectDir,
         protected Filesystem $filesystem,
@@ -60,15 +66,22 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             ->fxTitle("Creating folders...")
             ->generateOutputFolders();
 
+        // site
+        $this
+            ->loadArticles()
+            ->addHomePage()
+            ->addArticles()
+            ->addTags();
 
         // forum
         $this
             ->addForumIndexes()
-            ->addForumTopics()
-            ->writeForumXML();
+            ->addForumTopics();
 
         //
-        $this->writeIndex();
+        $this
+            ->writeXMLs()
+            ->writeIndex();
 
         $this
             ->fxTitle("Move new directory to final, public path...")
@@ -95,6 +108,124 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
     }
 
 
+    public function loadArticles() :static
+    {
+        $this->fxTitle("Selecting Articles...");
+        $this->articleCollection->loadAllPublished();
+        $countArticles =  $this->articleCollection->count();
+        return $this->fxOK( number_format($countArticles, 0, ',', '.') . " article(s) loaded");
+    }
+
+
+    protected function addHomePage() : static
+    {
+        $this->fxTitle("Adding the Home Page...");
+        $this->arrSections["site"][0][] = [
+            "url" => $this->symfonyUrlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            "lastmod"       => (new \DateTime())->format(DATE_W3C),
+            "changefreq"    => 'hourly',
+            "priority"      => 0.9
+        ];
+
+        $countArticles =  $this->articleCollection->count();
+
+        $this->fxTitle("Adding the Home Page (paginated)...");
+        $homePages = ceil($countArticles / Paginator::ITEMS_PER_PAGE);
+        $this->fxInfo("There are " . $homePages . " pages");
+
+        if(false) {
+            for($i=2; $i<=$homePages; $i++) {
+                $this->arrSections["site"][0][] = [
+                    "url"           => $this->symfonyUrlGenerator->generate('app_home_paginated', ["page" => $i], UrlGeneratorInterface::ABSOLUTE_URL),
+                    "lastmod"       => (new \DateTime())->format(DATE_W3C),
+                    "changefreq"    => 'daily'
+                ];
+            }
+        } else {
+            $this->fxWarning('Disabled, as per 📚 https://www.searchenginejournal.com/technical-seo/pagination/');
+        }
+
+        $this->fxTitle("Adding the News Page...");
+        $this->arrSections["site"][0][] = [
+            "url" => $this->symfonyUrlGenerator->generate('app_news', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            "lastmod"       => (new \DateTime())->format(DATE_W3C),
+            "changefreq"    => 'hourly',
+            "priority"      => 0.8
+        ];
+
+        return $this;
+    }
+
+
+    protected function addArticles() : static
+    {
+        $this->fxTitle("Adding Articles...");
+        $currentFileItem    = count($this->arrSections["site"][0]);
+        $currentFileIndex   = 0;
+
+        $oNow = new \DateTime();
+
+       /** @var Article $article */
+        foreach($this->articleCollection as $article) {
+
+            if( $currentFileItem == static::URL_LIMIT_PER_FILE ) {
+
+                $currentFileIndex++;
+                $currentFileItem = 0;
+            }
+
+            $oDateTime = $article->getUpdatedAt();
+            if( $oDateTime->format('U') > $oNow->format('U') ) {
+                $oDateTime = $oNow;
+            }
+
+            $this->arrSections["site"][$currentFileIndex][] = [
+                "url"       => $article->getUrl(),
+                "lastmod"   => $oDateTime->format(DATE_W3C),
+                "changefreq"=> $this->buildScanFrequencyFromDateTime($oDateTime)
+            ];
+
+            $currentFileItem++;
+        }
+
+        return $this;
+    }
+
+
+    protected function addTags() : static
+    {
+        $this->fxTitle("Adding Tags...");
+        $this->tagCollection->loadAll();
+        $countTags =  $this->tagCollection->count();
+        $this->fxOK( number_format($countTags, 0, ',', '.') . " tag(s) loaded");
+
+        $lastSiteFileIndex  = array_key_last( $this->arrSections["site"] );
+        $currentFileItem    = count($this->arrSections["site"][$lastSiteFileIndex]);
+        $currentFileIndex   = $lastSiteFileIndex;
+
+        $oNow = new \DateTime();
+
+        /** @var Tag $tag */
+        foreach($this->tagCollection as $tag) {
+
+            if( $currentFileItem == static::URL_LIMIT_PER_FILE ) {
+
+                $currentFileIndex++;
+                $currentFileItem = 0;
+            }
+
+            $this->arrSections["site"][$currentFileIndex][] = [
+                "url"       => $tag->getUrl(),
+                "changefreq"=> 'weekly'
+            ];
+
+            $currentFileItem++;
+        }
+
+        return $this;
+    }
+
+
     protected function addForumIndexes() : static
     {
         $this->fxTitle("Adding /forum...");
@@ -104,12 +235,10 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             "changefreq"=> 'hourly'
         ];
 
-        $this->fxTitle("Selecting Forums...");
+        $this->fxTitle("Adding Forums...");
         $arrForums = $this->entityManager->getRepository(Forum::class)->findAll();
         $countForums = count($arrForums);
         $this->fxOK("$countForums forum(s) loaded");
-
-        $this->fxTitle("Building in-memory structure...");
 
         /** @var Forum $forum */
         foreach($arrForums as $forum) {
@@ -130,12 +259,11 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
     protected function addForumTopics() : static
     {
-        $this->fxTitle("Selecting forum Topics...");
+        $this->fxTitle("Adding forum Topics...");
         $this->topicCollection->loadAll();
         $countTopics =  $this->topicCollection->count();
         $this->fxOK( number_format($countTopics, 0, ',', '.') . " topic(s) loaded");
 
-        $this->fxTitle("Building in-memory structure...");
         $currentFileItem    = count($this->arrSections["forum"][0]);
         $currentFileIndex   = 0;
 
@@ -162,37 +290,41 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
     }
 
 
-    protected function writeForumXML() : static
+    protected function writeXMLs() : static
     {
-        $this->fxTitle("Building the XML...");
-        foreach($this->arrSections["forum"] as $index => $arrData) {
+        $this->fxTitle("Building the XMLs...");
+        foreach($this->arrSections as $filename => $arrSection) {
 
-            $txtXml = $this->twig->render('sitemap/sitemap.xml.twig', [
-                "Items" => $arrData
-            ]);
+            foreach($arrSection as $index => $arrData) {
 
-            $XMLDoc = new \DOMDocument();
-            $XMLDoc->preserveWhiteSpace = false;
-            $XMLDoc->formatOutput = true;
-            $XMLDoc->loadXML($txtXml);
-            $txtXml = $XMLDoc->saveXML();
+                $txtXml = $this->twig->render('sitemap/sitemap.xml.twig', [
+                    "Items" => $arrData
+                ]);
 
-            $fileName   = "forum_" . $index . ".xml";
-            $filePath   = $this->outDir . $fileName;
-            $this->arrFilesForIndex[] = $fileName;
+                $XMLDoc = new \DOMDocument();
+                $XMLDoc->preserveWhiteSpace = false;
+                $XMLDoc->formatOutput = true;
+                $XMLDoc->loadXML($txtXml);
+                $txtXml = $XMLDoc->saveXML();
 
-            $countTopics = count($arrData);
-            $label = "##$filePath## with " . number_format($countTopics, 0, ',', '.') . " items";
+                $fileName   = "{$filename}_$index.xml";
+                $filePath   = $this->outDir . $fileName;
+                $this->arrFilesForIndex[] = $fileName;
 
-            if( $this->isNotDryRun(true) ) {
+                $countItems = count($arrData);
+                $label = "##$filePath## with " . number_format($countItems, 0, ',', '.') . " items";
 
-                file_put_contents($filePath, $txtXml);
-                $this->fxOK($label . " written");
+                if( $this->isNotDryRun(true) ) {
 
-            } else {
+                    file_put_contents($filePath, $txtXml);
+                    $this->fxOK($label . " written");
 
-                $this->fxWarning($label . " wasn't written due to --dry-run");
+                } else {
+
+                    $this->fxWarning($label . " wasn't written due to --dry-run");
+                }
             }
+
         }
 
         return $this;
