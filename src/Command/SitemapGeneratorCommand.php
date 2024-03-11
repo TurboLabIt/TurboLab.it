@@ -10,6 +10,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Twig\Environment;
@@ -43,7 +44,8 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         protected EntityManagerInterface $entityManager,
         protected TopicCollection $topicCollection,
         protected Environment $twig, protected ProjectDir $projectDir,
-        protected Filesystem $filesystem, protected ForumUrlGenerator $forumUrlGenerator
+        protected Filesystem $filesystem,
+        protected ForumUrlGenerator $forumUrlGenerator, protected UrlGeneratorInterface $symfonyUrlGenerator
     )
     {
         parent::__construct();
@@ -64,6 +66,9 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             ->addForumIndexes()
             ->addForumTopics()
             ->writeForumXML();
+
+        //
+        $this->writeIndex();
 
         $this
             ->fxTitle("Move new directory to final, public path...")
@@ -208,6 +213,40 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         }
 
         return 'weekly';
+    }
+
+
+    public function writeIndex()
+    {
+        $this->fxTitle("Building the Sitemap index...");
+        $urlBase = $this->symfonyUrlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'sitemap/';
+
+        $arrItems = [];
+        foreach($this->arrFilesForIndex as &$fileName) {
+
+            $url = $urlBase . $fileName;
+            $this->fxInfo($url);
+
+            $arrItems[] = [
+                "url"       => $url,
+                "lastmod"   => (new \DateTime())->format(DATE_W3C)
+            ];
+        }
+
+        $txtXml = $this->twig->render('sitemap/index.xml.twig', [
+            "Items" => $arrItems
+        ]);
+
+        $XMLDoc = new \DOMDocument();
+        $XMLDoc->preserveWhiteSpace = false;
+        $XMLDoc->formatOutput = true;
+        $XMLDoc->loadXML($txtXml);
+        $txtXml = $XMLDoc->saveXML();
+
+        $filePath = $this->outDir . "sitemap.xml";
+        file_put_contents($filePath, $txtXml);
+
+        return $this;
     }
 
 
