@@ -1,9 +1,8 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Command\NewsletterCommand;
+use App\Command\NewsletterSendCommand;
 use App\Service\Cms\Article;
-use App\Service\Factory;
 use App\Service\User;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\Depends;
@@ -168,12 +167,9 @@ class NewsletterTest extends BaseT
 
     public function testCommand()
     {
-        /** @var Factory $factory */
-        $factory = static::getService("App\\Service\\Factory");
-        $newsletter = static::getService("App\\Service\\Newsletter");
-        $command = new NewsletterCommand($factory->createArticleCollection(), $factory->createTopicCollection(), $newsletter);
-
+        /** @var NewsletterSendCommand $command */
+        $command = static::getService("App\\Command\\NewsletterSendCommand");
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
-        $this->assertEquals($result, NewsletterCommand::SUCCESS);
+        $this->assertEquals($result, NewsletterSendCommand::SUCCESS);
     }
 }

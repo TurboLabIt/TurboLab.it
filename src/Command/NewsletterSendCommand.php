@@ -20,7 +20,7 @@ use TurboLabIt\BaseCommand\Service\Options;
     name: 'Newsletter',
     description: 'Generate and send the weekly newsletter',
 )]
-class NewsletterCommand extends AbstractBaseCommand
+class NewsletterSendCommand extends AbstractBaseCommand
 {
     const string CLI_ARG_ACTION     = 'action';
     const null CLI_ACTION_TEST      = null;
