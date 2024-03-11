@@ -58,11 +58,16 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             ->fxTitle("Creating folders...")
             ->generateOutputFolders();
 
+
         // forum
         $this
             ->addForumIndexes()
             ->addForumTopics()
             ->writeForumXML();
+
+        $this
+            ->fxTitle("Move new directory to final, public path...")
+            ->moveDirectory();
 
         return $this->endWithSuccess();
     }
@@ -181,7 +186,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
             } else {
 
-                $this->fxOK($label . " wasn't written due to --dry-run");
+                $this->fxWarning($label . " wasn't written due to --dry-run");
             }
         }
 
@@ -203,5 +208,29 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         }
 
         return 'weekly';
+    }
+
+
+    public function moveDirectory() : static
+    {
+        if( $this->isDryRun(true) ) {
+            return $this->fxWarning("Skipped due to --dry-run");
+        }
+
+        // the new dir must exist and have some files in it
+        if( !is_dir($this->outDir) || !(new \FilesystemIterator($this->outDir))->valid() ) {
+            throw new \Exception("##" . $this->outDir . "## must exist and have some XML in it!");
+        }
+
+        if( is_dir($this->outDirFinal) ) {
+
+            $this->filesystem->remove($this->outDirFinal);
+            $this->fxOK("The old folder ##" . $this->outDirFinal . "## was deleted successfully");
+        }
+
+        $this->filesystem->rename($this->outDir, $this->outDirFinal);
+        $this->fxOK("The new folder was moved to it's final destination: ##" . $this->outDirFinal . "##");
+
+        return $this;
     }
 }
