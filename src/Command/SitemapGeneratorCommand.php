@@ -87,6 +87,10 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             ->fxTitle("Move new directory to final, public path...")
             ->moveDirectory();
 
+        $this->fxTitle("The sitemap is ready!");
+        $finalUrlSitemapIndex = $this->symfonyUrlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'sitemap/sitemap.xml';
+        $this->fxOK("\t 👉 $finalUrlSitemapIndex 👈");
+
         return $this->endWithSuccess();
     }
 
@@ -376,7 +380,16 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $txtXml = $XMLDoc->saveXML();
 
         $filePath = $this->outDir . "sitemap.xml";
-        file_put_contents($filePath, $txtXml);
+
+        if( $this->isNotDryRun(true) ) {
+
+            file_put_contents($filePath, $txtXml);
+            $this->fxOK("##$filePath## written");
+
+        } else {
+
+            $this->fxWarning("##$filePath## wasn't written due to --dry-run");
+        }
 
         return $this;
     }

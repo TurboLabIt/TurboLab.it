@@ -7,6 +7,8 @@
             {% if Item.lastmod is defined and Item.lastmod is not empty %}
                 <lastmod>{{ Item.lastmod }}</lastmod>
             {% endif %}
+            {# Google still doesn't use the changefreq or priority elements at all #}
+            {# 📚 https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping #}
             <changefreq>{{ Item.changefreq ?? 'daily' }}</changefreq>
             {% if Item.priority is defined and Item.priority != 0.5 %}
                 <priority>{{ Item.priority }}</priority>
