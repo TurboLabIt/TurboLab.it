@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27ccc8446ec675871cbf95e839c3be73",
+    "content-hash": "9102cc1a39483cf9633c0c23c6144394",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -487,16 +487,16 @@
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "2.11.3",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "492725310ae9a1b5b20d6ae09fb5ae6404616e68"
+                "reference": "5418e811a14724068e95e0ba43353b903ada530f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/492725310ae9a1b5b20d6ae09fb5ae6404616e68",
-                "reference": "492725310ae9a1b5b20d6ae09fb5ae6404616e68",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/5418e811a14724068e95e0ba43353b903ada530f",
+                "reference": "5418e811a14724068e95e0ba43353b903ada530f",
                 "shasum": ""
             },
             "require": {
@@ -534,6 +534,7 @@
                 "symfony/property-info": "^5.4 || ^6.0 || ^7.0",
                 "symfony/proxy-manager-bridge": "^5.4 || ^6.0 || ^7.0",
                 "symfony/security-bundle": "^5.4 || ^6.0 || ^7.0",
+                "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0",
                 "symfony/string": "^5.4 || ^6.0 || ^7.0",
                 "symfony/twig-bridge": "^5.4 || ^6.0 || ^7.0",
                 "symfony/validator": "^5.4 || ^6.0 || ^7.0",
@@ -551,7 +552,7 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Doctrine\\Bundle\\DoctrineBundle\\": ""
+                    "Doctrine\\Bundle\\DoctrineBundle\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -586,7 +587,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineBundle/tree/2.11.3"
+                "source": "https://github.com/doctrine/DoctrineBundle/tree/2.12.0"
             },
             "funding": [
                 {
@@ -602,7 +603,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-10T20:56:20+00:00"
+            "time": "2024-03-19T07:20:37+00:00"
         },
         {
             "name": "doctrine/doctrine-migrations-bundle",
@@ -1128,16 +1129,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.19.0",
+            "version": "2.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "a809a71aa6a233a6c82e68ebaaf8954adc4998dc"
+                "reference": "40a0964f06e142e173b783c45688e5f5efaed6aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/a809a71aa6a233a6c82e68ebaaf8954adc4998dc",
-                "reference": "a809a71aa6a233a6c82e68ebaaf8954adc4998dc",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/40a0964f06e142e173b783c45688e5f5efaed6aa",
+                "reference": "40a0964f06e142e173b783c45688e5f5efaed6aa",
                 "shasum": ""
             },
             "require": {
@@ -1223,9 +1224,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.19.0"
+                "source": "https://github.com/doctrine/orm/tree/2.19.2"
             },
-            "time": "2024-03-03T17:43:41+00:00"
+            "time": "2024-03-18T19:12:56+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -7026,26 +7027,29 @@
         },
         {
             "name": "turbolabit/php-symfony-messenger",
-            "version": "dev-main",
+            "version": "dev-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "a6cd034ba4827e42d6107740adb2be31437e6f0e"
+                "reference": "52397c741ed7cd89b294f84d3a59bf7eeddbb7dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/a6cd034ba4827e42d6107740adb2be31437e6f0e",
-                "reference": "a6cd034ba4827e42d6107740adb2be31437e6f0e",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/52397c741ed7cd89b294f84d3a59bf7eeddbb7dc",
+                "reference": "52397c741ed7cd89b294f84d3a59bf7eeddbb7dc",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8",
+                "symfony/http-client": "@stable"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.5"
+                "phpunit/phpunit": "@stable",
+                "symfony/dotenv": "@stable",
+                "symfony/framework-bundle": "@stable",
+                "symfony/yaml": "@stable"
             },
-            "default-branch": true,
-            "type": "library",
+            "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
                     "TurboLabIt\\Messengers\\": "src/"
@@ -7053,20 +7057,20 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "CC-BY-4.0"
             ],
             "authors": [
                 {
-                    "name": "Zane",
+                    "name": "Zane di TurboLab.it",
                     "email": "info@turbolab.it"
                 }
             ],
             "description": "A collection of webclients to send messages to Slack, Facebook, Twitter, Telegram, ...",
             "support": {
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
-                "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
+                "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/dev"
             },
-            "time": "2023-08-30T07:55:17+00:00"
+            "time": "2024-03-20T21:29:29+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
@@ -9575,7 +9579,8 @@
     "stability-flags": {
         "turbolabit/php-encryptor": 20,
         "turbolabit/php-foreachable": 20,
-        "turbolabit/php-symfony-basecommand": 20
+        "turbolabit/php-symfony-basecommand": 20,
+        "turbolabit/php-symfony-messenger": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
