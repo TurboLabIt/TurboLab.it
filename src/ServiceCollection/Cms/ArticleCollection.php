@@ -57,6 +57,13 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
+    public function loadLatestForSocialSharing(int $maxPublishedMinutes) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestForSocialSharing($maxPublishedMinutes);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function loadLatestNewsPublished(?int $page = 1) : static
     {
         $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestNewsPublished($page);

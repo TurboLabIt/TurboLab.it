@@ -141,6 +141,31 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
+    public function findLatestForSocialSharing(int $maxPublishedMinutes) : array
+    {
+        $sqlSelect = "
+            SELECT id FROM article
+            WHERE
+              publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
+              published_at BETWEEN DATE_SUB(NOW(),INTERVAL :maxPublishedMinutes MINUTE) AND NOW()
+            ";
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, [
+            "maxPublishedMinutes" => $maxPublishedMinutes
+        ]);
+
+        if( empty($qb) ) {
+            return [];
+        }
+
+        return
+            $qb
+                ->orderBy('t.publishedAt', 'ASC')
+                ->getQuery()
+                ->getResult();
+    }
+
+
     public function findLatestNewsPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $sqlSelect = "
