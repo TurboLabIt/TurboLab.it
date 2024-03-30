@@ -36,6 +36,13 @@ Abbiamo scelto di **non utilizzare servizi esterni dedicati**, per i seguenti mo
 3. evitare i costi dei piani a pagamento
 
 
+## Configurazione
+
+Il sistema sfrutta il bundle Symfony [turbolabit/php-symfony-messenger](https://github.com/TurboLabIt/php-symfony-messenger) per l'effettivo invio dei contenuti alle piattaforme. I vari file `.env` devono quindi essere configurati come documentato nel bundle. Per il resto non c'è nulla da fare.
+
+Il token per l'accesso a Facebook è particolamente delicato, in quanto tende a scadere dopo pochi mesi. TLI utilizza un token "never expiring", generato seguendo la tediosa procedura [documentata nel bundle](https://github.com/TurboLabIt/php-symfony-messenger/blob/main/docs/facebook.md).
+
+
 ## Comando di invio
 
 La condivisione sulle piattaforme esterne avviene tramite il comando [social-share.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/social-share.sh), che invoca a sua volta [ShareOnSocialCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
@@ -44,20 +51,10 @@ Non sono previsti parametri: credenziali ed endpoint vengono letti dal `.env` co
 
 Il comando viene eseguito automaticamente tramite [config/custom/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
 
-
-## ShareOnSocialCommand
-
-Il comando ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio di messaggi in orari inappropriati ("di notte", ad esempio). L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
+ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio di messaggi in orari inappropriati ("di notte", ad esempio). L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
 
 - se si tratta della prima esecuzione della mattina, al termine dell'orario del silenzio ➡ condivide tutti gli articoli pubblicati dall'inizio dell'orario del silenzio sino a ora
 - se si tratta di una regolare esecuzione periodica ➡ invia gli articoli pubblicati su TLI negli ultimi [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php) minuti.
-
-
-## Tecnologie utilizzate
-
-Il comando utilizza il bundle Symfony [turbolabit/php-symfony-messenger](https://github.com/TurboLabIt/php-symfony-messenger) per l'effettivo invio dei contenuti alle piattaforme.
-
-Il token per l'accesso a Facebook è particolamente delicato, in quanto tende a scadere dopo pochi mesi. TLI utilizza un token "never expiring", generato seguendo la tediosa procedura [documentata nel bundle Symfony](https://github.com/TurboLabIt/php-symfony-messenger/blob/main/docs/facebook.md).
 
 
 ## Valutazione casi-limite execuzioni regolari
