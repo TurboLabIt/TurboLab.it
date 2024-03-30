@@ -21,8 +21,9 @@ L'archivio completo di tutti gli invii è il [tag "newsletter turbolab.it"](http
 
 ## Priorità
 
-Le due priorità principali nella gestione della newsletter sono:
+Le priorità principali nella gestione della newsletter sono:
 
+- **ottenere un servizio completamente automatico**: generazione e invio devono avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
 - offrire a quanti più utenti possibile l'occasione di ricevere almeno una volta la newsletter per valutare se possa loro interessare
 - assicurarci che chi non vuole ricevere la newsletter non la riceva più, senza ostacoli o ritardi
 
