@@ -143,15 +143,29 @@ class ArticleRepository extends BaseCmsRepository
 
     public function findLatestForSocialSharing(int $maxPublishedMinutes) : array
     {
+        $lowLimit   = (new \DateTime())->modify('-' . $maxPublishedMinutes . " minutes");
+        // reset the time to zero seconds
+        $lowHour    = (int)$lowLimit->format('G');
+        $lowMinute  = (int)$lowLimit->format('i');
+        $lowLimit->setTime($lowHour, $lowMinute, 0);
+
+        $highLimit  = (new \DateTime());
+        // reset the time to zero seconds
+        $highHour   = (int)$highLimit->format('G');
+        $highMinute = (int)$highLimit->format('i');
+        $highLimit->setTime($highHour, $highMinute, 0);
+
         $sqlSelect = "
             SELECT id FROM article
             WHERE
               publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
-              published_at BETWEEN DATE_SUB(NOW(),INTERVAL :maxPublishedMinutes MINUTE) AND NOW()
+              # must be: GreaterOrEqualThan and LessThan - see https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/social-network-sharing.md
+              published_at >= :lowLimit AND published_at < :highLimit
             ";
 
         $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, [
-            "maxPublishedMinutes" => $maxPublishedMinutes
+            "lowLimit"  => $lowLimit->format('Y-m-d H:i:s'),
+            "highLimit" => $highLimit->format('Y-m-d H:i:s')
         ]);
 
         if( empty($qb) ) {
