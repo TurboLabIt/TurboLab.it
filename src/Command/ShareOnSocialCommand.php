@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\Messengers\FacebookMessenger;
 use TurboLabIt\Messengers\TelegramMessenger;
+use TurboLabIt\Messengers\TwitterMessenger;
 
 /**
  * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/social-network-sharing.md
@@ -34,11 +35,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         protected ArticleCollection $articleCollection,
         protected TelegramMessenger $telegram,
         protected FacebookMessenger $facebook,
-        /*protected Environment $twig,
-        protected GenericUrlGenerator $urlGenerator,
-        protected Telegram $telegram,
-        protected FacebookPage $facebook,
-        protected Twitter $twitter,*/
+        protected TwitterMessenger $twitter,
     )
     {
         parent::__construct();
@@ -71,10 +68,16 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         foreach($this->articleCollection as $article) {
 
+            $articleTitle = $article->getTitle();
+            $this->fxTitle($articleTitle);
+
+            $articleUrl = $article->getShortUrl();
+            $this->io->writeLn("🔗 $articleUrl");
+
             $this
-                ->shareOnTelegram($article)
-                ->shareOnFacebook($article);
-                //->shareOnTwitter($article);
+                ->shareOnTelegram($articleTitle, $articleUrl)
+                ->shareOnFacebook($articleTitle, $articleUrl)
+                ->shareOnTwitter($articleTitle, $articleUrl);
         }
 
         return $this->endWithSuccess();
@@ -129,62 +132,50 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    public function shareOnTelegram(Article $article) : static
+    public function shareOnTelegram(string $articleTitle, string $articleUrl) : static
     {
-        $articleTitle   = $article->getTitle();
-        $articleUrl     = $article->getShortUrl();
+        $this->io->write("⭐ Telegram: ");
 
-        $this->fxTitle("Sharing on Telegram: $articleTitle | $articleUrl");
         $messageHtml = '<b><a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
-        $this->telegram
-            ->setMessageButtons([
-                [
-                    "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
-                    "url"   => $articleUrl
-                ]
-            ])
-            ->sendMessageToChannel($messageHtml);
+        $result =
+            $this->telegram
+                ->setMessageButtons([
+                    [
+                        "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
+                        "url"   => $articleUrl
+                    ]
+                ])
+                ->sendMessageToChannel($messageHtml);
+
+        $url = $this->telegram->buildNewMessageUrl($result);
+        $this->io->writeln("$url");
 
         return $this;
     }
 
 
-    public function shareOnFacebook(Article $article) : static
+    public function shareOnFacebook(string $articleTitle, string $articleUrl) : static
     {
-        $articleTitle   = $article->getTitle();
-        $articleUrl     = $article->getShortUrl();
+        $this->io->write("⭐ Facebook: ");
 
-        $this->fxTitle("Sharing on Facebook: $articleTitle | $articleUrl");
-        $this->facebook->sendUrlToPage($articleUrl);
+        $postId = $this->facebook->sendUrlToPage($articleUrl);
+
+        $url = $this->facebook->buildMessageUrl($postId);
+        $this->io->writeln("$url");
 
         return $this;
     }
 
 
-    public function shareOnTwitter(Article $article) : static
+    public function shareOnTwitter(string $articleTitle, string $articleUrl) : static
     {
-        $this->io->section('Sharing an article on Twitter....');
-        $this->io->text( $article->getTitle() );
+        $this->io->write("⭐ Twitter: ");
 
-        $url = $this->urlGenerator->changeDevDomainToProduction( $article->getUrl() );
+        $message = $articleTitle . " " . $articleUrl;
+        $postId  = $this->twitter->sendMessage($message);
 
-        $message =
-            $this->twig->render('messenger/twitter.html.twig', [
-                "emoji" => "📰",
-                "title" => $article->getTitle(),
-                "url"   => $url
-            ]);
-
-        try {
-            $this->twitter->sendMessage($message);
-            $this->io->text("<fg=green>OK</>");
-
-        } catch(TwitterOAuthException $ex) {
-
-            $message = $this->twitter->getLastResponseAsJson();
-            $this->io->error( json_encode($message) );
-            $this->io->error( $ex->getMessage() );
-        }
+        $url = $this->twitter->buildMessageUrl($postId);
+        $this->io->writeln("$url");
 
         return $this;
     }
