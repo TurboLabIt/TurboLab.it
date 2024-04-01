@@ -7169,12 +7169,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "4286bc56f6c095a8f659a57f54a6b1f22944556c"
+                "reference": "55735008d29c8b0478cf34767b57060c3e6b9b43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/4286bc56f6c095a8f659a57f54a6b1f22944556c",
-                "reference": "4286bc56f6c095a8f659a57f54a6b1f22944556c",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/55735008d29c8b0478cf34767b57060c3e6b9b43",
+                "reference": "55735008d29c8b0478cf34767b57060c3e6b9b43",
                 "shasum": ""
             },
             "require": {
@@ -7210,7 +7210,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
             },
-            "time": "2024-03-31T17:32:54+00:00"
+            "time": "2024-04-01T06:01:08+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
