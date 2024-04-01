@@ -1,7 +1,6 @@
 <?php
 namespace App\Command;
 
-use App\Service\Cms\Article;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
@@ -132,50 +131,84 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    public function shareOnTelegram(string $articleTitle, string $articleUrl) : static
+    protected function shareOnTelegram(string $articleTitle, string $articleUrl) : static
     {
-        $this->io->write("⭐ Telegram: ");
+        $this->io->write("✴ Telegram: ");
 
-        $messageHtml = '<b><a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
-        $result =
-            $this->telegram
-                ->setMessageButtons([
-                    [
-                        "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
-                        "url"   => $articleUrl
-                    ]
-                ])
-                ->sendMessageToChannel($messageHtml);
+        try {
+            $messageHtml = '<b><a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
+            $result =
+                $this->telegram
+                    ->setMessageButtons([
+                        [
+                            "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
+                            "url"   => $articleUrl
+                        ]
+                    ])
+                    ->sendMessageToChannel($messageHtml);
 
-        $url = $this->telegram->buildNewMessageUrl($result);
-        $this->io->writeln("$url");
+            $url = $this->telegram->buildNewMessageUrl($result);
+            $this->io->writeln("<info>$url</info>");
+
+        } catch(\Exception $ex) {
+
+            $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
+            $this->sendAlert("Telegram", $ex, $articleTitle, $articleUrl);
+        }
 
         return $this;
     }
 
 
-    public function shareOnFacebook(string $articleTitle, string $articleUrl) : static
+    protected function shareOnFacebook(string $articleTitle, string $articleUrl) : static
     {
-        $this->io->write("⭐ Facebook: ");
+        $this->io->write("✴ Facebook: ");
 
-        $postId = $this->facebook->sendUrlToPage($articleUrl);
+        try {
+            $postId = $this->facebook->sendUrlToPage($articleUrl);
+            $url = $this->facebook->buildMessageUrl($postId);
+            $this->io->writeln("<info>$url</info>");
 
-        $url = $this->facebook->buildMessageUrl($postId);
-        $this->io->writeln("$url");
+        } catch(\Exception $ex) {
+
+            $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
+            $this->sendAlert("Facebook", $ex, $articleTitle, $articleUrl);
+        }
 
         return $this;
     }
 
 
-    public function shareOnTwitter(string $articleTitle, string $articleUrl) : static
+    protected function shareOnTwitter(string $articleTitle, string $articleUrl) : static
     {
-        $this->io->write("⭐ Twitter: ");
+        $this->io->write("✴ Twitter: ");
 
-        $message = $articleTitle . " " . $articleUrl;
-        $postId  = $this->twitter->sendMessage($message);
+        try {
+            $message = $articleTitle . " " . $articleUrl;
+            $postId  = $this->twitter->sendMessage($message);
 
-        $url = $this->twitter->buildMessageUrl($postId);
-        $this->io->writeln("$url");
+            $url = $this->twitter->buildMessageUrl($postId);
+            $this->io->writeln("<info>$url</info>");
+
+        } catch(\Exception $ex) {
+
+            $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
+            $this->sendAlert("Twitter", $ex, $articleTitle, $articleUrl);
+        }
+
+        return $this;
+    }
+
+
+    protected function sendAlert(string $serviceName, \Exception $ex, string $articleTitle, string $articleUrl) : static
+    {
+        $message  = "<b>" . ($this->isDevEnv ? "[DEV] " : "") . "SHARING ERROR on $serviceName</b>" . PHP_EOL;
+        $message .= "<code>" . $ex->getMessage() . "</code>" . PHP_EOL;
+        $message .= "URL: $articleUrl";
+
+        $this->telegram
+            ->setMessageButtons([])
+            ->sendErrorMessage($message);
 
         return $this;
     }
