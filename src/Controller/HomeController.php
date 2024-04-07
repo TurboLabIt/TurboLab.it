@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
+use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -20,6 +21,7 @@ class HomeController extends BaseController
         protected Factory $factory,
         protected ArticleCollection $articleCollection, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
+        protected YouTubeChannelApi $YouTubeChannel,
         protected Environment $twig
     )
     {
@@ -145,6 +147,9 @@ class HomeController extends BaseController
         $arrArticlesMiddleSlideShow = $this->articleCollection->getItems($numLatestSlider);
 
 
+        //
+        $arrVideos = $this->YouTubeChannel->getLatestVideos(8);
+
         return $this->twig->render('home/index.html.twig', [
             'metaCanonicalUrl'          => $metaCanonicalUrl,
             'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
@@ -153,6 +158,7 @@ class HomeController extends BaseController
             'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(),
             'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
             'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
+            'Videos'                    => $arrVideos,
             //'Articles'          => $this->articleCollection,
             //'Paginator'         => $this->paginator
         ]);

@@ -24,3 +24,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\YouTubeChannelApi:
+        arguments:
+            $arrConfig:
+                apiKey: '%env(APP_YOUTUBE_API_KEY)%'
+                channelId: '%env(APP_YOUTUBE_CHANNEL_ID)%'
