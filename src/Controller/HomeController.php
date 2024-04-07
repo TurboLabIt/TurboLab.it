@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Service\Cms\Paginator;
+use App\Service\Factory;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,6 +17,7 @@ use Twig\Environment;
 class HomeController extends BaseController
 {
     public function __construct(
+        protected Factory $factory,
         protected ArticleCollection $articleCollection, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
         protected Environment $twig
@@ -90,7 +92,6 @@ class HomeController extends BaseController
     protected function buildHtml(?int $page) : Response|string
     {
         $this->articleCollection->loadLatestPublished($page);
-
         $this->paginator
             ->setTotalElementsNum( $this->articleCollection->countTotalBeforePagination() )
             ->setCurrentPageNum($page)
@@ -119,10 +120,41 @@ class HomeController extends BaseController
          */
         $metaCanonicalUrl = trim($metaCanonicalUrl, '/');
 
+        //
+        $numLatestSlider = 4;
+        $arrArticlesLatestSlider = $this->articleCollection->getItems($numLatestSlider);
+
+        //
+        $arrArticlesMosaic1 = $arrArticlesMosaic2 = [];
+        $numMosaic = $numLatestSlider + 4;
+        for($i=0; $i<$numMosaic; $i++) {
+
+            $article =  $this->articleCollection->popFirst();
+            if( empty($article) ) {
+                break;
+            }
+
+            if( $i == 0 || $i % 2 == 0 ) {
+                $arrArticlesMosaic1[] = $article;
+            } else {
+                $arrArticlesMosaic2[] = $article;
+            }
+        }
+
+        //
+        $arrArticlesMiddleSlideShow = $this->articleCollection->getItems($numLatestSlider);
+
+
         return $this->twig->render('home/index.html.twig', [
-            'metaCanonicalUrl'  => $metaCanonicalUrl,
-            'Articles'          => $this->articleCollection,
-            'Paginator'         => $this->paginator
+            'metaCanonicalUrl'          => $metaCanonicalUrl,
+            'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
+            'ArticlesLatestMosaic1'     => $arrArticlesMosaic1,
+            'ArticlesLatestMosaic2'     => $arrArticlesMosaic2,
+            'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(),
+            'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
+            'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
+            //'Articles'          => $this->articleCollection,
+            //'Paginator'         => $this->paginator
         ]);
     }
 }

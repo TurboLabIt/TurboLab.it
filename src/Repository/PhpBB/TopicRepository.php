@@ -23,6 +23,34 @@ class TopicRepository extends BaseRepository
     }
 
 
+    public function findLatest(int $num = 10) : array
+    {
+        $arrTopicIds =
+            $this->sqlQueryExecute("
+                SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
+                WHERE
+                (
+                  forum_id != " . ForumRepository::COMMENTS_FORUM_ID . " OR
+                  (forum_id = " . ForumRepository::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
+                )
+                ORDER BY topic_last_post_time DESC
+                LIMIT " . $num
+            )->fetchFirstColumn();
+
+        if( empty($arrTopicIds) ) {
+            return [];
+        }
+
+        return
+            $this->getQueryBuilder()
+                ->andWhere('t.id IN (:arrTopicIds)')
+                    ->setParameter("arrTopicIds", $arrTopicIds)
+                ->orderBy('t.lastPostTime', 'DESC')
+                ->getQuery()
+                ->getResult();
+    }
+
+
     public function findLatestForNewsletter() : array
     {
         $arrTopicIds =
@@ -42,7 +70,7 @@ class TopicRepository extends BaseRepository
         return
             $this->getQueryBuilder()
                 ->andWhere('t.id IN (:arrTopicIds)')
-                ->setParameter("arrTopicIds", $arrTopicIds)
+                    ->setParameter("arrTopicIds", $arrTopicIds)
                 ->orderBy('t.views', 'DESC')
                 ->getQuery()
                 ->getResult();

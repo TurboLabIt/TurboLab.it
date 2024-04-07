@@ -15,8 +15,10 @@ class Tag extends BaseCmsService
     const string ENTITY_CLASS           = TagEntity::class;
     const string NOT_FOUND_EXCEPTION    = 'App\Exception\TagNotFoundException';
 
-    // 👀 https://turbolab.it/newsletter-turbolab.it-1349
-    const int ID_NEWSLETTER_TLI = 1349;
+    const int ID_SECURITY       = 13;// 👀 https://turbolab.it/sicurezza-13
+    const int ID_NEWSLETTER_TLI = 1349; // 👀 https://turbolab.it/newsletter-turbolab.it-1349
+    const int ID_SPONSOR        = 5443; // 👀 https://turbolab.it/sponsor-5443
+
 
     use ViewableServiceTrait;
 

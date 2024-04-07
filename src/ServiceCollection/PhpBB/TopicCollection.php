@@ -11,6 +11,13 @@ class TopicCollection extends BaseServiceEntityCollection
     const string ENTITY_CLASS = TopicService::ENTITY_CLASS;
 
 
+    public function loadLatest() : static
+    {
+        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findLatest();
+        return $this->setEntities($arrTopics);
+    }
+
+
     public function loadLatestForNewsletter() : static
     {
         $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findLatestForNewsletter();
