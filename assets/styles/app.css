@@ -23,3 +23,7 @@ footer .site-description {
 .partner-container {
     border-right: none;
 }
+
+.tli-video-thumb {
+    cursor: pointer;
+}
