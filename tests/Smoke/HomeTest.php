@@ -52,7 +52,7 @@ class HomeTest extends BaseT
     public function testHomeLinks()
     {
         $crawler = $this->fetchDomNode("/", 'body');
-        $this>internalLinksChecker($crawler);
+        $this->internalLinksChecker($crawler);
     }
 
 
