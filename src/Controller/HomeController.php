@@ -137,7 +137,7 @@ class HomeController extends BaseController
             'Articles'                  => $mainArticleCollection,
             'Categories'                => $this->factory->createTagCollection()->loadCategories(),
             'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
-            //'Paginator'         => $this->paginator
+            'Paginator'                 => $this->paginator
         ]);
     }
 }

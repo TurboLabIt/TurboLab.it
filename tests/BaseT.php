@@ -250,15 +250,15 @@ abstract class BaseT extends WebTestCase
     {
         // first page
         $crawler        = $this->fetchDomNode($url, 'body');
-        $paginator      = $crawler->filter('div.pagination-container');
+        $paginator      = $crawler->filter('#tli-paginator');
         $paginatorHtml  = mb_strtolower($paginator->html());
 
         $this->assertStringNotContainsString('precedente', $paginatorHtml);
-        $this->assertStringNotContainsString('prev', $paginatorHtml);
+        $this->assertStringNotContainsString('tli-prev', $paginatorHtml);
 
         $this->assertStringContainsString('successiv', $paginatorHtml);
-        $this->assertStringContainsString('next', $paginatorHtml);
-        $nextLink = $paginator->filter('.pagination-next > a');
+        $this->assertStringContainsString('tli-next', $paginatorHtml);
+        $nextLink = $paginator->filter('a.tli-next');
         $nextHref = $nextLink->attr('href');
         $this->assertStringEndsWith('/2', $nextHref);
 
@@ -272,20 +272,20 @@ abstract class BaseT extends WebTestCase
             $url = $nextHref;
 
             $crawler        = $this->fetchDomNode($url, 'body');
-            $paginator      = $crawler->filter('div.pagination-container');
+            $paginator      = $crawler->filter('#tli-paginator');
             $paginatorHtml  = mb_strtolower($paginator->html());
 
             // prev checks
             $this->assertStringContainsString('precedente', $paginatorHtml);
-            $this->assertStringContainsString('prev', $paginatorHtml);
-            $prevLink = $paginator->filter('.pagination-prev > a');
+            $this->assertStringContainsString('tli-prev', $paginatorHtml);
+            $prevLink = $paginator->filter('a.tli-prev');
             $prevHref = $prevLink->attr('href');
             $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
 
             // next checks
             $this->assertStringContainsString('successiv', $paginatorHtml);
-            $this->assertStringContainsString('next', $paginatorHtml);
-            $nextLink = $paginator->filter('.pagination-next > a');
+            $this->assertStringContainsString('tli-next', $paginatorHtml);
+            $nextLink = $paginator->filter('a.tli-next');
             $nextHref = $nextLink->attr('href');
             $this->assertStringEndsWith('/' . $i + 1, $nextHref);
         }
@@ -297,13 +297,13 @@ abstract class BaseT extends WebTestCase
         $lastPageUrl = $nextHref;
 
         $crawler = $this->fetchDomNode($lastPageUrl, 'body');
-        $paginator = $crawler->filter('div.pagination-container');
+        $paginator = $crawler->filter('#tli-paginator');
         $paginatorHtml = mb_strtolower($paginator->html());
 
         // prev checks
         $this->assertStringContainsString('precedente', $paginatorHtml);
         $this->assertStringContainsString('prev', $paginatorHtml);
-        $prevLink = $paginator->filter('.pagination-prev > a');
+        $prevLink = $paginator->filter('a.tli-prev');
         $prevHref = $prevLink->attr('href');
         $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
 
