@@ -1,6 +1,7 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
+use App\Service\Cms\Article;
 use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Tag as TagService;
@@ -15,9 +16,7 @@ class ArticleCollection extends BaseCmsServiceCollection
     public function load(array $arrIds) : array
     {
         $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->findMultipleComplete($arrIds);
-        $this->setEntities($arrEntities);
-
-        return $this->arrData;
+        return $this->setEntities($arrEntities)->arrData;
     }
 
 
@@ -75,6 +74,23 @@ class ArticleCollection extends BaseCmsServiceCollection
     {
         $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestSecurityNews();
         return $this->setEntities($arrArticles);
+    }
+
+
+    public function loadTopViewsRecent(?int $page = 1) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findTopViewsLastYear($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
+    public function loadGuidesForAuthors() : static
+    {
+        $this->load([
+            Article::ID_ABOUT_US, Article::ID_ISSUE_REPORT, Article::ID_FORUM_IMAGES, Article::ID_HOW_TO_JOIN,
+            Article::ID_HOW_TO_WRITE, Article::ID_PUBLISH_NEWS, Article::ID_PUBLISH_ARTICLE, Article::ID_SIGN_ARTICLE
+        ]);
+        return $this;
     }
 
 

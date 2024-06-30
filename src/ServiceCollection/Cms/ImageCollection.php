@@ -10,7 +10,8 @@ use App\Service\Cms\Image as ImageService;
  */
 class ImageCollection extends BaseCmsServiceCollection
 {
-    const string ENTITY_CLASS = ImageService::ENTITY_CLASS;
+    const string ENTITY_CLASS   =  ImageService::ENTITY_CLASS;
+    const int ID_404            = 24297;
 
 
     public function get404() : ImageService
@@ -19,7 +20,7 @@ class ImageCollection extends BaseCmsServiceCollection
 
         $entity =
             (new ImageEntity())
-                ->setId(24297)
+                ->setId(static::ID_404)
                 ->setFormat(ImageEntity::FORMAT_JPG);
 
         $image404 = $this->createService($entity);

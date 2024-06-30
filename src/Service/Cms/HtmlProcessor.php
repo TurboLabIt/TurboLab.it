@@ -11,7 +11,6 @@ class HtmlProcessor extends HtmlProcessorBase
     const array ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
 
 
-
     public function processArticleBodyForDisplay(Article $article) : string
     {
         $text   = $article->getBody();
@@ -30,8 +29,6 @@ class HtmlProcessor extends HtmlProcessorBase
 
         return $processedText;
     }
-
-
 
 
     protected function imagesFromPlaceholderToUrl(\DOMDocument $domDoc, Article $article): static

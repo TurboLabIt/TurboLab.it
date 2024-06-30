@@ -20,8 +20,19 @@ class Article extends BaseCmsService
     const string ENTITY_CLASS           = ArticleEntity::class;
     const string NOT_FOUND_EXCEPTION    = 'App\Exception\ArticleNotFoundException';
 
-    // 👀 https://turbolab.it/402
-    const int ID_NEWSLETTER = 402;
+    const int ID_FORUM_IMAGES   = 24;
+    const int ID_HOW_TO_JOIN    = 28;
+    const int ID_ABOUT_US       = 40;
+    const int ID_HOW_TO_WRITE   = 46;
+    const int ID_ISSUE_REPORT   = 49;
+    const int ID_PUBLISH_NEWS   = 222;
+    const int ID_NEWSLETTER     = 402;
+    const int ID_PRIVACY_POLICY = 617;
+    const int ID_COOKIE_POLICY  = 681;
+    const int ID_DONATIONS      = 1126;
+    const int ID_PUBLISH_ARTICLE= 3990;
+    const int ID_SIGN_ARTICLE   = 2329;
+
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;

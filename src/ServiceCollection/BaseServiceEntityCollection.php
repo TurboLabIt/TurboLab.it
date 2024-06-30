@@ -15,17 +15,16 @@ abstract class BaseServiceEntityCollection implements \Iterator, \Countable, \Ar
     use Foreachable;
 
 
-    public function __construct(protected EntityManagerInterface $em, protected Factory $factory)
-    { }
+    public function __construct(protected EntityManagerInterface $em, protected Factory $factory) { }
 
 
-    public function load(array $arrIds) : array
+    /*public function load(array $arrIds) : array
     {
         $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->findBy(["id" => $arrIds], ["updatedAt" => 'DESC']);
         $this->setEntities($arrEntities);
 
         return $this->arrData;
-    }
+    }*/
 
 
     public function loadAll() : static
