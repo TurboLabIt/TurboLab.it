@@ -64,8 +64,17 @@ abstract class BaseT extends WebTestCase
 
     protected function fetchImage(string $url, string $contentType = 'image/avif') : string
     {
-        $image = $this->fetchHtml($url, Request::METHOD_GET, false);
+        // WebTestCase doesn't support fetching static files from /public/ and just returns 404
+        // https://stackoverflow.com/a/41518169
+        if( stripos($url, '/images/') !== false ) {
 
+            $siteUrl    = trim('https://' . $_ENV["APP_SITE_DOMAIN"], '/');
+            $filePath   = getcwd() . '/public' . str_ireplace($siteUrl, '', $url);
+            $this->assertFileExists($filePath);
+            return file_get_contents($filePath);
+        }
+
+        $image = $this->fetchHtml($url, Request::METHOD_GET, false);
         if( !empty($contentType) ) {
             $this->assertResponseHeaderSame('content-type', $contentType);
         }
@@ -235,8 +244,12 @@ abstract class BaseT extends WebTestCase
         foreach($imgNodes as $img) {
 
             $src = $img->getAttribute("src");
-            if( empty($src) || empty(trim($src)) || str_ends_with($src, '/images/logo/turbolab.it.png') ) {
-                continue;
+            $this->assertNotEmpty($src);
+
+            $siteUrl = trim('https://' . $_ENV["APP_SITE_DOMAIN"], '/');
+            if( !str_starts_with($src, '/') &&  !str_starts_with($src, $siteUrl) ) {
+                // testing external images, such as YouTube thumbnails, is not supported
+                return $this;
             }
 
             $this->fetchImage($src);
