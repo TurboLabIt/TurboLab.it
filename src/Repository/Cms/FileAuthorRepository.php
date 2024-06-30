@@ -16,8 +16,5 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FileAuthorRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, FileAuthor::class);
-    }
+    const string ENTITY_CLASS_NAME = FileAuthor::class;
 }

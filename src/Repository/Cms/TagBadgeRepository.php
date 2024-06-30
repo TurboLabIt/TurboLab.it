@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Repository\Cms;
 
 use App\Entity\Cms\TagBadge;
+use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+
 
 /**
  * @extends ServiceEntityRepository<TagBadge>
@@ -14,35 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method TagBadge[]    findAll()
  * @method TagBadge[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TagBadgeRepository extends ServiceEntityRepository
+class TagBadgeRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, TagBadge::class);
-    }
-
-//    /**
-//     * @return TagBadge[] Returns an array of TagBadge objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?TagBadge
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    const string ENTITY_CLASS_NAME = TagBadge::class;
 }

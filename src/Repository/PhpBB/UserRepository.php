@@ -5,7 +5,6 @@ use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ParameterType;
-use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
@@ -19,10 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, User::class);
-    }
+    const string ENTITY_CLASS_NAME = User::class;
 
 
     public function loadAll()

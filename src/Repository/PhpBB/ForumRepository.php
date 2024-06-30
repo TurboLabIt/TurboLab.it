@@ -5,7 +5,6 @@ use App\Entity\PhpBB\Forum;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
@@ -17,6 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ForumRepository extends BaseRepository
 {
+    const string ENTITY_CLASS_NAME = Forum::class;
+
     /**
      *  4 : area staff
      * 25 : cestinate
@@ -24,12 +25,6 @@ class ForumRepository extends BaseRepository
      */
     const array OFFLIMITS_FORUM_IDS = [4,25,7];
     const int COMMENTS_FORUM_ID     = 26;
-
-
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Forum::class);
-    }
 
 
     public function findAll() : array

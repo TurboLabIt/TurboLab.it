@@ -4,7 +4,6 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\ArticleTag;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ArticleTag>
@@ -16,8 +15,5 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ArticleTagRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, ArticleTag::class);
-    }
+    const string ENTITY_CLASS_NAME = ArticleTag::class;
 }

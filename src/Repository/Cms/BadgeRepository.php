@@ -5,7 +5,6 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\Badge;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Badge>
@@ -17,9 +16,5 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BadgeRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Badge::class);
-    }
-
+    const string ENTITY_CLASS_NAME = Badge::class;
 }

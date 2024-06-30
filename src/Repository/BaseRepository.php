@@ -3,11 +3,19 @@ namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
+use Doctrine\Persistence\ManagerRegistry;
 
 
 abstract class BaseRepository extends ServiceEntityRepository
 {
+    const string ENTITY_CLASS_NAME = '';
     protected array $cachedRs;
+
+
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, static::ENTITY_CLASS_NAME);
+    }
 
 
     protected function getTableName() : string

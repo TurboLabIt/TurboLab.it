@@ -5,7 +5,6 @@ use App\Entity\PhpBB\Topic;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
@@ -17,10 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TopicRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Topic::class);
-    }
+    const string ENTITY_CLASS_NAME = Topic::class;
 
 
     public function findLatest(int $num = 10) : array

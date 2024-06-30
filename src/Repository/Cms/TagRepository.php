@@ -4,7 +4,6 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
@@ -17,20 +16,19 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TagRepository extends BaseCmsRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Tag::class);
-    }
+    const string ENTITY_CLASS_NAME = Tag::class;
 
 
     protected function getQueryBuilder() : QueryBuilder
     {
-        return $this->createQueryBuilder('t', 't.id');
+        return
+            parent::getQueryBuilder()
+                ->orderBy('t.title', 'ASC');
     }
 
 
     public function findComplete(int $id) : ?Tag
-    { return $this->find($id);
+    {
         return
             $this->getQueryBuilder()
                 //

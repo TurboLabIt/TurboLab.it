@@ -4,7 +4,6 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\File;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<File>
@@ -16,8 +15,5 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FileRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, File::class);
-    }
+    const string ENTITY_CLASS_NAME = File::class;
 }

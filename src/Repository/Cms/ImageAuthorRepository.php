@@ -17,8 +17,5 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ImageAuthorRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, ImageAuthor::class);
-    }
+    const string ENTITY_CLASS_NAME = ImageAuthor::class;
 }

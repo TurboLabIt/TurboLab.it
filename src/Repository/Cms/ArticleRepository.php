@@ -19,32 +19,27 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ArticleRepository extends BaseCmsRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Article::class);
-    }
+    const string ENTITY_CLASS_NAME = Article::class;
 
 
-    public function findComplete(int $id) : ?Article
+    //<editor-fold defaultstate="collapsed" desc="** QUERY BUILDERS **">
+    protected function getQueryBuilderComplete() : QueryBuilder
     {
         return
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.id = :id')
-                    ->setParameter('id', $id)
-                ->getQuery()
-                ->getOneOrNullResult();
+            $this->getQueryBuilder()
+                // authors
+                ->leftJoin('t.authors', 'authorsJunction')
+                ->leftJoin('authorsJunction.user', 'user')
+                // tags
+                ->leftJoin('t.tags', 'tagsJunction')
+                ->leftJoin('tagsJunction.tag', 'tag')
+                // files
+                ->leftJoin('t.files', 'filesJunction')
+                ->leftJoin('filesJunction.file', 'file')
+                //
+                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file');
     }
-
-
-    public function findMultipleComplete(array $arrIds) : array
-    {
-        return
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.id IN(:ids)')
-                    ->setParameter('ids', $arrIds)
-                ->getQuery()
-                ->getResult();
-    }
+    //</editor-fold>
 
 
     public function findAllPublished() : array
@@ -63,7 +58,7 @@ class ArticleRepository extends BaseCmsRepository
     {
         // we need to extract "having at least this tag" first
         // otherwise, the following call to getQueryBuilderComplete() would load only "this tag" in the articles,
-        // excluding other, potentially more important, tag. This would screw Article->getUrl(). Example of the bug:
+        // excluding other, potentially more important, tags. This would screw Article->getUrl(). Example of the bug:
         // "Come dis/iscriversi dalla newsletter" /newsletter-turbolab.it-1349/something-402
         // when listed in https://turbolab.it/turbolab.it-1
         // had the wrong URL /turbolab.it-1/something-402
@@ -232,44 +227,23 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
-    //<editor-fold defaultstate="collapsed" desc="** INTERNAL METHODS **">
-    protected function getQueryBuilder() : QueryBuilder
+    public function findTopViewsLastYear(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
-        return
-            $this->createQueryBuilder('t', 't.id')
-                ->orderBy('t.updatedAt', 'DESC');
-    }
+        $page    = $page ?: 1;
+        $startAt = Paginator::ITEMS_PER_PAGE * ($page - 1);
 
-
-    protected function getQueryBuilderComplete() : QueryBuilder
-    {
-        return
-            $this->getQueryBuilder()
-                // authors
-                ->leftJoin('t.authors', 'authorsJunction')
-                ->leftJoin('authorsJunction.user', 'user')
-                // tags
-                ->leftJoin('t.tags', 'tagsJunction')
-                ->leftJoin('tagsJunction.tag', 'tag')
-                // files
-                ->leftJoin('t.files', 'filesJunction')
-                ->leftJoin('filesJunction.file', 'file')
-                //
-                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file');
-    }
-
-
-    public function getQueryBuilderCompleteFromSqlQuery(string $sqlSelectArtIds, array $arrSqlSelectParams = []) : ?QueryBuilder
-    {
-        $arrArticleIds = $this->sqlQueryExecute($sqlSelectArtIds, $arrSqlSelectParams)->fetchFirstColumn();
-        if( empty($arrArticleIds) ) {
-            return null;
-        }
-
-        return
+        $query =
             $this->getQueryBuilderComplete()
-                ->andWhere('t.id IN (:articleIds)')
-                ->setParameter("articleIds", $arrArticleIds);
+                ->where('t.updatedAt >= :oneYearAgo')
+                    ->setParameter('oneYearAgo', new \DateTime('-1 year'))
+                ->andWhere('t.updatedAt <= :now')
+                    ->setParameter('now', new \DateTime())
+                ->orderBy('t.views', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->getQuery();
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $paginator;
     }
-    //</editor-fold>
 }

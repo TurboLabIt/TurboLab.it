@@ -5,7 +5,6 @@ use App\Entity\NewsletterOpener;
 use App\Entity\PhpBB\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<NewsletterOpener>
@@ -17,10 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class NewsletterOpenerRepository extends BaseRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, NewsletterOpener::class);
-    }
+    const string ENTITY_CLASS_NAME = NewsletterOpener::class;
 
 
     public function getByUserOrNew(User $user) : NewsletterOpener

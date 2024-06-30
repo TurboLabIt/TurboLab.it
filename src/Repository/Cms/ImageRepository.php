@@ -4,7 +4,6 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\Image;
 use App\Repository\BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
@@ -15,12 +14,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Image[]    findAll()
  * @method Image[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ImageRepository extends BaseRepository
+class ImageRepository extends BaseCmsRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Image::class);
-    }
+    const string ENTITY_CLASS_NAME = Image::class;
 
 
     public function findComplete(int $id) : ?Image
