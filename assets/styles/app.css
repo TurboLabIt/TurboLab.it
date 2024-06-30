@@ -27,3 +27,7 @@ footer .site-description {
 .tli-video-thumb {
     cursor: pointer;
 }
+
+.all-post-area {
+    padding-bottom: 0px;
+}

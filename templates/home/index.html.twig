@@ -13,31 +13,31 @@
     <title>Newspark - News Magazine Template</title>
 
     <!--====== Favicon Icon ======-->
-    <link rel="shortcut icon" href="assets/images/fabicon.png" type="image/png">
+    <link rel="shortcut icon" href="/assets/images/fabicon.png" type="image/png">
 
     <!--====== Bootstrap css ======-->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
 
     <!--====== Fontawesome css ======-->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
 
     <!--====== Magnific Popup css ======-->
-    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
 
     <!--====== nice select css ======-->
-    <link rel="stylesheet" href="assets/css/nice-select.css">
+    <link rel="stylesheet" href="/assets/css/nice-select.css">
 
     <!--====== Slick css ======-->
-    <link rel="stylesheet" href="assets/css/slick.css">
+    <link rel="stylesheet" href="/assets/css/slick.css">
 
     <!--====== stellarnav css ======-->
-    <link rel="stylesheet" href="assets/css/stellarnav.css">
+    <link rel="stylesheet" href="/assets/css/stellarnav.css">
 
     <!--====== Default css ======-->
-    <link rel="stylesheet" href="assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/default.css">
 
     <!--====== Style css ======-->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 
     <style>
 
@@ -110,7 +110,7 @@
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'vpn-2942'}) }}">Migliori VPN</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="#contact">📧 Contatti</a></li>
+                                    <li><a href="#" class="tli-scroll-to" data-tli-scroll-to="#contact">📧 Contatti</a></li>
                                 </ul>
                             </div><!-- .stellarnav -->
                         </div>
@@ -720,34 +720,35 @@
 
 
     <!--====== jquery js ======-->
-    <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
-    <script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/assets/js/vendor/jquery-1.12.4.min.js"></script>
 
 
     <!--====== Bootstrap js ======-->
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
 
     <!--====== Slick js ======-->
-    <script src="assets/js/slick.min.js"></script>
+    <script src="/assets/js/slick.min.js"></script>
 
     <!--====== nice select js ======-->
-    <script src="assets/js/jquery.nice-select.min.js"></script>
+    <script src="/assets/js/jquery.nice-select.min.js"></script>
 
     <!--====== stellarnav js ======-->
-    <script src="assets/js/stellarnav.min.js"></script>
+    <script src="/assets/js/stellarnav.min.js"></script>
 
     <!--====== circle progress js ======-->
-    <script src="assets/js/circle-progress.min.js"></script>
+    <script src="/assets/js/circle-progress.min.js"></script>
 
     <!--====== Magnific Popup js ======-->
-    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
 
     <!--====== Main js ======-->
-    <script src="assets/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
 
 
     {{ encore_entry_link_tags('home') }}
+    {{ encore_entry_script_tags('app') }}
     {{ encore_entry_script_tags('home') }}
 
 </body>
