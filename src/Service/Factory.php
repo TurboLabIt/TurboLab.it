@@ -32,6 +32,7 @@ use App\ServiceCollection\UserCollection;
 class Factory
 {
     protected ?ImageService $defaultSpotlight;
+    protected ?TagService $defaultTag;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
@@ -86,6 +87,20 @@ class Factory
 
 
     //<editor-fold defaultstate="collapsed" desc="*** Tag ***">
+    public function createDefaultTag() : TagService
+    {
+        if( !empty($this->defaultTag) ) {
+            return $this->defaultTag;
+        }
+
+        $entity =
+            (new TagEntity())
+                ->setId(TagService::ID_DEFAULT_TAG)
+                ->setTitle("PC");
+
+        return $this->defaultTag = $this->createTag($entity);
+    }
+
     public function createTag(?TagEntity $entity = null) : TagService
     {
         $service = new TagService($this->tagUrlGenerator, $this->em, $this);
@@ -116,8 +131,8 @@ class Factory
 
         $entity =
             (new ImageEntity())
-                ->setId(1)
-                ->setFormat('png')
+                ->setId(ImageService::ID_DEFAULT_SPOTLIGHT)
+                ->setFormat(ImageEntity::FORMAT_PNG)
                 ->setWatermarkPosition(ImageEntity::WATERMARK_DISABLED)
                 ->setTitle("TurboLab.it");
 

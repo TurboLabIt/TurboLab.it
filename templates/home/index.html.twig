@@ -33,7 +33,7 @@
                                     <div class="trending-news-content">
                                         <div class="post-meta">
                                             <div class="meta-categories">
-                                                <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                             </div>
                                             <div class="meta-date">
                                                 <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -59,7 +59,7 @@
                                         <div class="gallery_item_content">
                                             <div class="post-meta">
                                                 <div class="meta-categories">
-                                                    <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                                 </div>
                                                 <div class="meta-date">
                                                     <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -84,7 +84,7 @@
                                         <div class="gallery_item_content">
                                             <div class="post-meta">
                                                 <div class="meta-categories">
-                                                    <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                                 </div>
                                                 <div class="meta-date">
                                                     <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -201,7 +201,7 @@
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
-                                            <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                            <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                         </div>
                                         <div class="meta-date">
                                             <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -306,7 +306,7 @@
                                         <div class="trending-news-content">
                                             <div class="post-meta">
                                                 <div class="meta-categories">
-                                                    <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                                 </div>
                                                 <div class="meta-date">
                                                     <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -338,7 +338,7 @@
                                                 <div class="trending-news-content">
                                                     <div class="post-meta">
                                                         <div class="meta-categories">
-                                                            <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                            <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                                         </div>
                                                         <div class="meta-date">
                                                             <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -369,7 +369,7 @@
                                         <div class="most-share-post-item">
                                             <div class="post-meta">
                                                 <div class="meta-categories">
-                                                    <a href="{{ Article.topTag.url|raw }}">{{ Article.topTag.title|upper|raw }}</a>
+                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                                 </div>
                                                 <div class="meta-date">
                                                     <span>{{ Article.updatedAt|date('d/m/Y') }}</span>

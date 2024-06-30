@@ -2,6 +2,7 @@
 namespace App\ServiceCollection\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\Image;
 use App\Service\Cms\Image as ImageService;
 
 
@@ -11,16 +12,13 @@ use App\Service\Cms\Image as ImageService;
 class ImageCollection extends BaseCmsServiceCollection
 {
     const string ENTITY_CLASS   =  ImageService::ENTITY_CLASS;
-    const int ID_404            = 24297;
 
 
     public function get404() : ImageService
     {
-        // 👀 https://turbolab.it/immagini/24297/med
-
         $entity =
             (new ImageEntity())
-                ->setId(static::ID_404)
+                ->setId(Image::ID_404)
                 ->setFormat(ImageEntity::FORMAT_JPG);
 
         $image404 = $this->createService($entity);
