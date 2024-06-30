@@ -59,7 +59,7 @@ class TagController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        return $this->render('tag/index.html.twig', [
+        return $this->render('tag/index-wireframe.html.twig', [
             'metaTitle'         => "#" . $tag->getTitle() . ": articoli, guide e news",
             'metaDescription'   => "Articoli, guide, notizie che riguardano: " . $tag->getTitle(),
             'metaCanonicalUrl'  => $tag->getUrl($page),

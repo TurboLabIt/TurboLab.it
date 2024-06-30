@@ -111,7 +111,7 @@ class NewsController extends BaseController
                 ? $this->generateUrl('app_news', [], UrlGeneratorInterface::ABSOLUTE_URL)
                 : $this->generateUrl('app_news_paginated', ['page' => $page], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        return $this->twig->render('news/index.html.twig', [
+        return $this->twig->render('home/index-wireframe.html.twig', [
             'metaTitle'         => 'Ultime notizie di tecnologia, sicurezza e truffe su Internet',
             'metaCanonicalUrl'  => $metaCanonicalUrl,
             'Articles'          => $this->articleCollection,

@@ -34,11 +34,11 @@ class HomeTest extends BaseT
         // H1
         $this->tagTitleAsH1Checker($crawler, "Guide PC, Windows, Linux, Android e Bitcoin");
 
-        // H2
+        // H3
         $crawler = $this->fetchDomNode($url, 'body');
-        $H2s = $crawler->filter('h2');
-        $countH2 = $H2s->count();
-        $this->assertGreaterThan(24, $countH2);
+        $H3s = $crawler->filter('h3');
+        $countH3 = $H3s->count();
+        $this->assertGreaterThan(24, $countH3);
 
         $this
             ->internalLinksChecker($crawler)
