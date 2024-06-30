@@ -2,12 +2,11 @@
 <html lang="it">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 
     <title>{% block metaTitle %}{{ (metaTitle ?? null)|raw }}{% endblock %}{% block metaTitleSuffix %}{{ metaTitleSuffix ?? null }}{% endblock %}</title>
     <meta property="og:title" content="{{ block('metaTitle') }}">
     <meta name="twitter:title" content="{{ block('metaTitle') }}">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
     <meta name="description" content="{% block metaDescription %}{{ (metaDescription ?? null)|raw }}{% endblock %}">
     <meta property="og:description" content="{{ block('metaDescription') }}">
@@ -29,7 +28,7 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <link rel="alternate" type="application/rss+xml" title="Feed" href="{% block metaFeedUrl %}/feed{% endblock %}">
+    <link rel="alternate" type="application/rss+xml" title="Feed" href="{% block metaFeedUrl %}{{ absolute_url(path('app_feed')) }}{% endblock %}">
 
     {% if Paginator is defined and Paginator.PreviousPage ?? null is not empty %}
         <link rel="prev" href="{{ Paginator.PreviousPage.url }}">
@@ -39,92 +38,292 @@
         <link rel="next" href="{{ Paginator.NextPage.url }}">
     {% endif %}
 
-    {% block metaFonts %}
-        <link rel="preload" href="https://PLACEHOLDER.example.com/font.woff" as="font" type="font/woff2" crossorigin>
-    {% endblock %}
-
     {% block stylesheets %}
-        <link rel="stylesheet" href="css/styles.css?v=1.0">
-        {#{ encore_entry_link_tags('app') }#}
+
+        {# Newspark #}
+        <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="/assets/css/nice-select.css">
+        <link rel="stylesheet" href="/assets/css/slick.css">
+        <link rel="stylesheet" href="/assets/css/stellarnav.css">
+        <link rel="stylesheet" href="/assets/css/default.css">
+        <link rel="stylesheet" href="/assets/css/style.css">
+
+        {# TLI #}
+        {{ encore_entry_link_tags('app') }}
+
     {% endblock %}
 
-    {% if gtmId is defined %}
-        <!-- Google Tag Manager (GTM) -->
-        <script>
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','{{ gtmId }}');
-        </script>
-        <!-- End Google Tag Manager (GTM) -->
-    {% endif %}
 </head>
 
-<body>
+<body class="home-1-bg">
 
-    {% block bodyStart %}{% endblock %}
+    <div class="preloader">
+        <div>
+            <div class="nb-spinner"></div>
+        </div>
+    </div>
 
-    {% if gtmId is defined %}
-        <!-- Google Tag Manager (GTM) -->
-        <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id={{ gtmId }}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-        </noscript>
-        <!-- End Google Tag Manager (GTM) -->
-    {% endif %}
+    <header class="header-area">
 
-    {% block bodyHeader %}
-        <header id="page-top">
-            <a href="/"><img src="{{ websiteLogoUrl ?? null }}" alt="{{ siteName ?? null }}"></a>
-        </header>
-    {% endblock %}
+        <div class="header-topbar">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-12">
+                        <div class="topbar-trending">
+                                <span>
+                                    <strong><a href="{{ path('app_home') }}forum/ucp.php?mode=login">Esegui login</a></strong> |
+                                    Non sei registrato?
+                                    <strong><a href="{{ path('app_home') }}forum/ucp.php?mode=register">Iscriviti ora</a></strong>
+                                    per ricevere <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_NEWSLETTER')}) }}">la newsletter</a> e
+                                    partecipare al <a href="{{ path('app_home') }}forum">forum</a>: è gratis!
+                                </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    {% block bodyNav %}
-        <nav>
-            <ul>
-                <li><a href="{{ absolute_url(path('app_home')) }}">Home</a></li>
-                <li><a href="{{ absolute_url(path('app_home')) }}forum">Forum</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'windows-10'})) }}">Windows</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'linux-27'})) }}">Linux</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'bitcoin-ethereum-criptovalute-4904'})) }}">Bitcoin e Cripto</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'android-28'})) }}">Android</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'sicurezza-13'})) }}">Sicurezza</a></li>
-                <li><a href="{{ absolute_url(path('app_tag', {tagSlugDashId: 'guida-mercato-640'})) }}">Guida Mercato</a></li>
-                <li><a href="{{ absolute_url(path('app_news')) }}">News</a></li>
-                <li><a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">YouTube</a></li>
-                <li><a href="https://t.me/turbolab" target="_blank">Telegram</a></li>
-                <li><a href="{{ absolute_url(path('app_feed')) }}">Feed</a></li>
-            </ul>
-        </nav>
-    {% endblock %}
+        <div class="header-centerbar">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-4">
+                        <div class="logo">
+                            <a href="{{ path('app_home') }}">
+                                <img src="{{ asset('images/logo/turbolab.it.png') }}" alt="Logo TurboLab.it">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    {% block bodyMainContent %}
-        <article id="article-top">
-            <h1>PLACEHOLDER PageH1</h1>
-            <h2>PLACEHOLDER PageH2</h2>
-            <p>PLACEHOLDER Paragraph</p>
-        </article>
-    {% endblock %}
+        <div class="header-menubar">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="header-menu">
+                            <div class="stellarnav">
+                                <ul>
+                                    <li><a class="active" href="{{ path('app_home') }}">Home</a></li>
+                                    <li><a href="{{ path('app_home') }}forum">Forum</a></li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'windows-10'}) }}">Windows</a></li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'linux-27'}) }}">Linux</a></li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'bitcoin-ethereum-criptovalute-4904'}) }}">Bitcoin e Cripto</a></li>
+                                    <li><a href="{{ path('app_news') }}">News</a></li>
+                                    <li class="has-sub"><a href="#">Guide...</a>
+                                        <ul>
+                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'android-28'}) }}">Android</a></li>
+                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'filesharing-p2p-peer-to-peer-2914'}) }}">Filesharing peer-to-peer</a></li>
+                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'sicurezza-13'}) }}">Sicurezza</a></li>
+                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'guida-mercato-640'}) }}">Guide mercato (cosa comprare)</a></li>
+                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'vpn-2942'}) }}">Migliori VPN</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" class="tli-scroll-to" data-tli-scroll-to="#contact">📧 Contatti</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    {% block bodyAside %}
-        <aside>PLACEHOLDER Aside</aside>
-    {% endblock %}
+    </header>
 
-    {% block bodyFooter %}
-        <footer>
-            <div>{{ block("metaDescription") }}</div>
-        </footer>
-    {% endblock %}
+    {% block bodyMainContent %}{% endblock %}
 
-    {% block bodyPreEnd %}{% endblock %}
+    <footer class="footer-area">
+        <div class="container">
+            <div class="footer-topbar">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 col-md-5">
+                        <div class="footer-logo">
+                            <a href="{{ path('app_file', {fileId: 18}) }}" target="_blank">
+                                <img src="{{ asset('images/logo/turbolab.it.png') }}" alt="Logo TurboLab.it">
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('app_home') }}forum/ucp.php?mode=register"
+                                       alt="Forum e newsletter" title="Forum e newsletter">
+                                        <i class="fa fa-user"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank"
+                                       alt="YouTube" title="YouTube">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://t.me/turbolab" target="_blank"
+                                       alt="Telegram" title="Telegram">
+                                        <i class="fab fa-telegram"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/TurboLab.it" target="_blank"
+                                       alt="Facebook" title="Facebook">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://twitter.com/TurboLabIt" target="_blank"
+                                       alt="Twitter" title="Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="site-description">
+                TurboLab.it è un sito indipendente e no-profit, totalmente gestito da appassionati di informatica (come te!).
+                Sin dal 2013, pubblichiamo gratuitamente <strong>guide per PC e smartphone con sistemi operativi Windows, Linux e Android</strong>.
+                Abbiamo oltre 20 anni di esperienza professionale nel <strong>supporto tecnico (helpdesk) e nella gestione di
+                    server web</strong> e tecnologie annesse, che condividiamo tramite guide passo per passo.
+                Trattiamo anche <strong>Bitcoin, Ethereum e altre criptovalute basate su blockchain</strong>, focalizzandoci
+                principalmente sugli aspetti tecnologici e le applicazioni pratiche.
+                <strong>Il nostro forum è il punto di incontro italiano per gli appassionati di computer e informatica</strong>, e consente
+                di confrontarsi con altri esperti, appassionati e professionisti IT, nonché di richiedere un aiuto con i
+                propri problemi tecnologici. Per partecipare è sufficiente una registrazione gratuita.
+            </div>
+            <div class="footer-widget-area">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="footer-widget-right-border">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8">
+                                    <div class="widget widget-list">
+                                        <div class="section-title section-title-2">
+                                            <h3 class="title">Altre pagine</h3>
+                                        </div>
+                                        <div class="list d-flex justify-content-between">
+                                            <ul>
+                                                <li><a href="{{ path('app_home') }}forum/ucp.php?mode=register">Registrazione (gratuita)</a></li>
+                                                <li><a href="{{ path('app_info') }}">Info tecniche piattaforma</a></li>
+                                                <li><a href="{{ path('app_stats') }}">Statistiche</a></li>
+                                                <li><a href="{{ path('app_calendar') }}">Calendario pubblicazioni</a></li>
+                                            </ul>
+                                            <ul>
+                                                <li><a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">Donazioni</a></li>
+                                                <li><a href="https://v1.turbolab.it">TLI 1.0 (vecchio sito)</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <div class="widget widget-list widget-list-2" id="contact">
+                                        <div class="section-title section-title-2">
+                                            <h3 class="title">Contact</h3>
+                                        </div>
+                                        <img src="{{ asset('build/images/clock.png') }}" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="footer-twitter-post">
+                                <div class="row">
+                                    <div class="col-lg-5 col-md-5">
+                                        <div class="widget widget-list">
+                                            <div class="section-title section-title-2">
+                                                <h3 class="title">Privacy</h3>
+                                            </div>
+                                            <div class="list">
+                                                <ul>
+                                                    <li><a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_PRIVACY_POLICY')}) }}">Informativa privacy</a></li>
+                                                    <li><a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_COOKIE_POLICY')}) }}">Informativa cookie</a></li>
+                                                    <li><a href="#" onclick="if(window.__lxG__consent__!==undefined&&window.__lxG__consent__.getState()!==null){window.__lxG__consent__.showConsent()} else {alert('This function only for users from European Economic Area (EEA)')}; return false">Change privacy settings</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 col-md-7">
+                                        <div class="widget widget-list partner-container">
+                                            <div class="section-title section-title-2">
+                                                <h3 class="title">Partner</h3>
+                                            </div>
+                                            <div class="list d-flex justify-content-between">
+                                                <ul>
+                                                    <li><a href="https://amzn.to/3XI6I24" target="_blank">Amazon.it</a></li>
+                                                    <li><a href="https://www.telegramitalia.it" target="_blank">Telegram Italia</a></li>
+                                                </ul>
+                                                <ul>
+                                                    <li><a href="https://petstar.us" target="_blank">PetStar</a></li>
+                                                    <li><a href="https://pasticciotti.it" target="_blank">Pasticciotti</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="footer-rightbar mt-60">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-6">
+                                    <div class="widget widget-news">
+                                        <div class="section-title section-title-2">
+                                            <h3 class="title">Vuoi partecipare a TurboLab.it?</h3>
+                                        </div>
+                                        <div class="footer-news">
+                                            {% for Article in GuidesForAuthors %}
+                                                <div class="gallery_item gallery_item-style-2 footer_gallery_item">
+                                                    <div class="gallery_item_content">
+                                                        <h4 class="title">
+                                                            <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="footer-copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="copyright-item d-block d-md-flex justify-content-between align-items-center">
+                        <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://turbolab.it/">TurboLab.it</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Creative Commons Attribution 4.0 International<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% block javascripts %}
+        {#
         <!-- https://releases.jquery.com -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        {#{ encore_entry_script_tags('app') }#}
-        <script src="/PLACEHOLDER/scripts.js"></script>
+        #}
+
+        {# Newspark #}
+        <script src="/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+        <script src="/assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="/assets/js/bootstrap.min.js"></script>
+        <script src="/assets/js/popper.min.js"></script>
+        <script src="/assets/js/slick.min.js"></script>
+        <script src="/assets/js/jquery.nice-select.min.js"></script>
+        <script src="/assets/js/stellarnav.min.js"></script>
+        <script src="/assets/js/circle-progress.min.js"></script>
+        <script src="/assets/js/jquery.magnific-popup.min.js"></script>
+        <script src="/assets/js/main.js"></script>
+
+        {# TLI #}
+        {{ encore_entry_script_tags('app') }}
+
     {% endblock %}
 
-    {% block bodyEnd %}{% endblock %}
 </body>
+
 </html>

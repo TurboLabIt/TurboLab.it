@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+
+{% endblock %}
+
+
 {% block bodyMainContent %}
-
-    {% block stylesheets %}
-
-        {{ parent() }}
-        {{ encore_entry_link_tags('home') }}
-
-    {% endblock %}
 
     <section class="trending-news-area">
 
