@@ -599,14 +599,14 @@
                                 <div class="col-lg-8 col-md-8">
                                     <div class="widget widget-list">
                                         <div class="section-title section-title-2">
-                                            <h3 class="title">Collegamenti</h3>
+                                            <h3 class="title">Altre pagine</h3>
                                         </div>
                                         <div class="list d-flex justify-content-between">
                                             <ul>
                                                 <li><a href="{{ path('app_home') }}forum/ucp.php?mode=register">Registrazione (gratuita)</a></li>
-                                                <li><a href="#">Info tecniche piattaforma</a></li>
-                                                <li><a href="#">Statistiche</a></li>
-                                                <li><a href="#">Calendario pubblicazioni</a></li>
+                                                <li><a href="{{ path('app_info') }}">Info tecniche piattaforma</a></li>
+                                                <li><a href="{{ path('app_stats') }}">Statistiche</a></li>
+                                                <li><a href="{{ path('app_calendar') }}">Calendario pubblicazioni</a></li>
                                             </ul>
                                             <ul>
                                                 <li><a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">Donazioni</a></li>
