@@ -20,18 +20,18 @@ class Article extends BaseCmsService
     const string ENTITY_CLASS           = ArticleEntity::class;
     const string NOT_FOUND_EXCEPTION    = 'App\Exception\ArticleNotFoundException';
 
-    const int ID_FORUM_IMAGES   = 24;
-    const int ID_HOW_TO_JOIN    = 28;
-    const int ID_ABOUT_US       = 40;
-    const int ID_HOW_TO_WRITE   = 46;
-    const int ID_ISSUE_REPORT   = 49;
-    const int ID_PUBLISH_NEWS   = 222;
-    const int ID_NEWSLETTER     = 402;
-    const int ID_PRIVACY_POLICY = 617;
-    const int ID_COOKIE_POLICY  = 681;
-    const int ID_DONATIONS      = 1126;
-    const int ID_PUBLISH_ARTICLE= 3990;
-    const int ID_SIGN_ARTICLE   = 2329;
+    const int ID_FORUM_IMAGES   = 24;       // 👀 https://turbolab.it/24
+    const int ID_HOW_TO_JOIN    = 28;       // 👀 https://turbolab.it/28
+    const int ID_ABOUT_US       = 40;       // 👀 https://turbolab.it/40
+    const int ID_HOW_TO_WRITE   = 46;       // 👀 https://turbolab.it/46
+    const int ID_ISSUE_REPORT   = 49;       // 👀 https://turbolab.it/49
+    const int ID_PUBLISH_NEWS   = 222;      // 👀 https://turbolab.it/222
+    const int ID_NEWSLETTER     = 402;      // 👀 https://turbolab.it/402
+    const int ID_PRIVACY_POLICY = 617;      // 👀 https://turbolab.it/617
+    const int ID_COOKIE_POLICY  = 681;      // 👀 https://turbolab.it/681
+    const int ID_DONATIONS      = 1126;     // 👀 https://turbolab.it/1126
+    const int ID_PUBLISH_ARTICLE= 3990;     // 👀 https://turbolab.it/3990
+    const int ID_SIGN_ARTICLE   = 2329;     // 👀 https://turbolab.it/2329
 
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
@@ -58,6 +58,17 @@ class Article extends BaseCmsService
     }
 
     public function getEntity() : ?ArticleEntity { return $this->entity; }
+
+
+    public function getTopTagOrDefault() : TagService
+    {
+        $topTag = $this->getTopTag();
+        if( !empty($topTag) ) {
+            return $topTag;
+        }
+
+        return $this->factory->createDefaultTag();
+    }
 
 
     public function getTopTag() : ?TagService

@@ -20,8 +20,11 @@ class Image extends BaseCmsService
     const string ENTITY_CLASS          = ImageEntity::class;
     const string NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
 
-    const bool BUILD_CACHE_ENABLED = true;
-    const BUILD_FORMAT_FORCED = null;
+    const int ID_404                    = 24297;    // 👀 https://turbolab.it/immagini/24297/med
+    const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/med
+
+    const bool BUILD_CACHE_ENABLED      = true;
+    const BUILD_FORMAT_FORCED           = null;
 
     const string WIDTH  = 'width';
     const string HEIGHT = 'height';
