@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\YouTubeChannelApi;
-use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,11 +17,9 @@ use Twig\Environment;
 class HomeController extends BaseController
 {
     public function __construct(
-        protected Factory $factory,
-        protected ArticleCollection $articleCollection, protected Paginator $paginator,
+        protected Factory $factory, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected YouTubeChannelApi $YouTubeChannel,
-        protected Environment $twig
+        protected YouTubeChannelApi $YouTubeChannel, protected Environment $twig
     )
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -32,27 +29,12 @@ class HomeController extends BaseController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        if( !$this->isCachable() ) {
-
-            $buildHtmlResult = $this->buildHtml(1);
-            return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-        }
-
-        $that = $this;
-        $buildHtmlResult =
-            $this->cache->get("app_home", function(CacheItem $cache) use($that) {
-
-                $cache->tag(["app_home"]);
-                $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                return $that->buildHtml(1);
-        });
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
+        return $this->indexPaginated(1);
     }
 
 
     #[Route('/home/{page<0|1>}', name: 'app_home_page_0-1')]
-    public function appHomePage0Or1(?int $page = null)
+    public function appHomePage0Or1()
     {
         return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY);
     }
@@ -61,12 +43,6 @@ class HomeController extends BaseController
     #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
     public function indexPaginated(?int $page): Response
     {
-        if( !$this->isCachable() ) {
-
-            $buildHtmlResult = $this->buildHtml($page);
-            return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-        }
-
         $that = $this;
         $cacheKey = 'app_home_page_' . $page;
         $buildHtmlResult =
@@ -74,10 +50,10 @@ class HomeController extends BaseController
 
                 $buildHtmlResult = $that->buildHtml($page);
 
-                if( is_string($buildHtmlResult) ) {
+                if( is_string($buildHtmlResult) && $that->isCachable() ) {
 
-                    $cache->tag(["app_home_" . $page, "loadLatestPublished", "loadLatestPublished_" . $page]);
                     $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $cache->tag(["app_home_" . $page, "loadLatestPublished", "loadLatestPublished_" . $page]);
 
                 } else {
 
@@ -93,17 +69,13 @@ class HomeController extends BaseController
 
     protected function buildHtml(?int $page) : Response|string
     {
-        $this->articleCollection->loadLatestPublished($page);
+        $mainArticleCollection = $this->factory->createArticleCollection()->loadLatestPublished($page);
         $this->paginator
-            ->setTotalElementsNum( $this->articleCollection->countTotalBeforePagination() )
+            ->setTotalElementsNum( $mainArticleCollection->countTotalBeforePagination() )
             ->setCurrentPageNum($page)
             ->build('app_home', [], 'app_home_paginated', ['page' => $page]);
 
         $lastPageNum = $this->paginator->isPageOutOfRange();
-
-        if( $lastPageNum !== false && in_array($lastPageNum, [0, 1])) {
-            return $this->redirectToRoute("app_home");
-        }
 
         if( $lastPageNum !== false ) {
             return $this->redirectToRoute("app_home_paginated", ["page" => $lastPageNum]);
@@ -124,14 +96,14 @@ class HomeController extends BaseController
 
         //
         $numLatestSlider = 4;
-        $arrArticlesLatestSlider = $this->articleCollection->getItems($numLatestSlider);
+        $arrArticlesLatestSlider = $mainArticleCollection->getItems($numLatestSlider);
 
         //
         $arrArticlesMosaic1 = $arrArticlesMosaic2 = [];
         $numMosaic = $numLatestSlider + 4;
         for($i=0; $i<$numMosaic; $i++) {
 
-            $article =  $this->articleCollection->popFirst();
+            $article =  $mainArticleCollection->popFirst();
             if( empty($article) ) {
                 break;
             }
@@ -144,11 +116,9 @@ class HomeController extends BaseController
         }
 
         //
-        $arrArticlesMiddleSlideShow = $this->articleCollection->getItems($numLatestSlider);
-
-
-        //
-        $arrVideos = $this->YouTubeChannel->getLatestVideos(8);
+        $arrArticlesMiddleSlideShow = $mainArticleCollection->getItems($numLatestSlider);
+        $arrVideos                  = $this->YouTubeChannel->getLatestVideos(8);
+        $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViewsRecent();
 
         return $this->twig->render('home/index.html.twig', [
             'metaCanonicalUrl'          => $metaCanonicalUrl,
@@ -159,7 +129,14 @@ class HomeController extends BaseController
             'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
             'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
             'Videos'                    => $arrVideos,
-            //'Articles'          => $this->articleCollection,
+            'ArticlesLatestMosaic3'     => $mainArticleCollection->getItems($numLatestSlider),
+            'SplitArticlesMostViews'    => [
+                $articlesMostViews->getItems( $articlesMostViews->count() / 2),
+                $articlesMostViews
+            ],
+            'Articles'                  => $mainArticleCollection,
+            'Categories'                => $this->factory->createTagCollection()->loadCategories(),
+            'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
             //'Paginator'         => $this->paginator
         ]);
     }
