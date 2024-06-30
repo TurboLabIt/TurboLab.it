@@ -25,30 +25,9 @@ class HomeTest extends BaseT
     }
 
 
-    public function testHomeFirstPage()
+    public function testHomeH1()
     {
-        $url = "/";
-
-        $crawler = $this->fetchDomNode($url);
-
-        // H1
-        $this->tagTitleAsH1Checker($crawler, "Guide PC, Windows, Linux, Android e Bitcoin");
-
-        // H3
-        $crawler = $this->fetchDomNode($url, 'body');
-        $H3s = $crawler->filter('h3');
-        $countH3 = $H3s->count();
-        $this->assertGreaterThan(24, $countH3);
-
-        $this
-            ->internalLinksChecker($crawler)
-            ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::HOME_TOTAL_PAGES);
-    }
-
-
-    protected function tagTitleAsH1Checker(Crawler $crawler, ?string $expectedH1) : void
-    {
+        $crawler = $this->fetchDomNode("/");
         $H1FromCrawler = $crawler->filter('body h1')->html();
 
         foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
@@ -57,6 +36,39 @@ class HomeTest extends BaseT
             $this->assertStringNotContainsString($accentedLetterEntity, $H1FromCrawler);
         }
 
-        $this->assertEquals($expectedH1, $H1FromCrawler, "Explicit H1 check failure!");
+        $this->assertEquals("Guide PC, Windows, Linux, Android e Bitcoin", $H1FromCrawler, "Homepage H1 test failed");
     }
+
+
+    public function testHomeH3s()
+    {
+        $crawler = $this->fetchDomNode("/", 'body');
+        $H3s = $crawler->filter('h3');
+        $countH3 = $H3s->count();
+        $this->assertGreaterThan(24, $countH3);
+    }
+
+
+    public function testHomeLinks()
+    {
+        $crawler = $this->fetchDomNode("/", 'body');
+        $this
+            ->internalLinksChecker($crawler)
+            ->internalImagesChecker($crawler)
+            ->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::HOME_TOTAL_PAGES);
+    }
+
+
+    public function testHomeImages()
+    {
+        $crawler = $this->fetchDomNode("/", 'body');
+        $this->internalImagesChecker($crawler);
+    }
+
+
+    public function testHomePaginator()
+    {
+        $this->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::HOME_TOTAL_PAGES);
+    }
+
 }
