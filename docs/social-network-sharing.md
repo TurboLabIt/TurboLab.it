@@ -20,7 +20,7 @@ Lista completa dei nostri canali social, nonché "guida" da indicare agli utenti
 
 ## Lista dei canali di test
 
-Gli ambienti *non-prod* condividono gli articoli su canali social di test, diversi da quelli reali. La lista di tali canali è nel file [.env.dev](ttps://github.com/TurboLabIt/TurboLab.it/blob/main/d.env.dev).
+Gli ambienti *non-prod* condividono gli articoli su canali social di test, diversi da quelli reali. La lista di tali canali è nel file [.env.dev](https://github.com/TurboLabIt/TurboLab.it/blob/main/d.env.dev).
 
 
 ## Priorità
