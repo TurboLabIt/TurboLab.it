@@ -25,6 +25,8 @@ Questi dati possono essere utilizzati "così come sono".
 
 ## Fase 1: Download dati
 
+🎗️ Al termine di questa fase, l'**ambiente di sviluppo diventa inutilizzabile**, ed è obbligatorio eseguire la Fase 2.
+
 La prima fase consiste nel download dei dati dal vecchio server all'istanza corrente.
 
 🛑 Poiché la procedura richiede l'accesso SSH al server di produzione, questo comando deve essere lanciato sul PC locale
@@ -39,3 +41,12 @@ bash [scripts/tli1-download.sh](https://github.com/TurboLabIt/TurboLab.it/blob/m
 
 
 ## Fase 2: Importazione
+
+Una volta che phpStorm ha finito di caricare tutti i file dal PC locale al server di sviluppo, possiamo importare i dati.
+
+🛑 Il comando seguente va regolarmente eseguito sul server di sviluppo, **NON** sul PC locale.
+
+````bash
+bash [scripts/tli1-import.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-import.sh)
+
+````
