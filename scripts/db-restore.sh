@@ -19,12 +19,4 @@ MYSQL_DB_NAME=turbolab_it_forum
 SKIP_POST_RESTORE_QUERY=0
 wsuSourceFrameworkScript db-restore
 
-cd ${PROJECT_DIR}
-
-if [ "$EXPECTED_USER" = "$(whoami)" ]; then
-  symfony console tli1
-else
-  sudo -u "$EXPECTED_USER" -H symfony console tli1
-fi
-
 source "${SCRIPT_DIR}script_end.sh"
