@@ -28,7 +28,9 @@ Questi dati possono essere utilizzati "così come sono".
 La prima fase consiste nel download dei dati dal vecchio server all'istanza corrente.
 
 🛑 Poiché la procedura richiede l'accesso SSH al server di produzione, questo comando deve essere lanciato sul PC locale
-dello sviluppatore.
+dello sviluppatore, **NON** sul server di sviluppo.
+
+🛑 Prima di eseguire lo script, assicurarsi che l'**auto-upload di phpStorm** sia attivo e funzionante.
 
 ````bash
 bash [scripts/tli1-download.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-download.sh)
