@@ -6,6 +6,7 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 fxHeader "TLI1 importer"
 devOnlyCheck
 
+rm -rf ${PROJECT_DIR}backup/db-dumps/*.sql
 bash "${SCRIPT_DIR}db-restore.sh"
 
 cd ${PROJECT_DIR}
