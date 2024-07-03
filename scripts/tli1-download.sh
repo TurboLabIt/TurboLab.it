@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 ## 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/tli1-migration.md
 
+clear
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "TLI1 downloader"
