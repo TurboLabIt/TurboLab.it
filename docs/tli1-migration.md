@@ -42,7 +42,7 @@ bash [scripts/tli1-download.sh](https://github.com/TurboLabIt/TurboLab.it/blob/m
 
 ## Fase 2: Importazione
 
-Una volta che phpStorm ha finito di caricare tutti i file dal PC locale al server di sviluppo, possiamo importare i dati.
+Una volta che phpStorm ha finito di caricare tutti i file dal PC locale al server di sviluppo, importare i dati.
 
 🛑 Il comando seguente va regolarmente eseguito sul server di sviluppo, **NON** sul PC locale.
 
