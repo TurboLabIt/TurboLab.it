@@ -90,6 +90,13 @@ class Article extends BaseCmsService
             if( $topTagCandidate->getRanking() > $this->topTag->getRanking() ) {
                 $this->topTag = $topTagCandidate;
             }
+
+            if( $topTagCandidate->getRanking() == $this->topTag->getRanking() ) {
+
+                $this->topTag =
+                    $topTagCandidate->getUpdatedAt() < $this->topTag->getUpdatedAt()
+                    ? $topTagCandidate : $this->topTag;
+            }
         }
 
         return $this->topTag;
