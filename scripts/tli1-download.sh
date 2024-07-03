@@ -56,7 +56,7 @@ fi
 
 echo "From: ${REMOTE_PATH}"
 echo "To:   $(pwd)"
-fxCountdown
+#fxCountdown
 
 rsync --archive --compress --delete --partial --progress --verbose ${REMOTE_PATH} .
 
@@ -79,7 +79,7 @@ fi
 
 echo "From: ${REMOTE_PATH}"
 echo "To:   $(pwd)"
-fxCountdown
+#fxCountdown
 
 rsync --archive --compress --delete --partial --progress --verbose ${REMOTE_PATH} .
 
@@ -120,7 +120,7 @@ fi
 
 echo "From: ${REMOTE_PATH}"
 echo "To:   $(pwd)"
-fxCountdown
+#fxCountdown
 
 rsync --archive --compress --delete --partial --progress --verbose \
   --exclude='cache/production' --exclude='.gitignore' ${REMOTE_PATH} .
@@ -142,7 +142,9 @@ rm -rf "ext/turbolabit"
 if [ -f "${PHPBB_CONFIG_BACKUP_PATH}" ]; then
 
   fxTitle "🦺 Restoring your local phpBB config.php..."
+  chmod +w config.php
   mv "${PHPBB_CONFIG_BACKUP_PATH}" config.php
+  chmod -w config.php
   fxOK "Restored to #$(pwd)/config.php#"
 fi
 
@@ -164,9 +166,12 @@ fi
 
 echo "From: ${REMOTE_PATH}"
 echo "To:   $(pwd)"
-fxCountdown
+#fxCountdown
 
 rsync --archive --compress --delete --partial --progress --verbose ${REMOTE_PATH} .
+
+rm "${TLI_EXT_DIR}Attenzione - è un symlink.txt"
+git restore "${TLI_EXT_DIR}this is a symlink.md"
 
 
 fxTitle "📂 Listing..."
