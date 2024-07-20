@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27ccc8446ec675871cbf95e839c3be73",
+    "content-hash": "a8039ac74e535de37195ccf4e8d49461",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -7048,6 +7048,52 @@
             "time": "2023-12-08T13:03:43+00:00"
         },
         {
+            "name": "turbolabit/paginatorbundle",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TurboLabIt/php-symfony-paginator.git",
+                "reference": "0733233569e2a33be8ca49d1b862666d5d267e34"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/0733233569e2a33be8ca49d1b862666d5d267e34",
+                "reference": "0733233569e2a33be8ca49d1b862666d5d267e34",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable",
+                "symfony/dotenv": "@stable",
+                "symfony/framework-bundle": "@stable",
+                "symfony/yaml": "@stable"
+            },
+            "default-branch": true,
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "TurboLabIt\\PaginatorBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "CC-BY-4.0"
+            ],
+            "authors": [
+                {
+                    "name": "Zane di TurboLab.it",
+                    "email": "info@turbolab.it"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/TurboLabIt/php-symfony-paginator/issues",
+                "source": "https://github.com/TurboLabIt/php-symfony-paginator/tree/main"
+            },
+            "time": "2024-07-20T17:28:57+00:00"
+        },
+        {
             "name": "turbolabit/php-encryptor",
             "version": "dev-main",
             "source": {
@@ -9746,6 +9792,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "turbolabit/paginatorbundle": 20,
         "turbolabit/php-encryptor": 20,
         "turbolabit/php-foreachable": 20,
         "turbolabit/php-symfony-basecommand": 20,

@@ -16,4 +16,5 @@ return [
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
     TurboLabIt\Encryptor\TurboLabItEncryptorBundle::class => ['all' => true],
     TurboLabIt\Messengers\TurboLabItMessengersBundle::class => ['all' => true],
+    TurboLabIt\PaginatorBundle\TurboLabItPaginatorBundle::class => ['all' => true],
 ];

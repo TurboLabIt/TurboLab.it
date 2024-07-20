@@ -34,6 +34,7 @@
         "symfony/validator": "7.0.*",
         "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "7.0.*",
+        "turbolabit/paginatorbundle": "dev-main",
         "turbolabit/php-encryptor": "dev-main",
         "turbolabit/php-foreachable": "dev-main",
         "turbolabit/php-symfony-basecommand": "dev-main",

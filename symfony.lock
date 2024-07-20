@@ -256,6 +256,9 @@
             "webpack.config.js"
         ]
     },
+    "turbolabit/paginatorbundle": {
+        "version": "dev-main"
+    },
     "turbolabit/php-dev-pack": {
         "version": "dev-master"
     },
