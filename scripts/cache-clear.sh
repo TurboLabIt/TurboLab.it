@@ -27,7 +27,6 @@ if [ "$APP_ENV" = "dev" ]; then
 
   fxTitle "Removing built images cache..."
   rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
-
 fi
 
 wsuSourceFrameworkScript cache-clear "$@"
@@ -40,5 +39,20 @@ rm -rf "${WEBROOT_DIR}forum/cache/production"
 
 fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
 bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
+
+
+if [ "$APP_ENV" = "dev" ]; then
+
+  fxHeader "Special DEV handling..."
+
+  fxTitle "Creating the built images cache..."
+  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
+
+  fxTitle "chown dev..."
+  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
+  sudo chmod ugo= "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwx "${PROJECT_DIR}" -R
+fi
+
 
 source "${SCRIPT_DIR}script_end.sh"
