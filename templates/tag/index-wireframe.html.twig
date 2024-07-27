@@ -5,20 +5,7 @@
 
     {% if TaggedArticles is not empty %}
 
-        <div class="pagination-container">
-            {% if Paginator.PreviousPage is not empty %}
-                <p class="pagination-prev"><a href="{{ Paginator.PreviousPage.url }}"><i class="fas fa-angle-left"></i> Precedente</a></p>
-            {% endif %}
-
-
-            <div class="pagination-number">
-                <p>{{ Paginator.CurrentPageNum }} / {{ Paginator.MaxPageNum }}</p>
-            </div>
-
-            {% if Paginator.NextPage is not empty %}
-                <p class="pagination-next"><a href="{{ Paginator.NextPage.url }}">Successiva <i class="fas fa-angle-right"></i></a></p>
-            {% endif %}
-        </div>
+        {% include '@TurboLabItPaginator/pagination-bootstrap.html.twig' %}
 
         <div>
             {% for Article in TaggedArticles %}

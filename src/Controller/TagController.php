@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 use Twig\Environment;
 
 
@@ -16,8 +17,8 @@ class TagController extends BaseController
 {
     public function __construct(
         protected Tag $tag, protected Paginator $paginator,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected Environment $twig
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache,
+        protected ParameterBagInterface $parameterBag, protected Environment $twig
     )
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -43,16 +44,16 @@ class TagController extends BaseController
 
         $taggedArticles = $tag->getArticles($page);
 
-        $this->paginator
-            ->setTotalElementsNum( $taggedArticles->countTotalBeforePagination() )
-            ->setCurrentPageNum($page)
-            ->build('app_tag', ['tagSlugDashId' => $tagSlugDashId]);
+        try {
+            $oPages =
+                $this->paginator
+                    ->setBaseUrl( $tag->getUrl() )
+                    ->buildByTotalItems($page, $taggedArticles->countTotalBeforePagination() );
 
-        $lastPageNum = $this->paginator->isPageOutOfRange();
-        if( $lastPageNum !== false ) {
+        } catch(PaginatorOverflowException $ex) {
 
-            $lastPageNum = in_array($lastPageNum, [0, 1]) ? null : $lastPageNum;
-            return $this->redirectToRoute("app_tag", ["tagSlugDashId" => $tagSlugDashId, "page" => $lastPageNum]);
+            $lastPageUrl = $tag->getUrl( $ex->getMaxPage() );
+            return $this->redirect($lastPageUrl);
         }
 
         $tag
@@ -67,7 +68,7 @@ class TagController extends BaseController
             'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
             'Tag'               => $tag,
             'TaggedArticles'    => $taggedArticles,
-            'Paginator'         => $this->paginator
+            'Pages'             => $oPages
         ]);
     }
 
@@ -76,9 +77,7 @@ class TagController extends BaseController
     public function legacyUrl(string $tag, ?string $page = null) : Response
     {
         $page = empty($page) ? null : (int)$page;
-
-        /** @var Tag $tag */
-        $tag = $this->tag->loadByTitle($tag);
-        return $this->redirect($tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
+        $this->tag->loadByTitle($tag);
+        return $this->redirect($this->tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
     }
 }
