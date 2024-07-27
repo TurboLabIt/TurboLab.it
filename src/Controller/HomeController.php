@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 use Twig\Environment;
 
 
@@ -70,15 +71,16 @@ class HomeController extends BaseController
     protected function buildHtml(?int $page) : Response|string
     {
         $mainArticleCollection = $this->factory->createArticleCollection()->loadLatestPublished($page);
-        $this->paginator
-            ->setTotalElementsNum( $mainArticleCollection->countTotalBeforePagination() )
-            ->setCurrentPageNum($page)
-            ->build('app_home', [], 'app_home_paginated', ['page' => $page]);
 
-        $lastPageNum = $this->paginator->isPageOutOfRange();
+        try {
+            $oPages =
+                $this->paginator
+                    ->setBaseUrl( $this->generateUrl('app_home') )
+                    ->setBaseUrlForPages( $this->generateUrl('app_home_page_0-1') )
+                    ->buildByTotalItems($page, $mainArticleCollection->countTotalBeforePagination() );
 
-        if( $lastPageNum !== false ) {
-            return $this->redirectToRoute("app_home_paginated", ["page" => $lastPageNum]);
+        } catch(PaginatorOverflowException $ex) {
+            return $this->redirectToRoute("app_home_paginated", ["page" => $ex->getMaxPage()]);
         }
 
         $metaCanonicalUrl =
@@ -137,7 +139,7 @@ class HomeController extends BaseController
             'Articles'                  => $mainArticleCollection,
             'Categories'                => $this->factory->createTagCollection()->loadCategories(),
             'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
-            'Paginator'                 => $this->paginator
+            'Pages'                     => $oPages
         ]);
     }
 }

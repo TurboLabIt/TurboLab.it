@@ -21,6 +21,15 @@ class ArticleRepository extends BaseCmsRepository
 {
     const string ENTITY_CLASS_NAME = Article::class;
 
+    protected int $itemsPerPage;
+
+
+    public function __construct(ManagerRegistry $registry, Paginator $paginator)
+    {
+        parent::__construct($registry);
+        $this->itemsPerPage = $paginator->getItemsPerPageNum();
+    }
+
 
     //<editor-fold defaultstate="collapsed" desc="** QUERY BUILDERS **">
     protected function getQueryBuilderComplete() : QueryBuilder
@@ -71,12 +80,12 @@ class ArticleRepository extends BaseCmsRepository
         }
 
         $page    = $page ?: 1;
-        $startAt = Paginator::ITEMS_PER_PAGE * ($page - 1);
+        $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
             $qb
                 ->setFirstResult($startAt)
-                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -87,7 +96,7 @@ class ArticleRepository extends BaseCmsRepository
     public function findLatestPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
-        $startAt = Paginator::ITEMS_PER_PAGE * ($page - 1);
+        $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
             $this->getQueryBuilderComplete()
@@ -97,7 +106,7 @@ class ArticleRepository extends BaseCmsRepository
                 ->orderBy('t.publishedAt', 'DESC')
                 ->addOrderBy('t.updatedAt', 'DESC')
                 ->setFirstResult($startAt)
-                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -174,7 +183,7 @@ class ArticleRepository extends BaseCmsRepository
     public function findLatestNewsPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
-        $startAt = Paginator::ITEMS_PER_PAGE * ($page - 1);
+        $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
             $this->getQueryBuilderComplete()
@@ -185,7 +194,7 @@ class ArticleRepository extends BaseCmsRepository
                 ->andWhere('t.publishingDate <= CURRENT_TIMESTAMP')
                 ->orderBy('t.publishedAt', 'DESC')
                 ->setFirstResult($startAt)
-                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -230,7 +239,7 @@ class ArticleRepository extends BaseCmsRepository
     public function findTopViewsLastYear(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
-        $startAt = Paginator::ITEMS_PER_PAGE * ($page - 1);
+        $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
             $this->getQueryBuilderComplete()
@@ -240,7 +249,7 @@ class ArticleRepository extends BaseCmsRepository
                     ->setParameter('now', new \DateTime())
                 ->orderBy('t.views', 'DESC')
                 ->setFirstResult($startAt)
-                ->setMaxResults(Paginator::ITEMS_PER_PAGE)
+                ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);

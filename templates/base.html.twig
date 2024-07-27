@@ -30,12 +30,12 @@
 
     <link rel="alternate" type="application/rss+xml" title="Feed" href="{% block metaFeedUrl %}{{ absolute_url(path('app_feed')) }}{% endblock %}">
 
-    {% if Paginator is defined and Paginator.PreviousPage ?? null is not empty %}
-        <link rel="prev" href="{{ Paginator.PreviousPage.url }}">
+    {% if (Pages.prev.url ?? null) is not empty %}
+        <link rel="prev" href="{{ Pages.prev.url }}">
     {% endif %}
 
-    {% if Paginator is defined and Paginator.NextPage ?? null is not empty %}
-        <link rel="next" href="{{ Paginator.NextPage.url }}">
+    {% if (Pages.next.url ?? null) is not empty %}
+        <link rel="next" href="{{ Pages.next.url }}">
     {% endif %}
 
     {% block stylesheets %}
@@ -133,6 +133,8 @@
     </header>
 
     {% block bodyMainContent %}{% endblock %}
+
+    {% include '@TurboLabItPaginator/pagination-bootstrap.html.twig' %}
 
     {% if Paginator is defined %}
 
