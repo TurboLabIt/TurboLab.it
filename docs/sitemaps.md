@@ -45,6 +45,21 @@ Il relativo codice è dunque stato rimosso. In caso fosse necessario ripristinar
 La vecchia pratica di inviare un "ping" ai motori di ricerca dopo l'aggiornamento della sitemap [📚 non è più necessaria, né possibile](https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping).
 
 
+## Sitemap all'interno di una cartella...?
+
+Da specifiche, il dominio degli URL di una Sitemap posizionata in una cartella inizia dalla cartella stessa, e non può contenere URL relativi alla root o ad altre cartelle.
+
+[📚 sitemaps.org](https://www.sitemaps.org/protocol.html#location):
+
+> A Sitemap file located at http://example.com/catalog/sitemap.xml can include any URLs starting with http://example.com/catalog/ but can not include URLs starting with http://example.com/images/
+
+[📚 Google Search Central](https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps?hl=en#sitemap-index-best-practices):
+
+> Sitemaps that are referenced in the sitemap index file must be in the same directory as the sitemap index file, or lower in the site hierarchy. For example, if the sitemap index file is at https://example.com/public/sitemap_index.xml, it can only contain sitemaps that are in the same or deeper directory, like https://example.com/public/shared/....
+
+In realtà, *Google Search Console* non segnala alcuna violazione. Inoltre, l'esperienza diretta e le testimonianze su *Stack Exchange* (rif.: [Can a sitemap index file list sitemaps in a different directory?](https://webmasters.stackexchange.com/a/23933/87608), [Does sitemap.xml have to be in the root directory?](https://webmasters.stackexchange.com/q/29564/87608)) confermano che questa restrizione o non è implementata, oppure la presenza dell'URL nel file [robots.txt](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/misc/robots.txt) la disattiva similmente a quanto avviene per il *cross submit*.
+
+
 ## Comando di generazione
 
 La Sitemap viene generata quotidianamente tramite [config/custom/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron).
