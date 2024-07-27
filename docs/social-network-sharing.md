@@ -57,7 +57,7 @@ ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzi
 - se si tratta di una regolare esecuzione periodica ➡ invia gli articoli pubblicati su TLI negli ultimi [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php) minuti.
 
 
-## Valutazione casi-limite execuzioni regolari
+## Valutazione casi-limite esecuzioni regolari
 
 | Pubblicato alle | Orario exec1 | Range exec1         | Risultato exec1 | Orario exec2 | Range exec2         | Risultato exec2 |
 |-----------------|--------------|---------------------|:---------------:|--------------|---------------------|:---------------:|
