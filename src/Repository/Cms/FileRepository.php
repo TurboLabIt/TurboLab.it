@@ -13,7 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method File[]    findAll()
  * @method File[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FileRepository extends BaseRepository
+class FileRepository extends BaseCmsRepository
 {
     const string ENTITY_CLASS_NAME = File::class;
 }
