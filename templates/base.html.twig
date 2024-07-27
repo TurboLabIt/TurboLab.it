@@ -44,6 +44,7 @@
         <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
         {# Now delivered via Font Awesome CDN (see JS below) #}
         {# <link rel="stylesheet" href="/assets/css/font-awesome.min.css"> #}
+        <script src="https://kit.fontawesome.com/efe2621351.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="/assets/css/magnific-popup.css">
         <link rel="stylesheet" href="/assets/css/nice-select.css">
         <link rel="stylesheet" href="/assets/css/slick.css">
@@ -107,13 +108,19 @@
                         <div class="header-menu">
                             <div class="stellarnav">
                                 <ul>
-                                    <li><a class="active" href="{{ path('app_home') }}">Home</a></li>
-                                    <li><a href="{{ path('app_home') }}forum">Forum</a></li>
-                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'windows-10'}) }}">Windows</a></li>
-                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'linux-27'}) }}">Linux</a></li>
-                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'bitcoin-ethereum-criptovalute-4904'}) }}">Bitcoin e Cripto</a></li>
-                                    <li><a href="{{ path('app_news') }}">News</a></li>
-                                    <li class="has-sub"><a href="/">Guide...</a>
+                                    <li><a class="active" href="{{ path('app_home') }}"><i class="fa-solid fa-house"></i> Home</a></li>
+                                    <li class="has-sub"><a href="{{ path('app_home') }}forum"><i class="fa-solid fa-users"></i> Forum... <i class="fa-solid fa-angle-down"></i></a>
+                                        <ul>
+                                            <li><a href="{{ path('app_home') }}forum/search.php?search_id=egosearch">I tuoi messaggi</a></li>
+                                            <li><a href="{{ path('app_home') }}forum/search.php?search_id=unreadposts">Messaggi non letti</a></li>
+                                            <li><a href="{{ path('app_home') }}forum/ucp.php?i=pm&folder=inbox">Messaggi privati</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'windows-10'}) }}"><i class="fa-brands fa-windows"></i> Windows</a></li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'linux-27'}) }}"><i class="fa-brands fa-linux"></i> Linux</a></li>
+                                    <li><a href="{{ path('app_tag', {tagSlugDashId: 'bitcoin-ethereum-criptovalute-4904'}) }}"><i class="fa-brands fa-bitcoin"></i> Bitcoin e cripto</a></li>
+                                    <li><a href="{{ path('app_news') }}"><i class="fa-solid fa-newspaper"></i> News</a></li>
+                                    <li class="has-sub"><a href="/"><i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i></a>
                                         <ul>
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'android-28'}) }}">Android</a></li>
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'filesharing-p2p-peer-to-peer-2914'}) }}">Filesharing peer-to-peer</a></li>
@@ -122,7 +129,7 @@
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'vpn-2942'}) }}">Migliori VPN</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="#" class="tli-scroll-to" data-tli-scroll-to="#contact">📧 Contatti</a></li>
+                                    <li><a href="#contact"><i class="fa-solid fa-envelope" style="color: #e01b24;"></i> Contatti</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -250,7 +257,9 @@
                                         <div class="section-title section-title-2">
                                             <h3 class="title">Contact</h3>
                                         </div>
-                                        <img src="{{ asset('build/images/clock.png') }}" loading="lazy">
+                                        <div class="glowing-image-container">
+                                            <img src="{{ asset('build/images/clock.png') }}" class="glowing-image" loading="lazy">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -352,7 +361,6 @@
         <script src="/assets/js/main.js"></script>
 
         {# TLI #}
-        <script src="https://kit.fontawesome.com/efe2621351.js" crossorigin="anonymous"></script>
         {{ encore_entry_script_tags('app') }}
 
     {% endblock %}

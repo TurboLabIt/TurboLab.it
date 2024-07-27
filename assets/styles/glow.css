@@ -1,0 +1,49 @@
+.glowing-image-container {
+    display: inline-block;
+    position: relative;
+    width: fit-content;
+}
+
+.glowing-image {
+    border-radius: 50%; /* Ensure the image is round */
+    animation: glowing 2s infinite;
+}
+
+@keyframes glowing {
+
+    0% {
+        box-shadow: 0 0 0px red;
+    }
+    10% {
+        box-shadow: 0 0 4px red;
+    }
+    20% {
+        box-shadow: 0 0 8px red;
+    }
+    30% {
+        box-shadow: 0 0 12px red;
+    }
+    40% {
+        box-shadow: 0 0 16px red;
+    }
+
+    50% {
+        box-shadow: 0 0 20px red;
+    }
+
+    60% {
+        box-shadow: 0 0 16px red;
+    }
+    70% {
+        box-shadow: 0 0 12px red;
+    }
+    80% {
+        box-shadow: 0 0 8px red;
+    }
+    90% {
+        box-shadow: 0 0 4px red;
+    }
+    100% {
+        box-shadow: 0 0 0px red;
+    }
+}

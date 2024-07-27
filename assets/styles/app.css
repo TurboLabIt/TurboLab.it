@@ -1,3 +1,5 @@
+@import 'glow.css';
+
 body {
     background-color: lightgray;
 }
@@ -14,10 +16,6 @@ footer .site-description {
 .footer-copyright .copyright-item p a {
     color: white;
     text-decoration: underline;
-}
-
-#contact img {
-    max-width: 150px;
 }
 
 .partner-container {
