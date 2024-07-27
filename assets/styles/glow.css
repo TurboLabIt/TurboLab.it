@@ -14,31 +14,56 @@
     0% {
         box-shadow: 0 0 0px red;
     }
+    5% {
+        box-shadow: 0 0 2px red;
+    }
     10% {
         box-shadow: 0 0 4px red;
+    }
+    15% {
+        box-shadow: 0 0 6px red;
     }
     20% {
         box-shadow: 0 0 8px red;
     }
+    25% {
+        box-shadow: 0 0 10px red;
+    }
     30% {
         box-shadow: 0 0 12px red;
+    }
+    35% {
+        box-shadow: 0 0 14px red;
     }
     40% {
         box-shadow: 0 0 16px red;
     }
-
+    45% {
+        box-shadow: 0 0 18px red;
+    }
     50% {
         box-shadow: 0 0 20px red;
     }
-
+    55% {
+        box-shadow: 0 0 18px red;
+    }
     60% {
         box-shadow: 0 0 16px red;
+    }
+    65% {
+        box-shadow: 0 0 14px red;
     }
     70% {
         box-shadow: 0 0 12px red;
     }
+    75% {
+        box-shadow: 0 0 10px red;
+    }
     80% {
         box-shadow: 0 0 8px red;
+    }
+    85% {
+        box-shadow: 0 0 6px red;
     }
     90% {
         box-shadow: 0 0 4px red;
