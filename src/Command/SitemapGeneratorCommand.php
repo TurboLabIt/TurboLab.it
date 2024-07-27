@@ -415,7 +415,8 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
         } else {
 
-            file_put_contents($filePath, $txtXml);
+            $txtXmlNoGz = str_ireplace('.xml.gz</loc>', '.xml</loc>', $txtXml);
+            file_put_contents($filePath, $txtXmlNoGz);
             $this->fxOK("🐡 $cliMessage (uncompressed) stored (non-prod only)");
         }
 
