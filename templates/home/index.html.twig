@@ -27,7 +27,7 @@
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url|raw }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                 alt="{{ Article.title|raw }}" loading="lazy">
+                                                 class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
@@ -38,6 +38,12 @@
                                             <div class="meta-date">
                                                 <span>{{ Article.publishedAt|friendlyDate }}</span>
                                             </div>
+                                        </div>
+                                        <div class="tli-meta-authors">
+                                            a cura di
+                                            {% for Author in Article.Authors %}
+                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
                                         </div>
                                         <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
                                     </div>
@@ -197,7 +203,7 @@
                         <div class="col-lg-6">
                             <div class="single-play-post-item">
                                 <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                     alt="{{ Article.title|raw }}" loading="lazy">
+                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
@@ -300,7 +306,7 @@
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                     alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="trending-news-content">
@@ -329,7 +335,7 @@
                                             <div class="business-post-thumb">
                                                 <a href="{{ Article.url|raw }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                         alt="{{ Article.title|raw }}" loading="lazy">
+                                                         class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
                                             </div>
                                         </div>

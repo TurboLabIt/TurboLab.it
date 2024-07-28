@@ -37,3 +37,21 @@ footer .site-description {
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
 }
+
+.post-meta {
+    margin-bottom: 0px !important;
+}
+
+.tli-meta-authors {
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.tli-meta-authors a {
+    color: #1091FF;
+}
+
+.tli-uniform-slider-image {
+    height: 250px !important;
+    object-fit: cover !important;
+}
