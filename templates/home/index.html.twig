@@ -155,6 +155,7 @@
                         </div>
                         <div class="trending-sidebar-slider">
                             <div class="post_gallery_items">
+                                <!-- HOME PAGE column top slider START -->
                                 {% for Topic in TopicsLatest %}
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_content">
@@ -177,7 +178,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
