@@ -7147,12 +7147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-paginator.git",
-                "reference": "8139d521c271304bef298b1d7e40a257a2333747"
+                "reference": "c5af5822fd9e54c0276ab6db03f07e055dbba41e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/8139d521c271304bef298b1d7e40a257a2333747",
-                "reference": "8139d521c271304bef298b1d7e40a257a2333747",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/c5af5822fd9e54c0276ab6db03f07e055dbba41e",
+                "reference": "c5af5822fd9e54c0276ab6db03f07e055dbba41e",
                 "shasum": ""
             },
             "require": {
@@ -7185,7 +7185,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-paginator/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-paginator/tree/main"
             },
-            "time": "2024-07-28T09:43:53+00:00"
+            "time": "2024-07-28T09:58:28+00:00"
         },
         {
             "name": "turbolabit/php-encryptor",
