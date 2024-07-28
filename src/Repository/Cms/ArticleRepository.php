@@ -241,7 +241,7 @@ class ArticleRepository extends BaseCmsRepository
     public function findTopViewsLastYear(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
-        $startAt = $this->itemsPerPage * ($page - 1);
+        $startAt = 20 * ($page - 1);
 
         $query =
             $this->getQueryBuilderComplete()
@@ -251,7 +251,7 @@ class ArticleRepository extends BaseCmsRepository
                     ->setParameter('now', new \DateTime())
                 ->orderBy('t.views', 'DESC')
                 ->setFirstResult($startAt)
-                ->setMaxResults($this->itemsPerPage)
+                ->setMaxResults(20)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
