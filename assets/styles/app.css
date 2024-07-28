@@ -61,3 +61,23 @@ footer .site-description {
     height: 100px !important;
     object-fit: cover !important;
 }
+
+.tli-mosaic-post-meta {
+    margin-bottom: 10px;
+}
+
+.tli-mosaic-post-meta .tli-meta-category {
+    color: #1091FF;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.tli-mosaic-post-meta .tli-meta-slash {
+    font-weight: 500;
+}
+
+.tli-mosaic-post-meta .tli-meta-date {
+    font-size: 12px;
+    font-weight: 400;
+    color: #515A60;
+}

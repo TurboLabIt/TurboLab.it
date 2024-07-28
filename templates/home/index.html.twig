@@ -57,6 +57,13 @@
                         <div class="col-lg-6 col-md-6">
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic1 %}
+                                    <div class="tli-mosaic-post-meta">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                        </a>
+                                        <span class="tli-meta-slash"> · </span>
+                                        <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                    </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
@@ -65,14 +72,6 @@
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <div class="post-meta">
-                                                <div class="meta-categories">
-                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
-                                                </div>
-                                                <div class="meta-date">
-                                                    <span>{{ Article.publishedAt|friendlyDate }}</span>
-                                                </div>
-                                            </div>
                                             <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>
@@ -83,6 +82,13 @@
                         <div class="col-lg-6 col-md-6">
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic2 %}
+                                    <div class="tli-mosaic-post-meta">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                        </a>
+                                        <span class="tli-meta-slash"> · </span>
+                                        <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                    </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
@@ -91,14 +97,6 @@
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <div class="post-meta">
-                                                <div class="meta-categories">
-                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
-                                                </div>
-                                                <div class="meta-date">
-                                                    <span>{{ Article.publishedAt|friendlyDate }}</span>
-                                                </div>
-                                            </div>
                                             <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>
