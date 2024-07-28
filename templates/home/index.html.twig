@@ -432,11 +432,18 @@
                                             <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
                                                 {{ Article.TopTagOrDefault.title|upper|raw }}
                                             </a>
+                                            <br>
+                                            <span class="tli-meta-authors">
+                                                a cura di
+                                                {% for Author in Article.Authors %}
+                                                    <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </span>
                                             {% if Article.commentsNum %}
-                                                <span class="tli-meta-slash">&nbsp;</span>
-                                                <span class="tli-meta-comments-num">
+                                                <span class="tli-meta-slash"> · </span>
+                                                    <span class="tli-meta-comments-num">
                                                     <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
                                                 </span>
                                             {% endif %}
                                         </div>
