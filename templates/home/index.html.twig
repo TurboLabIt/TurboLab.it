@@ -165,16 +165,19 @@
                             <div class="post_gallery_items">
                                 <!-- HOME PAGE column top slider START -->
                                 {% for Topic in TopicsLatest %}
+                                    <div class="tli-mosaic-post-meta">
+                                        <a class="tli-meta-category" href="{{ path('app_home') }}forum">FORUM</a>
+                                        <span class="tli-meta-slash"> · </span>
+                                        <span class="tli-meta-date">{{ Topic.lastPostDateTime|friendlyDate }}</span>
+                                        <br>
+                                        <span class="tli-meta-comments-num">
+                                            <i class="fa-solid fa-comment"></i> {{ Topic.postNum }}
+                                            {% if Topic.postNum == 1 %}messaggio{% else %}messaggi{% endif %}
+                                        </span>
+                                    </div>
+
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_content">
-                                            <div class="post-meta">
-                                                <div class="meta-categories">
-                                                    <a href="{{ path('app_home') }}forum">FORUM</a>
-                                                </div>
-                                                <div class="meta-date">
-                                                    <span>{{ Topic.lastPostDateTime|friendlyDate }}</span>
-                                                </div>
-                                            </div>
                                             <h4 class="title"><a href="{{ Topic.url|raw }}">{{ Topic.title|raw }}</a></h4>
                                         </div>
                                     </div>
@@ -387,25 +390,40 @@
                                 <h3 class="title">Le guide più richieste</h3>
                             </div>
                         </div>
+
                         <div class="trending-sidebar-slider">
+                            <!-- HOME PAGE most requested articles slider START -->
                             {% for HalfArticlesMostViews in SplitArticlesMostViews %}
-                                <div class="most-share-post-items">
+                                <div class="post_gallery_items">
                                     {% for Article in HalfArticlesMostViews %}
-                                        <div class="most-share-post-item">
-                                            <div class="post-meta">
-                                                <div class="meta-categories">
-                                                    <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
-                                                </div>
-                                                <div class="meta-date">
-                                                    <span>{{ Article.updatedAt|date('d/m/Y') }}</span>
-                                                </div>
+                                        <div class="tli-mosaic-post-meta">
+                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            </a>
+                                            {% if Article.commentsNum %}
+                                                <span class="tli-meta-slash">&nbsp;</span>
+                                                <span class="tli-meta-comments-num">
+                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="gallery_item gallery_item-style-2">
+                                            <div class="gallery_item_thumb">
+                                                <a href="{{ Article.url|raw }}">
+                                                    <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
+                                                         class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                </a>
                                             </div>
-                                            <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                            <div class="gallery_item_content">
+                                                <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
+                                            </div>
                                         </div>
                                     {% endfor %}
                                 </div>
                             {% endfor %}
                         </div>
+
 
                         <div class="Categories-post mt-40">
 
