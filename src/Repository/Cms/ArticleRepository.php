@@ -45,8 +45,10 @@ class ArticleRepository extends BaseCmsRepository
                 // files
                 ->leftJoin('t.files', 'filesJunction')
                 ->leftJoin('filesJunction.file', 'file')
+                // comments
+                ->leftJoin('t.commentsTopic', 'commentsTopic')
                 //
-                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file');
+                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file', 'commentsTopic');
     }
     //</editor-fold>
 

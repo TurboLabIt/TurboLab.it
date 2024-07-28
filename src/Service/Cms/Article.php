@@ -5,6 +5,7 @@ use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
+use App\Service\PhpBB\Topic;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
@@ -41,6 +42,7 @@ class Article extends BaseCmsService
     protected ?ImageService $spotlight;
     protected HtmlProcessor $htmlProcessor;
     protected ?TagService $topTag = null;
+    protected ?Topic $commentsTopic;
 
 
     public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
@@ -206,6 +208,34 @@ class Article extends BaseCmsService
         }
 
         return $arrFiles;
+    }
+
+
+    public function getCommentsTopic() : ?Topic
+    {
+        if( !empty($this->commentsTopic) ) {
+            return $this->commentsTopic;
+        }
+
+        $entity = $this->entity->getCommentsTopic();
+        if( empty($entity) ) {
+            return null;
+        }
+
+        return $this->commentsTopic = $this->factory->createTopic($entity);
+    }
+
+
+    public function getCommentsNum() : ?int
+    {
+        $topic = $this->getCommentsTopic();
+        if( empty($topic) ) {
+            return null;
+        }
+
+        $num = $topic->getPostNum();
+        $num = empty($num) ? 0 : ($num - 1);
+        return $num;
     }
 
 

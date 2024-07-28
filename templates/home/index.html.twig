@@ -63,6 +63,11 @@
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                        <br>
+                                        <span class="tli-meta-comments-num">
+                                            <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                            {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                        </span>
                                     </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
@@ -88,6 +93,11 @@
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                        <br>
+                                        <span class="tli-meta-comments-num">
+                                            <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                            {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                        </span>
                                     </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
@@ -172,6 +182,18 @@
                             </div>
                             <div class="post_gallery_items">
                                 {% for Article in ArticlesLatestSecurity %}
+                                    <div class="tli-mosaic-post-meta">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                        </a>
+                                        {% if Article.commentsNum %}
+                                            <span class="tli-meta-slash">&nbsp;</span>
+                                            <span class="tli-meta-comments-num">
+                                                <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
@@ -180,11 +202,6 @@
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <div class="post-meta">
-                                                <div class="meta-categories">
-                                                    <a href="{{ path('app_tag', {tagSlugDashId: 'sicurezza-13'}) }}">SICUREZZA</a>
-                                                </div>
-                                            </div>
                                             <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>

@@ -76,8 +76,17 @@ footer .site-description {
     font-weight: 500;
 }
 
-.tli-mosaic-post-meta .tli-meta-date {
+.tli-mosaic-post-meta .tli-meta-date,
+.tli-mosaic-post-meta .tli-meta-comments-num {
     font-size: 12px;
     font-weight: 400;
     color: #515A60;
+}
+
+.gallery_item.gallery_item-style-2 {
+    margin-top: 0px !important;
+}
+
+.trending-right-sidebar .tli-mosaic-post-meta {
+    margin-bottom: 0px;
 }
