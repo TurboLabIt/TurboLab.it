@@ -38,19 +38,6 @@ footer .site-description {
     -webkit-box-orient: vertical;
 }
 
-.post-meta {
-    margin-bottom: 0px !important;
-}
-
-.tli-meta-authors {
-    font-weight: 500;
-    margin-bottom: 10px;
-}
-
-.tli-meta-authors a {
-    color: #1091FF;
-}
-
 .tli-uniform-slider-image {
     height: 250px !important;
     object-fit: cover !important;
@@ -77,10 +64,15 @@ footer .site-description {
 }
 
 .tli-mosaic-post-meta .tli-meta-date,
-.tli-mosaic-post-meta .tli-meta-comments-num {
+.tli-mosaic-post-meta .tli-meta-comments-num,
+.tli-mosaic-post-meta .tli-meta-authors {
     font-size: 12px;
     font-weight: 400;
     color: #515A60;
+}
+
+.tli-mosaic-post-meta .tli-meta-authors a {
+    color: #1091FF;
 }
 
 .gallery_item.gallery_item-style-2 {
