@@ -20,6 +20,7 @@
                     <div class="section-title">
                         <h1 class="title">{{ metaTitle }}</h1>
                     </div>
+                    <!-- HOME PAGE top slider START -->
                     <div class="row trending-news-slider">
                         {% for Article in ArticlesLatestSlider %}
                             <div class="col-lg-6">
@@ -52,6 +53,7 @@
                         {% endfor %}
                     </div>
                     <div class="row">
+                        <!-- HOME PAGE top mosaic 1st half START -->
                         <div class="col-lg-6 col-md-6">
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic1 %}
@@ -59,7 +61,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -77,6 +79,7 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        <!-- HOME PAGE top mosaic 2nd half START -->
                         <div class="col-lg-6 col-md-6">
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic2 %}
@@ -84,7 +87,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
