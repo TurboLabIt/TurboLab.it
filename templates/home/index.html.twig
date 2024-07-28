@@ -31,6 +31,9 @@
                                                  class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                         </a>
                                     </div>
+                                    <div class="trending-news-content">
+                                        <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                    </div>
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
@@ -51,9 +54,6 @@
                                                 {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
                                             </span>
                                         {% endif %}
-                                    </div>
-                                    <div class="trending-news-content">
-                                        <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
                                     </div>
                                 </div>
                             </div>
