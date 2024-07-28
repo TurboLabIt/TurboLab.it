@@ -144,34 +144,6 @@
 
     {% include '@TurboLabItPaginator/pagination-bootstrap.html.twig' %}
 
-    {% if Paginator is defined %}
-
-        <nav id="tli-paginator">
-            <ul class="pagination justify-content-center pagination-lg">
-                {% if Paginator.PreviousPage is not empty %}
-                    <li class="page-item">
-                        <a class="page-link tli-prev" href="{{ Paginator.PreviousPage.url }}" title="Precedente">
-                            <span>&laquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-
-                <li class="page-item disabled">
-                    <span class="page-link">Pagina {{ Paginator.CurrentPageNum }} di {{ Paginator.MaxPageNum }}</span>
-                </li>
-
-                {% if Paginator.NextPage is not empty %}
-                    <li class="page-item">
-                        <a class="page-link tli-next" href="{{ Paginator.NextPage.url }}" title="Successivo">
-                            <span>&raquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-
-    {% endif %}
-
     <footer class="footer-area">
         <div class="container">
             <div class="footer-topbar">
