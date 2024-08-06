@@ -97,6 +97,17 @@ class HomeController extends BaseController
         $metaCanonicalUrl = trim($metaCanonicalUrl, '/');
 
         //
+        if( $page > 1 ) {
+
+            return $this->twig->render('archive/index.html.twig', [
+                'metaCanonicalUrl'          => $metaCanonicalUrl,
+                'Articles'                  => $mainArticleCollection,
+                'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
+                'Pages'                     => $oPages,
+                'currentPage'               => $page,
+            ]);
+        }
+
         $numLatestSlider = 4;
         $arrArticlesLatestSlider = $mainArticleCollection->getItems($numLatestSlider);
 

@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+    {{ parent() }}
+    {{ encore_entry_link_tags('archive') }}
+
+{% endblock %}
+
+
+{% block bodyMainContent %}
+
+    <!-- ARCHIVE bodyMainContent START -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="about-author-content mt-10">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Pagina {{ currentPage }}</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="about-item-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="about-tab-btn mt-20">
+                        <div class="about-post-items">
+                            <div class="row">
+                                {% for Article in Articles %}
+
+                                    {% set loopMod = loop.index % 10 %}
+                                    {% if loopMod == 0 %}
+                                        {% set loopMod = 10 %}
+                                    {% endif %}
+
+                                    {% if loopMod <= 2 or (loopMod > 8 and loopMod <= 10) %}
+                                        {% set bootstrapColumnWidth = 6 %}
+                                    {% else %}
+                                        {% set bootstrapColumnWidth = 4 %}
+                                    {% endif %}
+
+                                    <div class="col-lg-{{ bootstrapColumnWidth }} col-md-{{ bootstrapColumnWidth }}">
+                                        <div class="trending-news-item mb-30">
+
+                                            <div class="trending-news-thumb">
+                                                <a href="{{ Article.url|raw }}">
+                                                    <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                                         class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                </a>
+                                            </div>
+
+                                            <div class="tli-mosaic-post-meta">
+                                                <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                    {{ Article.TopTagOrDefault.title|upper|raw }}
+                                                </a>
+                                                <span class="tli-meta-slash"> · </span>
+                                                <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                            </div>
+
+                                            <div class="trending-news-content">
+                                                <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                            </div>
+
+                                            <div class="tli-mosaic-post-meta">
+                                                <span class="tli-meta-authors">
+                                                    a cura di
+                                                    {% for Author in Article.Authors %}
+                                                        <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                                {% if Article.commentsNum %}
+                                                    <span class="tli-meta-slash">&nbsp;</span>
+                                                    <span class="tli-meta-comments-num">
+                                                        <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="trending-news-content">
+                                                <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHIVE bodyMainContent END -->
+
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    {{ encore_entry_script_tags('archive') }}
+
+{% endblock %}
