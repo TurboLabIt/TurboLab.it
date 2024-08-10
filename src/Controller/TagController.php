@@ -53,8 +53,7 @@ class TagController extends BaseController
             'Tag'               => $tag,
             'Articles'          => $taggedArticles,
             'Pages'             => $oPages,
-            'currentPage'       => $page,
-            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
+            'currentPage'       => $page
         ]);
     }
 

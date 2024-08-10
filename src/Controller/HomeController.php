@@ -68,8 +68,7 @@ class HomeController extends BaseController
             'activeMenu'        => 'home',
             'FrontendHelper'    => $this->frontendHelper,
             'currentPage'       => $page,
-            'Pages'             => $oPages,
-            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
+            'Pages'             => $oPages
         ];
 
         //

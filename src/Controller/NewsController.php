@@ -57,8 +57,7 @@ class NewsController extends BaseController
                 'FrontendHelper'    => $this->frontendHelper,
                 'Articles'          => $articleCollection,
                 'Pages'             => $oPages,
-                'currentPage'       => $page,
-                'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
+                'currentPage'       => $page
             ]);
     }
 }

@@ -1,14 +1,16 @@
 <?php
 namespace App\Service;
 
+use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 class FrontendHelper
 {
-    public function __construct(protected UrlGeneratorInterface $urlGenerator) {}
+    public function __construct(protected UrlGeneratorInterface $urlGenerator, protected Factory $factory) {}
 
 
+    //<editor-fold defaultstate="collapsed" desc="*** Links ***">
     public function getOwnFollowUsPages() : array
     {
         return [
@@ -53,4 +55,13 @@ class FrontendHelper
             "blank" => $blank
         ];
     }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** Guides for authors ***">
+    public function getGuidesForAuthors() : ArticleCollection
+    {
+        return $this->factory->createArticleCollection()->loadGuidesForAuthors();
+    }
+    //</editor-fold>
 }
