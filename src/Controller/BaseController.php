@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
-use App\Service\YouTubeChannelApi;
+use App\Service\FrontendHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -25,7 +25,7 @@ abstract class BaseController extends AbstractController
     public function __construct(
         protected Factory $factory, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected YouTubeChannelApi $YouTubeChannel, protected Environment $twig
+        protected FrontendHelper $frontendHelper, protected Environment $twig
     )
     {
         $this->request = $requestStack->getCurrentRequest();

@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\YouTubeChannelApi;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -9,8 +10,14 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 class HomeController extends BaseController
 {
+    protected YouTubeChannelApi $YouTubeChannel;
+
+
     #[Route('/', name: 'app_home')]
-    public function index() : Response { return $this->indexPaginated(1); }
+    public function index(YouTubeChannelApi $YouTubeChannel) : Response
+    {
+        return $this->indexPaginated(1, $YouTubeChannel);
+    }
 
 
     #[Route('/home/{page<0|1>?}', name: 'app_home_page_0-1')]
@@ -21,8 +28,9 @@ class HomeController extends BaseController
 
 
     #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
-    public function indexPaginated(?int $page): Response
+    public function indexPaginated(?int $page, YouTubeChannelApi $YouTubeChannel): Response
     {
+        $this->YouTubeChannel = $YouTubeChannel;
         return $this->tliStandardControllerResponse(["app_home"], $page);
     }
 
@@ -55,18 +63,22 @@ class HomeController extends BaseController
          */
         $metaCanonicalUrl = trim($metaCanonicalUrl, '/');
 
+        $arrTemplateParams = [
+            'metaCanonicalUrl'  => $metaCanonicalUrl,
+            'activeMenu'        => 'home',
+            'FrontendHelper'    => $this->frontendHelper,
+            'currentPage'       => $page,
+            'Pages'             => $oPages,
+            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
+        ];
+
         //
         if( $page > 1 ) {
-
-            return $this->twig->render('home/index-paginated.html.twig', [
-                'metaTitle'                 => "Archivio articoli - Pagina " . $page,
-                'metaCanonicalUrl'          => $metaCanonicalUrl,
-                'activeMenu'                => 'home',
-                'Articles'                  => $mainArticleCollection,
-                'Pages'                     => $oPages,
-                'currentPage'               => $page,
-                'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors()
-            ]);
+            return
+                $this->twig->render('home/index-paginated.html.twig', array_merge($arrTemplateParams, [
+                    'metaTitle' => "Archivio articoli - Pagina " . $page,
+                    'Articles'  => $mainArticleCollection,
+            ]));
         }
 
         $numLatestSlider = 4;
@@ -94,25 +106,22 @@ class HomeController extends BaseController
         $arrVideos                  = $this->YouTubeChannel->getLatestVideos(8);
         $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViewsRecent();
 
-        return $this->twig->render('home/index.html.twig', [
-            'metaCanonicalUrl'          => $metaCanonicalUrl,
-            'activeMenu'                => 'home',
-            'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
-            'ArticlesLatestMosaic1'     => $arrArticlesMosaic1,
-            'ArticlesLatestMosaic2'     => $arrArticlesMosaic2,
-            'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(),
-            'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
-            'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
-            'Videos'                    => $arrVideos,
-            'ArticlesLatestMosaic3'     => $mainArticleCollection->getItems($numLatestSlider),
-            'SplitArticlesMostViews'    => [
-                $articlesMostViews->getItems( $articlesMostViews->count() / 2),
-                $articlesMostViews
-            ],
-            'Articles'                  => $mainArticleCollection,
-            'Categories'                => $this->factory->createTagCollection()->loadCategories(),
-            'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
-            'Pages'                     => $oPages
-        ]);
+        return
+            $this->twig->render('home/index.html.twig', array_merge($arrTemplateParams, [
+                'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
+                'ArticlesLatestMosaic1'     => $arrArticlesMosaic1,
+                'ArticlesLatestMosaic2'     => $arrArticlesMosaic2,
+                'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(),
+                'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
+                'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
+                'Videos'                    => $arrVideos,
+                'ArticlesLatestMosaic3'     => $mainArticleCollection->getItems($numLatestSlider),
+                'SplitArticlesMostViews'    => [
+                    $articlesMostViews->getItems( $articlesMostViews->count() / 2),
+                    $articlesMostViews
+                ],
+                'Articles'                  => $mainArticleCollection,
+                'Categories'                => $this->factory->createTagCollection()->loadCategories()
+            ]));
     }
 }

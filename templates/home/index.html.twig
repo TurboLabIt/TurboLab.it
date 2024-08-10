@@ -146,38 +146,12 @@
                                 <h3 class="title">Seguici</h3>
                             </div>
                             <div id="social-links">
-                                <a href="{{ path('app_home') }}forum/ucp.php?mode=register">
-                                    <img src="{{ asset('images/social-icons/email.svg') }}" width="48px"
-                                         alt="Forum e newsletter" title="Forum e newsletter" loading="lazy">
-                                </a>
-                                <a href="{{ path('app_feed') }}">
-                                    <img src="{{ asset('images/social-icons/rss.svg') }}"
-                                         width="48px" alt="Feed RSS" title="Feed RSS" loading="lazy">
-                                </a>
-                                <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">
-                                    <img src="{{ asset('images/social-icons/youtube.svg') }}" width="48px"
-                                         alt="YouTube" title="YouTube" loading="lazy">
-                                </a>
-                                <a href="https://t.me/turbolab" target="_blank">
-                                    <img src="{{ asset('images/social-icons/telegram.svg') }}" width="48px"
-                                         alt="Telegram" title="Telegram" loading="lazy">
-                                </a>
-                                <a href="https://www.facebook.com/TurboLab.it" target="_blank">
-                                    <img src="{{ asset('images/social-icons/facebook.svg') }}" width="48px"
-                                         alt="Facebook" title="Facebook" loading="lazy">
-                                </a>
-                                <a href="https://twitter.com/TurboLabIt" target="_blank">
-                                    <img src="{{ asset('images/social-icons/x-twitter.svg') }}" width="48px"
-                                         alt="X (Twitter)" title="X (Twitter)" loading="lazy">
-                                </a>
-                                <a href="https://github.com/TurboLabIt/" target="_blank">
-                                    <img src="{{ asset('images/social-icons/github.svg') }}" width="48px"
-                                         alt="GitHub" title="GitHub" loading="lazy">
-                                </a>
-                                <a href="https://linkedin.com/company/turbolabit" target="_blank">
-                                    <img src="{{ asset('images/social-icons/linkedin.svg') }}" width="48px"
-                                         alt="LinkedIn" title="LinkedIn" loading="lazy">
-                                </a>
+                                {% for Link in FrontendHelper.ownFollowUsPages|merge(FrontendHelper.socialMediaPages) %}
+                                    <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
+                                        <img src="{{ asset(Link.icon) }}" width="48px"
+                                             alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
+                                    </a>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="trending-most-view mt-25">

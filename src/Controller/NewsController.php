@@ -49,14 +49,16 @@ class NewsController extends BaseController
             $metaTitle     .= " - Pagina $page";
         }
 
-        return $this->twig->render('news/index.html.twig', [
-            'metaTitle'         => $metaTitle,
-            'metaCanonicalUrl'  => $this->generateUrl('app_news', $arrPageParam, UrlGeneratorInterface::ABSOLUTE_URL),
-            'activeMenu'        => "news",
-            'Articles'          => $articleCollection,
-            'Pages'             => $oPages,
-            'currentPage'       => $page,
-            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
-        ]);
+        return
+            $this->twig->render('news/index.html.twig', [
+                'metaTitle'         => $metaTitle,
+                'metaCanonicalUrl'  => $this->generateUrl('app_news', $arrPageParam, UrlGeneratorInterface::ABSOLUTE_URL),
+                'activeMenu'        => "news",
+                'FrontendHelper'    => $this->frontendHelper,
+                'Articles'          => $articleCollection,
+                'Pages'             => $oPages,
+                'currentPage'       => $page,
+                'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
+            ]);
     }
 }
