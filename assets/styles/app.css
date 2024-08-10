@@ -13,3 +13,7 @@ body {
 .all-post-area {
     padding-bottom: 0px;
 }
+
+.title {
+    text-transform: none;
+}
