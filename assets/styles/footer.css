@@ -1,0 +1,17 @@
+footer .site-description {
+    color: white;
+    margin-top: 10px;
+}
+
+.footer-copyright .copyright-item p {
+    color: white;
+}
+
+.footer-copyright .copyright-item p a {
+    color: white;
+    text-decoration: underline;
+}
+
+.partner-container {
+    border-right: none;
+}

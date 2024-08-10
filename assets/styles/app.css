@@ -1,25 +1,9 @@
 @import 'glow.css';
+@import 'footer.css';
+
 
 body {
     background-color: lightgray;
-}
-
-footer .site-description {
-    color: white;
-    margin-top: 10px;
-}
-
-.footer-copyright .copyright-item p {
-    color: white;
-}
-
-.footer-copyright .copyright-item p a {
-    color: white;
-    text-decoration: underline;
-}
-
-.partner-container {
-    border-right: none;
 }
 
 .tli-video-thumb {
@@ -28,61 +12,4 @@ footer .site-description {
 
 .all-post-area {
     padding-bottom: 0px;
-}
-
-.trending-news-item p.text > a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-}
-
-.tli-uniform-slider-image {
-    height: 250px !important;
-    object-fit: cover !important;
-}
-
-.tli-uniform-mosaic-image {
-    width: 100px !important;
-    height: 100px !important;
-    object-fit: cover !important;
-}
-
-.tli-mosaic-post-meta {
-    margin-bottom: 10px;
-}
-
-.tli-mosaic-post-meta .tli-meta-category {
-    color: #1091FF;
-    font-weight: 500;
-    font-size: 12px;
-}
-
-.tli-mosaic-post-meta .tli-meta-slash {
-    font-weight: 500;
-}
-
-.tli-mosaic-post-meta .tli-meta-date,
-.tli-mosaic-post-meta .tli-meta-comments-num,
-.tli-mosaic-post-meta .tli-meta-authors {
-    font-size: 12px;
-    font-weight: 400;
-    color: #515A60;
-}
-
-.tli-mosaic-post-meta .tli-meta-authors a {
-    color: #1091FF;
-}
-
-.gallery_item.gallery_item-style-2 {
-    margin-top: 0px !important;
-}
-
-.trending-right-sidebar .tli-mosaic-post-meta {
-    margin-bottom: 0px;
-}
-
-.slick-arrow {
-    padding: 0px;
 }
