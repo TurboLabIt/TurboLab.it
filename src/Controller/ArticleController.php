@@ -2,27 +2,12 @@
 namespace App\Controller;
 
 use App\Service\Cms\Image;
-use App\Service\Cms\Article;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Twig\Environment;
 
 
 class ArticleController extends BaseController
 {
-    public function __construct(
-        protected Article $article,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected Environment $twig
-    )
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
-
-
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]+-[1-9]+[0-9]*>}', name: 'app_article')]
     public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {

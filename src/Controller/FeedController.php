@@ -1,29 +1,14 @@
 <?php
 namespace App\Controller;
 
-use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Twig\Environment;
 
 
 class FeedController extends BaseController
 {
     const bool DISPLAY_AS_HTML = false;
-
-
-    public function __construct(
-        protected ArticleCollection $articleCollection,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected Environment $twig
-    )
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
 
 
     #[Route('/feed', name: 'app_feed')]
@@ -34,7 +19,10 @@ class FeedController extends BaseController
             "description"   => "Questo feed eroga articoli più recenti pubblicati in home page"
         ];
 
-        return $this->sendRssResponse( "app_feed", $arrData, $this->articleCollection->loadLatestPublished(...) );
+        return
+            $this->sendRssResponse(
+                "app_feed", $arrData, $this->factory->createArticleCollection()->loadLatestPublished(...)
+            );
     }
 
 
@@ -47,7 +35,10 @@ class FeedController extends BaseController
             "fullFeed"      => true,
         ];
 
-        return $this->sendRssResponse( "app_feed_fullfeed", $arrData, $this->articleCollection->loadLatestPublished(...) );
+        return
+            $this->sendRssResponse(
+                "app_feed_fullfeed", $arrData, $this->factory->createArticleCollection()->loadLatestPublished(...)
+            );
     }
 
 
@@ -61,7 +52,10 @@ class FeedController extends BaseController
             "description"   => "Questo feed eroga i contenuti che gli autori hanno indicato come completati, ma che non sono ancora stati pubblicati",
         ];
 
-        return $this->sendRssResponse( "app_feed_new_unpublished", $arrData, $this->articleCollection->loadLatestReadyForReview(...) );
+        return
+            $this->sendRssResponse(
+                "app_feed_new_unpublished", $arrData, $this->factory->createArticleCollection()->loadLatestReadyForReview(...)
+            );
     }
 
 
@@ -112,7 +106,7 @@ class FeedController extends BaseController
     {
         $twigFile = static::DISPLAY_AS_HTML ? 'feed/rss.html.twig' : 'feed/rss.xml.twig';
         $xml = $this->twig->render($twigFile, array_merge($arrFeedData, [
-            "Articles"  => $this->articleCollection
+            "Articles"  => $this->factory->createArticleCollection()
         ]));
 
         return $xml;

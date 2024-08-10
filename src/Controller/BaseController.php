@@ -1,8 +1,15 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\Paginator;
+use App\Service\Factory;
+use App\Service\YouTubeChannelApi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Twig\Environment;
 
 
 abstract class BaseController extends AbstractController
@@ -11,6 +18,16 @@ abstract class BaseController extends AbstractController
 
     protected bool $cacheIsDisabled = false;
     protected Request $request;
+
+
+    public function __construct(
+        protected Factory $factory, protected Paginator $paginator,
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
+        protected YouTubeChannelApi $YouTubeChannel, protected Environment $twig
+    )
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     protected function isCachable() : bool

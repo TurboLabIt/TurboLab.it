@@ -1,29 +1,14 @@
 <?php
 namespace App\Controller;
 
-use App\Service\Cms\Paginator;
-use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Twig\Environment;
 
 
 class NewsController extends BaseController
 {
-    public function __construct(
-        protected ArticleCollection $articleCollection, protected Paginator $paginator,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected Environment $twig
-    )
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
-
 
     #[Route('/news', name: 'app_news')]
     public function index(): Response
@@ -89,10 +74,11 @@ class NewsController extends BaseController
 
     protected function buildHtml(?int $page) : Response|string
     {
-        $this->articleCollection->loadLatestNewsPublished($page);
+        $articleCollection = $this->factory->createArticleCollection();
+        $articleCollection->loadLatestNewsPublished($page);
 
         $this->paginator
-            ->setTotalElementsNum( $this->articleCollection->countTotalBeforePagination() )
+            ->setTotalElementsNum( $articleCollection->countTotalBeforePagination() )
             ->setCurrentPageNum($page)
             ->build('app_news', [], 'app_news_paginated', ['page' => $page]);
 
@@ -114,7 +100,7 @@ class NewsController extends BaseController
         return $this->twig->render('home/index-wireframe.html.twig', [
             'metaTitle'         => 'Ultime notizie di tecnologia, sicurezza e truffe su Internet',
             'metaCanonicalUrl'  => $metaCanonicalUrl,
-            'Articles'          => $this->articleCollection,
+            'Articles'          => $articleCollection,
             'Paginator'         => $this->paginator
         ]);
     }

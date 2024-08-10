@@ -14,8 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class ImageController extends BaseController
 {
-    public function __construct(protected Image $image, protected ImageCollection $imageCollection)
-    { }
+    public function __construct(protected Image $image, protected ImageCollection $imageCollection) {}
 
 
     #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]

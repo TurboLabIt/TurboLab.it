@@ -1,32 +1,15 @@
 <?php
 namespace App\Controller;
 
-use App\Service\Cms\Paginator;
-use App\Service\Factory;
-use App\Service\YouTubeChannelApi;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
-use Twig\Environment;
 
 
 class HomeController extends BaseController
 {
-    public function __construct(
-        protected Factory $factory, protected Paginator $paginator,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected YouTubeChannelApi $YouTubeChannel, protected Environment $twig
-    )
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
-
-
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
