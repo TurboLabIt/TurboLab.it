@@ -193,7 +193,7 @@ class ArticleRepository extends BaseCmsRepository
                     ->setParameter('formatNews', Article::FORMAT_NEWS)
                 ->andWhere('t.publishingStatus = :published')
                     ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
-                ->andWhere('t.publishingDate <= CURRENT_TIMESTAMP')
+                ->andWhere('t.publishedAt <= CURRENT_TIMESTAMP()')
                 ->orderBy('t.publishedAt', 'DESC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
