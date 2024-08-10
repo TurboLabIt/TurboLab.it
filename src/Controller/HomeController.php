@@ -63,9 +63,9 @@ class HomeController extends BaseController
                 'metaCanonicalUrl'          => $metaCanonicalUrl,
                 'activeMenu'                => 'home',
                 'Articles'                  => $mainArticleCollection,
-                'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
                 'Pages'                     => $oPages,
                 'currentPage'               => $page,
+                'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors()
             ]);
         }
 

@@ -1,5 +1,7 @@
 {% extends 'archive/index.html.twig' %}
 
+{% block metaDescription %}Articoli, guide, notizie che riguardano {{ Tag.titleFormatted }}{% endblock %}
+
 {% block breadcrumb %}
 
     {% if currentPage < 2 %}

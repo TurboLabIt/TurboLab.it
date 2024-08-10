@@ -38,4 +38,5 @@ abstract class BaseServiceEntity
 
     public function getId() : ?int { return $this->entity->getId(); }
     public function getTitle() : ?string { return $this->entity->getTitle(); }
+    public function getTitleFormatted() : ?string { return mb_ucfirst( $this->getTitle() ); }
 }

@@ -45,17 +45,15 @@ class TagController extends BaseController
             ->countOneView();
 
         return $this->render('tag/index.html.twig', [
-            'metaTitle'         => mb_strtoupper($tag->getTitle()) . ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page"),
-            'metaDescription'   => "Articoli, guide, notizie che riguardano: " . $tag->getTitle(),
+            'metaTitle'         => $tag->getTitleFormatted() . ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page"),
             'metaCanonicalUrl'  => $tag->getUrl($page),
-            'metaOgType'        => 'article',
             'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
             'activeMenu'        => $tag->getActiveMenu(),
             'Tag'               => $tag,
             'Articles'          => $taggedArticles,
             'Pages'             => $oPages,
             'currentPage'       => $page,
-            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
+            'GuidesForAuthors'  => $this->factory->createArticleCollection()->loadGuidesForAuthors()
         ]);
     }
 
