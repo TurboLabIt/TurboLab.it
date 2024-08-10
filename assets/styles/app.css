@@ -82,3 +82,7 @@ footer .site-description {
 .trending-right-sidebar .tli-mosaic-post-meta {
     margin-bottom: 0px;
 }
+
+.slick-arrow {
+    padding: 0px;
+}
