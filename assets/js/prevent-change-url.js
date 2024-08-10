@@ -7,3 +7,10 @@ jQuery('.prevent-change-url').click(function() {
         history.replaceState(null, null, originalUrl);
     }, 500);
 });
+
+
+jQuery('a.disabled-link').click(function(event) {
+
+    event.preventDefault();
+    return false;
+});

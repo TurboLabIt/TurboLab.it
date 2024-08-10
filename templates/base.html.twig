@@ -128,7 +128,7 @@
                                     </li>
                                     <li><a class="{{ activeMenu == 'news' ? 'active' : '' }}" href="{{ path('app_news') }}"><i class="fa-solid fa-newspaper"></i> News</a></li>
                                     <li class="has-sub">
-                                        <a class="{{ activeMenu == 'guide' ? 'active' : '' }}" href="/"><i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i></a>
+                                        <a class="{{ activeMenu == 'guide' ? 'active' : '' }} disabled-link" href="#"><i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i></a>
                                         <ul>
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'filesharing-p2p-peer-to-peer-2914'}) }}">Filesharing peer-to-peer</a></li>
                                             <li><a href="{{ path('app_tag', {tagSlugDashId: 'sicurezza-13'}) }}">Sicurezza</a></li>

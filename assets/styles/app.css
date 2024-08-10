@@ -17,3 +17,7 @@ body {
 .title {
     text-transform: none;
 }
+
+a.disabled-link {
+    cursor: default;
+}
