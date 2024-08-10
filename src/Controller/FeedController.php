@@ -8,37 +8,26 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FeedController extends BaseController
 {
-    const bool DISPLAY_AS_HTML = false;
-
-
     #[Route('/feed', name: 'app_feed')]
     public function main() : Response
     {
-        $arrData = [
-            "title"         => "TurboLab.it | Feed Principale",
-            "description"   => "Questo feed eroga articoli più recenti pubblicati in home page"
-        ];
-
         return
-            $this->sendRssResponse(
-                "app_feed", $arrData, $this->factory->createArticleCollection()->loadLatestPublished(...)
-            );
+            $this->sendRssResponse("app_feed", [
+                "title"         => "TurboLab.it | Feed Principale",
+                "description"   => "Questo feed eroga articoli più recenti pubblicati in home page"
+            ], 'loadLatestPublished');
     }
 
 
     #[Route('/feed/fullfeed', name: 'app_feed_fullfeed')]
     public function fullFeed(): Response
     {
-        $arrData = [
-            "title"         => "TurboLab.it | Full Feed",
-            "description"   => "Questo feed eroga i nuovi articoli in forma completa",
-            "fullFeed"      => true,
-        ];
-
         return
-            $this->sendRssResponse(
-                "app_feed_fullfeed", $arrData, $this->factory->createArticleCollection()->loadLatestPublished(...)
-            );
+            $this->sendRssResponse("app_feed_fullfeed", [
+                "title"         => "TurboLab.it | Full Feed",
+                "description"   => "Questo feed eroga i nuovi articoli in forma completa",
+                "fullFeed"      => true
+            ], 'loadLatestPublished');
     }
 
 
@@ -46,20 +35,15 @@ class FeedController extends BaseController
     public function newUnpublished(): Response
     {
         $this->cacheIsDisabled = true;
-
-        $arrData    = [
-            "title"         => "TurboLab.it | Nuovi contenuti completati, in attesa di pubblicazione",
-            "description"   => "Questo feed eroga i contenuti che gli autori hanno indicato come completati, ma che non sono ancora stati pubblicati",
-        ];
-
         return
-            $this->sendRssResponse(
-                "app_feed_new_unpublished", $arrData, $this->factory->createArticleCollection()->loadLatestReadyForReview(...)
-            );
+            $this->sendRssResponse("app_feed_new_unpublished", [
+                "title"         => "TurboLab.it | Nuovi contenuti completati, in attesa di pubblicazione",
+                "description"   => "Questo feed eroga i contenuti che gli autori hanno indicato come completati, ma che non sono ancora stati pubblicati"
+            ], 'loadLatestReadyForReview');
     }
 
 
-    protected function sendRssResponse(string $routeName, array $arrData, callable $fxLoadArticle) : Response
+    protected function sendRssResponse(string $routeName, array $arrData, callable|string $fxLoadArticle) : Response
     {
         if( !array_key_exists('selfUrl', $arrData) ) {
             $arrData["selfUrl"] = strtok($this->request->getUri(), '?');
@@ -69,46 +53,39 @@ class FeedController extends BaseController
             $arrData["fullFeed"] = false;
         }
 
-        if( !$this->isCachable() ) {
+        $that = $this;
 
-            $fxLoadArticle();
-            $buildXmlResult = $this->buildXml($arrData);
+        $txtResponseBody =
+            $this->cache->get($routeName, function(CacheItem $cache) use($routeName, $arrData, $that, $fxLoadArticle) {
 
-        } else {
+                $txtResponseBody =
+                    $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
+                        "activeMenu"    => "feed",
+                        "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
+                    ]));
 
-            $buildXmlResult =
-                $this->cache->get($routeName, function(CacheItem $cache) use($routeName, $arrData, $fxLoadArticle) {
+                if( $that->isCachable() ) {
 
-                    $cache->tag([$routeName, "app_feed", "app_home"]);
                     $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $cache->tag([$routeName, "app_feed"]);
 
-                    $fxLoadArticle();
-                    return $this->buildXml($arrData);
-                });
-        }
+                } else {
 
-        $response = new Response($buildXmlResult);
+                    $cache->expiresAfter(-1);
+                }
 
-        if( !static::DISPLAY_AS_HTML) {
-            /**
-             * 📚 https://validator.w3.org/feed/docs/warning/UnexpectedContentType.html
-             * RSS feeds should be served as application/rss+xml. Alternatively,
-             * for compatibility with widely-deployed web browsers, [...] application/xml
-             */
-            $response->headers->set('Content-Type', 'application/xml');
-        }
+                return $txtResponseBody;
+            });
+
+        $response = new Response($txtResponseBody);
+
+        /**
+         * 📚 https://validator.w3.org/feed/docs/warning/UnexpectedContentType.html
+         * RSS feeds should be served as application/rss+xml. Alternatively,
+         * for compatibility with widely-deployed web browsers, [...] application/xml
+         */
+        $response->headers->set('Content-Type', 'application/xml');
 
         return $response;
-    }
-
-
-    protected function buildXml(array $arrFeedData) : string
-    {
-        $twigFile = static::DISPLAY_AS_HTML ? 'feed/rss.html.twig' : 'feed/rss.xml.twig';
-        $xml = $this->twig->render($twigFile, array_merge($arrFeedData, [
-            "Articles"  => $this->factory->createArticleCollection()
-        ]));
-
-        return $xml;
     }
 }

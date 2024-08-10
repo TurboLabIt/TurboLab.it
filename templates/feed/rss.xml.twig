@@ -52,7 +52,7 @@
                 {% if Article.commentsUrl  %}
                     <comments>{{ Article.commentsUrl }}</comments>
                 {% endif %}
-                <guid isPermaLink="false">{{ Article.getFeedGuId }}</guid>
+                <guid isPermaLink="false">{{ Article.feedGuId }}</guid>
                 <pubDate>{{ Article.publishedAt|date('r') }}</pubDate>
                 <source url="{{ selfUrl }}">{{ title }}</source>
             </item>
