@@ -1,1 +1,18 @@
-{% extends 'home/index.html.twig' %}
+{% extends 'archive/index.html.twig' %}
+
+{% block metaDescription %}Scopri le ultime notizie e aggiornamenti su tecnologia, sicurezza informatica e truffe online. Rimani informato sulle novità digitali, proteggi la tua privacy e naviga in sicurezza.{% endblock %}
+
+{% block breadcrumb %}
+
+    {% if currentPage < 2 %}
+
+        <li class="breadcrumb-item active">News</li>
+
+    {% else %}
+
+        <li class="breadcrumb-item"><a href="{{ path('app_news') }}">News</a></li>
+        {{ parent() }}
+
+    {% endif %}
+
+{% endblock %}
