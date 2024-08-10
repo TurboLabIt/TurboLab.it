@@ -100,6 +100,7 @@ class NewsController extends BaseController
         return $this->twig->render('home/index-wireframe.html.twig', [
             'metaTitle'         => 'Ultime notizie di tecnologia, sicurezza e truffe su Internet',
             'metaCanonicalUrl'  => $metaCanonicalUrl,
+            'activeMenu'        => 'news',
             'Articles'          => $articleCollection,
             'Paginator'         => $this->paginator
         ]);

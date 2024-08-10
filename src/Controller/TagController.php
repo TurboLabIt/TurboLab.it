@@ -50,6 +50,7 @@ class TagController extends BaseController
             'metaCanonicalUrl'  => $tag->getUrl($page),
             'metaOgType'        => 'article',
             'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
+            'activeMenu'        => $tag->getActiveMenu(),
             'Tag'               => $tag,
             'Articles'          => $taggedArticles,
             'Pages'             => $oPages,
@@ -62,8 +63,8 @@ class TagController extends BaseController
     #[Route('/tag/{tag<[^/]+>}/{page<[0-9]*>}', name: 'app_tag_legacy')]
     public function legacyUrl(string $tag, ?string $page = null) : Response
     {
-        $page = empty($page) ? null : (int)$page;
-        $this->tag->loadByTitle($tag);
-        return $this->redirect($this->tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
+        $page   = empty($page) ? null : (int)$page;
+        $tag    = $this->factory->createTag()->loadByTitle($tag);
+        return $this->redirect($tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
     }
 }

@@ -84,6 +84,7 @@ class HomeController extends BaseController
 
             return $this->twig->render('archive/index.html.twig', [
                 'metaCanonicalUrl'          => $metaCanonicalUrl,
+                'activeMenu'                => 'home',
                 'Articles'                  => $mainArticleCollection,
                 'GuidesForAuthors'          => $this->factory->createArticleCollection()->loadGuidesForAuthors(),
                 'Pages'                     => $oPages,
@@ -118,6 +119,7 @@ class HomeController extends BaseController
 
         return $this->twig->render('home/index.html.twig', [
             'metaCanonicalUrl'          => $metaCanonicalUrl,
+            'activeMenu'                => 'home',
             'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
             'ArticlesLatestMosaic1'     => $arrArticlesMosaic1,
             'ArticlesLatestMosaic2'     => $arrArticlesMosaic2,

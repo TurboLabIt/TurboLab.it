@@ -76,6 +76,22 @@ class Tag extends BaseCmsService
     }
 
 
+    public function getActiveMenu() : ?string
+    {
+        // TODO DB-driven activeMenu for tags
+        $activeMenu =
+            match( $this->getId() ) {
+                static::ID_WINDOWS, static::ID_LINUX, static::ID_ANDROID,
+                static::ID_CRYPTOCURRENCIES => $this->getSlug(),
+                // centos, ubuntu
+                1009, 584   => 'linux',
+                default     => 'guide',
+            };
+
+        return $activeMenu;
+    }
+
+
     public function getArticles(?int $page = 1) : ArticleCollection
     {
         if( $this->articlesTagged !== null ) {
