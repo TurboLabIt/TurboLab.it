@@ -21,3 +21,9 @@ body {
 a.disabled-link {
     cursor: default;
 }
+
+.cta-social-top {
+    font-weight: 500;
+    color: #222;
+    margin-right: 5px;
+}
