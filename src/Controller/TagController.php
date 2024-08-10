@@ -10,7 +10,7 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 class TagController extends BaseController
 {
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{page<0|1>}', name: 'app_tag_page_0-1')]
-    public function appTagPage0Or1(string $tagSlugDashId)
+    public function appTagPage0Or1(string $tagSlugDashId) : Response
     {
         return $this->redirectToRoute('app_tag', ["tagSlugDashId" => $tagSlugDashId], Response::HTTP_MOVED_PERMANENTLY);
     }
@@ -45,7 +45,7 @@ class TagController extends BaseController
             ->countOneView();
 
         return $this->render('tag/index.html.twig', [
-            'metaTitle'         => "#" . $tag->getTitle() . ": articoli, guide e news",
+            'metaTitle'         => mb_strtoupper($tag->getTitle()) . ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page"),
             'metaDescription'   => "Articoli, guide, notizie che riguardano: " . $tag->getTitle(),
             'metaCanonicalUrl'  => $tag->getUrl($page),
             'metaOgType'        => 'article',

@@ -5,9 +5,11 @@ use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\YouTubeChannelApi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Twig\Environment;
 
@@ -27,6 +29,36 @@ abstract class BaseController extends AbstractController
     )
     {
         $this->request = $requestStack->getCurrentRequest();
+    }
+
+
+    protected function tliStandardControllerResponse(
+        array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null
+    ) : Response
+    {
+        $page       = empty($page) ? 1 : $page;
+        $cacheKey   = reset($arrCacheTags) . '_page_' . $page;
+        $that       = $this;
+
+        $buildHtmlResult =
+            $this->cache->get($cacheKey, function(CacheItem $cache) use($cacheKey, $that, $fxBuildHtml, $page, $arrCacheTags) {
+
+                $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtml($page) : $fxBuildHtml($page);
+
+                if( is_string($buildHtmlResult) && $that->isCachable() ) {
+
+                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $cache->tag( array_merge([$cacheKey], $arrCacheTags ) );
+
+                } else {
+
+                    $cache->expiresAfter(-1);
+                }
+
+                return $buildHtmlResult;
+            });
+
+        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
     }
 
 

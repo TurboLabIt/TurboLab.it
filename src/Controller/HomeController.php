@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -11,14 +10,11 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 class HomeController extends BaseController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
-    {
-        return $this->indexPaginated(1);
-    }
+    public function index() : Response { return $this->indexPaginated(1); }
 
 
     #[Route('/home/{page<0|1>?}', name: 'app_home_page_0-1')]
-    public function appHomePage0Or1()
+    public function appHomePage0Or1() : Response
     {
         return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY);
     }
@@ -27,27 +23,7 @@ class HomeController extends BaseController
     #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
     public function indexPaginated(?int $page): Response
     {
-        $that = $this;
-        $cacheKey = 'app_home_page_' . $page;
-        $buildHtmlResult =
-            $this->cache->get($cacheKey, function(CacheItem $cache) use($that, $page) {
-
-                $buildHtmlResult = $that->buildHtml($page);
-
-                if( is_string($buildHtmlResult) && $that->isCachable() ) {
-
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cache->tag(["app_home_" . $page, "loadLatestPublished", "loadLatestPublished_" . $page]);
-
-                } else {
-
-                    $cache->expiresAfter(-1);
-                }
-
-                return $buildHtmlResult;
-            });
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
+        return $this->tliStandardControllerResponse(["app_home"], $page);
     }
 
 
@@ -82,7 +58,8 @@ class HomeController extends BaseController
         //
         if( $page > 1 ) {
 
-            return $this->twig->render('archive/index.html.twig', [
+            return $this->twig->render('home/index-paginated.html.twig', [
+                'metaTitle'                 => "Archivio articoli - Pagina " . $page,
                 'metaCanonicalUrl'          => $metaCanonicalUrl,
                 'activeMenu'                => 'home',
                 'Articles'                  => $mainArticleCollection,
