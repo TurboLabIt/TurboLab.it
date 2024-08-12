@@ -34,9 +34,9 @@
         "symfony/validator": "7.0.*",
         "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "7.0.*",
+        "turbolabit/service-entity-plus-bundle": "dev-main",
         "turbolabit/paginatorbundle": "dev-main",
         "turbolabit/php-encryptor": "dev-main",
-        "turbolabit/php-foreachable": "dev-main",
         "turbolabit/php-symfony-basecommand": "dev-main",
         "turbolabit/php-symfony-messenger": "dev-main",
         "twig/cssinliner-extra": "^3.8",
@@ -85,16 +85,6 @@
             "allow-contrib": "true",
             "require": "7.0.*",
             "docker": "false"
-        }
-    },
-    "repositories": {
-        "turbolabit/php-symfony-basecommand": {
-            "type": "git",
-            "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git"
-        },
-        "turbolabit/php-foreachable": {
-            "type": "git",
-            "url": "https://github.com/TurboLabIt/php-foreachable.git"
         }
     },
     "require-dev": {
