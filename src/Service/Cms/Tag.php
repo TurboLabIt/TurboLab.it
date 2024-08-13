@@ -79,6 +79,7 @@ class Tag extends BaseCmsService
             'ipad'      => 'iPad',
             'ipod'      => 'iPod',
             'youtube'   => 'YouTube',
+            'turbolab'  => 'TurboLab'
         ];
 
         $title = str_replace( array_keys($arrSpecialCasesMap), $arrSpecialCasesMap, $title);
