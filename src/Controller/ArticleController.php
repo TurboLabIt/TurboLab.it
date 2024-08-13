@@ -11,7 +11,7 @@ class ArticleController extends BaseController
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]+-[1-9]+[0-9]*>}', name: 'app_article')]
     public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {
-        $article = $this->article->loadBySlugDashId($articleSlugDashId);
+        $article = $this->factory->createArticle()->loadBySlugDashId($articleSlugDashId);
 
         $articleRealUrl = $article->checkRealUrl($tagSlugDashId, $articleSlugDashId);
         if( !empty($articleRealUrl) ) {
@@ -36,7 +36,7 @@ class ArticleController extends BaseController
     #[Route('/{id<[1-9]+[0-9]*>}', name: 'app_article_shorturl')]
     public function shortUrl(int $id) : Response
     {
-        $article = $this->article->load($id);
+        $article = $this->factory->createArticle()->load($id);
         return $this->redirect($article->getUrl(), Response::HTTP_MOVED_PERMANENTLY);
     }
 }
