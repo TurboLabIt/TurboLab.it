@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class NewsTest extends BaseT
 {
-    const NEWS_TOTAL_PAGES = 40;
+    const NEWS_TOTAL_PAGES = 41;
 
 
     public static function newsRedirectionProvider()
@@ -43,7 +43,7 @@ class NewsTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($_ENV["APP_SITE_URL"] . "news", static::NEWS_TOTAL_PAGES);
+            ->internalPaginatorChecker("/news", static::NEWS_TOTAL_PAGES);
     }
 
 
