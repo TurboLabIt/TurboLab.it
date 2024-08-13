@@ -109,35 +109,51 @@
                         <div class="header-menu">
                             <div class="stellarnav">
                                 <ul>
-                                    <li><a class="{{ activeMenu == 'home' ? 'active' : '' }}" href="{{ path('app_home') }}"><i class="fa-solid fa-house"></i> Home</a></li>
-                                    <li class="has-sub"><a href="{{ path('app_home') }}forum"><i class="fa-solid fa-users"></i> Forum... <i class="fa-solid fa-angle-down"></i></a>
+                                    <li>
+                                        <a class="{{ activeMenu == 'home' ? 'active' : '' }}" href="{{ path('app_home') }}">
+                                            <i class="fa-solid fa-house"></i> Home
+                                        </a>
+                                    </li>
+                                    <li class="has-sub">
+                                        <a href="{{ path('app_home') }}forum">
+                                            <i class="fa-solid fa-users"></i> Forum... <i class="fa-solid fa-angle-down"></i>
+                                        </a>
                                         <ul>
                                             <li><a href="{{ path('app_home') }}forum/search.php?search_id=egosearch">I tuoi messaggi</a></li>
                                             <li><a href="{{ path('app_home') }}forum/search.php?search_id=unreadposts">Messaggi non letti</a></li>
                                             <li><a href="{{ path('app_home') }}forum/ucp.php?i=pm&folder=inbox">Messaggi privati</a></li>
                                         </ul>
                                     </li>
-                                    <li><a class="{{ activeMenu == 'windows' ? 'active' : '' }}" href="{{ path('app_tag', {tagSlugDashId: 'windows-10'}) }}"><i class="fa-brands fa-windows"></i> Windows</a></li>
-                                    <li><a class="{{ activeMenu == 'linux' ? 'active' : '' }}" href="{{ path('app_tag', {tagSlugDashId: 'linux-27'}) }}"><i class="fa-brands fa-linux"></i> Linux</a></li>
-                                    <li><a class="{{ activeMenu == 'android' ? 'active' : '' }}" href="{{ path('app_tag', {tagSlugDashId: 'android-28'}) }}"><i class="fa-brands fa-android"></i> Android</a></li>
-                                    <li>
-                                        <a class="{{ activeMenu == 'bitcoin-ethereum-criptovalute' ? 'active' : '' }}" href="{{ path('app_tag', {tagSlugDashId: 'bitcoin-ethereum-criptovalute-4904'}) }}">
-                                            <i class="fa-brands fa-bitcoin"></i> <i class="fa-brands fa-ethereum"></i>
-                                            Bitcoin e cripto
-                                        </a>
-                                    </li>
-                                    <li><a class="{{ activeMenu == 'news' ? 'active' : '' }}" href="{{ path('app_news') }}"><i class="fa-solid fa-newspaper"></i> News</a></li>
+
+                                    {% for Link in FrontendHelper.NavTopCategories %}
+                                        <li>
+                                            <a class="{{ activeMenu == Link.activeMenu ? 'active' : '' }}" href="{{ Link.url }}">
+                                                {% for fa in Link.fa %}
+                                                    <i class="{{ fa }}"></i>
+                                                {% endfor %} &nbsp;{{ Link.name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+
                                     <li class="has-sub">
-                                        <a class="{{ activeMenu == 'guide' ? 'active' : '' }} disabled-link" href="#"><i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i></a>
+                                        <a class="{{ activeMenu == 'guide' ? 'active' : '' }} disabled-link" href="#">
+                                            <i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i>
+                                        </a>
                                         <ul>
-                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'filesharing-p2p-peer-to-peer-2914'}) }}">Filesharing peer-to-peer</a></li>
-                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'sicurezza-13'}) }}">Sicurezza</a></li>
-                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'guida-mercato-640'}) }}">Guide mercato (cosa comprare)</a></li>
-                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'vpn-2942'}) }}">Migliori VPN</a></li>
-                                            <li><a href="{{ path('app_tag', {tagSlugDashId: 'youtube-42'}) }}">YouTube: trucchi e software</a></li>
+                                            {% for Link in FrontendHelper.NavOtherCategories %}
+                                                <li>
+                                                    <a href="{{ Link.url }}">
+                                                        <i class="{{ Link.fa|first }}"></i> &nbsp;{{ Link.name }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
                                         </ul>
                                     </li>
-                                    <li><a href="#contact" class="prevent-change-url"><i class="fa-solid fa-envelope" style="color: #e01b24;"></i> Contatti</a></li>
+                                    <li>
+                                        <a href="#contact" class="prevent-change-url">
+                                            <i class="fa-solid fa-envelope" style="color: #e01b24;"></i> Contatti
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -162,10 +178,12 @@
                                 <img src="{{ asset('images/logo/turbolab.it.png') }}" alt="Logo TurboLab.it">
                             </a>
                             <ul>
-                                {% for Link in FrontendHelper.ownFollowUsPages|merge(FrontendHelper.socialMediaPages) %}
+                                {% for Link in FrontendHelper.FollowUsLinks %}
                                     <li>
                                         <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %} title="{{ Link.name }}">
-                                            <i class="{{ Link.fa }} fa-xl"></i>
+                                            {% for fa in Link.fa %}
+                                                <i class="{{ fa }} fa-xl"></i>
+                                            {% endfor %}
                                         </a>
                                     </li>
                                 {% endfor %}

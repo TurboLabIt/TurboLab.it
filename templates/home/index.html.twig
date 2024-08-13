@@ -146,7 +146,7 @@
                                 <h3 class="title">Seguici</h3>
                             </div>
                             <div id="social-links">
-                                {% for Link in FrontendHelper.ownFollowUsPages|merge(FrontendHelper.socialMediaPages) %}
+                                {% for Link in FrontendHelper.FollowUsLinks %}
                                     <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
                                         <img src="{{ asset(Link.icon) }}" width="48px"
                                              alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
@@ -468,24 +468,22 @@
 
 
                         <div class="Categories-post mt-40">
-
                             <div class="section-title d-flex justify-content-between align-items-center">
                                 <h3 class="title">Categorie</h3>
                             </div>
-
                             <div>
-                                {% for Tag in Categories %}
+                                {% for Link in FrontendHelper.NavCategories %}
                                     <div class="item">
                                         <div class="Categories-content">
-                                            <a href="{{ Tag.url }}">
-                                                <span>#{{ Tag.title }}</span>
+                                            <a href="{{ Link.url }}">
+                                                <i class="{{ Link.fa|first }}"></i> &nbsp;{{ Link.name }}
                                             </a>
                                         </div>
                                     </div>
                                 {% endfor %}
                             </div>
-
                         </div>
+
                     </div>
                 </div>
             </div>
