@@ -38,11 +38,11 @@
 
             {% else %}
 
-                <p class="tli-center">
+                <p>
                     <strong><i class="fa-solid fa-check" style="color: #63E6BE;"></i> Dis-iscrizione dalla newsletter avvenuta con successo!</strong>
                 </p>
 
-                <p class="tli-center">L'indirizzo <samp>{{ User.email }}</samp> non riceverà più la newsletter.</p>
+                <p>L'indirizzo <samp>{{ User.email }}</samp> non riceverà più la newsletter.</p>
 
                 <hr>
 
@@ -67,7 +67,7 @@
                 </p>
 
             {% endif %}
-        </>
+        </div>
     </section>
 
 {% endblock %}

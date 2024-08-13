@@ -32,10 +32,7 @@ a.disabled-link {
     padding-bottom: 0px;
 }
 
-.tli-fullpage-message p {
+.tli-fullpage-message {
     font-size: large;
-}
-
-.tli-center {
     text-align: center;
 }
