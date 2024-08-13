@@ -2,9 +2,8 @@
 namespace App\Tests\Smoke;
 
 use App\Entity\Cms\Tag as TagEntity;
-use App\Service\Cms\HtmlProcessor;
 use App\Service\Cms\Tag;
-use App\Service\CmsFactory;
+use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
@@ -143,14 +142,11 @@ class TagTest extends BaseT
             static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest(10);
         }
 
-        /** @var CmsFactory $cmsFactory */
-        $cmsFactory = static::getService("App\\Service\\Factory");
-
         /** @var TagEntity $entity */
         foreach(static::$arrTagEntity as $entity) {
             yield [[
                 "entity"    => $entity,
-                "service"   => $cmsFactory->createTag($entity)
+                "service"   => static::getService("App\\Service\\Factory")->createTag($entity)
             ]];
         }
     }

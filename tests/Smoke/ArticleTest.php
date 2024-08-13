@@ -4,7 +4,6 @@ namespace App\Tests\Smoke;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
-use App\Service\CmsFactory;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
@@ -141,14 +140,11 @@ class ArticleTest extends BaseT
             static::$arrArticleEntity = static::getEntityManager()->getRepository(ArticleEntity::class)->findLatestPublished();
         }
 
-        /** @var CmsFactory $cmsFactory */
-        $cmsFactory = static::getService("App\\Service\\Factory");
-
         /** @var ArticleEntity $entity */
         foreach(static::$arrArticleEntity as $entity) {
             yield [[
                 "entity"    => $entity,
-                "service"   => $cmsFactory->createArticle($entity)
+                "service"   => static::getService("App\\Service\\Factory")->createArticle($entity)
             ]];
         }
     }
