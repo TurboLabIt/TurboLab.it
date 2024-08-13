@@ -27,3 +27,7 @@ a.disabled-link {
     color: #222;
     margin-right: 5px;
 }
+
+.about-item-area {
+    padding-bottom: 0px;
+}
