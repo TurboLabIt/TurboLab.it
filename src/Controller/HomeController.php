@@ -110,8 +110,8 @@ class HomeController extends BaseController
                 'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
                 'ArticlesLatestMosaic1'     => $arrArticlesMosaic1,
                 'ArticlesLatestMosaic2'     => $arrArticlesMosaic2,
-                'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(),
-                'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(),
+                'TopicsLatest'              => $this->factory->createTopicCollection()->loadLatest(9),
+                'ArticlesLatestSecurity'    => $this->factory->createArticleCollection()->loadLatestSecurityNews(7),
                 'MiddleSlideShow'           => $arrArticlesMiddleSlideShow,
                 'Videos'                    => $arrVideos,
                 'ArticlesLatestMosaic3'     => $mainArticleCollection->getItems($numLatestSlider),
@@ -119,8 +119,7 @@ class HomeController extends BaseController
                     $articlesMostViews->getItems( $articlesMostViews->count() / 2),
                     $articlesMostViews
                 ],
-                'Articles'                  => $mainArticleCollection,
-                'Categories'                => $this->factory->createTagCollection()->loadCategories()
+                'Articles'                  => $mainArticleCollection
             ]));
     }
 }

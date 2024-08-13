@@ -3,34 +3,13 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ParameterType;
 
 
-/**
- * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
- * @extends ServiceEntityRepository<User>
- *
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class UserRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = User::class;
-
-
-    public function loadAll()
-    {
-        $this->cachedRs =
-            $this->createQueryBuilder('t', 't.user_id')
-                ->orderBy('t.user_id')
-                ->getQuery()
-                ->getResult();
-
-        return $this->cachedRs;
-    }
+    const string ENTITY_CLASS       = User::class;
+    const string DEFAULT_INDEXED_BY = 't.user_id';
 
 
     public function findOneByPhpBBCookiesValues(int $userId, string $sessionId, string $sessionKey)

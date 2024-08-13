@@ -15,7 +15,7 @@ abstract class BaseCmsService extends BaseServiceEntity
         $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
 
         $this->clear();
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->findComplete($entityId);
+        $entity = $this->em->getRepository(static::ENTITY_CLASS)->getOneById($entityId);
 
         if( empty($entity) ) {
 

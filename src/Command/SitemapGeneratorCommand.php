@@ -272,7 +272,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $this->fxOK("##$url## added");
 
         $this->fxTitle("Adding Forums...");
-        $arrForums = $this->entityManager->getRepository(Forum::class)->findAll();
+        $arrForums = $this->entityManager->getRepository(Forum::class)->getAll();
         $countForums = count($arrForums);
         $this->fxOK("$countForums forum(s) loaded");
 

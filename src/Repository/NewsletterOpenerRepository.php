@@ -3,20 +3,12 @@ namespace App\Repository;
 
 use App\Entity\NewsletterOpener;
 use App\Entity\PhpBB\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
 
-/**
- * @extends ServiceEntityRepository<NewsletterOpener>
- *
- * @method NewsletterOpener|null find($id, $lockMode = null, $lockVersion = null)
- * @method NewsletterOpener|null findOneBy(array $criteria, array $orderBy = null)
- * @method NewsletterOpener[]    findAll()
- * @method NewsletterOpener[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
+
 class NewsletterOpenerRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = NewsletterOpener::class;
+    const string ENTITY_CLASS = NewsletterOpener::class;
 
 
     public function getByUserOrNew(User $user) : NewsletterOpener

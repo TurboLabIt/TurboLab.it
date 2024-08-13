@@ -3,25 +3,20 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\Article;
 use App\Entity\Cms\Tag;
+use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 
-/**
- * @extends ServiceEntityRepository<Article>
- *
- * @method Article|null find($id, $lockMode = null, $lockVersion = null)
- * @method Article|null findOneBy(array $criteria, array $orderBy = null)
- * @method Article[]    findAll()
- * @method Article[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class ArticleRepository extends BaseCmsRepository
+class ArticleRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = Article::class;
+    const string ENTITY_CLASS       = Article::class;
+    const string DEFAULT_ORDER_BY   = 't.publishedAt';
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected int $itemsPerPage;
+    //</editor-fold>
 
 
     public function __construct(ManagerRegistry $registry, Paginator $paginator)
@@ -31,11 +26,11 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
-    //<editor-fold defaultstate="collapsed" desc="** QUERY BUILDERS **">
+    //<editor-fold defaultstate="collapsed" desc="*** 👷 Query Builders ***">
     protected function getQueryBuilderComplete() : QueryBuilder
     {
         return
-            $this->getQueryBuilder()
+            parent::getQueryBuilderComplete()
                 // authors
                 ->leftJoin('t.authors', 'authorsJunction')
                 ->leftJoin('authorsJunction.user', 'user')
@@ -43,49 +38,55 @@ class ArticleRepository extends BaseCmsRepository
                 ->leftJoin('t.tags', 'tagsJunction')
                 ->leftJoin('tagsJunction.tag', 'tag')
                 // files
-                ->leftJoin('t.files', 'filesJunction')
-                ->leftJoin('filesJunction.file', 'file')
+                //->leftJoin('t.files', 'filesJunction')
+                //->leftJoin('filesJunction.file', 'file')
                 // comments
                 ->leftJoin('t.commentsTopic', 'commentsTopic')
                 //
-                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag', 'filesJunction', 'file', 'commentsTopic');
+                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag',/* 'filesJunction', 'file',*/ 'commentsTopic');
+    }
+
+
+    protected function getQueryBuilderCompleteWherePublishingStatus(
+        array|int $publishingStatus = Article::PUBLISHING_STATUS_PUBLISHED, bool $excludeUpcoming = true
+    ) : QueryBuilder
+    {
+        return $this->addWherePublishingStatus($this->getQueryBuilderComplete(), $publishingStatus, $excludeUpcoming);
+    }
+
+
+    protected function addWherePublishingStatus(
+        QueryBuilder $queryBuilder, array|int $publishingStatus = Article::PUBLISHING_STATUS_PUBLISHED,
+        bool $excludeUpcoming = true
+    ) : QueryBuilder
+    {
+        if( is_array($publishingStatus) ) {
+
+            $queryBuilder->andWhere('t.publishingStatus IN(:publishingStatus)');
+
+        } else {
+
+            $queryBuilder->andWhere('t.publishingStatus = :publishingStatus');
+        }
+
+        $queryBuilder->setParameter('publishingStatus', $publishingStatus);
+
+        if($excludeUpcoming) {
+            $queryBuilder->andWhere('t.publishedAt <= CURRENT_TIMESTAMP()');
+        }
+
+        return $queryBuilder;
     }
     //</editor-fold>
 
 
-    public function findAllPublished() : array
+    public function findLatestPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
-        return
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.publishingStatus = :published')
-                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
-                ->orderBy('t.id', 'ASC')
-                ->getQuery()
-                ->getResult();
-    }
-
-
-    public function findByTag(Tag $tag, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
-    {
-        // we need to extract "having at least this tag" first
-        // otherwise, the following call to getQueryBuilderComplete() would load only "this tag" in the articles,
-        // excluding other, potentially more important, tags. This would screw Article->getUrl(). Example of the bug:
-        // "Come dis/iscriversi dalla newsletter" /newsletter-turbolab.it-1349/something-402
-        // when listed in https://turbolab.it/turbolab.it-1
-        // had the wrong URL /turbolab.it-1/something-402
-        $sqlSelect = "SELECT article_id FROM article_tag WHERE tag_id = :tagId";
-        $arrParams = [ "tagId" => $tag->getId() ];
-
-        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, $arrParams);
-        if( empty($qb) ) {
-            return null;
-        }
-
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
-            $qb
+            $this->getQueryBuilderCompleteWherePublishingStatus()
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -95,18 +96,38 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
-    public function findLatestPublished(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findAllPublished() : array
     {
+        return
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->getQuery()
+                ->getResult();
+    }
+
+
+    public function findByTag(Tag $tag, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this tag" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this tag" in the articles,
+        // excluding other tags. This would also screw Article->getUrl(). Example of the bug:
+        // "Come dis/iscriversi dalla newsletter" /newsletter-turbolab.it-1349/something-402
+        // when listed in https://turbolab.it/turbolab.it-1
+        // had the wrong URL /turbolab.it-1/something-402
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_tag WHERE tag_id = :tagId",
+                [ "tagId" => $tag->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.publishingStatus = :published')
-                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
-                ->andWhere('t.publishedAt <= CURRENT_TIMESTAMP()')
-                ->orderBy('t.publishedAt', 'DESC')
-                ->addOrderBy('t.updatedAt', 'DESC')
+            $this->addWherePublishingStatus($qb)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -119,11 +140,9 @@ class ArticleRepository extends BaseCmsRepository
     public function findLatestReadyForReview() : array
     {
         return
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.publishingStatus = :readyForReview')
-                    ->setParameter('readyForReview', Article::PUBLISHING_STATUS_READY_FOR_REVIEW)
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
                 ->andWhere('t.updatedAt >= :dateLimit')
-                    ->setParameter('dateLimit', (new \DateTime())->modify('-30 days') )
+                    ->setParameter('dateLimit', (new \DateTime())->modify('-45 days') )
                 ->getQuery()
                 ->getResult();
     }
@@ -134,7 +153,6 @@ class ArticleRepository extends BaseCmsRepository
         $sqlSelect = "
             SELECT id FROM article
             WHERE
-              publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
               published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
               title NOT LIKE 'Questa settimana su TLI%'
             ";
@@ -146,7 +164,7 @@ class ArticleRepository extends BaseCmsRepository
         }
 
         return
-            $qb
+            $this->addWherePublishingStatus($qb)
                 ->orderBy('t.views', 'DESC')
                 ->getQuery()
                 ->getResult();
@@ -168,9 +186,7 @@ class ArticleRepository extends BaseCmsRepository
         $highLimit->setTime($highHour, $highMinute, 0);
 
         return
-            $this->getQueryBuilderComplete()
-                ->andWhere('t.publishingStatus = :published')
-                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 //  # must be: GreaterOrEqualThan and LessThan - see https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/social-network-sharing.md
                 ->andWhere('t.published_at >= :lowLimit')
                     ->setParameter('lowLimit', $lowLimit)
@@ -188,13 +204,9 @@ class ArticleRepository extends BaseCmsRepository
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
-            $this->getQueryBuilderComplete()
+            $this->getQueryBuilderCompleteWherePublishingStatus()
                 ->andWhere('t.format = :formatNews')
                     ->setParameter('formatNews', Article::FORMAT_NEWS)
-                ->andWhere('t.publishingStatus = :published')
-                    ->setParameter('published', Article::PUBLISHING_STATUS_PUBLISHED)
-                ->andWhere('t.publishedAt <= CURRENT_TIMESTAMP()')
-                ->orderBy('t.publishedAt', 'DESC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -204,31 +216,28 @@ class ArticleRepository extends BaseCmsRepository
     }
 
 
-    public function findLatestSecurityNews(int $num = 6) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findLatestSecurityNews(?int $num = null) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
+        $num = $num ?? $this->itemsPerPage;
+
         // we need to extract "having at least this tag" first
-        // otherwise, the following call to getQueryBuilderComplete() would load only "this tag" in the articles,
-        // excluding other, potentially more important, tag. This would screw Article->getUrl(). Example of the bug:
-        // "Come dis/iscriversi dalla newsletter" /newsletter-turbolab.it-1349/something-402
-        // when listed in https://turbolab.it/turbolab.it-1
-        // had the wrong URL /turbolab.it-1/something-402
-        $sqlSelect = "
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this tag" in the articles,
+        // excluding other tags. This would also screw Article->getUrl()
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery("
             SELECT DISTINCT article_id FROM article_tag WHERE tag_id = :securityTagId AND article_id NOT IN(
               SELECT article_id FROM article_tag WHERE tag_id = :sponsorTagId
-            )";
+            )", [
+                "securityTagId" => \App\Service\Cms\Tag::ID_SECURITY,
+                "sponsorTagId"  => \App\Service\Cms\Tag::ID_SPONSOR
+            ]);
 
-        $arrParams = [
-            "securityTagId" => \App\Service\Cms\Tag::ID_SECURITY,
-            "sponsorTagId"  => \App\Service\Cms\Tag::ID_SPONSOR
-        ];
-
-        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect, $arrParams);
         if( empty($qb) ) {
             return null;
         }
 
         $query =
-            $qb
+            $this->addWherePublishingStatus($qb)
                 ->andWhere('t.format = ' . Article::FORMAT_NEWS)
                 ->setMaxResults($num)
                 ->getQuery();
@@ -240,18 +249,19 @@ class ArticleRepository extends BaseCmsRepository
 
     public function findTopViewsLastYear(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
-        $page    = $page ?: 1;
-        $startAt = 20 * ($page - 1);
+        $page       = $page ?: 1;
+        $numItems   = $this->itemsPerPage % 2 == 0 ? $this->itemsPerPage : ( $this->itemsPerPage - 1 );
+        $startAt    = $numItems * ($page - 1);
 
         $query =
-            $this->getQueryBuilderComplete()
-                ->where('t.updatedAt >= :oneYearAgo')
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.updatedAt >= :oneYearAgo')
                     ->setParameter('oneYearAgo', new \DateTime('-1 year'))
                 ->andWhere('t.updatedAt <= :now')
                     ->setParameter('now', new \DateTime())
                 ->orderBy('t.views', 'DESC')
                 ->setFirstResult($startAt)
-                ->setMaxResults(20)
+                ->setMaxResults($numItems)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);

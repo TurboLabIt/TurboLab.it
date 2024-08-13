@@ -6,18 +6,12 @@ use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
+use App\ServiceCollection\BaseServiceEntityCollection;
 
 
-class ArticleCollection extends BaseCmsServiceCollection
+class ArticleCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = ArticleService::ENTITY_CLASS;
-
-
-    public function load(array $arrIds) : array
-    {
-        $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->findMultipleComplete($arrIds);
-        return $this->setEntities($arrEntities)->arrData;
-    }
 
 
     public function loadAllPublished() : static
@@ -70,9 +64,9 @@ class ArticleCollection extends BaseCmsServiceCollection
     }
 
 
-    public function loadLatestSecurityNews() : static
+    public function loadLatestSecurityNews(?int $num = null) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestSecurityNews();
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestSecurityNews($num);
         return $this->setEntities($arrArticles);
     }
 
@@ -86,7 +80,7 @@ class ArticleCollection extends BaseCmsServiceCollection
 
     public function loadGuidesForAuthors() : static
     {
-        $this->load([
+        $this->loadComplete([
             Article::ID_ABOUT_US, Article::ID_ISSUE_REPORT, Article::ID_FORUM_IMAGES, Article::ID_HOW_TO_JOIN,
             Article::ID_HOW_TO_WRITE, Article::ID_PUBLISH_NEWS, Article::ID_PUBLISH_ARTICLE, Article::ID_SIGN_ARTICLE
         ]);

@@ -3,44 +3,59 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Topic;
 use App\Repository\BaseRepository;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 
-/**
- * @extends ServiceEntityRepository<Topic>
- *
- * @method Topic|null find($id, $lockMode = null, $lockVersion = null)
- * @method Topic|null findOneBy(array $criteria, array $orderBy = null)
- * @method Topic[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class TopicRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = Topic::class;
+    const string ENTITY_CLASS       = Topic::class;
+    const string DEFAULT_INDEXED_BY = 't.id';
 
 
-    public function findLatest(int $num = 10) : array
+    protected function getQueryBuilder() : QueryBuilder
     {
-        $arrTopicIds =
-            $this->sqlQueryExecute("
-                SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
-                WHERE
+        return
+            parent::getQueryBuilder()
+                ->andWhere('t.forumId NOT IN (' . implode(',', ForumRepository::OFFLIMITS_FORUM_IDS) . ')')
+                ->andWhere('t.visibility = 1')
+                ->andWhere('t.deleteTime = 0')
+                ->andWhere('t.status = 0')
+                ->orderBy('t.lastPostTime', 'DESC');
+    }
+
+
+    protected function getSqlSelectQuery() : string
+    {
+        return "
+            SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
+            WHERE
                 (
                   forum_id != " . ForumRepository::COMMENTS_FORUM_ID . " OR
                   (forum_id = " . ForumRepository::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
-                )
-                ORDER BY topic_last_post_time DESC
-                LIMIT " . $num
-            )->fetchFirstColumn();
+                ) AND
+                forum_id NOT IN (" . implode(',', ForumRepository::OFFLIMITS_FORUM_IDS) . ")
+        ";
+    }
 
-        if( empty($arrTopicIds) ) {
+
+    public function findLatest(?int $num = null) : array
+    {
+        $num = $num ?? 10;
+
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                $this->getSqlSelectQuery() . "
+                ORDER BY topic_last_post_time DESC
+                LIMIT $num
+            "
+        );
+
+        if( empty($qb) ) {
             return [];
         }
 
         return
-            $this->getQueryBuilder()
-                ->andWhere('t.id IN (:arrTopicIds)')
-                    ->setParameter("arrTopicIds", $arrTopicIds)
+            $qb
                 ->orderBy('t.lastPostTime', 'DESC')
                 ->getQuery()
                 ->getResult();
@@ -49,50 +64,23 @@ class TopicRepository extends BaseRepository
 
     public function findLatestForNewsletter() : array
     {
-        $arrTopicIds =
-            $this->sqlQueryExecute("
-                SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
-                WHERE FROM_UNIXTIME(topic_last_post_time) BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
-                (
-                  forum_id != " . ForumRepository::COMMENTS_FORUM_ID . " OR
-                  (forum_id = " . ForumRepository::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
-                )
-            ")->fetchFirstColumn();
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                $this->getSqlSelectQuery() . "
+                AND FROM_UNIXTIME(topic_last_post_time) BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
+                ORDER BY topic_views DESC
+                LIMIT 25
+            "
+            );
 
-        if( empty($arrTopicIds) ) {
+        if( empty($qb) ) {
             return [];
         }
 
         return
-            $this->getQueryBuilder()
-                ->andWhere('t.id IN (:arrTopicIds)')
-                    ->setParameter("arrTopicIds", $arrTopicIds)
+            $qb
                 ->orderBy('t.views', 'DESC')
                 ->getQuery()
                 ->getResult();
     }
-
-
-    public function findAll() : array
-    {
-        return
-            $this->getQueryBuilder()
-                ->orderBy('t.id', 'ASC')
-                ->getQuery()
-                ->getResult();
-    }
-
-
-    //<editor-fold defaultstate="collapsed" desc="** INTERNAL METHODS **">
-    protected function getQueryBuilder() : QueryBuilder
-    {
-        return
-            $this->createQueryBuilder('t', 't.id')
-                ->andWhere('t.forumId NOT IN (' . implode(',', ForumRepository::OFFLIMITS_FORUM_IDS) . ')')
-                ->andWhere('t.visibility = 1')
-                ->andWhere('t.deleteTime = 0')
-                ->andWhere('t.status = 0')
-                ->orderBy('t.lastPostTime', 'DESC');
-    }
-    //</editor-fold>
 }

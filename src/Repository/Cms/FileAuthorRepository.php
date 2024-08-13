@@ -3,18 +3,9 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\FileAuthor;
 use App\Repository\BaseRepository;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<FileAuthor>
- *
- * @method FileAuthor|null find($id, $lockMode = null, $lockVersion = null)
- * @method FileAuthor|null findOneBy(array $criteria, array $orderBy = null)
- * @method FileAuthor[]    findAll()
- * @method FileAuthor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
+
 class FileAuthorRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = FileAuthor::class;
+    const string ENTITY_CLASS = FileAuthor::class;
 }

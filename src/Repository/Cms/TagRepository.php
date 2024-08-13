@@ -2,32 +2,18 @@
 namespace App\Repository\Cms;
 
 use App\Entity\Cms\Tag;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Repository\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 
 
-/**
- * @extends ServiceEntityRepository<Tag>
- *
- * @method Tag|null find($id, $lockMode = null, $lockVersion = null)
- * @method Tag|null findOneBy(array $criteria, array $orderBy = null)
- * @method Tag[]    findAll()
- * @method Tag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class TagRepository extends BaseCmsRepository
+class TagRepository extends BaseRepository
 {
-    const string ENTITY_CLASS_NAME = Tag::class;
+    const string ENTITY_CLASS               = Tag::class;
+    const string DEFAULT_ORDER_BY           = 't.title';
+    const string DEFAULT_ORDER_DIRECTION    = 'ASC';
 
 
-    protected function getQueryBuilder() : QueryBuilder
-    {
-        return
-            parent::getQueryBuilder()
-                ->orderBy('t.title', 'ASC');
-    }
-
-
-    public function findComplete(int $id) : ?Tag
+    protected function getQueryBuilderComplete() : QueryBuilder
     {
         return
             $this->getQueryBuilder()
@@ -45,21 +31,13 @@ class TagRepository extends BaseCmsRepository
                     'articlesJunction', 'article',
                     'articleAuthorsJunction', 'articleUser',
                     'articleTagsJunction', 'articleTag'
-                )
-                //
-                ->andWhere('t.id = :id')
-                    ->setParameter('id', $id)
-                ->orderBy('article.updatedAt', 'DESC')
-                ->getQuery()
-                ->getOneOrNullResult();
+                );
     }
 
 
     public function findLatest(?int $num = null) : array
     {
-        $qb =
-            $this->getQueryBuilder()
-                ->orderBy('t.updatedAt', 'DESC');
+        $qb = $this->getQueryBuilder()->orderBy('t.updatedAt', 'DESC');
 
         if( !empty($num) ) {
             $qb->setMaxResults($num);
@@ -74,13 +52,10 @@ class TagRepository extends BaseCmsRepository
 
     public function findByTitle(string $title) : ?Tag
     {
-        $qb =
+        return
             $this->getQueryBuilder()
                 ->andWhere('t.title = :title')
-                    ->setParameter('title', $title);
-
-        return
-            $qb
+                    ->setParameter('title', $title)
                 ->getQuery()
                 ->getOneOrNullResult();
     }
