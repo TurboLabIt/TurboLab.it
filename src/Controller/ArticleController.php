@@ -22,12 +22,14 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        return $this->render('article/index-wireframe.html.twig', [
+        return $this->render('article/index.html.twig', [
             'metaTitle'         => $article->getTitle(),
             'metaDescription'   => $article->getAbstract(),
             'metaCanonicalUrl'  => $article->getUrl(),
             'metaOgType'        => 'article',
             'metaPageImageUrl'  => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
+            'activeMenu'        => $article->getTopTag()?->getActiveMenu(),
+            'FrontendHelper'    => $this->frontendHelper,
             'Article'           => $article
         ]);
     }
