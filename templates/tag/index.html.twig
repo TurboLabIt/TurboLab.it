@@ -6,11 +6,11 @@
 
     {% if currentPage < 2 %}
 
-        <li class="breadcrumb-item active">Tag &quot;{{ Tag.title }}&quot;</li>
+        <li class="breadcrumb-item active">Tag &quot;{{ Tag.titleFormatted|raw }}&quot;</li>
 
     {% else %}
 
-        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag &quot;{{ Tag.title }}&quot;</a></li>
+        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag &quot;{{ Tag.titleFormatted|raw }}&quot;</a></li>
         {{ parent() }}
 
     {% endif %}

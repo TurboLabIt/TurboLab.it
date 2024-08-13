@@ -70,14 +70,14 @@ class TagTest extends BaseT
             // 👀 https://turbolab.it/turbolab.it-1
             [
                 "id"            => 1,
-                "title"         => "turbolab.it",
-                "totalPageNum"  => 3
+                "title"         => "TurboLab.it",
+                "totalPageNum"  => 2
             ],
             // 👀 https://turbolab.it/windows-10
             [
                 "id"            => 10,
-                "title"         => "windows",
-                "totalPageNum"  => 61
+                "title"         => "Windows",
+                "totalPageNum"  => 62
             ],
         ];
     }
@@ -97,7 +97,8 @@ class TagTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($tag, $crawler, "#" . $arrSpecialTag["title"] . ": articoli, guide e news");
+        $tagTitle = $arrSpecialTag["title"];
+        $this->tagTitleAsH1Checker($tag, $crawler, "$tagTitle: articoli, guide e news");
 
         // H2
         $crawler = $this->fetchDomNode($url, 'body');
@@ -122,10 +123,14 @@ class TagTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($tag, $crawler, "#tli test tag | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine: articoli, guide e news");
+        $this->tagTitleAsH1Checker(
+            $tag, $crawler,
+            "Tli Test Tag | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; " .
+            "&apos;single Quoted&apos; \ / | » Fine: articoli, guide e news"
+        );
 
         $html = $this->fetchHtml($url);
-        $this->assertStringContainsString('nessun contenuto trovato', $html);
+        $this->assertStringContainsString('nessun articolo trovato', $html);
     }
 
 
@@ -175,20 +180,20 @@ class TagTest extends BaseT
     {
         $assertFailureMessage = "Failing URL: " . $tag->getUrl();
 
-        $title = $tag->getTitle();
-        $this->assertNotEmpty($title, $assertFailureMessage);
+        $tagTitle = $tag->getTitleFormatted();
+        $this->assertNotEmpty($tagTitle, $assertFailureMessage);
 
         foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
 
             $accentedLetterEntity = htmlentities($accentedLetter);
-            $this->assertStringNotContainsString($accentedLetterEntity, $title);
+            $this->assertStringNotContainsString($accentedLetterEntity, $tagTitle);
         }
 
-        $this->assertStringNotContainsString('&nbsp;', $title);
+        $this->assertStringNotContainsString('&nbsp;', $tagTitle);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
         $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
-        $this->assertEquals('#' . $title . ': articoli, guide e news', $H1FromCrawler, $assertFailureMessage);
+        $this->assertEquals("$tagTitle: articoli, guide e news", $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {
             $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
