@@ -65,7 +65,6 @@ class HomeTest extends BaseT
 
     public function testHomePaginator()
     {
-        $this->internalPaginatorChecker($_ENV["APP_SITE_URL"], static::HOME_TOTAL_PAGES);
+        $this->internalPaginatorChecker('/', static::HOME_TOTAL_PAGES);
     }
-
 }

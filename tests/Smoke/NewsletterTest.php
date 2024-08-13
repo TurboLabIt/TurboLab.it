@@ -39,8 +39,6 @@ class NewsletterTest extends BaseT
         $this->assertStringContainsStringIgnoringCase('Articoli e news', $html);
         $this->assertStringContainsStringIgnoringCase('Dal forum', $html);
 
-        // H2
-
         $crawler = $this->fetchDomNode($url, 'body');
         $H4s = $crawler->filter('h4');
         $countH4 = $H4s->count();
@@ -78,8 +76,11 @@ class NewsletterTest extends BaseT
             }
 
             if( empty($firstUnsubscribeUrl) ) {
+
                 $firstUnsubscribeUrl = $href;
+
             } else {
+
                 $this->assertEquals($firstUnsubscribeUrl, $href);
             }
 

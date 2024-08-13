@@ -65,13 +65,15 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
         $this->fxTitle("Email delivery check");
         if( $this->isDryRun() ) {
+
             $this->fxWarning("Email delivery is BLOCKED");
+
         } else {
+
             $this->fxWarning("📨🔥 Emails are HOT! 🔥📨");
         }
 
         $this->newsletter->block( $this->isDryRun(true) );
-
 
         $this
             ->fxTitle("Loading newsletter content...")
@@ -114,8 +116,11 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $articleUrl = $this->newsletter->saveOnTheWeb($persist);
 
         if($persist) {
+
             $this->fxOK("Article ready: " . $articleUrl);
+
         } else {
+
             $this->fxWarning('The article was NOT saved due to test mode or --' . Options::CLI_OPT_DRY_RUN);
         }
 

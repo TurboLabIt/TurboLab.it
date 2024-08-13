@@ -263,17 +263,42 @@ abstract class BaseT extends WebTestCase
     {
         // first page
         $crawler        = $this->fetchDomNode($url, 'body');
-        $paginator      = $crawler->filter('#tli-paginator');
-        $paginatorHtml  = mb_strtolower($paginator->html());
+        $paginator      = $crawler->filter('ul.pagination');
 
-        $this->assertStringNotContainsString('precedente', $paginatorHtml);
-        $this->assertStringNotContainsString('tli-prev', $paginatorHtml);
+        // "go to the beginning" and "go to the previous page" must be disabled on the first page
+        foreach(['tli-pagination-first', 'tli-pagination-prev'] as $class) {
 
-        $this->assertStringContainsString('successiv', $paginatorHtml);
-        $this->assertStringContainsString('tli-next', $paginatorHtml);
-        $nextLink = $paginator->filter('a.tli-next');
-        $nextHref = $nextLink->attr('href');
-        $this->assertStringEndsWith('/2', $nextHref);
+            $li = $paginator->filter('.' . $class);
+            $this->assertTrue(
+                $li->getNode(0)->hasAttribute('class') &&
+                in_array('disabled', explode(' ', $li->attr('class')))
+            );
+
+            $link = $li->filter('a')->getNode(0);
+            $this->assertEmpty($link);
+        }
+
+
+        // "go to the next page" and "go to the last page" must be available
+        foreach(['tli-pagination-next', 'tli-pagination-last'] as $class) {
+
+            $li = $paginator->filter('.' . $class);
+            $this->assertTrue(
+                $li->getNode(0)->hasAttribute('class') &&
+                !in_array('disabled', explode(' ', $li->attr('class')))
+            );
+
+            $link = $li->filter('a');
+            $this->assertNotEmpty( $link->getNode(0) );
+
+            if( $class != 'tli-pagination-next' ) {
+                continue;
+            }
+
+            $nextHref = $link->attr('href');
+            $this->assertStringEndsWith('/2', $nextHref);
+        }
+
 
         // loop on every page but first and last
         for($i = 2; $i < $expectedTotalPageNum; $i++) {
@@ -284,44 +309,93 @@ abstract class BaseT extends WebTestCase
             // this is the URL of the page to request and test now
             $url = $nextHref;
 
-            $crawler        = $this->fetchDomNode($url, 'body');
-            $paginator      = $crawler->filter('#tli-paginator');
-            $paginatorHtml  = mb_strtolower($paginator->html());
+            $crawler    = $this->fetchDomNode($url, 'body');
+            $paginator  = $crawler->filter('ul.pagination');
 
-            // prev checks
-            $this->assertStringContainsString('precedente', $paginatorHtml);
-            $this->assertStringContainsString('tli-prev', $paginatorHtml);
-            $prevLink = $paginator->filter('a.tli-prev');
-            $prevHref = $prevLink->attr('href');
-            $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
+            // "go to the beginning" and "go to the previous page" must be available on the 2nd+ page
+            foreach(['tli-pagination-first', 'tli-pagination-prev'] as $class) {
 
-            // next checks
-            $this->assertStringContainsString('successiv', $paginatorHtml);
-            $this->assertStringContainsString('tli-next', $paginatorHtml);
-            $nextLink = $paginator->filter('a.tli-next');
-            $nextHref = $nextLink->attr('href');
-            $this->assertStringEndsWith('/' . $i + 1, $nextHref);
+                $li = $paginator->filter('.' . $class);
+                $this->assertTrue(
+                    $li->getNode(0)->hasAttribute('class') &&
+                    !in_array('disabled', explode(' ', $li->attr('class')))
+                );
+
+                $link = $li->filter('a');
+                $this->assertNotEmpty( $link->getNode(0) );
+
+                if( $class != 'tli-pagination-prev' ) {
+                    continue;
+                }
+
+                $prevHref = $link->attr('href');
+                $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
+            }
+
+
+            // "go to the next page" and "go to the last page" must be available
+            foreach(['tli-pagination-next', 'tli-pagination-last'] as $class) {
+
+                $li = $paginator->filter('.' . $class);
+                $this->assertTrue(
+                    $li->getNode(0)->hasAttribute('class') &&
+                    !in_array('disabled', explode(' ', $li->attr('class')))
+                );
+
+                $link = $li->filter('a');
+                $this->assertNotEmpty( $link->getNode(0) );
+
+                if( $class != 'tli-pagination-next' ) {
+                    continue;
+                }
+
+                $nextHref = $link->attr('href');
+                $this->assertStringEndsWith('/' . $i + 1, $nextHref);
+            }
         }
+
+
+        // last page
+        $lastPageUrl = $nextHref;
 
         // URL of the current page. It will be checked against "prev" on the next page
         $nextPagePrevLinkUrl = $url;
 
-        // this is the URL of the page to request and test now
-        $lastPageUrl = $nextHref;
-
         $crawler = $this->fetchDomNode($lastPageUrl, 'body');
-        $paginator = $crawler->filter('#tli-paginator');
-        $paginatorHtml = mb_strtolower($paginator->html());
+        $paginator = $crawler->filter('ul.pagination');
 
-        // prev checks
-        $this->assertStringContainsString('precedente', $paginatorHtml);
-        $this->assertStringContainsString('prev', $paginatorHtml);
-        $prevLink = $paginator->filter('a.tli-prev');
-        $prevHref = $prevLink->attr('href');
-        $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
+        // "go to the beginning" and "go to the previous page" must be available on the last page
+        foreach(['tli-pagination-first', 'tli-pagination-prev'] as $class) {
 
-        // next checks
-        $this->assertStringNotContainsString('successiv', $paginatorHtml);
+            $li = $paginator->filter('.' . $class);
+            $this->assertTrue(
+                $li->getNode(0)->hasAttribute('class') &&
+                !in_array('disabled', explode(' ', $li->attr('class')))
+            );
+
+            $link = $li->filter('a');
+            $this->assertNotEmpty( $link->getNode(0) );
+
+            if( $class != 'tli-pagination-prev' ) {
+                continue;
+            }
+
+            $prevHref = $link->attr('href');
+            $this->assertEquals($nextPagePrevLinkUrl, $prevHref);
+        }
+
+        // "go to the next page" and "go to the last page" must be disabled on the first page
+        foreach(['tli-pagination-next', 'tli-pagination-last'] as $class) {
+
+            $li = $paginator->filter('.' . $class);
+            $this->assertTrue(
+                $li->getNode(0)->hasAttribute('class') &&
+                in_array('disabled', explode(' ', $li->attr('class')))
+            );
+
+            $link = $li->filter('a')->getNode(0);
+            $this->assertEmpty($link);
+        }
 
         // requesting an over-limit page must redirect to the last page
         $basePageUrl = substr($lastPageUrl, 0, strrpos($lastPageUrl, "/")) . "/";
