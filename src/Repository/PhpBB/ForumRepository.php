@@ -28,6 +28,6 @@ class ForumRepository extends BaseRepository
                 ->andWhere('t.status = 0')
                 ->andWhere('t.type = 1')
                 ->andWhere('t.last_post_time > 0')
-                ->orderBy('t.lastPostTime', 'DESC');
+                ->orderBy('t.last_post_time', 'DESC');
     }
 }
