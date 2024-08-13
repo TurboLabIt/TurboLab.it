@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Exception\UserNotFoundException;
 use App\Service\Cms\Article;
 use App\Service\Cms\UrlGenerator;
+use App\Service\FrontendHelper;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +28,7 @@ class Newsletter extends BaseController
 
     public function __construct(
         protected Encryptor $encryptor, protected User $user, protected EntityManagerInterface $entityManager,
-        RequestStack $requestStack
+        RequestStack $requestStack, protected FrontendHelper $frontendHelper
     )
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -125,7 +126,9 @@ class Newsletter extends BaseController
         $newsletter->unsubscribeUser($this->user);
 
         return $this->render('newsletter/unsubscribe.html.twig', [
-            "User"  => $this->user
+            "activeMenu"        => 'newsletter',
+            "FrontendHelper"    => $this->frontendHelper,
+            "User"              => $this->user
         ]);
     }
 
@@ -134,6 +137,8 @@ class Newsletter extends BaseController
     {
         return
             $this->render('newsletter/unsubscribe.html.twig', [
+                "activeMenu"        => 'newsletter',
+                "FrontendHelper"    => $this->frontendHelper,
                 "error"             => $errorConstant,
                 "SubscriberData"    => $arrDecodedSubscriberData,
                 "User"              => $this->user
@@ -179,7 +184,9 @@ class Newsletter extends BaseController
         $this->entityManager->flush();
 
         return $this->render('newsletter/subscribe.html.twig', [
-            "User" => $this->user
+            "activeMenu"        => 'newsletter',
+            "FrontendHelper"    => $this->frontendHelper,
+            "User"              => $this->user
         ]);
     }
 
@@ -188,6 +195,8 @@ class Newsletter extends BaseController
     {
         return
             $this->render('newsletter/subscribe.html.twig', [
+                "activeMenu"        => 'newsletter',
+                "FrontendHelper"    => $this->frontendHelper,
                 "error"             => $errorConstant,
                 "SubscriberData"    => $arrDecodedSubscriberData,
                 "User"              => $this->user

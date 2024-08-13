@@ -31,3 +31,7 @@ a.disabled-link {
 .about-item-area {
     padding-bottom: 0px;
 }
+
+.tli-fullpage-error p {
+    font-size: large;
+}

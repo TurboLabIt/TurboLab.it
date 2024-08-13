@@ -1,59 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block metaTitle %}Dis-iscrizione dalla newsletter{% endblock %}
+{% block metaTitle %}Annullamento dell'iscrizione alla newsletter{% endblock %}
 {% block metaRobots %}noindex,follow{% endblock %}
 
 {% block bodyMainContent %}
-    {% if error ?? null == constant('App\\Controller\\Newsletter::ERROR_BAD_ACCESS_KEY') %}
 
-        <p>Errore durante la decodifica dell'iscrizione.</p>
+    <section>
+        <div class="container tli-fullpage-error">
 
-    {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_NOT_FOUND') %}
+            <h1 class="title">Annullamento dell'iscrizione alla newsletter</h1>
 
-        <p>
-            L'utente numero <samp>{{ SubscriberData.userId }}</samp>,
-            associato all'indirizzo email <samp>{{ SubscriberData.email }}</samp>,
-            non esiste.
-        </p>
+            {% if error ?? null == constant('App\\Controller\\Newsletter::ERROR_BAD_ACCESS_KEY') %}
 
-    {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_NOT_SUBSCRIBED') %}
+                <p>
+                    Errore durante la decodifica dell'iscrizione. Per favore, riprova cliccando il link di dis-iscrizione
+                    che trovi all'interno della newsletter stessa.
+                </p>
 
-        <p>
+            {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_NOT_FOUND') %}
 
-            L'indirizzo email <samp>{{ SubscriberData.email }}</samp>
-            non risulta iscritto alla newsletter.
-        </p>
+                <p>
+                    L'utente numero <samp>{{ SubscriberData.userId }}</samp>,
+                    associato all'indirizzo email <samp>{{ SubscriberData.email }}</samp>,
+                    non esiste.
+                </p>
 
-    {% elseif error is defined %}
+            {% elseif error ?? null == constant('App\\Controller\\Newsletter::ERROR_USER_NOT_SUBSCRIBED') %}
 
-        <p>
-            Si è verificato un errore imprevisto.
-        </p>
+                <p>
+                    L'indirizzo email <samp>{{ SubscriberData.email }}</samp>
+                    non risulta iscritto alla newsletter.
+                </p>
 
-    {% else %}
+            {% elseif error is defined %}
 
-        <p><strong>✅ Dis-iscrizione dalla newsletter avvenuta con successo!</strong></p>
-        <p>L'indirizzo email {{ User.email }} non riceverà più la newsletter.</p>
-        <p>
-            Ci farebbe piacere <strong>sapere perché ti sei dis-iscritto</strong> e come possiamo migliorare: se ti va,
-            puoi raccontarcelo scrivendo a <a href="mailto:info@turbolab.it?subject=Feedback newsletter">info@turbolab.it</a>.
-        </p>
-        <p>
-            Ti sei dis-iscritto per sbaglio? Puoi ri-iscriverti subito
-            👉 <a href="{{ User.newsletterSubscribeUrl }}">cliccando qui</a>.
-        </p>
+                <p>Si è verificato un errore imprevisto.</p>
 
-    {% endif %}
+            {% else %}
 
-    {% if error ?? false %}
+                <p><strong>✅ Dis-iscrizione dalla newsletter avvenuta con successo!</strong></p>
+                <p>L'indirizzo email {{ User.email }} non riceverà più la newsletter.</p>
+                <p>
+                    Ci farebbe piacere <strong>sapere perché ti sei dis-iscritto</strong> e come possiamo migliorare: se ti va,
+                    puoi raccontarcelo scrivendo a <a href="mailto:info@turbolab.it?subject=Feedback newsletter">info@turbolab.it</a>.
+                </p>
+                <p>
+                    Ti sei dis-iscritto per sbaglio? Puoi ri-iscriverti subito
+                    👉 <a href="{{ User.newsletterSubscribeUrl }}">cliccando qui</a>.
+                </p>
 
-        <hr>
-        <p>
-            Se il problema persiste e continui a ricevere la newsletter, per favore
-            scrivici all'indirizzo <a href="mailto:info@turbolab.it?subject=Problema dis-iscrizione newsletter">info@turbolab.it</a>
-            e ti aiuteremo a dis-iscriverti.
-        </p>
+            {% endif %}
 
-    {% endif %}
+            {% if error ?? false %}
+
+                <hr>
+                <p>
+                    Se il problema persiste e continui a ricevere la newsletter, per favore
+                    scrivici all'indirizzo <a href="mailto:info@turbolab.it?subject=Problema dis-iscrizione newsletter">info@turbolab.it</a>
+                    e ti aiuteremo a dis-iscriverti.
+                </p>
+
+            {% endif %}
+        </div>
+    </section>
 
 {% endblock %}
