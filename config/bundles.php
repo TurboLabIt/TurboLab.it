@@ -17,4 +17,5 @@ return [
     TurboLabIt\Encryptor\TurboLabItEncryptorBundle::class => ['all' => true],
     TurboLabIt\Messengers\TurboLabItMessengersBundle::class => ['all' => true],
     TurboLabIt\PaginatorBundle\TurboLabItPaginatorBundle::class => ['all' => true],
+    TurboLabIt\ServiceEntityPlusBundle\TurboLabItServiceEntityPlusBundle::class => ['all' => true],
 ];
