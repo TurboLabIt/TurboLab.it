@@ -52,7 +52,7 @@ class TagController extends BaseController
             'FrontendHelper'    => $this->frontendHelper,
             'Tag'               => $tag,
             'Articles'          => $taggedArticles,
-            'Pages'             => $oPages,
+            'Pages'             => $taggedArticles->count() > 0 ? $oPages : null,
             'currentPage'       => $page
         ]);
     }
