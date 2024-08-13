@@ -110,7 +110,9 @@ class Newsletter extends BaseController
 
         try {
             $this->user->load($userId);
+
         } catch(UserNotFoundException) {
+
             return $this->unsubscribeErrorResponse(static::ERROR_USER_NOT_FOUND, $arrDecodedSubscriberData);
         }
 

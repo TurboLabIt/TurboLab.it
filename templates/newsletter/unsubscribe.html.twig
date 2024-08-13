@@ -6,7 +6,7 @@
 {% block bodyMainContent %}
 
     <section>
-        <div class="container tli-fullpage-error">
+        <div class="container tli-fullpage-message">
 
             <h1 class="title">Annullamento dell'iscrizione alla newsletter</h1>
 
@@ -38,15 +38,21 @@
 
             {% else %}
 
-                <p><strong>✅ Dis-iscrizione dalla newsletter avvenuta con successo!</strong></p>
-                <p>L'indirizzo email {{ User.email }} non riceverà più la newsletter.</p>
+                <p class="tli-center">
+                    <strong><i class="fa-solid fa-check" style="color: #63E6BE;"></i> Dis-iscrizione dalla newsletter avvenuta con successo!</strong>
+                </p>
+
+                <p class="tli-center">L'indirizzo <samp>{{ User.email }}</samp> non riceverà più la newsletter.</p>
+
+                <hr>
+
                 <p>
-                    Ci farebbe piacere <strong>sapere perché ti sei dis-iscritto</strong> e come possiamo migliorare: se ti va,
-                    puoi raccontarcelo scrivendo a <a href="mailto:info@turbolab.it?subject=Feedback newsletter">info@turbolab.it</a>.
+                    <strong><i class="fa-solid fa-rotate-left fa-shake" style="color: #e01b24;"></i> Ti sei dis-iscritto per sbaglio?</strong>
+                    Puoi ri-iscriverti subito <a href="{{ User.newsletterSubscribeUrl }}">cliccando qui</a> (è sempre gratis!).
                 </p>
                 <p>
-                    Ti sei dis-iscritto per sbaglio? Puoi ri-iscriverti subito
-                    👉 <a href="{{ User.newsletterSubscribeUrl }}">cliccando qui</a>.
+                    In alternativa, ci farebbe piacere <strong>sapere perché ti sei dis-iscritto</strong> e come possiamo migliorare: se ti va,
+                    puoi raccontarcelo scrivendo a <a href="mailto:info@turbolab.it?subject=Feedback newsletter">info@turbolab.it</a>.
                 </p>
 
             {% endif %}
@@ -61,7 +67,7 @@
                 </p>
 
             {% endif %}
-        </div>
+        </>
     </section>
 
 {% endblock %}

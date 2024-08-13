@@ -32,6 +32,10 @@ a.disabled-link {
     padding-bottom: 0px;
 }
 
-.tli-fullpage-error p {
+.tli-fullpage-message p {
     font-size: large;
+}
+
+.tli-center {
+    text-align: center;
 }
