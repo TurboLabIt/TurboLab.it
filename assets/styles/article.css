@@ -1,3 +1,12 @@
 .tli-article-main-content {
     padding-top: 15px !important;
 }
+
+.tli-article-main-content p {
+    font-size: 20px;
+    line-height: 1.5;
+}
+
+.tli-article-main-content img {
+    width: 100%;
+}
