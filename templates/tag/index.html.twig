@@ -1,6 +1,6 @@
 {% extends 'archive/index.html.twig' %}
 
-{% block metaDescription %}Articoli, guide, notizie che riguardano {{ Tag.titleFormatted }}{% endblock %}
+{% block metaDescription %}Articoli, guide, notizie che riguardano {{ Tag.titleFormatted|raw }}{% endblock %}
 
 {% block breadcrumb %}
 
