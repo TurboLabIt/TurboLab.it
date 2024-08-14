@@ -11,7 +11,7 @@ class ArticleController extends BaseController
     #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]+-[1-9]+[0-9]*>}', name: 'app_article')]
     public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {
-        $article = $this->factory->createArticle()->loadBySlugDashId($articleSlugDashId);
+        $article = $this->factory->createArticle()->loadBySlugDashIdComplete($articleSlugDashId);
 
         $articleRealUrl = $article->checkRealUrl($tagSlugDashId, $articleSlugDashId);
         if( !empty($articleRealUrl) ) {
