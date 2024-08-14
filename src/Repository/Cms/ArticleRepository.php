@@ -267,4 +267,39 @@ class ArticleRepository extends BaseRepository
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
         return $paginator;
     }
+
+
+    public function getPrevNextArticle(Article $article) : array
+    {
+        $sqlSelect = "
+            SELECT id FROM " . $this->getTableName() . "
+            WHERE
+                publishing_status = :publishingStatus AND published_at IS NOT NULL AND
+                published_at ##OP## :articleDate AND id != :articleId
+                ORDER BY published_at ##DIR##
+                LIMIT 1
+            ";
+
+        $arrResults =
+            $this->getQueryBuilderCompleteFromSqlQuery("
+                ( " . str_ireplace(["##OP##", "##DIR##"], ["<", "DESC"], $sqlSelect) . " )
+                UNION
+                ( " . str_ireplace(["##OP##", "##DIR##"], [">", "ASC"], $sqlSelect) . " )
+            ", [
+                "publishingStatus"  => Article::PUBLISHING_STATUS_PUBLISHED,
+                "articleDate"       => $article->getPublishedAt()->format('Y-m-d H:i:s'),
+                "articleId"         => $article->getId(),
+            ])
+            ->getQuery()->getResult();
+
+        if( empty($arrResults) ) {
+            return [];
+        }
+
+        uasort($arrResults, function(Article $a1, Article $a2) {
+            return $a1->getPublishedAt() <=> $a2->getPublishedAt();
+        });
+
+        return $arrResults;
+    }
 }

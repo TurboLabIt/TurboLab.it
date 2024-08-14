@@ -88,5 +88,12 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadPrevNextArticle(Article $article) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->getPrevNextArticle( $article->getEntity() );
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function createService(?ArticleEntity $entity = null) : ArticleService { return $this->factory->createArticle($entity); }
 }

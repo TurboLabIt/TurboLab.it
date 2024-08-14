@@ -38,11 +38,12 @@ class Article extends BaseCmsService
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
 
-    protected ?ArticleEntity $entity = null;
+    protected ?ArticleEntity $entity        = null;
     protected ?ImageService $spotlight;
     protected HtmlProcessor $htmlProcessor;
-    protected ?TagService $topTag = null;
+    protected ?TagService $topTag           = null;
     protected ?Topic $commentsTopic;
+    protected array $arrPrevNextArticles    = [];
 
 
     public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
@@ -256,6 +257,35 @@ class Article extends BaseCmsService
         }
 
         return 'guide';
+    }
+
+
+    public function getPreviousArticle() : ?static { return $this->loadPrevNextArticle("prev"); }
+
+    public function getNextArticle() : ?static { return $this->loadPrevNextArticle("next"); }
+
+    protected function loadPrevNextArticle(string $index) : ?static
+    {
+        if(
+            $this->entity?->getPublishingStatus() != ArticleEntity::PUBLISHING_STATUS_PUBLISHED ||
+            empty( $this->getPublishedAt() )
+        ) {
+            return null;
+        }
+
+        if( !empty($this->arrPrevNextArticles) ) {
+            return $this->arrPrevNextArticles[$index] ?? null;
+        }
+
+        $collArticles = $this->factory->createArticleCollection()->loadPrevNextArticle($this);
+
+        foreach($collArticles as $article) {
+
+            $which = $article->getPublishedAt()->format('U') < $this->getPublishedAt()->format('U')  ? 'prev' : 'next';
+            $this->arrPrevNextArticles[$which] = $article;
+        }
+
+        return $this->arrPrevNextArticles[$index] ?? null;
     }
 
 
