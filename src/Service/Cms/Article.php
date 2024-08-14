@@ -226,7 +226,7 @@ class Article extends BaseCmsService
     }
 
 
-    public function getCommentsNum() : ?int
+    public function getCommentsNum(bool $formatted = true) : null|int|string
     {
         $topic = $this->getCommentsTopic();
         if( empty($topic) ) {
@@ -235,12 +235,34 @@ class Article extends BaseCmsService
 
         $num = $topic->getPostNum();
         $num = empty($num) ? 0 : ($num - 1);
+
+        if($formatted && !empty($num) ) {
+            $num = number_format($num, 0, '', '.');
+        }
+
         return $num;
+    }
+
+
+    public function getActiveMenu() : ?string
+    {
+        $topTagActiveMenu = $this->getTopTag()?->getActiveMenu();
+        if( $topTagActiveMenu != 'guide' ) {
+            return $topTagActiveMenu;
+        }
+
+        if( $this->isNews() ) {
+            return 'news';
+        }
+
+        return 'guide';
     }
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
     public function getPublishedAt() : ?\DateTimeInterface { return $this->entity->getPublishedAt(); }
+
+    public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
     public function getBody() : ?string { return $this->entity->getBody(); }

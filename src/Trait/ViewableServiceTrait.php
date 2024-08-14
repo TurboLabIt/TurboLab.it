@@ -39,5 +39,14 @@ trait ViewableServiceTrait
     }
 
 
-    public function getViews() : int { return $this->localViewCount; }
+    public function getViews(bool $formatted = true) : int|string
+    {
+        $num = $this->localViewCount;
+
+        if($formatted && !empty($num) ) {
+            $num = number_format($num, 0, '', '.');
+        }
+
+        return $num;
+    }
 }

@@ -28,7 +28,7 @@ class ArticleController extends BaseController
             'metaCanonicalUrl'  => $article->getUrl(),
             'metaOgType'        => 'article',
             'metaPageImageUrl'  => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
-            'activeMenu'        => $article->getTopTag()?->getActiveMenu(),
+            'activeMenu'        => $article->getActiveMenu(),
             'FrontendHelper'    => $this->frontendHelper,
             'Article'           => $article
         ]);
