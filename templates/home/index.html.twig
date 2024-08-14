@@ -45,12 +45,12 @@
                                                 <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         </span>
-                                        {% if Article.commentsNum %}
+                                        {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
-                                            <span class="tli-meta-comments-num">
+                                            <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                 <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                 {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                            </span>
+                                            </a>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -75,12 +75,12 @@
                                                 <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         </span>
-                                        {% if Article.commentsNum %}
+                                        {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
-                                            <span class="tli-meta-comments-num">
+                                            <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                 <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                 {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                            </span>
+                                            </a>
                                         {% endif %}
                                     </div>
                                     <div class="gallery_item">
@@ -114,12 +114,12 @@
                                                 <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         </span>
-                                        {% if Article.commentsNum %}
+                                        {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
-                                            <span class="tli-meta-comments-num">
+                                            <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                 <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                 {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                            </span>
+                                            </a>
                                         {% endif %}
                                     </div>
                                     <div class="gallery_item">
@@ -193,12 +193,12 @@
                                                 <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         </span>
-                                        {% if Article.commentsNum %}
+                                        {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
-                                            <span class="tli-meta-comments-num">
+                                            <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                 <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                 {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                            </span>
+                                            </a>
                                         {% endif %}
                                     </div>
                                     <div class="gallery_item gallery_item-style-2">
@@ -351,12 +351,12 @@
                                                         <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
                                                 </span>
-                                                {% if Article.commentsNum %}
+                                                {% if Article.commentsUrl is not empty %}
                                                     <span class="tli-meta-slash">&nbsp;</span>
-                                                    <span class="tli-meta-comments-num">
+                                                    <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                         <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                             {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                                    </span>
+                                                    </a>
                                                 {% endif %}
                                             </div>
 
@@ -398,12 +398,12 @@
                                                                 <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                                             {% endfor %}
                                                         </span>
-                                                        {% if Article.commentsNum %}
+                                                        {% if Article.commentsUrl is not empty %}
                                                             <span class="tli-meta-slash">&nbsp;</span>
-                                                            <span class="tli-meta-comments-num">
+                                                            <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                                 <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                                                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                                            </span>
+                                                                {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                            </a>
                                                         {% endif %}
                                                     </div>
 
@@ -441,12 +441,12 @@
                                                     <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
-                                            {% if Article.commentsNum %}
+                                            {% if Article.commentsUrl is not empty %}
                                                 <span class="tli-meta-slash">&nbsp;</span>
-                                                    <span class="tli-meta-comments-num">
+                                                    <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                     <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                                </span>
+                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                </a>
                                             {% endif %}
                                         </div>
                                         <div class="gallery_item gallery_item-style-2">

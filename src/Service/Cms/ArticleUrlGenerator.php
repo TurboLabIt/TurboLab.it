@@ -36,12 +36,16 @@ class ArticleUrlGenerator extends UrlGenerator
 
     public function generateArticleCommentsUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : ?string
     {
-        $topicId = $article->getEntity()?->getCommentsTopic()?->getId();
-        if( empty($topicId) ) {
+        $topic = $article->getEntity()?->getCommentsTopic();
+
+        if( empty($topic) ) {
             return null;
         }
 
-        $url = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/viewtopic.php?t=$topicId";
+        $topicId        = $topic->getId();
+        $firstPostId    = $topic->getFirstPostId();
+
+        $url = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/viewtopic.php?t=$topicId#p$firstPostId";
         return $url;
     }
 

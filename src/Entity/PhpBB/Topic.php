@@ -29,11 +29,14 @@ class Topic
     #[ORM\Column(options: ['unsigned' => true])]
     protected ?int $forumId = null;
 
-    #[ORM\Column(name: "topic_last_post_time", options: ['unsigned' => true])]
-    protected ?int $lastPostTime = null;
+    #[ORM\Column(name: "topic_first_post_id", options: ['unsigned' => true])]
+    protected ?int $firstPostId = null;
 
     #[ORM\Column(name: "topic_last_post_id", options: ['unsigned' => true])]
     protected ?int $lastPostId = null;
+
+    #[ORM\Column(name: "topic_last_post_time", options: ['unsigned' => true])]
+    protected ?int $lastPostTime = null;
 
     #[ORM\Column(name: "topic_last_poster_name", length: 512)]
     protected ?string $lastPosterName = null;
@@ -103,14 +106,14 @@ class Topic
         return $this;
     }
 
-    public function getLastPostTime(): ?int
+    public function getFirstPostId(): ?int
     {
-        return $this->lastPostTime;
+        return $this->firstPostId;
     }
 
-    public function setLastPostTime(int $lastPostTime): static
+    public function setFirstPostId(int $firstPostId): static
     {
-        $this->lastPostTime = $lastPostTime;
+        $this->firstPostId = $firstPostId;
         return $this;
     }
 
@@ -122,6 +125,17 @@ class Topic
     public function setLastPostId(int $lastPostId): static
     {
         $this->lastPostId = $lastPostId;
+        return $this;
+    }
+
+    public function getLastPostTime(): ?int
+    {
+        return $this->lastPostTime;
+    }
+
+    public function setLastPostTime(int $lastPostTime): static
+    {
+        $this->lastPostTime = $lastPostTime;
         return $this;
     }
 
