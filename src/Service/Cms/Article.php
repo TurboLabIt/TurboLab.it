@@ -266,10 +266,7 @@ class Article extends BaseCmsService
 
     protected function loadPrevNextArticle(string $index) : ?static
     {
-        if(
-            $this->entity?->getPublishingStatus() != ArticleEntity::PUBLISHING_STATUS_PUBLISHED ||
-            empty( $this->getPublishedAt() )
-        ) {
+        if( ! $this->isPublished() ) {
             return null;
         }
 
@@ -286,6 +283,14 @@ class Article extends BaseCmsService
         }
 
         return $this->arrPrevNextArticles[$index] ?? null;
+    }
+
+
+    public function isPublished() : bool
+    {
+        return
+            $this->entity?->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
+            !empty( $this->getPublishedAt() );
     }
 
 
