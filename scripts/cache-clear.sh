@@ -17,8 +17,10 @@ if [ "$APP_ENV" = "dev" ]; then
   fxLink ${PROJECT_DIR}config/custom/dev/nginx-dev0.conf /etc/nginx/conf.d/turbolab.it-dev0.conf
 
   fxTitle "Removing composer stuff..."
-  rm -f ${PROJECT_DIR}.env.local.php
-  rm -rf ${PROJECT_DIR}vendor composer.lock
+  rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
+
+  fxTitle "Removing yarn stuff..."
+  rm -f ${PROJECT_DIR}yarn.lock
 
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
@@ -52,6 +54,8 @@ if [ "$APP_ENV" = "dev" ]; then
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwx "${PROJECT_DIR}" -R
+
+  source "${WEBSTACKUP_SCRIPT_DIR}node.js/webpack_watch.sh"
 fi
 
 
