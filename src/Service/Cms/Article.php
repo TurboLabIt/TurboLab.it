@@ -81,7 +81,6 @@ class Article extends BaseCmsService
     public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
     public function getTags() : array
     {
