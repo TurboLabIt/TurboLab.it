@@ -25,8 +25,9 @@ class ForumUrlGenerator
 
 
     public function generateTopicViewUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        $url = $this->generateHomeUrl($urlType) . 'viewtopic.php?t=' . $topic->getId();
-        return $url;
-    }
+        { return $this->generateHomeUrl($urlType) . 'viewtopic.php?t=' . $topic->getId() . "#p" . $topic->getFirstPostId(); }
+
+
+    public function generateTopicReplyUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->generateHomeUrl($urlType) . "forum/posting.php?mode=reply&t=" . $topic->getId(); }
 }

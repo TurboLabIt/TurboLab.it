@@ -8,52 +8,27 @@ class ArticleUrlGenerator extends UrlGenerator
 {
     public function generateUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $topTag             = $article->getTopTag();
-        $tagSlugDashId      = empty($topTag) ? static::DEFAULT_TAG_SLUG_DASH_ID : $this->buildSlugDashIdString($topTag);
+        $topTag         = $article->getTopTag();
+        $tagSlugDashId  = empty($topTag) ? static::DEFAULT_TAG_SLUG_DASH_ID : $this->buildSlugDashIdString($topTag);
 
-        $articleSlugDashId  = $this->buildSlugDashIdString($article);
-
-        $articleUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_article', [
                 "tagSlugDashId"     => $tagSlugDashId,
-                "articleSlugDashId" => $articleSlugDashId
+                "articleSlugDashId" => $this->buildSlugDashIdString($article)
             ], $urlType);
-
-        return $articleUrl;
     }
 
 
     public function generateShortUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $articleShortUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_article_shorturl', [
                 "id" => $article->getId()
             ], $urlType);
-
-        return $articleShortUrl;
     }
 
 
-    public function generateArticleCommentsUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : ?string
-    {
-        $topic = $article->getEntity()?->getCommentsTopic();
-
-        if( empty($topic) ) {
-            return null;
-        }
-
-        $topicId        = $topic->getId();
-        $firstPostId    = $topic->getFirstPostId();
-
-        $url = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/viewtopic.php?t=$topicId#p$firstPostId";
-        return $url;
-    }
-
-
-    public function isUrl(string $urlCandidate) : bool
-    {
-        return !empty( $this->extractIdFromUrl($urlCandidate) );
-    }
+    public function isUrl(string $urlCandidate) : bool { return !empty( $this->extractIdFromUrl($urlCandidate) ); }
 
 
     public function extractIdFromUrl(string $url) : ?int

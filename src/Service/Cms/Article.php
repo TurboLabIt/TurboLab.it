@@ -251,7 +251,13 @@ class Article extends BaseCmsService
     }
 
 
-    public function getCommentsUrl() : ?string { return $this->urlGenerator->generateArticleCommentsUrl($this); }
+    public function getCommentsUrl() : ?string { return $this->getCommentsTopic()?->getUrl(); }
+
+
+    public function getAddNewCommentUrl() : string { return $this->getCommentsTopic()?->getReplyUrl(); }
+
+
+    public function getComments() : array { return $this->getCommentsTopic()?->getPosts() ?? [];}
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔄 Prev/Next articles ***">
