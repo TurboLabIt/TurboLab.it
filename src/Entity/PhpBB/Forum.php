@@ -10,6 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "turbolab_it_forum.phpbb_forums")]
 class Forum
 {
+    /**
+     *  4 : area staff
+     * 25 : cestinate
+     *  7 : area prove
+     */
+    const array OFFLIMITS_FORUM_IDS = [4,25,7];
+    const int COMMENTS_FORUM_ID     = 26;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "forum_id", options: ['unsigned' => true])]

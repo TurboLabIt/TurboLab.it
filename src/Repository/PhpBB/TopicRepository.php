@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository\PhpBB;
 
+use App\Entity\PhpBB\Forum;
 use App\Entity\PhpBB\Topic;
 use App\Repository\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -16,10 +17,9 @@ class TopicRepository extends BaseRepository
     {
         return
             parent::getQueryBuilder()
-                ->andWhere('t.forumId NOT IN (' . implode(',', ForumRepository::OFFLIMITS_FORUM_IDS) . ')')
+                ->andWhere('t.forumId NOT IN (' . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
-                ->andWhere('t.status = 0')
                 ->orderBy('t.lastPostTime', 'DESC');
     }
 
@@ -30,10 +30,10 @@ class TopicRepository extends BaseRepository
             SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
             WHERE
                 (
-                  forum_id != " . ForumRepository::COMMENTS_FORUM_ID . " OR
-                  (forum_id = " . ForumRepository::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
+                  forum_id != " . Forum::COMMENTS_FORUM_ID . " OR
+                  (forum_id = " . Forum::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
                 ) AND
-                forum_id NOT IN (" . implode(',', ForumRepository::OFFLIMITS_FORUM_IDS) . ")
+                forum_id NOT IN (" . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ")
         ";
     }
 
