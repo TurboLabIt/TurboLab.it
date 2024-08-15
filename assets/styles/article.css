@@ -22,3 +22,9 @@
     -webkit-line-clamp: 3;
     line-height: 1.4 !important;
 }
+
+.tli-article-box {
+    box-shadow: 0px 2px 10px rgba(23, 34, 43, 0.08);
+    background: #fff;
+    padding: 20px;
+}
