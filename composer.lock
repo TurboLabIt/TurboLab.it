@@ -465,16 +465,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.8.7",
+            "version": "3.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "2093d670ca17f634f3c095ec10a20687eccebd99"
+                "reference": "d8f68ea6cc00912e5313237130b8c8decf4d28c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2093d670ca17f634f3c095ec10a20687eccebd99",
-                "reference": "2093d670ca17f634f3c095ec10a20687eccebd99",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/d8f68ea6cc00912e5313237130b8c8decf4d28c6",
+                "reference": "d8f68ea6cc00912e5313237130b8c8decf4d28c6",
                 "shasum": ""
             },
             "require": {
@@ -558,7 +558,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.8.7"
+                "source": "https://github.com/doctrine/dbal/tree/3.9.0"
             },
             "funding": [
                 {
@@ -574,7 +574,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-07T11:57:25+00:00"
+            "time": "2024-08-15T07:34:42+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -7147,12 +7147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-paginator.git",
-                "reference": "c5af5822fd9e54c0276ab6db03f07e055dbba41e"
+                "reference": "373d2523c127b064fa4fa53591e5fd1102e130cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/c5af5822fd9e54c0276ab6db03f07e055dbba41e",
-                "reference": "c5af5822fd9e54c0276ab6db03f07e055dbba41e",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/373d2523c127b064fa4fa53591e5fd1102e130cd",
+                "reference": "373d2523c127b064fa4fa53591e5fd1102e130cd",
                 "shasum": ""
             },
             "require": {
@@ -7185,7 +7185,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-paginator/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-paginator/tree/main"
             },
-            "time": "2024-07-28T09:58:28+00:00"
+            "time": "2024-08-13T09:42:09+00:00"
         },
         {
             "name": "turbolabit/php-encryptor",
@@ -7382,12 +7382,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle.git",
-                "reference": "6652569db1473904fe6dbdda3e2b0035c880e5c4"
+                "reference": "d420b40d0c03ba07535206ed3b75f9bb1df77a86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/6652569db1473904fe6dbdda3e2b0035c880e5c4",
-                "reference": "6652569db1473904fe6dbdda3e2b0035c880e5c4",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/d420b40d0c03ba07535206ed3b75f9bb1df77a86",
+                "reference": "d420b40d0c03ba07535206ed3b75f9bb1df77a86",
                 "shasum": ""
             },
             "require": {
@@ -7421,7 +7421,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/tree/main"
             },
-            "time": "2024-08-13T08:11:31+00:00"
+            "time": "2024-08-13T08:59:59+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
