@@ -31,7 +31,7 @@ class File extends BaseCmsService
         $this->clear();
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?FileEntity $entity = null) : static
     {
         $this->entity = $entity;
@@ -39,7 +39,7 @@ class File extends BaseCmsService
     }
 
     public function getEntity() : ?FileEntity { return $this->entity; }
-
+    //</editor-fold>
 
     public function isLocal() : bool
     {

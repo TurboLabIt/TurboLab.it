@@ -47,7 +47,7 @@ class Tag extends BaseCmsService
         $this->clear();
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?TagEntity $entity = null) : static
     {
         $this->localViewCount = $entity->getViews();
@@ -56,6 +56,7 @@ class Tag extends BaseCmsService
     }
 
     public function getEntity() : ?TagEntity { return $this->entity; }
+    //</editor-fold>
 
 
     public function getTitleFormatted() : ?string

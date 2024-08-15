@@ -25,7 +25,7 @@ class Topic extends BaseServiceEntity
         $this->clear();
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?TopicEntity $entity = null) : static
     {
         $this->entity = $entity;
@@ -33,7 +33,7 @@ class Topic extends BaseServiceEntity
     }
 
     public function getEntity() : ?TopicEntity { return $this->entity; }
-
+    //</editor-fold>
 
     public function getLastPostDateTime() : \DateTime
     {

@@ -28,7 +28,7 @@ class User extends BaseServiceEntity
         $this->clear();
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?UserEntity $entity = null) : static
     {
         $this->entity = $entity;
@@ -36,7 +36,7 @@ class User extends BaseServiceEntity
     }
 
     public function getEntity() : ?UserEntity { return $this->entity; }
-
+    //</editor-fold>
 
     public function isSubscribedToNewsletter() : bool
     {

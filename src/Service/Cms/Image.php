@@ -78,7 +78,7 @@ class Image extends BaseCmsService
         }
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?ImageEntity $entity = null) : static
     {
         $this->entity = $entity;
@@ -86,7 +86,7 @@ class Image extends BaseCmsService
     }
 
     public function getEntity() : ?ImageEntity { return $this->entity; }
-
+    //</editor-fold>
 
     public function getSizes() : array
     {
