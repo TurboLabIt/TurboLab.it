@@ -23,14 +23,15 @@ class ArticleController extends BaseController
             ->countOneView();
 
         return $this->render('article/index.html.twig', [
-            'metaTitle'         => $article->getTitle(),
-            'metaDescription'   => $article->getAbstract(),
-            'metaCanonicalUrl'  => $article->getUrl(),
-            'metaOgType'        => 'article',
-            'metaPageImageUrl'  => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
-            'activeMenu'        => $article->getActiveMenu(),
-            'FrontendHelper'    => $this->frontendHelper,
-            'Article'           => $article
+            'metaTitle'             => $article->getTitle(),
+            'metaDescription'       => $article->getAbstract(),
+            'metaCanonicalUrl'      => $article->getUrl(),
+            'metaOgType'            => 'article',
+            'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
+            'activeMenu'            => $article->getActiveMenu(),
+            'FrontendHelper'        => $this->frontendHelper,
+            'Article'               => $article,
+            'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl()
         ]);
     }
 

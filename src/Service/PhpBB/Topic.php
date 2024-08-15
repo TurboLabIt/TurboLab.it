@@ -41,6 +41,9 @@ class Topic extends BaseServiceEntity
 
     public function getReplyUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
         { return $this->urlGenerator->generateTopicReplyUrl($this, $urlType); }
+
+    public function getCommentsAjaxLoadingUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : ?string
+        { return $this->urlGenerator->generateCommentsAjaxLoadingUrl($this, $urlType); }
     //</editor-fold>
 
     public function getLastPostDateTime() : \DateTime
@@ -49,6 +52,8 @@ class Topic extends BaseServiceEntity
         $oDateTime->setTimezone(new \DateTimeZone('Europe/Rome'));
         return $oDateTime;
     }
+
+    public function getFirstPostId(): ?int { return $this->entity->getFirstPostId(); }
 
     public function getPostNum() : ?int { return $this->entity->getPostNum(); }
 }

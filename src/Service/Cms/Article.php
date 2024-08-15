@@ -257,7 +257,14 @@ class Article extends BaseCmsService
     public function getAddNewCommentUrl() : string { return $this->getCommentsTopic()?->getReplyUrl(); }
 
 
-    public function getComments() : array { return $this->getCommentsTopic()?->getPosts() ?? [];}
+    public function getCommentsAjaxLoadingUrl() : ?string
+    {
+        if( $this->getCommentsNum() == 0 ) {
+            return null;
+        }
+
+        return $this->getCommentsTopic()?->getCommentsAjaxLoadingUrl();
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔄 Prev/Next articles ***">
