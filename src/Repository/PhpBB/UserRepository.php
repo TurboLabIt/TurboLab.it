@@ -75,4 +75,14 @@ class UserRepository extends BaseRepository
                 ->getQuery()
                 ->getResult();
     }
+
+
+    public function getAdditionalFields(User $user) : array
+    {
+        $db     = $this->getEntityManager()->getConnection();
+        $sql    = "SELECT * FROM turbolab_it_forum.phpbb_profile_fields_data WHERE user_id = :userId";
+        $stmt   = $db->prepare($sql);
+        $stmt->bindValue('userId', $user->getId(), ParameterType::INTEGER);
+        return $stmt->executeQuery()->fetchAssociative() ?: [];
+    }
 }

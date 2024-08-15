@@ -6,12 +6,12 @@ use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
+use App\Service\User;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -38,13 +38,17 @@ class Article extends BaseCmsService
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
 
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected ?ArticleEntity $entity        = null;
+    protected ?array $arrTags               = null;
+    protected ?array $arrAuthors            = null;
     protected ?ImageService $spotlight;
     protected HtmlProcessor $htmlProcessor;
     protected ?TagService $topTag           = null;
     protected ?Topic $commentsTopic;
     protected array $arrPrevNextArticles    = [];
-
+    //</editor-fold>
 
     public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
     {
@@ -52,7 +56,7 @@ class Article extends BaseCmsService
         $this->htmlProcessor = new HtmlProcessor($factory);
     }
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?ArticleEntity $entity = null) : static
     {
         $this->localViewCount = $entity->getViews();
@@ -61,16 +65,41 @@ class Article extends BaseCmsService
     }
 
     public function getEntity() : ?ArticleEntity { return $this->entity; }
+    //</editor-fold>
 
-
-    public function getTopTagOrDefault() : TagService
+    //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
+    public function isPublished() : bool
     {
-        $topTag = $this->getTopTag();
-        if( !empty($topTag) ) {
-            return $topTag;
+        return
+            $this->entity?->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
+            !empty( $this->getPublishedAt() );
+    }
+
+
+    public function getPublishedAt() : ?\DateTimeInterface { return $this->entity->getPublishedAt(); }
+
+    public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
+    public function getTags() : array
+    {
+        if( is_array($this->arrTags) ) {
+            return $this->arrTags;
         }
 
-        return $this->factory->createDefaultTag();
+        $this->arrTags = [];
+
+        $tagJunctionEntities = $this->entity->getTags();
+        foreach($tagJunctionEntities as $junctionEntity) {
+
+            $tagEntity              = $junctionEntity->getTag();
+            $tagId                  = $tagEntity->getId();
+            $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
+        }
+
+        return $this->arrTags;
     }
 
 
@@ -97,8 +126,7 @@ class Article extends BaseCmsService
             if( $topTagCandidate->getRanking() == $this->topTag->getRanking() ) {
 
                 $this->topTag =
-                    $topTagCandidate->getUpdatedAt() < $this->topTag->getUpdatedAt()
-                    ? $topTagCandidate : $this->topTag;
+                    $topTagCandidate->getUpdatedAt() < $this->topTag->getUpdatedAt() ? $topTagCandidate : $this->topTag;
             }
         }
 
@@ -106,47 +134,61 @@ class Article extends BaseCmsService
     }
 
 
-    public function countOneView() : static
+    public function getTopTagOrDefault() : TagService
     {
-        if( !$this->entity->publishingStatusCountOneView() ) {
-            return $this;
+        $topTag = $this->getTopTag();
+        if( !empty($topTag) ) {
+            return $topTag;
         }
 
-        return $this->traitCountOneView();
+        return $this->topTag = $this->factory->createDefaultTag();
     }
+    //</editor-fold>
 
-
-    public function checkRealUrl(string $tagSlugDashId, string $articleSlugDashId) : ?string
+    //<editor-fold defaultstate="collapsed" desc="*** 👔 Authors ***">
+    public function getAuthors() : array
     {
-        $candidateUrl   = '/' . $tagSlugDashId . '/' . $articleSlugDashId;
-        $realUrl        = $this->urlGenerator->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
-        $result         = $candidateUrl == $realUrl ? null : $this->getUrl();
-        return $result;
+        if( is_array($this->arrAuthors) ) {
+            return $this->arrAuthors;
+        }
+
+        $this->arrAuthors = [];
+
+        $authorJunctionEntities = $this->entity->getAuthors();
+        foreach($authorJunctionEntities as $junctionEntity) {
+
+            $userEntity                     = $junctionEntity->getUser();
+            $authorId                       = $userEntity->getId();
+            $this->arrAuthors[$authorId]    = $this->factory->createUser($userEntity);
+        }
+
+        return $this->arrAuthors;
     }
 
 
-    public function getFeedGuId() : string
+    public function getAuthorsNotSystem() : array
+        { return array_filter($this->getAuthors(), fn(User $user) => !$user->isSystem()); }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 📂 Files ***">
+    public function getFiles() : array
     {
-        $guid =
-            implode(',', array_filter([
-                $this->entity->getId(),  $this->entity->getPublishingStatus(),
-                $this->getPublishedAt()?->format('Y-m-d-H:i:s')
-            ]));
+        $fileJunctionEntities = $this->entity->getFiles();
+        $arrFiles = [];
+        foreach($fileJunctionEntities as $junctionEntity) {
 
-        return $guid;
+            $fileEntity = $junctionEntity->getFile();
+            $fileId     = $fileEntity->getId();
+            $arrFiles[$fileId] = $this->factory->createFile($fileEntity);
+        }
+
+        return $arrFiles;
     }
+    //</editor-fold>
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** ☀️ Spotlight ***">
     public function getSpotlightOrDefaultUrl(string $size) : string
-    {
-        return $this->getSpotlightOrDefault()->getUrl($this, $size);
-    }
-
-
-    public function getSpotlightUrl(string $size) : ?string
-    {
-        return $this->getSpotlight()?->getUrl($this, $size);
-    }
+        { return $this->getSpotlightOrDefault()->getUrl($this, $size); }
 
 
     public function getSpotlight() : ?ImageService
@@ -172,46 +214,11 @@ class Article extends BaseCmsService
             return $spotlight;
         }
 
-        return $this->factory->createDefaultSpotlight();
+        return $this->spotlight = $this->factory->createDefaultSpotlight();
     }
+    //</editor-fold>
 
-
-    public function getBodyForDisplay() : ?string
-    {
-        return $this->htmlProcessor->processArticleBodyForDisplay($this);
-    }
-
-
-    public function getTags() : array
-    {
-        $tagJunctionEntities = $this->entity->getTags();
-        $arrTags = [];
-        foreach($tagJunctionEntities as $junctionEntity) {
-
-            $tagEntity  = $junctionEntity->getTag();
-            $tagId      = $tagEntity->getId();
-            $arrTags[$tagId] = $this->factory->createTag($tagEntity);
-        }
-
-        return $arrTags;
-    }
-
-
-    public function getFiles() : array
-    {
-        $fileJunctionEntities = $this->entity->getFiles();
-        $arrFiles = [];
-        foreach($fileJunctionEntities as $junctionEntity) {
-
-            $fileEntity = $junctionEntity->getFile();
-            $fileId     = $fileEntity->getId();
-            $arrFiles[$fileId] = $this->factory->createFile($fileEntity);
-        }
-
-        return $arrFiles;
-    }
-
-
+    //<editor-fold defaultstate="collapsed" desc="*** 💬 Comments ***">
     public function getCommentsTopic() : ?Topic
     {
         if( !empty($this->commentsTopic) ) {
@@ -245,21 +252,10 @@ class Article extends BaseCmsService
     }
 
 
-    public function getActiveMenu() : ?string
-    {
-        $topTagActiveMenu = $this->getTopTag()?->getActiveMenu();
-        if( $topTagActiveMenu != 'guide' ) {
-            return $topTagActiveMenu;
-        }
+    public function getCommentsUrl() : ?string { return $this->urlGenerator->generateArticleCommentsUrl($this); }
+    //</editor-fold>
 
-        if( $this->isNews() ) {
-            return 'news';
-        }
-
-        return 'guide';
-    }
-
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🔄 Prev/Next articles ***">
     public function getPreviousArticle() : ?static { return $this->loadPrevNextArticle("prev"); }
 
     public function getNextArticle() : ?static { return $this->loadPrevNextArticle("next"); }
@@ -284,23 +280,61 @@ class Article extends BaseCmsService
 
         return $this->arrPrevNextArticles[$index] ?? null;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🛋️ Text ***">
+    public function getAbstract() : ?string { return $this->entity->getAbstract(); }
 
-    public function isPublished() : bool
+    public function getBody() : ?string { return $this->entity->getBody(); }
+
+    public function getBodyForDisplay() : ?string
+        { return $this->htmlProcessor->processArticleBodyForDisplay($this); }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
+    public function checkRealUrl(string $tagSlugDashId, string $articleSlugDashId) : ?string
     {
-        return
-            $this->entity?->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
-            !empty( $this->getPublishedAt() );
+        $candidateUrl   = '/' . $tagSlugDashId . '/' . $articleSlugDashId;
+        $realUrl        = $this->urlGenerator->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
+        $result         = $candidateUrl == $realUrl ? null : $this->getUrl();
+        return $result;
+    }
+    //</editor-fold>
+
+
+    public function countOneView() : static
+    {
+        if( !$this->entity->publishingStatusCountOneView() ) {
+            return $this;
+        }
+
+        return $this->traitCountOneView();
     }
 
 
-    public function getAuthors() : Collection { return $this->entity->getAuthors(); }
-    public function getPublishedAt() : ?\DateTimeInterface { return $this->entity->getPublishedAt(); }
+    public function getFeedGuId() : string
+    {
+        $guid =
+            implode(',', array_filter([
+                $this->entity->getId(),  $this->entity->getPublishingStatus(),
+                $this->getPublishedAt()?->format('Y-m-d-H:i:s')
+            ]));
 
-    public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
+        return $guid;
+    }
 
-    public function getAbstract() : ?string { return $this->entity->getAbstract(); }
-    public function getBody() : ?string { return $this->entity->getBody(); }
 
-    public function getCommentsUrl() : ?string { return $this->urlGenerator->generateArticleCommentsUrl($this); }
+    public function getActiveMenu() : ?string
+    {
+        $topTagActiveMenu = $this->getTopTag()?->getActiveMenu();
+        if( $topTagActiveMenu != 'guide' ) {
+            return $topTagActiveMenu;
+        }
+
+        if( $this->isNews() ) {
+            return 'news';
+        }
+
+        return 'guide';
+    }
 }

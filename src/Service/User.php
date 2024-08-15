@@ -19,6 +19,7 @@ class User extends BaseServiceEntity
     const int TESTER_USER_ID    = 4015;
 
     protected ?UserEntity $entity = null;
+    protected ?array $arrAdditionalFields   = null;
 
 
     public function __construct(
@@ -38,12 +39,72 @@ class User extends BaseServiceEntity
     public function getEntity() : ?UserEntity { return $this->entity; }
     //</editor-fold>
 
-    public function isSubscribedToNewsletter() : bool
+    //<editor-fold defaultstate="collapsed" desc="*** 👔 User name ***">
+    public function getUsername() : string { return $this->entity->getUsername(); }
+
+
+    public function getFullName() : string
     {
-        $result = $this->entity->getAllowMassEmail();
-        return (bool)$result;
+        $username   = $this->getUsername();
+        $personName = $this->loadAdditionalFields()['pf_tli_fullname'] ?? null;
+
+        if( empty($personName) ) {
+            return $username;
+        }
+
+        return "$username ($personName)";
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🪪 User data ***">
+    public function isSystem() : bool { return $this->getId() == static::SYSTEM_USER_ID; }
+
+    public function getEmail() : string { return $this->entity->getEmail(); }
+
+    public function getBio() : ?string
+    {
+        $bio = $this->loadAdditionalFields()['pf_tli_bio'] ?? null;
+        if( empty($bio) ) {
+            return null;
+        }
+
+        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
+        $bio = str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
+
+        return $bio;
     }
 
+
+    public function getAvatarUrl() : ?string
+    {
+        if( $this->entity->getAvatarType() == 'avatar.driver.gravatar' ) {
+            return 'https://secure.gravatar.com/avatar/' . md5( $this->getEmail() ) . '?s=128';
+        }
+
+        $avatarFile = $this->entity->getAvatarFile();
+        if( !empty($avatarFile) ) {
+            return "/forum/download/file.php?avatar=$avatarFile";
+        }
+
+        return null;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🪪 Additional, custom fields from phpBB ***">
+    protected function loadAdditionalFields() : array
+    {
+        if( is_array($this->arrAdditionalFields) ) {
+            return $this->arrAdditionalFields;
+        }
+
+        return
+            $this->arrAdditionalFields =
+                $this->em->getRepository(UserEntity::class)->getAdditionalFields( $this->getEntity() );
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 📩 Newsletter ***">
+    public function isSubscribedToNewsletter() : bool { return $this->entity->getAllowMassEmail(); }
 
     public function subscribeToNewsletter() : static
     {
@@ -59,36 +120,26 @@ class User extends BaseServiceEntity
     }
 
 
-    public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->urlGenerator->generateUrl($this, $urlType);
-    }
-
-
-    public function getForumUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->urlGenerator->generateForumProfileUrl($this, $urlType);
-    }
-
-
     public function getNewsletterUnsubscribeUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->urlGenerator->generateNewsletterUnsubscribeUrl($this, $urlType);
-    }
-
+        { return $this->urlGenerator->generateNewsletterUnsubscribeUrl($this, $urlType); }
 
     public function getNewsletterSubscribeUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->urlGenerator->generateNewsletterSubscribeUrl($this, $urlType);
-    }
+        { return $this->urlGenerator->generateNewsletterSubscribeUrl($this, $urlType); }
 
 
-    public function getNewsletterOpenerUrl(?string $redirectToUrl = null, bool $requiresUrlEncode = true, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function getNewsletterOpenerUrl(
+        ?string $redirectToUrl = null, bool $requiresUrlEncode = true, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL
+    ) : string
     {
         return $this->urlGenerator->generateNewsletterOpenerUrl($this, $redirectToUrl, $requiresUrlEncode, $urlType);
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
+    public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->urlGenerator->generateUrl($this, $urlType); }
 
-    public function getUsername() : string { return $this->entity->getUsername(); }
-    public function getEmail() : string { return $this->entity->getEmail(); }
+    public function getForumUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->urlGenerator->generateForumProfileUrl($this, $urlType); }
+    //</editor-fold>
 }
