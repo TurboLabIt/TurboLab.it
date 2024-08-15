@@ -94,12 +94,14 @@
                                             </div>
 
                                             <div class="tli-mosaic-post-meta">
-                                                <span class="tli-meta-authors">
-                                                    a cura di
-                                                    {% for Author in Article.Authors %}
-                                                        <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                </span>
+                                                {% if Article.AuthorsNotSystem is not empty %}
+                                                    <span class="tli-meta-authors">
+                                                        a cura di
+                                                        {% for Author in Article.AuthorsNotSystem %}
+                                                            <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                {% endif %}
                                                 {% if Article.commentsUrl is not empty %}
                                                     <span class="tli-meta-slash">&nbsp;</span>
                                                     <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">

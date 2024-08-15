@@ -39,12 +39,14 @@
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
                                         <br>
-                                        <span class="tli-meta-authors">
-                                            a cura di
-                                            {% for Author in Article.Authors %}
-                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </span>
+                                        {% if Article.AuthorsNotSystem is not empty %}
+                                            <span class="tli-meta-authors">
+                                                a cura di
+                                                {% for Author in Article.AuthorsNotSystem %}
+                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </span>
+                                        {% endif %}
                                         {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
                                             <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -69,12 +71,14 @@
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
                                         <br>
-                                        <span class="tli-meta-authors">
-                                            a cura di
-                                            {% for Author in Article.Authors %}
-                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </span>
+                                        {% if Article.AuthorsNotSystem is not empty %}
+                                            <span class="tli-meta-authors">
+                                                a cura di
+                                                {% for Author in Article.AuthorsNotSystem %}
+                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </span>
+                                        {% endif %}
                                         {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
                                             <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -108,12 +112,14 @@
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
                                         <br>
-                                        <span class="tli-meta-authors">
-                                            a cura di
-                                            {% for Author in Article.Authors %}
-                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </span>
+                                        {% if Article.AuthorsNotSystem is not empty %}
+                                            <span class="tli-meta-authors">
+                                                a cura di
+                                                {% for Author in Article.AuthorsNotSystem %}
+                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </span>
+                                        {% endif %}
                                         {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
                                             <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -186,13 +192,15 @@
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                         </a>
-                                        <span class="tli-meta-slash"> · </span>
-                                        <span class="tli-meta-authors">
-                                            a cura di
-                                            {% for Author in Article.Authors %}
-                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </span>
+                                        {% if Article.AuthorsNotSystem is not empty %}
+                                            <span class="tli-meta-slash"> · </span>
+                                            <span class="tli-meta-authors">
+                                                a cura di
+                                                {% for Author in Article.AuthorsNotSystem %}
+                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </span>
+                                        {% endif %}
                                         {% if Article.commentsUrl is not empty %}
                                             <span class="tli-meta-slash">&nbsp;</span>
                                             <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -345,12 +353,14 @@
                                                 <span class="tli-meta-slash"> · </span>
                                                 <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
                                                 <br>
-                                                <span class="tli-meta-authors">
-                                                    a cura di
-                                                    {% for Author in Article.Authors %}
-                                                        <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                </span>
+                                                {% if Article.AuthorsNotSystem is not empty %}
+                                                    <span class="tli-meta-authors">
+                                                        a cura di
+                                                        {% for Author in Article.AuthorsNotSystem %}
+                                                            <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                {% endif %}
                                                 {% if Article.commentsUrl is not empty %}
                                                     <span class="tli-meta-slash">&nbsp;</span>
                                                     <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -392,12 +402,14 @@
                                                         <span class="tli-meta-slash"> · </span>
                                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
                                                         <br>
-                                                        <span class="tli-meta-authors">
-                                                            a cura di
-                                                            {% for Author in Article.Authors %}
-                                                                <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                                            {% endfor %}
-                                                        </span>
+                                                        {% if Article.AuthorsNotSystem is not empty %}
+                                                            <span class="tli-meta-authors">
+                                                                a cura di
+                                                                {% for Author in Article.AuthorsNotSystem %}
+                                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                                {% endfor %}
+                                                            </span>
+                                                        {% endif %}
                                                         {% if Article.commentsUrl is not empty %}
                                                             <span class="tli-meta-slash">&nbsp;</span>
                                                             <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
@@ -435,12 +447,14 @@
                                                 {{ Article.TopTagOrDefault.title|upper|raw }}
                                             </a>
                                             <br>
-                                            <span class="tli-meta-authors">
-                                                a cura di
-                                                {% for Author in Article.Authors %}
-                                                    <a href="">{{ Author.User.username }}</a>{% if not loop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </span>
+                                            {% if Article.AuthorsNotSystem is not empty %}
+                                                <span class="tli-meta-authors">
+                                                    a cura di
+                                                    {% for Author in Article.AuthorsNotSystem %}
+                                                        <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                            {% endif %}
                                             {% if Article.commentsUrl is not empty %}
                                                 <span class="tli-meta-slash">&nbsp;</span>
                                                     <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
