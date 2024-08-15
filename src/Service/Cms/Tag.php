@@ -30,6 +30,7 @@ class Tag extends BaseCmsService
     const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/youtube-42
 
     const int ID_MAC                = 26;       // 👀 https://turbolab.it/apple-mac-macos-26
+    const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/ssd-dischi-fissi-hard-disk-570
 
     const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/newsletter-turbolab.it-1349
     const int ID_SPONSOR            = 5443;     // 👀 https://turbolab.it/sponsor-5443
@@ -66,6 +67,7 @@ class Tag extends BaseCmsService
                 static::ID_FILESHARING          => 'Filesharing peer-to-peer (P2P)',
                 static::ID_MAC                  => 'Mac / macOS',
                 static::ID_YOUTUBE              => 'YouTube (trucchi e app)',
+                static::ID_STORAGE              => 'SSD e HDD (hard disk)',
                 default                         => null
             };
 
@@ -75,11 +77,13 @@ class Tag extends BaseCmsService
 
         $title = $this->getTitle();
         $arrSpecialCasesMap = [
-            'iphone'    => 'iPhone',
-            'ipad'      => 'iPad',
-            'ipod'      => 'iPod',
-            'youtube'   => 'YouTube',
-            'turbolab'  => 'TurboLab'
+            'iphone'        => 'iPhone',
+            'ipad'          => 'iPad',
+            'ipod'          => 'iPod',
+            'youtube'       => 'YouTube',
+            'turbolab'      => 'TurboLab',
+            'ssd'           => 'SSD',
+            'hdd'           => 'HDD',
         ];
 
         $title = str_replace( array_keys($arrSpecialCasesMap), $arrSpecialCasesMap, $title);
