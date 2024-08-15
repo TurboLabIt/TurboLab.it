@@ -5,33 +5,16 @@
  * https://turbolab.it/ajax/login/
  *
  * 400: generic client error
- * 500: server serror
+ * 500: server error
  * 401: username not found
- * 403: worng password
+ * 403: wrong password
  * 429: too many retries
  * 200: OK
  */
 
 const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
-$siteUrl = 'https://' . $_SERVER["SERVER_NAME"];
+require './includes/00_begin.php';
 
-
-function tliResponse(string $message, int $httpStatusCode) : never
-{
-    $arrResult = [
-        "code" => $httpStatusCode,
-        "message" => $message
-    ];
-
-    http_response_code($httpStatusCode);
-    die( json_encode($arrResult, JSON_PRETTY_PRINT) );
-}
-
-
-$requestUri = $_SERVER["REQUEST_URI"] ?? null;
-if( $requestUri != '/ajax/login/' ) {
-    tliResponse("L'URL di questa pagina è " . $siteUrl . THIS_SPECIAL_PAGE_PATH);
-}
 
 $devCredentialsFilePath = '../../backup/dev-credentials.php';
 if( stripos($siteUrl, 'https://dev') === 0 && file_exists($devCredentialsFilePath) ) {
@@ -53,17 +36,7 @@ foreach (["username", "password"] as $field) {
     $$field = $fieldValue;
 }
 
-// 📚 https://www.phpbb.com/support/docs/en/3.0/kb/article/phpbb3-cross-site-sessions-integration/
-define('IN_PHPBB', true);
-$phpbb_root_path = '../../public/forum/';
-$phpEx = substr(strrchr(__FILE__, '.'), 1);
-
-require($phpbb_root_path . 'common.' . $phpEx);
-require($phpbb_root_path . 'includes/functions_user.' . $phpEx);
-
-$user->session_begin();
-$auth->acl($user->data);
-$user->setup();
+require './includes/10_phpbb_start.php';
 
 // from: public/forum/phpbb/auth/auth.php
 // sign: function login($username, $password, $autologin = false, $viewonline = 1, $admin = 0)
