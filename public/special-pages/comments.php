@@ -44,7 +44,7 @@ if( empty($arrTopic) ) {
 if( $arrTopic["forum_id"] != $commentsForumId ) {
     tliHtmlResponse(
         "Impossibile accedere al topic dei commenti ##$topicId##. Questo topic " .
-        "non fa parte del <a href=\"/forum/viewforum.php?f=26\">forum dedicato ai commenti</a>. $txtPleaseReport",
+        "non fa parte del <a href=\"/forum/viewforum.php?f=$commentsForumId\">forum dedicato ai commenti</a>. $txtPleaseReport",
         500
     );
 }
@@ -117,6 +117,16 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
     $arrPost["tli_rank_image"] =
         empty( $arrPost['tli_rank']['rank_image'] )
             ? '' : '<img src="/forum/images/ranks/' . $arrPost['tli_rank']['rank_image'] . '" class="">';
+
+    $arrPost["tli_text"] =
+        generate_text_for_display(
+            $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
+        );
+
+    $arrPost["tli_text"] = str_replace(
+        '<img class="smilies" src="./../../../../public/forum/images/smilies/',
+        '<img class="smilies" src="/forum/images/smilies/', $arrPost["tli_text"]
+    );
 ?>
 
     <div class="post-comments-item">
@@ -124,13 +134,7 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
             <h5 class="title" <?php echo $arrPost["tli_username_style"] ?>>
                 <span><?php echo $arrPost["username"] ?></span> &nbsp; <?php echo $arrPost["tli_rank_image"] ?>
             </h5>
-            <div class="tli-comment-main-content">
-                <?php
-                echo generate_text_for_display(
-                    $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
-                )
-                ?>
-            </div>
+            <div class="tli-comment-main-content"><?php echo $arrPost["tli_text"] ?></div>
             <div class="tli-comment-reply">
                 <a href="/forum/posting.php?mode=reply&t=<?php echo $topicId ?>">Rispondi</a> |
                 <a href="/forum/posting.php?mode=quote&p=<?php echo $arrPost["post_id"] ?>">Rispondi citando</a>
@@ -138,7 +142,7 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
         </div>
     </div>
 
+    <hr>
 
 <?php
-    //var_dump($arrPost);
 }
