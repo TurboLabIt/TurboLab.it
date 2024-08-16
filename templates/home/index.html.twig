@@ -5,6 +5,8 @@
     {{ parent() }}
     {{ encore_entry_link_tags('home') }}
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+
 {% endblock %}
 
 
@@ -507,6 +509,9 @@
 {% endblock %}
 
 {% block javascripts %}
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"
+            async='async'></script>
 
     {{ parent() }}
     {{ encore_entry_script_tags('home') }}
