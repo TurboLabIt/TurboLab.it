@@ -1,0 +1,285 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+    {{ parent() }}
+    {{ encore_entry_link_tags('article') }}
+
+{% endblock %}
+
+
+{% block bodyMainContent %}
+    <!-- ARTICLE bodyMainContent START -->
+    <section class="post-layout-1-area post-layout-3-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="about-author-content">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                                {% if Article.isNews %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ path('app_news') }}">
+                                            <i class="fa-solid fa-newspaper"></i>&nbsp;
+                                            News
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="breadcrumb-item">
+                                    <a href="{{ Article.topTagOrDefault.url }}">
+                                        <i class="{{ Article.topTagOrDefault.fontAwesomeIcon|first }}"></i>&nbsp;
+                                        {{ Article.topTagOrDefault.titleFormatted }}
+                                    </a>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- ARTICLE main content START -->
+                <div class="col-lg-8">
+
+                    <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
+
+                        <div class="post-content">
+                            <h1 class="title">{{ Article.titleFormatted|raw }}</h1>
+                            <div class="post-categories d-flex justify-content-between align-content-center">
+                                <div class="categories-share">
+                                    <ul>
+                                        {% if Article.commentsTopic is not empty %}
+                                            <li>
+                                                <a href="{{ Article.commentsUrl }}">
+                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if Article.views(false) > 1 %}
+                                            <li><i class="fa-brands fa-readme"></i> {{ Article.views }} visualizzazioni</li>
+                                        {% endif %}
+                                        <li>
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            Aggiornato: {{ Article.updatedAt|friendlyDate }}
+                                        </li>
+                                        <li>
+                                            {% if Article.isPublished %}
+                                                <i class="fa-solid fa-book" style="color: #33d17a;"></i>
+                                                <span style="color: #33d17a;">Pubblicato</span>: {{ Article.publishedAt|friendlyDate }}
+                                            {% else %}
+                                                <i class="fa-solid fa-book" style="color: #f5c211;"></i>
+                                                <span style="color: #f5c211;">Articolo non ancora pubblicato</span>
+                                            {% endif %}
+                                        </li>
+                                        {% if Article.AuthorsNotSystem is not empty %}
+                                            <li>
+                                                <i class="fa-solid fa-user-tie"></i> a cura di
+                                                {% for Author in Article.AuthorsNotSystem %}
+                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sharethis-inline-share-buttons mt-30"></div>
+
+                        <div class="post-text mt-30">{{ Article.bodyForDisplay|raw }}</div>
+
+                        <h4>
+                            <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
+                            Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
+                        </h4>
+                        <div class="sharethis-inline-share-buttons"></div>
+
+                        <div class="post-tags mt-30">
+                            <ul>
+                                <li><a class="disabled-link" href="#"><i class="fas fa-tag"></i> Tags</a></li>
+                                {% if Article.tags|length > 0 %}
+                                    <li>
+                                        {% for Tag in Article.Tags %}
+                                            <a href="{{ Tag.url }}">
+                                                <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.titleFormatted|raw }}
+                                            </a>
+                                        {% endfor %}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    {% if Article.AuthorsNotSystem is not empty %}
+                        <div class="tli-article-box mt-30 container">
+                            <h4>Gli autori</h4>
+                            {% for Author in Article.AuthorsNotSystem %}
+                                <div class="row mt-30">
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        {% if Author.avatarUrl is not empty %}
+                                            <img src="{{ Author.avatarUrl }}" width="128">
+                                        {% else %}
+                                            <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p><strong>{{ Author.fullName }}</strong></p>
+                                        <p>
+                                            {% if Author.bio is not empty %}
+                                                {{ Author.bio }}
+                                            {% else %}
+                                                <em>Questo autore non ha ancora compilato la propria presentazione.</em>
+                                            {% endif %}
+                                        </p>
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="post-reader-text post-reader-text-2 post-reader-text-3 pt-50">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% if Article.previousArticle is not empty %}
+                                    <div class="post-reader-prev">
+                                        <a href="{{ Article.previousArticle.url }}">
+                                            <span><i class="fa fa-angle-left"></i> PRECEDENTE</span>
+                                        </a>
+                                        <h4 class="title">
+                                            <a href="{{ Article.previousArticle.url }}">
+                                                {{ Article.previousArticle.title|raw }}
+                                            </a>
+                                        </h4>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {% if Article.nextArticle is not empty %}
+                                    <div class="post-reader-prev">
+                                        <div style="text-align: right;">
+                                            <a href="{{ Article.nextArticle.url }}">
+                                                <span>SUCCESSIVO <i class="fa fa-angle-right"></i></span>
+                                            </a>
+                                        </div>
+                                        <h4 class="title">
+                                            <a href="{{ Article.nextArticle.url }}">
+                                                {{ Article.nextArticle.title|raw }}
+                                            </a>
+                                        </h4>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ARTICLE main END -->
+
+                <!-- ARTICLE side column START -->
+                <div class="col-lg-4 mt-20">
+                    <div class="about-tab-btn">
+                        <div class="about-post-items">
+                            <div class="row">
+                                {% for Article in SideArticles %}
+
+                                    <div class="trending-news-item mb-30">
+
+                                        <div class="trending-news-content">
+                                            <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
+                                        </div>
+
+                                        <div class="trending-news-thumb">
+                                            <a href="{{ Article.url|raw }}">
+                                                <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                            </a>
+                                        </div>
+
+                                        <div class="tli-mosaic-post-meta">
+                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            </a>
+                                            <span class="tli-meta-slash"> · </span>
+                                            <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                        </div>
+
+                                        <div class="tli-mosaic-post-meta">
+                                            {% if Article.AuthorsNotSystem is not empty %}
+                                                <span class="tli-meta-authors">
+                                                        a cura di
+                                                        {% for Author in Article.AuthorsNotSystem %}
+                                                            <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                            {% endif %}
+                                            {% if Article.commentsUrl is not empty %}
+                                                <span class="tli-meta-slash">&nbsp;</span>
+                                                <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
+                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ARTICLE side column END -->
+            </div>
+        </div>
+    </section>
+    <!-- ARTICLE bodyMainContent END -->
+
+    <!-- ARTICLE comments START -->
+    {% if Article.commentsTopic is not empty %}
+        <section class="post-comments-area pt-20 pb-20">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 tli-article-box">
+                        <div class="section-title">
+                            <h3 class="title">
+                                <i class="fa-solid fa-comments fa-lg"></i> Commenti
+                                <span>
+                                    <a href="{{ Article.commentsUrl }}">
+                                        <i class="fa-solid fa-users"></i> Guarda la discussione sul forum
+                                    </a>
+                                </span>
+                            </h3>
+                        </div>
+                        {% if Article.commentsNum(false) > 0 %}
+                            <div class="post-comments-list" data-comments-loading-url="{{ commentsLoadingUrl }}"></div>
+                            <div>
+                                <span>
+                                    <a href="{{ Article.commentsUrl }}">
+                                        <i class="fa-solid fa-users"></i> Guarda la discussione sul forum
+                                    </a>
+                                </span>
+                            </div>
+                            <div class="post-load-btn">
+                                <a class="main-btn" href="{{ Article.addNewCommentUrl }}">Aggiungi il tuo commento</a>
+                            </div>
+                        {% else %}
+                            <div class="tli-article-main-content">
+                                <p>Nessun commento. <a href="{{ Article.addNewCommentUrl }}">Scrivi tu il primo!</a></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+    <!-- ARTICLE comments END -->
+
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    {{ encore_entry_script_tags('article') }}
+
+{% endblock %}
