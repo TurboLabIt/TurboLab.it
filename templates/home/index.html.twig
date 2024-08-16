@@ -153,7 +153,7 @@
                             <div id="social-links">
                                 {% for Link in FrontendHelper.FollowUsLinks %}
                                     <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                        <img src="{{ asset(Link.icon) }}" width="48px"
+                                        <img src="{{ asset(Link.icon) }}" width="48"
                                              alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
                                     </a>
                                 {% endfor %}
@@ -268,7 +268,7 @@
                             </div>
                             <div class="video-news-post-item" id="tli-youtube-video-player">
                                 <div class="video-news-post-thumb">
-                                    <iframe frameborder="0" data-tli-autoplay="0"
+                                    <iframe data-tli-autoplay="0"
                                             width="720" height="404"
                                             src="{{ Videos|first.embedUrl }}"
                                             title="YouTube Video Player"
@@ -279,7 +279,7 @@
                                     <h3 class="title">{{ Videos|first.title|raw }}</h3>
                                     <div style="text-align: center; margin-top: 10px;">
                                         <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">
-                                            <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24px"
+                                            <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24"
                                                  alt="YouTube" title="YouTube" loading="lazy">
                                             ISCRIVITI AL NOSTRO CANALE YOUTUBE
                                         </a>
