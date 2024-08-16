@@ -50,8 +50,29 @@ if( $arrTopic["forum_id"] != $commentsForumId ) {
 }
 
 
-$sqlSelectTopic ='
+$sqlSelectRanks = 'SELECT * FROM ' . RANKS_TABLE . ' ORDER BY rank_min DESC';
+$result = $db->sql_query($sqlSelectRanks);
+
+$arrRankTable = [];
+while( $arrRank = $db->sql_fetchrow($result) ) {
+
+    if( $arrRank["rank_special"] == 1 ) {
+
+        $id = $arrRank["rank_id"];
+        $arrRankTable["specials"][$id] = $arrRank;
+
+    } else {
+
+        $minPosts = (string)$arrRank["rank_min"];
+        $arrRankTable["regulars"][$minPosts] = $arrRank;
+    }
+}
+
+
+$sqlSelectPosts = '
     SELECT * FROM ' . POSTS_TABLE . ' AS posts
+    LEFT JOIN ' . USERS_TABLE . ' AS users
+    ON posts.poster_id = users.user_id
     WHERE
       topic_id          = ' . $topicId . ' AND
       post_id          != ' . $arrTopic["topic_first_post_id"] . ' AND
@@ -62,22 +83,55 @@ $sqlSelectTopic ='
     ORDER BY post_time ASC
 ';
 
-$result = $db->sql_query($sqlSelectTopic);
+$result = $db->sql_query($sqlSelectPosts);
 
-while(true && $arrPost = $db->sql_fetchrow($result) ) {
-    var_dump($arrPost);
-}
+while( $arrPost = $db->sql_fetchrow($result) ) {
 
-while( $arrPost = $db->sql_fetchrow($result) ) { ?>
+    // 📚 https://area51.phpbb.com/docs/dev/master/extensions/tutorial_parsing_text.html#displaying-text-from-db
+    $arrPost['bbcode_options'] =
+        (($arrPost['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) +
+        (($arrPost['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) +
+        (($arrPost['enable_magic_url']) ? OPTION_FLAG_LINKS : 0);
+
+    $arrPost["tli_username_style"] =
+        empty($arrPost['user_colour']) ? '' : 'style="color: #' . $arrPost["user_colour"] . '"';
+
+    $rankId = $arrPost['user_rank'];
+    if( !empty($rankId) && array_key_exists($rankId, $arrRankTable["specials"]) ) {
+
+        $arrPost['tli_rank'] = $arrRankTable["specials"][$rankId];
+
+    } else {
+
+        $userPostNum = $arrPost["user_posts"];
+        foreach($arrRankTable["regulars"] ?? [] as $minPost => $rank) {
+
+            if( $userPostNum >= $minPost ) {
+
+                $arrPost['tli_rank'] = $rank;
+                break;
+            }
+        }
+    }
+
+    $arrPost["tli_rank_image"] =
+        empty( $arrPost['tli_rank']['rank_image'] )
+            ? '' : '<img src="/forum/images/ranks/' . $arrPost['tli_rank']['rank_image'] . '" class="">';
+?>
 
     <div class="post-comments-item">
-        <div class="thumb">
-            <img src="assets/images/comments-1.png" alt="comments">
-        </div>
         <div class="post">
-            <a href="#">Reply</a>
-            <h5 class="title">Subash Chandra</h5>
-            <p>We’ve invested every aspect of how we serve our users over the past Pellentesque rutrum ante in nulla suscipit, vel posuere leo tristique.</p>
+            <h5 class="title" <?php echo $arrPost["tli_username_style"] ?>>
+                <?php echo $arrPost["username"] . " " . $arrPost["tli_rank_image"] ?>
+            </h5>
+            <p>
+                <?php
+                echo generate_text_for_display(
+                    $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
+                )
+                ?>
+            </p>
+            <div><a href="#">Replyyyy</a></div>
         </div>
     </div>
 
