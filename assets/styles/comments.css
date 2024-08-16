@@ -1,0 +1,18 @@
+.tli-comment-main-content {
+    font-size: 20px;
+    line-height: 1.5;
+}
+
+.post-comments-list .post-comments-item .post a {
+    position: revert;
+}
+
+.tli-comment-main-content blockquote {
+    background-color: #EBEADD;
+    border-color: #DBDBCE;
+    border: 1px solid transparent;
+    font-size: 0.95em;
+    margin: 1em 1px 1em 25px;
+    overflow: hidden;
+    padding: 5px;
+}

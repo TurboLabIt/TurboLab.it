@@ -122,16 +122,19 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
     <div class="post-comments-item">
         <div class="post">
             <h5 class="title" <?php echo $arrPost["tli_username_style"] ?>>
-                <?php echo $arrPost["username"] . " " . $arrPost["tli_rank_image"] ?>
+                <span><?php echo $arrPost["username"] ?></span> &nbsp; <?php echo $arrPost["tli_rank_image"] ?>
             </h5>
-            <p>
+            <div class="tli-comment-main-content">
                 <?php
                 echo generate_text_for_display(
                     $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
                 )
                 ?>
-            </p>
-            <div><a href="#">Replyyyy</a></div>
+            </div>
+            <div class="tli-comment-reply">
+                <a href="/forum/posting.php?mode=reply&t=<?php echo $topicId ?>">Rispondi</a> |
+                <a href="/forum/posting.php?mode=quote&p=<?php echo $arrPost["post_id"] ?>">Rispondi citando</a>
+            </div>
         </div>
     </div>
 
