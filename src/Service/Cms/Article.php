@@ -47,6 +47,7 @@ class Article extends BaseCmsService
     protected HtmlProcessor $htmlProcessor;
     protected ?TagService $topTag           = null;
     protected ?Topic $commentsTopic;
+    protected ?string $articleBodyForDisplay = null;
     protected array $arrPrevNextArticles    = [];
     //</editor-fold>
 
@@ -299,8 +300,29 @@ class Article extends BaseCmsService
 
     public function getBody() : ?string { return $this->entity->getBody(); }
 
-    public function getBodyForDisplay() : ?string
-        { return $this->htmlProcessor->processArticleBodyForDisplay($this); }
+    public function getBodyForDisplay() : string
+    {
+        if( is_string($this->articleBodyForDisplay) ) {
+            return $this->articleBodyForDisplay;
+        }
+
+        return $this->articleBodyForDisplay = $this->htmlProcessor->processArticleBodyForDisplay($this);
+    }
+
+    public function textLengthIndex() : int
+    {
+        $articleBody = $this->getBodyForDisplay();
+
+        $lengthIndex    = mb_strlen($articleBody) / 90;
+        $imgCount       = mb_substr_count($articleBody, '<img');
+        $aHrefCount     = mb_substr_count($articleBody, '<a');
+
+        $lengthIndex    += $imgCount * 10;
+        $lengthIndex    -= $aHrefCount * 0.5;
+
+        return (int)$lengthIndex;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">

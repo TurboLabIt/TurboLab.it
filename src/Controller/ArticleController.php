@@ -22,6 +22,9 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
+        $sideArticlesNum    = $article->textLengthIndex() / 10;
+        $sideArticlesNum    = $sideArticlesNum < 5 ? $sideArticlesNum : 5;
+
         return $this->render('article/index.html.twig', [
             'metaTitle'             => $article->getTitle(),
             'metaDescription'       => $article->getAbstract(),
@@ -31,7 +34,10 @@ class ArticleController extends BaseController
             'activeMenu'            => $article->getActiveMenu(),
             'FrontendHelper'        => $this->frontendHelper,
             'Article'               => $article,
-            'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl()
+            'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
+            'SideArticles'          => $this->factory->createArticleCollection()
+                                            ->loadLatestPublished()
+                                            ->getItems($sideArticlesNum)
         ]);
     }
 
