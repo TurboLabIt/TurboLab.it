@@ -322,7 +322,6 @@ class Article extends BaseCmsService
 
         return (int)$lengthIndex;
     }
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
