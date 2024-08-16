@@ -143,6 +143,11 @@ class Article extends BaseCmsService
 
         return $this->topTag = $this->factory->createDefaultTag();
     }
+
+
+    public function isSponsored() :bool { return array_key_exists(Tag::ID_SPONSOR, $this->getTags()); }
+
+    public function isNewsletter() :bool { return array_key_exists(Tag::ID_NEWSLETTER_TLI, $this->getTags()); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👔 Authors ***">

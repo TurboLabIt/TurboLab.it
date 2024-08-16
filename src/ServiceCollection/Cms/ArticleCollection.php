@@ -27,6 +27,31 @@ class ArticleCollection extends BaseServiceEntityCollection
         return $this->setEntities($arrArticles);
     }
 
+    public function loadSideBarOf(Article $article) : static
+    {
+        $this->loadLatestPublished();
+
+        $sideArticlesNum    = $article->textLengthIndex() / 10;
+        $sideArticlesNum    = $sideArticlesNum < 5 ? $sideArticlesNum : 5;
+
+        $arrFilteredArticles = [];
+        foreach($this->arrData as $articleInSetId => $articleInSet) {
+
+            if( $articleInSetId == $article->getId() || $articleInSet->isNewsletter() ) {
+                continue;
+            }
+
+            $arrFilteredArticles[$articleInSetId] = $articleInSet;
+
+            if( count($arrFilteredArticles) >= $sideArticlesNum ) {
+                break;
+            }
+        }
+
+        $this->arrData = $arrFilteredArticles;
+
+        return $this;
+    }
 
     public function loadLatestReadyForReview() : static
     {
