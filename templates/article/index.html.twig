@@ -38,7 +38,7 @@
                 </div>
 
                 <!-- ARTICLE main content START -->
-                <div class="col-lg-8">
+                <article class="col-lg-8">
 
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
@@ -118,7 +118,7 @@
                                 <div class="row mt-30">
                                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                         {% if Author.avatarUrl is not empty %}
-                                            <img src="{{ Author.avatarUrl }}" width="128">
+                                            <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.username }} ">
                                         {% else %}
                                             <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
                                         {% endif %}
@@ -173,7 +173,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
                 <!-- ARTICLE main END -->
 
                 <!-- ARTICLE side column START -->
