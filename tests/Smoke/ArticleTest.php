@@ -59,8 +59,29 @@ class ArticleTest extends BaseT
         $firstPContent = $crawler->filter('p')->first()->html();
         $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
-        // summary
-        $summaryLi = $crawler->filter('ul')->first()->filter('li');
+        // header (comments, updated, publishing status, authors)
+        $articleMetaDataAsLi = $crawler->filter('ul')->first()->filter('li');
+        $arrUnmatchedUlContent = ['comment', 'aggiornat', 'pubblicato', 'a cura di'];
+        foreach($articleMetaDataAsLi as $li) {
+
+            $liText = $li->textContent;
+
+            foreach($arrUnmatchedUlContent as $k => $textToSearch) {
+
+                if( stripos($liText, $textToSearch) !== false ) {
+
+                    unset($arrUnmatchedUlContent[$k]);
+                    break;
+                }
+            }
+        }
+
+        $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
+
+        $articleBodyCrawler = $crawler->filter('.tli-article-body');
+
+            // first <li>s of the article (body content)
+        $summaryLi = $articleBodyCrawler->filter('ul')->first()->filter('li');
         $arrUnmatchedUlContent = [
             'video da YouTube', 'formattazione',
             'link ad altri articoli', 'link a pagine di tag', 'link a file',
@@ -85,7 +106,7 @@ class ArticleTest extends BaseT
         $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
 
         // YouTube
-        $iframes = $crawler->filter('iframe');
+        $iframes = $articleBodyCrawler->filter('iframe');
         $countYouTubeIframe = 0;
         foreach($iframes as $iframe) {
 
@@ -98,7 +119,7 @@ class ArticleTest extends BaseT
         $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
 
         // formatting styles
-        $formattingStylesOl = $crawler->filter('ol')->first()->filter('li');
+        $formattingStylesOl = $articleBodyCrawler->filter('ol')->first()->filter('li');
         $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 'code', 4 => 'ins'];
         foreach($arrExpectedNodes as $index => $expectedTagName) {
 
@@ -107,7 +128,7 @@ class ArticleTest extends BaseT
         }
 
         //
-        $this->internalLinksChecker($crawler);
+        $this->internalLinksChecker($articleBodyCrawler);
 
         // fragile chars
         $fragileCharsH2Text = 'Caratteri "delicati"';
@@ -123,7 +144,7 @@ class ArticleTest extends BaseT
         $this->assertEquals('@ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine', $fragileCharsActualValue);
 
         //
-        $this->internalImagesChecker($crawler);
+        $this->internalImagesChecker($articleBodyCrawler);
     }
 
 
