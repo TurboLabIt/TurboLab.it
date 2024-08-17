@@ -57,9 +57,11 @@ desktop.ini
 # Node.js #
 ###########
 node_modules/
+bower_components/
 npm-debug.log
 .sass-cache/
-bower_components/
+.yarnrc.yml
+/.yarn
 
 
 # Patches #
@@ -92,6 +94,14 @@ drivers/geckodriver
 /env
 
 
+## phpunit ##
+#################
+.phpunit
+.phpunit.cache
+.phpunit.result.cache
+/phpunit.xml
+
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -101,10 +111,3 @@ drivers/geckodriver
 /var/
 /src/.preload.php
 ###< symfony/framework-bundle ###
-
-###> symfony/phpunit-bridge ###
-.phpunit
-.phpunit.result.cache
-/phpunit.xml
-/bin/phpunit
-###< symfony/phpunit-bridge ###
