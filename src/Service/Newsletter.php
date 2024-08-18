@@ -200,7 +200,7 @@ class Newsletter extends Mailer
                 )
                 ->setCommentsTopic($topicComment)
                 ->setPublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED)
-                ->setCommentTopicNeedsUpdate(Article::COMMENT_TOPIC_UPDATE_NEVER)
+                //->setCommentTopicNeedsUpdate(Article::COMMENT_TOPIC_UPDATE_NEVER)
                 ->save($persist);
 
         if($persist) {

@@ -16,7 +16,7 @@ trait CommentTopicableEntityTrait
     #[ORM\JoinColumn('comments_topic_id', 'topic_id')]
     protected ?Topic $commentsTopic = null;
 
-    #[ORM\Column(type: Types::SMALLINT, options: ["unsigned" => true])]
+    //#[ORM\Column(type: Types::SMALLINT, options: ["unsigned" => true])]
     protected ?int $commentTopicNeedsUpdate = 0;
 
 

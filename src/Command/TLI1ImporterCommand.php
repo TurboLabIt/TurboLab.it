@@ -389,7 +389,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setPublishedAt($publishedAt)
                     ->setShowAds($ads)
                     ->setCommentsTopic($commentsTopic)
-                    ->setCommentTopicNeedsUpdate($commentTopicNeedsUpdate)
+                    //->setCommentTopicNeedsUpdate($commentTopicNeedsUpdate)
                     ->setViews($views)
                     ->setAbstract($abstract)
                     ->setBody($body)

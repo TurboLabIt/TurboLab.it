@@ -5,7 +5,7 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Copy data from TLI1 to TLI2 hybrid server"
 
-fxTitle "Clearing database..."
+fxTitle "Dropping doctrine_migration_versions..."
 wsuMysql -e 'DROP TABLE IF EXISTS turbolab_it_next.doctrine_migration_versions'
 
 bash ${SCRIPT_DIR}migrate.sh
