@@ -16,5 +16,6 @@ if [ "$APP_ENV" = "prod" ]; then
 elif [ "$APP_ENV" = "staging" ]; then
 
   APP_NAME="turbolab.it-next"
+  DEPLOY_MYSQL_RESTART=0
   EMOJI=cat
 fi
