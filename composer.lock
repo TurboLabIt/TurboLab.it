@@ -7382,12 +7382,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle.git",
-                "reference": "d420b40d0c03ba07535206ed3b75f9bb1df77a86"
+                "reference": "6ffebf0bb2b98aa3cf18925467d27092ab08c362"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/d420b40d0c03ba07535206ed3b75f9bb1df77a86",
-                "reference": "d420b40d0c03ba07535206ed3b75f9bb1df77a86",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/6ffebf0bb2b98aa3cf18925467d27092ab08c362",
+                "reference": "6ffebf0bb2b98aa3cf18925467d27092ab08c362",
                 "shasum": ""
             },
             "require": {
@@ -7421,7 +7421,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/tree/main"
             },
-            "time": "2024-08-13T08:59:59+00:00"
+            "time": "2024-08-18T17:02:05+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
