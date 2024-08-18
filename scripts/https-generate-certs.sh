@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 source $(dirname $(readlink -f $0))/script_begin.sh
 
+fxHeader "HTTPS certs generator"
 
 if [ "$APP_ENV" = "prod" ]; then
 
-  fxCatastrophicError "Not ready"
+  fxCatastrophicError "Not ready for prod"
 
 elif [ "$APP_ENV" = "staging" ]; then
 
