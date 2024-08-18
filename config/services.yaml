@@ -25,6 +25,11 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\Command\TLI1ImporterCommand:
+        arguments:
+            $arrConfig:
+                tli1DbName: '%env(APP_TLI1_DB_NAME)%'
+
     App\Service\YouTubeChannelApi:
         arguments:
             $arrConfig:

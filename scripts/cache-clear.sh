@@ -31,6 +31,7 @@ if [ "$APP_ENV" = "dev" ]; then
   rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
 fi
 
+
 wsuSourceFrameworkScript cache-clear "$@"
 
 fxTitle "👾 symlinking forum/ext/turbolabit..."
@@ -41,6 +42,7 @@ rm -rf "${WEBROOT_DIR}forum/cache/production"
 
 fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
 bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
+
 
 
 if [ "$APP_ENV" = "dev" ]; then

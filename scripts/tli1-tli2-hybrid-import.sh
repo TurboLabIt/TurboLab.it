@@ -58,6 +58,6 @@ bash ${SCRIPT_DIR}migrate.sh
 ## this is needed bc the phpBB entities of TLI2 are hardcoded to read from the "turbolab_it_forum" database (production)
 wsuMysql -e "GRANT SELECT ON \`turbolab_it%\`.* TO 'turbolab_it_next'@'localhost';"
 
-#sudo -u "$EXPECTED_USER" -H symfony console tli1
+sudo -u "$EXPECTED_USER" -H symfony console tli1
 
-#bash "${SCRIPT_DIR}cache-clear.sh"
+bash "${SCRIPT_DIR}cache-clear.sh"

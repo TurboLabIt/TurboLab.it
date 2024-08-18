@@ -56,11 +56,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
 
     public function __construct(
+        array $arrConfig,
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
         protected Factory $Factory, protected HtmlProcessor $htmlProcessor
     )
     {
-        parent::__construct();
+        parent::__construct($arrConfig);
     }
 
 
@@ -142,7 +143,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function tli1DbConnect() : static
     {
         $arrDbConfig = $this->em->getConnection()->getParams();
-        $dsn = "mysql:host=" . $arrDbConfig["host"] . ";dbname=tli1;charset=" . $arrDbConfig["charset"];
+        $dsn = "mysql:host=" . $arrDbConfig["host"] . ";dbname=" . $this->arrConfig["tli1DbName"] . ";charset=" . $arrDbConfig["charset"];
 
         $options = [
             \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
