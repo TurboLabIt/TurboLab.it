@@ -28,7 +28,7 @@
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url|raw }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                 class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                 class="tli-uniform-slider-image" alt="{{ Article.title|raw }}">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
@@ -93,7 +93,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -134,7 +134,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -156,7 +156,7 @@
                                 {% for Link in FrontendHelper.FollowUsLinks %}
                                     <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
                                         <img src="{{ asset(Link.icon) }}" width="48"
-                                             alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
+                                             alt="{{ Link.name }}" title="{{ Link.name }}">
                                     </a>
                                 {% endfor %}
                             </div>
@@ -215,7 +215,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
