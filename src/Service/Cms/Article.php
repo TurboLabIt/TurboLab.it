@@ -196,6 +196,9 @@ class Article extends BaseCmsService
         { return $this->getSpotlightOrDefault()->getUrl($this, $size); }
 
 
+    public function getSpotlightUrl(string $size) : ?string
+        { return $this->getSpotlight()?->getUrl($this, $size); }    
+
     public function getSpotlight() : ?ImageService
     {
         if( !empty($this->spotlight) ) {
