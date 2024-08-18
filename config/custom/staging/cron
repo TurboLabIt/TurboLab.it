@@ -25,8 +25,11 @@ LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
 
 ## Every minute: check for an autodeploy async request
 # https://github.com/TurboLabIt/webstackup/blob/master/script/php-pages/readme.md#how-to-autodeploy
-AUTODEPLOY_FILENAME_TO_CHECK=async-runner-request-turbolab.it-autodeploy-staging
-* * * * * root bash /usr/local/turbolab.it/webstackup/script/filesystem/async-runner.sh "${AUTODEPLOY_FILENAME_TO_CHECK}" "${SCRIPT_DIR}deploy.sh" fast >> ${LOG_PATH}autodeploy-async.log 2>&1
+#AUTODEPLOY_FILENAME_TO_CHECK=async-runner-request-turbolab.it-autodeploy-staging
+#* * * * * root bash /usr/local/turbolab.it/webstackup/script/filesystem/async-runner.sh "${AUTODEPLOY_FILENAME_TO_CHECK}" "${SCRIPT_DIR}deploy.sh" fast >> ${LOG_PATH}autodeploy-async.log 2>&1
+
+## autodeploy temp. disabled (no support for GitHub) - falling back to scheduled deploys
+0 1,10,15,17 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-async.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇
