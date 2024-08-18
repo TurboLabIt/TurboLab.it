@@ -15,5 +15,6 @@ if [ "$APP_ENV" = "prod" ]; then
 
 elif [ "$APP_ENV" = "staging" ]; then
 
+  APP_NAME="turbolab.it-next"
   EMOJI=cat
 fi
