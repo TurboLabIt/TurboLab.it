@@ -160,7 +160,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function loadUsers() : static
     {
         $this->repoUsers = $this->em->getRepository(User::class);
-        $arrUsers = $this->repoUsers->loadAll();
+        $arrUsers = $this->repoUsers->getAllComplete();
 
         return $this->fxOK(count($arrUsers) . " item(s) loaded");
     }
@@ -216,7 +216,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $this->repoTopics = $this->em->getRepository(Topic::class);
-        $arrTopics = $this->repoTopics->loadAll();
+        $arrTopics = $this->repoTopics->getAllComplete();
 
         return $this->fxOK(count($arrTopics) . " item(s) loaded");
     }
@@ -295,7 +295,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         if( $this->getCliOption(static::OPT_SKIP_ARTICLES) ) {
 
-            $this->arrNewArticles = $this->em->getRepository(ArticleEntity::class)->loadAll();
+            $this->arrNewArticles = $this->em->getRepository(ArticleEntity::class)->getAllComplete();
             return $this->fxWarning('🦘 Skipped!');
         }
 
@@ -311,7 +311,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Articles) . " items loaded");
 
         $this->io->text("Loading TLI2 articles...");
-        $arrTli2Articles = $this->em->getRepository(ArticleEntity::class)->loadAll();
+        $arrTli2Articles = $this->em->getRepository(ArticleEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Articles) . " item(s) loaded");
         unset($arrTli2Articles);
 
@@ -432,7 +432,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Images) . " items loaded");
 
         $this->io->text("Loading TLI2 images...");
-        $arrTli2Images = $this->em->getRepository(ImageEntity::class)->loadAll();
+        $arrTli2Images = $this->em->getRepository(ImageEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Images) . " item(s) loaded");
         unset($arrTli2Images);
 
@@ -549,7 +549,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
 
-            $this->arrNewTags = $this->em->getRepository(TagEntity::class)->loadAll();
+            $this->arrNewTags = $this->em->getRepository(TagEntity::class)->getAllComplete();
             return $this->fxWarning('🦘 Skipped!');
         }
 
@@ -581,7 +581,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Tags) . " items loaded");
 
         $this->io->text("Loading TLI2 tags...");
-        $arrTli2Tags = $this->em->getRepository(TagEntity::class)->loadAll();
+        $arrTli2Tags = $this->em->getRepository(TagEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Tags) . " item(s) loaded");
         unset($arrTli2Tags);
 
@@ -751,7 +751,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Files) . " items loaded");
 
         $this->io->text("Loading TLI2 files...");
-        $arrTli2Files = $this->em->getRepository(FileEntity::class)->loadAll();
+        $arrTli2Files = $this->em->getRepository(FileEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Files) . " item(s) loaded");
         unset($arrTli2Files);
 
@@ -918,7 +918,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Badges) . " items loaded");
 
         $this->io->text("Loading TLI2 badges...");
-        $arrTli2Badges = $this->em->getRepository(BadgeEntity::class)->loadAll();
+        $arrTli2Badges = $this->em->getRepository(BadgeEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Badges) . " item(s) loaded");
         unset($arrTli2Articles);
 
