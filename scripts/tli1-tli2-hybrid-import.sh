@@ -24,6 +24,9 @@ fxTitle "Copying the forum database..."
 bash "${TLI1_SOURCE_DIR}scripts/db-dump.sh"
 cd "${TLI1_SOURCE_DIR}backup/db-dumps"
 zzmysqlimp "$(hostname)_turbolab_it_forum_$(date +'%u').sql.7z" turbolab_it_next_forum
+
+fxTitle "Copying the TLI1 database (to import from)..."
+zzmysqlimp "$(hostname)_turbolab_it_$(date +'%u').sql.7z" turbolab_it_next_tli1_to_import
 cd "${PROJECT_DIR}"
 
 
