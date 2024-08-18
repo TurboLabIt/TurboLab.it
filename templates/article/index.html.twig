@@ -277,6 +277,20 @@
 
 {% endblock %}
 
+{% block licenseWorkName %}{{ Article.titleFormatted|raw }}<br>{% endblock %}
+
+{% block licenseWorkAuthor %}
+
+    {% if Article.AuthorsNotSystem is not empty %}
+        by <span property="cc:attributionName">
+            {% for Author in Article.AuthorsNotSystem %}
+                <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </span>
+    {% endif %}
+
+{% endblock %}
+
 {% block javascripts %}
 
     {{ parent() }}
