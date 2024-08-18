@@ -61,7 +61,9 @@ bower_components/
 npm-debug.log
 .sass-cache/
 .yarnrc.yml
-/.yarn
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
 
 
 # Patches #
