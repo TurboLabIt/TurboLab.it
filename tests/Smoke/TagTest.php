@@ -4,6 +4,7 @@ namespace App\Tests\Smoke;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Cms\Tag;
 use App\Service\Cms\HtmlProcessor;
+use App\ServiceCollection\Cms\TagCollection;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
@@ -15,6 +16,7 @@ class TagTest extends BaseT
     const int NO_ARTICLES_TAG_ID = 12600;
 
     protected static array $arrTagEntity;
+    protected static TagCollection $categories;
 
 
     public function testingPlayground()
@@ -61,7 +63,6 @@ class TagTest extends BaseT
             $this->expectRedirect("/tag/windows/$pageNum", $realTagUrl);
         }
     }
-
 
 
     public static function specialTagToTestProvider() : \Generator
@@ -173,6 +174,42 @@ class TagTest extends BaseT
 
         //
         $this->tagTitleAsH1Checker($tag, $crawler);
+    }
+
+
+    public static function categoryToTestProvider(): \Generator
+    {
+        if( empty(static::$categories) ) {
+            static::$categories =
+                static::getService("App\\Service\\Factory")->createTagCollection()->loadCategories();
+        }
+
+        foreach(static::$categories as $category) {
+            yield [$category];
+        }
+    }
+
+
+    #[DataProvider('categoryToTestProvider')]
+    public function testOpenAllCategories(Tag $category)
+    {
+        static::$client = null;
+
+        $url = $category->getUrl();
+        $this->assertStringEndsWith("-" . $category->getId(), $url, "Failing URL: $url");
+
+        $crawler = $this->fetchDomNode($url);
+        $this->assertResponseIsSuccessful();
+        $this->tagTitleAsH1Checker($category, $crawler);
+
+        // H2
+        $H2s = $crawler->filter('h2');
+        $countH2 = $H2s->count();
+        $this->assertGreaterThan(10, $countH2);
+
+        $this
+            ->internalLinksChecker($crawler)
+            ->internalImagesChecker($crawler);
     }
 
 
