@@ -223,7 +223,8 @@ abstract class BaseT extends WebTestCase
                 // author
             } elseif( stripos($href, "/utenti/") !== false ) {
 
-
+                $this->browse($href);
+                $this->assertResponseIsSuccessful();
 
                 // article
             } elseif(
@@ -247,8 +248,13 @@ abstract class BaseT extends WebTestCase
             $this->assertNotEmpty($src);
 
             $siteUrl = trim('https://' . $_ENV["APP_SITE_DOMAIN"], '/');
-            if( !str_starts_with($src, '/') &&  !str_starts_with($src, $siteUrl) ) {
+            if( !str_starts_with($src, '/') && !str_starts_with($src, $siteUrl) ) {
                 // testing external images, such as YouTube thumbnails, is not supported
+                return $this;
+            }
+
+            if( str_starts_with($src, '/forum/') || str_starts_with($src, "{$siteUrl}forum/") ) {
+                // testing forum images is not supported
                 return $this;
             }
 

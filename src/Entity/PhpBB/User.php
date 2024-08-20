@@ -32,6 +32,9 @@ class User implements UserInterface
     protected ?string $username = null;
 
     #[ORM\Column(unique: true)]
+    protected ?string $username_clean = null;
+
+    #[ORM\Column(unique: true)]
     protected ?string $user_email = null;
 
     #[ORM\Column]
@@ -110,6 +113,16 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getUsernameClean(): ?string
+    {
+        return $this->username_clean;
+    }
+
+    public function setUsernameClean(string $usernameClean): static
+    {
+        $this->username = $usernameClean;
+        return $this;
+    }
 
     public function getEmail() : ?string
     {

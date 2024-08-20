@@ -6,6 +6,8 @@ use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
+use App\Service\User as UserService;
+use App\Entity\PhpBB\User as UserEntity;
 use App\ServiceCollection\BaseServiceEntityCollection;
 
 
@@ -64,6 +66,14 @@ class ArticleCollection extends BaseServiceEntityCollection
     {
         $tag = $tag instanceof TagService ? $tag->getEntity() : $tag;
         $paginator = $this->em->getRepository(static::ENTITY_CLASS)->findByTag($tag, $page) ?? [];
+        return $this->setEntities($paginator);
+    }
+
+
+    public function loadByAuthor(UserEntity|UserService $user, ?int $page = 1) : static
+    {
+        $user = $user instanceof UserService ? $user->getEntity() : $user;
+        $paginator = $this->em->getRepository(static::ENTITY_CLASS)->findByAuthor($user, $page) ?? [];
         return $this->setEntities($paginator);
     }
 

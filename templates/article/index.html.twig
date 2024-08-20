@@ -75,7 +75,7 @@
                                             <li>
                                                 <i class="fa-solid fa-user-tie"></i> a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </li>
                                         {% endif %}
@@ -115,24 +115,35 @@
                         <div class="tli-article-box mt-30 container">
                             <h4>Gli autori</h4>
                             {% for Author in Article.AuthorsNotSystem %}
-                                <div class="row mt-30">
+                                <div class="row mt-10">
                                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                        {% if Author.avatarUrl is not empty %}
-                                            <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.username }} ">
-                                        {% else %}
-                                            <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
-                                        {% endif %}
+                                        <a href="{{ Author.url }}">
+                                            {% if Author.avatarUrl is not empty %}
+                                                    <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.username }}">
+                                            {% else %}
+                                                <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
+                                            {% endif %}
+                                        </a>
                                     </div>
                                     <div class="col-md-10">
-                                        <p><strong>{{ Author.fullName }}</strong></p>
-                                        <p>
-                                            {% if Author.bio is not empty %}
-                                                {{ Author.bio }}
-                                            {% else %}
-                                                <em>Questo autore non ha ancora compilato la propria presentazione.</em>
-                                            {% endif %}
+                                        <p class="tli-author-bio-name">
+                                            <a href="{{ Author.url }}">{{ Author.fullName }}</a><br>
+                                            <span class="tli-author-articles-counter">
+                                                <a href="{{ Author.url }}">
+                                                    <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }} 
+                                                    {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} 
+                                                </a>
+                                            </span>
                                         </p>
-
+                                        <p>
+                                            <a href="{{ Author.url }}">
+                                                {% if Author.bio is not empty %}
+                                                    {{ Author.bio }}
+                                                {% else %}
+                                                    <em>Questo autore non ha ancora compilato la propria presentazione.</em>
+                                                {% endif %}
+                                            </a>
+                                        </p>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -209,7 +220,7 @@
                                                 <span class="tli-meta-authors">
                                                         a cura di
                                                         {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </span>
                                             {% endif %}
@@ -284,7 +295,7 @@
     {% if Article.AuthorsNotSystem is not empty %}
         by <span property="cc:attributionName">
             {% for Author in Article.AuthorsNotSystem %}
-                <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
             {% endfor %}
         </span>
     {% endif %}

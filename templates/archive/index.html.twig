@@ -98,7 +98,7 @@
                                                     <span class="tli-meta-authors">
                                                         a cura di
                                                         {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </span>
                                                 {% endif %}

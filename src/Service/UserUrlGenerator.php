@@ -16,21 +16,23 @@ class UserUrlGenerator extends UrlGenerator
     {}
 
 
-    public function generateUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateUrl(User $user, ?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $userUrl =
-            $this->symfonyUrlGenerator->generate('app_user', [
-                "usernameClean" => $user->getUsernameClean()
-            ], $urlType);
+        $arrUrlParams = ['usernameClean' => $user->getUsernameClean()];
 
-        return $userUrl;
+        if( !empty($page) && $page > 1 ) {
+            $arrUrlParams["page"] = $page;
+        }
+
+        $authorUrl = $this->symfonyUrlGenerator->generate('app_author', $arrUrlParams, $urlType);
+        return $authorUrl;
     }
 
 
     public function generateForumProfileUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : ?string
     {
         $userId = $user->getId();
-        $url    = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "memberlist.php?mode=viewprofile&u=$userId";
+        $url    = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/memberlist.php?mode=viewprofile&u=$userId";
         return $url;
     }
 

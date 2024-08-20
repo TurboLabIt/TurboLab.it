@@ -3,6 +3,7 @@ namespace App\Service;
 
 use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\UserNotFoundException;
+use App\ServiceCollection\Cms\ArticleCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -18,8 +19,10 @@ class User extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
     const int TESTER_USER_ID    = 4015;
 
-    protected ?UserEntity $entity = null;
-    protected ?array $arrAdditionalFields   = null;
+    protected ?UserEntity $entity                   = null;
+    protected ?array $arrAdditionalFields           = null;
+    protected ?ArticleCollection $articlesAuthored  = null;
+    protected ?int $articlesNum                     = null;
 
 
     public function __construct(
@@ -39,9 +42,27 @@ class User extends BaseServiceEntity
     public function getEntity() : ?UserEntity { return $this->entity; }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Load methods ***">
+    public function loadByUsernameClean(string $usernameClean) : static
+    {
+        $this->clear();
+
+        $entity = $this->em->getRepository(static::ENTITY_CLASS)->getByUsernameClean($usernameClean);
+
+        if( empty($entity) ) {
+
+            $exceptionClass = static::NOT_FOUND_EXCEPTION;
+            throw new $exceptionClass($usernameClean);
+        }
+
+        return $this->setEntity($entity);
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** 👔 User name ***">
     public function getUsername() : string { return $this->entity->getUsername(); }
 
+    public function getUsernameClean() : string { return $this->entity->getUsernameClean(); }
 
     public function getFullName() : string
     {
@@ -103,6 +124,29 @@ class User extends BaseServiceEntity
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">
+    public function getArticles(?int $page = 1) : ArticleCollection
+    {
+        if( $this->articlesAuthored !== null ) {
+            return $this->articlesAuthored;
+        }
+
+        return $this->articlesAuthored = $this->factory->createArticleCollection()->loadByAuthor($this, $page);
+    }
+
+
+    public function getArticlesNum(bool $formatted = true) : int|string
+    {
+        $num = $this->articlesNum = $this->articlesNum ??  $this->getArticles()->countTotalBeforePagination();
+
+        if( !$formatted ) {
+            return $num;
+        }
+
+        return number_format($num, 0, null, ".");
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** 📩 Newsletter ***">
     public function isSubscribedToNewsletter() : bool { return $this->entity->getAllowMassEmail(); }
 
@@ -136,8 +180,8 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
-    public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateUrl($this, $urlType); }
+    public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->urlGenerator->generateUrl($this, $page, $urlType); }
 
     public function getForumUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
         { return $this->urlGenerator->generateForumProfileUrl($this, $urlType); }

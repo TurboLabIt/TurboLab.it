@@ -85,4 +85,17 @@ class UserRepository extends BaseRepository
         $stmt->bindValue('userId', $user->getId(), ParameterType::INTEGER);
         return $stmt->executeQuery()->fetchAssociative() ?: [];
     }
+
+
+    public function getByUsernameClean(string $usernameClean) : ?User
+    {
+        return
+            $this->createQueryBuilder('t', 't.user_id')
+                // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
+                ->andWhere('t.user_type IN(0,3)')
+                ->andWhere('t.username_clean = :username')
+                ->setParameter('username', $usernameClean)
+                ->getQuery()
+                ->getOneOrNullResult();
+    }
 }

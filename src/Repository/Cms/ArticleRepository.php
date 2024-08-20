@@ -3,6 +3,7 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\Article;
 use App\Entity\Cms\Tag;
+use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
 use Doctrine\ORM\QueryBuilder;
@@ -117,6 +118,35 @@ class ArticleRepository extends BaseRepository
             $this->getQueryBuilderCompleteFromSqlQuery(
                 "SELECT DISTINCT article_id FROM article_tag WHERE tag_id = :tagId",
                 [ "tagId" => $tag->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
+            $this->addWherePublishingStatus($qb)
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
+                ->getQuery();
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $paginator;
+    }
+
+
+    public function findByAuthor(User $author, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this author" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
+        // excluding other authors.
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                [ "authorId" => $author->getId() ]
             );
 
         if( empty($qb) ) {

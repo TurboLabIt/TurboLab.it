@@ -1,0 +1,55 @@
+{% extends 'archive/index.html.twig' %}
+
+{% block metaDescription %}Articoli, guide e news a cura di {{ Author.fullname|raw }}{% endblock %}
+
+{% block breadcrumb %}
+
+    {% if currentPage < 2 %}
+
+        <li class="breadcrumb-item active">Pagina dell'autore &quot;{{ Author.fullname|raw }}&quot;</li>
+
+    {% else %}
+
+        <li class="breadcrumb-item"><a href="{{ Author.url }}">Pagina dell'autore &quot;{{ Author.fullname|raw }}&quot;</a></li>
+        {{ parent() }}
+
+    {% endif %}
+
+{% endblock %}
+
+{% block beforeArticleList %}
+    {% if Author.articlesNum > 0 %}
+        <div class="container">
+            <div class="tli-article-box">
+                <div class="row mt-10">
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        {% if Author.avatarUrl is not empty %}
+                                <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.username }}">
+                        {% else %}
+                            <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-10">
+                        <p class="tli-author-bio-name">
+                            <span>{{ Author.fullName }}</span><br>
+                            <span class="tli-author-articles-counter">
+                                <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }} 
+                                {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} &nbsp;
+                                <a href="{{ Author.forumUrl }}">
+                                    <i class="fa-solid fa-id-badge"></i> ID: {{ Author.id }}
+                                </a>    
+                            </span>
+                        </p>
+                        <p class="mt-10">
+                            {% if Author.bio is not empty %}
+                                {{ Author.bio }}
+                            {% else %}
+                                <em>Questo autore non ha ancora compilato la propria presentazione.</em>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}    
+{% endblock %}
