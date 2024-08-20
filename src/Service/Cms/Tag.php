@@ -27,6 +27,7 @@ class Tag extends BaseCmsService
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/guida-mercato-640
     const int ID_VPN                = 2942;     // 👀 https://turbolab.it/vpn-2942
     const int ID_VIRTUALIZATION     = 535;      // 👀 https://turbolab.it/virtualizzazione-535
+    const int ID_DEV                = 232;      // 👀 https://turbolab.it/programmazione-232
     const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/youtube-42
 
     const int ID_MAC                = 26;       // 👀 https://turbolab.it/apple-mac-macos-26
@@ -112,7 +113,7 @@ class Tag extends BaseCmsService
         $this->clear();
         $entity = $this->em->getRepository(static::ENTITY_CLASS)->findByTitle($title);
 
-        if( empty($this->entity) ) {
+        if( empty($entity) ) {
 
             $exceptionClass = static::NOT_FOUND_EXCEPTION;
             throw new $exceptionClass($title);
@@ -140,12 +141,13 @@ class Tag extends BaseCmsService
     {
         // TODO DB-driven Font Awesome icon for tags
         $arrMap = [
-            static::ID_CRYPTOCURRENCIES         => ["fa-brands fa-bitcoin", "fa-brands fa-ethereum"],
-            static::ID_FILESHARING              => ["fa-solid fa-download"],
-            static::ID_SECURITY                 => ["fa-solid fa-shield-halved"],
-            static::ID_WHAT_TO_BUY              => ["fa-solid fa-laptop"],
-            static::ID_VPN                      => ["fa-solid fa-user-secret"],
-            static::ID_VIRTUALIZATION           => ["fa-solid fa-clone"]
+            static::ID_CRYPTOCURRENCIES => ["fa-brands fa-bitcoin", "fa-brands fa-ethereum"],
+            static::ID_FILESHARING      => ["fa-solid fa-download"],
+            static::ID_SECURITY         => ["fa-solid fa-shield-halved"],
+            static::ID_WHAT_TO_BUY      => ["fa-solid fa-laptop"],
+            static::ID_VPN              => ["fa-solid fa-user-secret"],
+            static::ID_VIRTUALIZATION   => ["fa-solid fa-clone"],
+            static::ID_DEV              => ["fa-brands fa-dev"]
         ];
 
         $id = $this->getId();
@@ -159,8 +161,7 @@ class Tag extends BaseCmsService
             return $this->articlesTagged;
         }
 
-        $this->articlesTagged = $this->factory->createArticleCollection()->loadByTag($this, $page);
-        return $this->articlesTagged;
+        return $this->articlesTagged = $this->factory->createArticleCollection()->loadByTag($this, $page);
     }
 
 
@@ -187,9 +188,7 @@ class Tag extends BaseCmsService
 
 
     public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->urlGenerator->generateUrl($this, $page, $urlType);
-    }
+        { return $this->urlGenerator->generateUrl($this, $page, $urlType); }
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }

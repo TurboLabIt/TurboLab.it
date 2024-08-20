@@ -19,7 +19,7 @@ class TagCollection extends BaseServiceEntityCollection
 
     const array NAV_OTHER_CATEGORIES    = [
         TagService::ID_FILESHARING, TagService::ID_SECURITY, TagService::ID_WHAT_TO_BUY, TagService::ID_VPN,
-        TagService::ID_VIRTUALIZATION, TagService::ID_YOUTUBE
+        TagService::ID_VIRTUALIZATION, TagService::ID_DEV, TagService::ID_YOUTUBE
     ];
 
 
