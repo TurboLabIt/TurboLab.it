@@ -5,7 +5,7 @@ Gli articoli pubblicati su TurboLab.it devono essere condivisi su piattaforme es
 - social network (Facebook, X (Twitter), ...)
 - servizi di messaggistica (WhatsApp, Telegram, ...)
 
-🛑 In realtà, noi dobbiamo sempre **incoraggiare il pubblico affinché**:
+🛑 In realtà, noi dobbiamo sempre **incoraggiare il pubblico** affinché:
 
 - **ci segua tramite servizi indipendenti da terze parti**, come [newsletter](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md) oppure [feed RSS](https://turbolab.it/feed)
 - **interagisca con noi tramite [il forum](https://turbolab.it/forum/)**
@@ -15,12 +15,12 @@ Ciò detto: le presenze social devono comunque essere alimentate.
 
 ## Informazioni/guida per utenti finali
 
-Lista completa dei nostri canali social, nonché "guida" da indicare agli utenti finali, è disponibile qui: [TurboLab.it sui social network: lista completa delle pagine ufficiali](https://turbolab.it/4092).
+La lista completa dei nostri canali social è esposta [in cima alla colonna della homepage](https://turbolab.it/) (sono le icone nella sezione `Seguici`).
 
 
 ## Lista dei canali di test
 
-Gli ambienti *non-prod* condividono gli articoli su canali social di test, diversi da quelli reali. La lista di tali canali è nel file [.env.dev](https://github.com/TurboLabIt/TurboLab.it/blob/main/d.env.dev).
+Gli ambienti *non-prod* pubblicano gli articoli su canali social di test, diversi da quelli reali. La lista di tali canali è nel file [.env.dev](https://github.com/TurboLabIt/TurboLab.it/blob/main/.env.dev).
 
 
 ## Priorità
@@ -28,8 +28,9 @@ Gli ambienti *non-prod* condividono gli articoli su canali social di test, diver
 Le priorità principali nella condivisione dei contenuti di TLI sulle pagine social sono:
 
 - **ottenere un servizio completamente automatico**: la condivisione deve avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
+- **non utilizzare servizi esterni dedicati**
 
-Abbiamo scelto di **non utilizzare servizi esterni dedicati**, per i seguenti motivi:
+L'indipendenza da servizi esterni, come *Hootsuite* o *dlvrit*, è necessaria per:
 
 1. non dipendere dalla disponibilità di un servizio sul quale non abbiamo alcun controllo
 2. evitare di sviluppare integrazioni specifiche con piattaforme che, storicamente, falliscono o chiudono i piani "free" molto rapidamente
@@ -49,7 +50,7 @@ La condivisione sulle piattaforme esterne avviene tramite il comando [social-sha
 
 Non sono previsti parametri: credenziali ed endpoint vengono letti dal `.env` corrente.
 
-Il comando viene eseguito automaticamente tramite [config/custom/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
+Il comando viene eseguito automaticamente tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
 
 ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio di messaggi in orari inappropriati ("di notte", ad esempio). L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
 

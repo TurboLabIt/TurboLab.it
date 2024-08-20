@@ -59,7 +59,7 @@ La pagina di anteprima non invia nessuna email, ma mostra soltanto il contenuto 
 
 ## Comando di invio
 
-La newsletter viene spedita periodicamente agli iscritti tramite [config/custom/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron).
+La newsletter viene spedita periodicamente agli iscritti tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)).
 
 Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/newsletter-send.sh), che a sua volta esegue [Command/NewsletterSendCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterSendCommand.php).
 
