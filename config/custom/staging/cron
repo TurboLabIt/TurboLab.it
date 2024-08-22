@@ -37,11 +37,11 @@ LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
 * * * * * root bash ${SCRIPT_DIR}cron.sh >> ${LOG_PATH}symfony.sh.log 2>&1
 
 ## every minute: phpBB cron job
-* * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli-cron.sh.log 2>&1
+* * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
 
 ## every xx minutes: share on Telegram, WhatsApp, ...
 # ⚠ Keep the interval synced with ShareOnSocialCommand::EXEC_INTERVAL
-*/10 * * * * root bash ${SCRIPT_DIR}social-share.sh cron >> ${LOG_PATH}social-share-cron.sh.log 2>&1
+*/10 * * * * root bash ${SCRIPT_DIR}social-share.sh >> ${LOG_PATH}social-share.sh.log 2>&1
 
 ## every hour: dump server configuration for the info page
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
