@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\Article;
 use App\Service\Cms\Image;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,6 +32,7 @@ class ArticleController extends BaseController
             'activeMenu'            => $article->getActiveMenu(),
             'FrontendHelper'        => $this->frontendHelper,
             'Article'               => $article,
+            'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
             'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
             'SideArticles'          => $this->factory->createArticleCollection()
                                             ->loadSideBarOf($article)

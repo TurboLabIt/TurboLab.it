@@ -11,6 +11,11 @@
     width: 100%;
 }
 
+.tli-file-download {
+    font-size: medium;
+    font-weight: 600;
+}
+
 .post-reader-prev {
     height: 170px;
 }

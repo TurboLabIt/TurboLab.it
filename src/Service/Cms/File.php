@@ -34,18 +34,81 @@ class File extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function setEntity(?FileEntity $entity = null) : static
     {
-        $this->entity = $entity;
+        $this->localViewCount   = $entity->getViews();
+        $this->entity           = $entity;
         return $this;
     }
 
     public function getEntity() : ?FileEntity { return $this->entity; }
     //</editor-fold>
 
-    public function isLocal() : bool
+    //<editor-fold defaultstate="collapsed" desc="*** 👽 Local or remote hosted ***">
+    public function getExternalDownloadUrl() : ?string { return $this->entity->getUrl(); }
+
+    public function isLocal() : bool { return empty( $this->getExternalDownloadUrl() ); }
+
+    public function isExternal() : bool { return !$this->isLocal(); }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🔎 File type ***">
+    public function getMimeType() : ?string
     {
-        $url = $this->entity->getUrl();
-        return empty($url);
+        if( !$this->isLocal() ) {
+            return null;
+        }
+
+        $filePath = $this->getOriginalFilePath();
+        $mime = mime_content_type($filePath);
+        return $mime;
     }
+
+
+    public function isBitTorrent() : bool
+    {
+        $format = $this->entity->getFormat();
+        return stripos($format, 'torrent') !== false || stripos($format, 'magnet') !== false;
+    }
+
+
+    public function getCompatibilities() : array
+    {
+        $format = $this->entity->getFormat();
+        if( empty($format) ) {
+            return [];
+        }
+
+        $arrWindowsFormats = ['exe', 'msi', 'bat', 'microsoft store', 'cmd', 'ps', 'appx'];
+        if( in_array($format, $arrWindowsFormats) ) {
+            return [[
+                "name"  => "Windows",
+                "slug"  => "windows",
+                "color" => "#74C0FC"
+            ]];
+        }
+
+        $arrLinuxFormats = ['service', 'sh'];
+        if( in_array($format, $arrLinuxFormats) ) {
+            return [[
+                "name"  => "Linux",
+                "slug"  => "linux",
+                "color" => "#000000"
+            ]];
+        }
+
+        $arrAndroidFormats = ['apk'];
+        if( in_array($format, $arrAndroidFormats) ) {
+            return [[
+                "name"  => "Android",
+                "slug"  => "android",
+                "color" => "#3DDC84"
+            ]];
+        }
+
+
+        return [];
+    }
+    //</editor-fold>
 
 
     public function getOriginalFileName() : ?string
@@ -81,18 +144,6 @@ class File extends BaseCmsService
         );
 
         return $filePath;
-    }
-
-
-    public function getMimeType() : ?string
-    {
-        if( !$this->isLocal() ) {
-            return null;
-        }
-
-        $filePath = $this->getOriginalFilePath();
-        $mime = mime_content_type($filePath);
-        return $mime;
     }
 
 
@@ -139,7 +190,4 @@ class File extends BaseCmsService
         $fileName .= "." . $format;
         return $fileName;
     }
-
-
-    public function getExternalDownloadUrl() : ?string { return $this->entity->getUrl(); }
 }
