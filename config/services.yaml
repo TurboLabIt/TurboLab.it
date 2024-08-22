@@ -30,6 +30,10 @@ services:
             $arrConfig:
                 tli1DbName: '%env(APP_TLI1_DB_NAME)%'
 
+    App\EventListener\CommandFailureListener:
+        tags:
+            - { name: kernel.event_listener, method: onCommandFailure,  event: console.error }
+
     App\Service\YouTubeChannelApi:
         arguments:
             $arrConfig:
