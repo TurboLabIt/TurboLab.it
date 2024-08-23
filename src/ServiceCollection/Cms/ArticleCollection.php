@@ -113,6 +113,13 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadTopViews(?int $page = 1) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findTopViews($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function loadGuidesForAuthors() : static
     {
         $this->loadComplete([

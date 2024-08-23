@@ -218,9 +218,9 @@ class ArticleRepository extends BaseRepository
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 //  # must be: GreaterOrEqualThan and LessThan - see https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/social-network-sharing.md
-                ->andWhere('t.published_at >= :lowLimit')
+                ->andWhere('t.publishedAt >= :lowLimit')
                     ->setParameter('lowLimit', $lowLimit)
-                ->andWhere('t.published_at < :highLimit')
+                ->andWhere('t.publishedAt < :highLimit')
                     ->setParameter('highLimit', $highLimit)
                 ->orderBy('t.publishedAt', 'ASC')
                 ->getQuery()
@@ -292,6 +292,23 @@ class ArticleRepository extends BaseRepository
                 ->orderBy('t.views', 'DESC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($numItems)
+                ->getQuery();
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $paginator;
+    }
+
+
+    public function findTopViews(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->orderBy('t.views', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);

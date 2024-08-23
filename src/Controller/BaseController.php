@@ -16,7 +16,8 @@ use Twig\Environment;
 
 abstract class BaseController extends AbstractController
 {
-    const int CACHE_DEFAULT_EXPIRY = 60 * 5;
+    const int CACHE_DEFAULT_EXPIRY      = 60 * 10; // 10 minutes
+    const string CACHE_WARMER_HEADER    = "x-tli-cache-warmer";
 
     protected bool $cacheIsDisabled = false;
     protected Request $request;
@@ -36,7 +37,14 @@ abstract class BaseController extends AbstractController
         array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null
     ) : Response
     {
-        $page       = empty($page) ? 1 : $page;
+        $page = empty($page) ? 1 : $page;
+
+        if( !$this->isCachable() ) {
+
+            $buildHtmlResult = empty($fxBuildHtml) ? $this->buildHtml($page) : $fxBuildHtml($page);
+            return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
+        }
+
         $cacheKey   = reset($arrCacheTags) . '_page_' . $page;
         $that       = $this;
 
@@ -45,9 +53,10 @@ abstract class BaseController extends AbstractController
 
                 $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtml($page) : $fxBuildHtml($page);
 
-                if( is_string($buildHtmlResult) && $that->isCachable() ) {
+                if( is_string($buildHtmlResult) ) {
 
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $coldCacheStormBuster = 60 * rand(0, 10); // 0-5 minutes
+                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
                     $cache->tag( array_merge([$cacheKey], $arrCacheTags ) );
 
                 } else {
@@ -68,18 +77,32 @@ abstract class BaseController extends AbstractController
            return false;
         }
 
-        $isLogged           = !empty($this->getUser() ?? null);
-        $currentUserIp      = $this->request->getClientIp();
-        $currentUserIsLocal =
+        /*$isLogged = !empty($this->getUser() ?? null);
+        if($isLogged) {
+            return false;
+        }*/
+
+        $isLocal =
             !filter_var(
-                $currentUserIp, FILTER_VALIDATE_IP,
+                $this->request->getClientIp(), FILTER_VALIDATE_IP,
                 FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
             );
 
-        $currentEnv = $this->parameterBag->get("kernel.environment");
-        $isDevEnv   = in_array($currentEnv, ["dev", "test"]);
+        $isCacheWarmer = !empty( $this->request->headers->get(static::CACHE_WARMER_HEADER) );
 
-        $result = !$isLogged && !$currentUserIsLocal && !$isDevEnv;
-        return $result;
+        if( $isLocal && $isCacheWarmer) {
+            return true;
+        }
+
+        if($isLocal) {
+            return false;
+        }
+
+        $currentEnv = $this->parameterBag->get("kernel.environment");
+        if( in_array($currentEnv, ["dev", "test"]) ) {
+            return false;
+        }
+        
+        return true;
     }
 }

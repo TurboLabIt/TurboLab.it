@@ -14,7 +14,7 @@ class FeedController extends BaseController
         return
             $this->sendRssResponse("app_feed", [
                 "title"         => "TurboLab.it | Feed Principale",
-                "description"   => "Questo feed eroga articoli più recenti pubblicati in home page"
+                "description"   => "Questo feed eroga gli articoli e le news più recenti"
             ], 'loadLatestPublished');
     }
 
@@ -25,7 +25,7 @@ class FeedController extends BaseController
         return
             $this->sendRssResponse("app_feed_fullfeed", [
                 "title"         => "TurboLab.it | Full Feed",
-                "description"   => "Questo feed eroga i nuovi articoli in forma completa",
+                "description"   => "Questo feed eroga gli articoli e le news più recenti, in forma completa",
                 "fullFeed"      => true
             ], 'loadLatestPublished');
     }
@@ -53,29 +53,34 @@ class FeedController extends BaseController
             $arrData["fullFeed"] = false;
         }
 
-        $that = $this;
+        if( !$this->isCachable() ) {
 
-        $txtResponseBody =
-            $this->cache->get($routeName, function(CacheItem $cache) use($routeName, $arrData, $that, $fxLoadArticle) {
+            $txtResponseBody =
+                $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
+                    "activeMenu"    => "feed",
+                    "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
+                ]));
 
-                $txtResponseBody =
-                    $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
-                        "activeMenu"    => "feed",
-                        "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
-                    ]));
+        } else {
 
-                if( $that->isCachable() ) {
+
+            $cacheKey = "feed_{$routeName}_" . md5(serialize($arrData));
+
+            $txtResponseBody =
+                $this->cache->get($cacheKey, function(CacheItem $cache) use($routeName, $arrData, $fxLoadArticle) {
+
+                    $txtResponseBody =
+                        $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
+                            "activeMenu"    => "feed",
+                            "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
+                        ]));
 
                     $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                     $cache->tag([$routeName, "app_feed"]);
 
-                } else {
-
-                    $cache->expiresAfter(-1);
-                }
-
-                return $txtResponseBody;
-            });
+                    return $txtResponseBody;
+                });
+        }
 
         $response = new Response($txtResponseBody);
 
