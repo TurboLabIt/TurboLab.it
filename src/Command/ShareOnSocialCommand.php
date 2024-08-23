@@ -38,7 +38,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     )
     {
         parent::__construct();
-        $this->isDevEnv = $kernel->getEnvironment() == 'dev';
+        $this->isDevEnv = in_array($kernel->getEnvironment(), ['dev', 'test']);
         $this->oNow     = new \DateTime();
     }
 
@@ -50,20 +50,33 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $isQuietHours = $this->isQuietHours();
         if( $isQuietHours && !$this->isDevEnv ) {
 
-            $this->io->warning("Stopping the execution due to quiet hours");
+            $this->fxWarning("Stopping the execution due to quiet hours");
             return $this->endWithSuccess();
 
         } elseif($isQuietHours) {
 
-            $this->io->warning("The execution should stop due to quiet hours. Ignoring in DEV...");
+            $this->fxWarning("👨‍💻 The execution should stop due to quiet hours. Ignoring in DEV...");
         }
 
         $this->loadArticles();
+
         if( $this->articleCollection->count() == 0 ) {
 
-            $this->io->warning("There are no articles to share");
-            return $this->endWithSuccess();
+            $this->fxWarning("There are no articles to share");
+
+            if( !$this->isDevEnv ) {
+
+                return $this->endWithSuccess();
+
+            } else {
+
+                $this->fxWarning("👨‍💻 The execution should stop due to no-articles. Ignoring in DEV, loading a random article...");
+                $arrArticles = $this->articleCollection->loadTopViewsRecent()->getAll();
+                $randKey = array_rand($arrArticles);
+                $this->articleCollection->setData([ $randKey => $arrArticles[$randKey] ]);
+            }
         }
+
 
         foreach($this->articleCollection as $article) {
 
