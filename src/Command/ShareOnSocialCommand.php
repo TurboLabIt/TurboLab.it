@@ -34,7 +34,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         protected ArticleCollection $articleCollection,
         protected TelegramMessenger $telegram,
         protected FacebookMessenger $facebook,
-        protected TwitterMessenger $twitter,
+        protected TwitterMessenger $twitter
     )
     {
         parent::__construct();
@@ -123,7 +123,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $maxMinutes = static::EXEC_INTERVAL;
         }
 
-        $this->fxTitle("Loading articles published in the last " . $maxMinutes . " minutes...");
+        $this->fxInfo("Loading articles published in the last $maxMinutes minutes...");
         $this->articleCollection->loadLatestForSocialSharing($maxMinutes);
         $this->fxOK("##" . $this->articleCollection->count() . "## article(s) loaded");
 
