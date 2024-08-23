@@ -7,12 +7,11 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 
-class SitemapTest extends BaseT
+class SitemapGeneratorCommandTest extends BaseT
 {
     public function testCommand()
     {
-        /** @var SitemapGeneratorCommand $command */
-        $command = static::getService("App\\Command\\SitemapGeneratorCommand");
+        $command = static::getService(SitemapGeneratorCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
         $this->assertEquals($result, SitemapGeneratorCommand::SUCCESS);
     }
