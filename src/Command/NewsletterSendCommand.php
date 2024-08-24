@@ -23,9 +23,8 @@ use TurboLabIt\BaseCommand\Service\Options;
 )]
 class NewsletterSendCommand extends AbstractBaseCommand
 {
-    protected bool $allowDryRunOpt          = true;
-    protected bool $limitedByDefaultOpt     = true;
-    protected ?array $allowUnlockOptIn = null;
+    protected bool $allowDryRunOpt      = true;
+    protected bool $limitedByDefaultOpt = true;
 
 
     public function __construct(

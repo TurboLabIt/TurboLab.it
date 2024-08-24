@@ -31,8 +31,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     public function __construct(
         protected EntityManagerInterface $em, protected ParameterBagInterface $parameters,
         protected ArticleCollection $articleCollection,
-        protected TelegramMessenger $telegram,
-        protected FacebookMessenger $facebook,
+        protected TelegramMessenger $telegram, protected FacebookMessenger $facebook,
         protected TwitterMessenger $twitter
     )
     {
@@ -145,9 +144,10 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     protected function shareOnTelegram(string $articleTitle, string $articleUrl) : static
     {
         $this->io->write("✴ Telegram: ");
+        $envTag = $this->getEnvTag();
 
         try {
-            $messageHtml = '<b><a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
+            $messageHtml = '<b>{$envTag}<a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
             $result =
                 $this->telegram
                     ->setMessageButtons([
@@ -195,7 +195,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ Twitter: ");
 
         try {
-            $message = $articleTitle . " " . $articleUrl;
+            $message = $this->getEnvTag() . $articleTitle . " " . $articleUrl;
             $postId  = $this->twitter->sendMessage($message);
 
             $url = $this->twitter->buildMessageUrl($postId);
@@ -213,8 +213,8 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
     protected function sendAlert(string $serviceName, \Exception $ex, string $articleTitle, string $articleUrl) : static
     {
-        $envText  = "[" . strtoupper( $this->getEnv() ) . "]";
-        $message  = "<b>$envText SHARING ERROR on $serviceName</b>" . PHP_EOL;
+        $envTag   = $this->getEnvTag(true);
+        $message  = "<b>{$envTag}SHARING ERROR on $serviceName</b>" . PHP_EOL;
         $message .= "<code>" . $ex->getMessage() . "</code>" . PHP_EOL;
         $message .= "URL: $articleUrl";
 
