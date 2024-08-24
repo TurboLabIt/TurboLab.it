@@ -8,6 +8,7 @@ use App\Service\FrontendHelper;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,7 +19,7 @@ use TurboLabIt\Encryptor\Encryptor;
 /**
  * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md
  */
-class Newsletter extends BaseController
+class NewsletterController extends BaseController
 {
     const int ERROR_BAD_ACCESS_KEY      = 1;
     const int ERROR_USER_NOT_FOUND      = 3;
@@ -44,22 +45,27 @@ class Newsletter extends BaseController
 
 
     #[Route('/newsletter/anteprima', name: 'app_newsletter_preview')]
-    public function preview(NewsletterService $newsletter, User $currentUser) : Response
+    public function preview(
+        NewsletterService $newsletter, User $currentUser, ParameterBagInterface $parameters
+    ) : Response
     {
-        $newsletter
-            ->loadContent()
-            ->loadTestRecipients();
+        $countArticles =
+            $newsletter
+                ->loadContent()
+                ->loadRecipients()
+                ->countArticles();
 
-        $currentUserId = $this->getUser()?->getId();
-        if( empty($currentUserId) ) {
-
-            $arrTestRecipients = $newsletter->getRecipients();
-            $user = reset($arrTestRecipients);
-
-        } else {
-
-            $user = $currentUser->load($currentUserId);
+        if( $countArticles == 0 && $parameters->get('kernel.environment') != 'prod' ) {
+            $newsletter->loadTestArticles();
         }
+
+        $countTopics = $newsletter->countTopics();
+        if( $countTopics == 0 && $parameters->get('kernel.environment') != 'prod' ) {
+            $newsletter->loadTestTopics();
+        }
+
+        $userId = $this->getUser()?->getId() ?? User::SYSTEM_USER_ID;
+        $user   = $currentUser->load($userId);
 
         $email =
             $newsletter

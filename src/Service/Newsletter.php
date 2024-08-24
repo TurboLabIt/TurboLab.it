@@ -22,11 +22,13 @@ class Newsletter extends Mailer
 {
     protected string $newsletterOnSiteUrl;
     protected string $privacyUrl;
-    protected string $newsletterName        = "Questa settimana su TLI";
+    protected string $newsletterName    = "Questa settimana su TLI";
     protected string $subject;
-    protected array $arrRecipients          = [];
+    protected array $arrRecipients      = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;
+    protected bool $showingTestArticles = false;
+    protected bool $showingTestTopics   = false;
 
 
     public function __construct(
@@ -107,6 +109,7 @@ class Newsletter extends Mailer
 
     public function loadTestArticles() : static
     {
+        $this->showingTestArticles = true;
         $this->articleCollection->loadRandom( rand(2,7) );
         return $this->loadAncillaryContent();
     }
@@ -114,6 +117,7 @@ class Newsletter extends Mailer
 
     public function loadTestTopics() : static
     {
+        $this->showingTestTopics = true;
         $this->topicCollection->loadRandom( rand(5,20) );
         return $this;
     }
@@ -161,7 +165,9 @@ class Newsletter extends Mailer
 
         $arrTemplateParams = [
             "Articles"                      => $this->articleCollection,
+            "showingTestArticles"           => $this->showingTestArticles,
             "Topics"                        => $this->topicCollection,
+            "showingTestTopics"             => $this->showingTestTopics,
             "openerUrl"                     => $user->getNewsletterOpenerUrl(),
             "homeWithOpenerUrl"             => $user->getNewsletterOpenerUrl($homeUrl),
             "forumWithOpenerUrl"            => $user->getNewsletterOpenerUrl( $homeUrl . "forum/" ),

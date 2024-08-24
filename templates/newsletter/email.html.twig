@@ -1,58 +1,65 @@
 {# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md #}
 {% apply inky_to_html|inline_css( source('@styles/email/foundation-emails.css'), source('@styles/email/email.css') ) %}
 <container>
-    <row>
-        <columns>
-            <a href="{{ homeWithOpenerUrl }}">
-                <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it">
-            </a>
-        </columns>
-    </row>
-    <row>
-        <columns><strong>Ciao {{ ToFirst.name }}</strong>! 👋🏻 Queste sono le novità pubblicate su <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a> nel corso della settimana.</columns>
-    </row>
-    <row>
-        <columns><p class="text-center tli-alert-warning">Non vuoi più ricevere queste email? Allora <a href="{{ unsubscribeUrl }}">dis-iscriviti</a> con un solo click!</p></columns>
-    </row>
-    <row>
-        <columns>
-            🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla rubrica per
-            evitare che queste newsletter finiscano nel tuo spam.
-        </columns>
-    </row>
+
+    <row><columns>
+        <a href="{{ homeWithOpenerUrl }}">
+            <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it">
+        </a>
+    </columns></row>
+
+    <row><columns>
+        <strong>Ciao {{ ToFirst.name }}</strong>! 👋🏻 Queste sono le novità pubblicate su <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a> nel corso della settimana.
+    </columns></row>
+
+    <row><columns>
+        <p class="text-center tli-alert-warning">Non vuoi più ricevere queste email? Allora <a href="{{ unsubscribeUrl }}">dis-iscriviti</a> con un solo click!</p>
+    </columns></row>
+
+    <row><columns>
+        🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla rubrica per
+        evitare che queste newsletter finiscano nel tuo spam.
+    </columns></row>
 
 
-    <row>
-        <columns><h2 class="text-center tli-group-title">Articoli e news</h2></columns>
-    </row>
+    <row><columns>
+        <h2 class="text-center tli-group-title">Articoli e news</h2>
+    </columns></row>
 
-    {% if Articles is not empty %}
-
-        {% for Article in Articles %}
-            <row>
-                <columns>
-                    <h4 class="tli-article-title"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.title|raw }}</a></h4>
-                    <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
-                        <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}">
-                    </a>
-                    <p class="tli-article-abstract"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.abstract|raw }}</a></p>
-                </columns>
-            </row>
-        {% endfor %}
-
-    {% else %}
-
+    {% if Articles is empty or showingTestArticles %}
         <row><columns>🌴 Questa settimana non sono stati pubblicati nuovi articoli.</columns></row>
-
     {% endif %}
 
+    {% if showingTestArticles %}
+        <row><columns>Ma, siccome questo è un test, stai visualizzando articoli a caso</columns></row>
+    {% endif %}
 
-    <row>
-        <columns><h2 class="text-center tli-group-title">Messaggi dal forum</h2></columns>
-    </row>
+    {% for Article in Articles %}
+        <row>
+            <columns>
+                <h4 class="tli-article-title"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.title|raw }}</a></h4>
+                <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
+                    <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}">
+                </a>
+                <p class="tli-article-abstract"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.abstract|raw }}</a></p>
+            </columns>
+        </row>
+    {% endfor %}
+
+
+    <row><columns>
+        <h2 class="text-center tli-group-title">Messaggi dal forum</h2>
+    </columns></row>
+
+    {% if Topics is empty or showingTestTopics %}
+        <row><columns>🏄 Nessuna novità dal forum.</columns></row>
+    {% endif %}
+
+    {% if showingTestTopics %}
+        <row><columns>Ma, siccome questo è un test, stai visualizzando discussioni a caso</columns></row>
+    {% endif %}
 
     {% if Topics is not empty %}
-
         <row>
             <columns>
                 <ul>
@@ -65,58 +72,60 @@
                 </ul>
             </columns>
         </row>
-
-    {% else %}
-
-        <row><columns>🏄 Nessuna novità dal forum.</columns></row>
-
     {% endif %}
+
 
     {# The following <center> is from INKY, it's NOT deprecated. #}
     {# 📚 https://get.foundation/emails/docs/alignment.html #}
-    <row><columns><center><button href="{{ forumWithOpenerUrl }}">Inizia una nuova discussione</button></center></columns></row>
+    <row><columns><center>
+        <button href="{{ forumWithOpenerUrl }}">Inizia una nuova discussione</button
+    </center></columns></row>
 
 
-    <row>
-        <columns><h2 class="text-center tli-group-title">Curiosità</h2></columns>
-    </row>
-    <row>
-        <columns>
-            Questa newsletter viene recapitata a {{ subscriberCount|friendlyNum }} iscritti, fra i quali ci sei anche tu!<br>
-            I domini più usati sono
-            {% for domain,Provider in TopEmailProviders %}
-                <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
-            {% endfor %}
-        </columns>
-    </row>
+    <row><columns>
+        <h2 class="text-center tli-group-title">Curiosità</h2>
+    </columns></row>
+
+    <row><columns>
+        Questa newsletter viene recapitata a {{ subscriberCount|friendlyNum }} iscritti, fra i quali ci sei anche tu!<br>
+        I domini più usati sono
+        {% for domain,Provider in TopEmailProviders %}
+            <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
+        {% endfor %}
+    </columns></row>
 
 
-    <row>
-        <columns><h2 class="text-center tli-group-title">Cosa ne pensi?</h2></columns>
-    </row>
-    <row>
-        <columns>
-            👍 Ti è piaciuta questa email? 👎 NON ti è piaciuta? Manca qualcosa che vorresti oppure hai problemi di visualizzazione?
-            <strong>Siamo super-interessati a conoscere la tua opinione</strong>! Raccontaci tutto partecipando alla discussione sul forum:
-        </columns>
-    </row>
+    <row><columns>
+        <h2 class="text-center tli-group-title">Cosa ne pensi?</h2>
+    </columns></row>
 
-    <row><columns><center><button href="{{ feedbackTopicWithOpenerUrl }}">Raccontaci cosa ne pensi della newsletter</button></center></columns></row>
+    <row><columns>
+        👍 Ti è piaciuta questa email? 👎 NON ti è piaciuta? Manca qualcosa che vorresti oppure hai problemi di visualizzazione?
+        <strong>Siamo super-interessati a conoscere la tua opinione</strong>! Raccontaci tutto partecipando alla discussione sul forum:
+    </columns></row>
+
+    {# The following <center> is from INKY, it's NOT deprecated. #}
+    {# 📚 https://get.foundation/emails/docs/alignment.html #}
+    <row><columns><center>
+        <button href="{{ feedbackTopicWithOpenerUrl }}">Raccontaci cosa ne pensi della newsletter</button>
+    </center></columns></row>
 
 
     <row><columns><hr></columns></row>
 
-    <row>
-        <columns>
-            Abbiamo inviato questa email a <span class="tli-code">{{ ToFirst.address }}</span> poiché ti sei registrato a <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a>
-            con lo username <span class="tli-code">{{ ToFirst.name }}</span>, e hai scelto di ricevere la newsletter.
-        </columns>
-    </row>
-    <row>
-        <columns><p class="text-center tli-alert-warning"><a href="{{ unsubscribeUrl }}">Clicca qui per dis-iscriverti con un solo click</a></p></columns>
-    </row>
-    <row>
-        <columns><a href="{{ privacyWithOpenerUrl }}">Informativa privacy</a> disponibile sul sito.</columns>
-    </row>
+
+    <row><columns>
+        Abbiamo inviato questa email a <span class="tli-code">{{ ToFirst.address }}</span> poiché ti sei registrato a <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a>
+        con lo username <span class="tli-code">{{ ToFirst.name }}</span>, e hai scelto di ricevere la newsletter.
+    </columns></row>
+
+    <row><columns>
+        <p class="text-center tli-alert-warning"><a href="{{ unsubscribeUrl }}">Clicca qui per dis-iscriverti con un solo click</a></p>
+    </columns></row>
+
+    <row><columns>
+        <a href="{{ privacyWithOpenerUrl }}">Informativa privacy</a> disponibile sul sito.
+    </columns></row>
+
 </container>
 {% endapply %}
