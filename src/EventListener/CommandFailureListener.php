@@ -11,13 +11,10 @@ class CommandFailureListener
 
     public function onCommandFailure(ConsoleErrorEvent $event)
     {
-        // https://symfony.com/doc/current/components/console/events.html#the-consoleevents-error-event
+        $message =
+            "<b>CommandFailure on " . $event->getCommand()?->getName() . "</b>" . PHP_EOL .
+            "<code>" . $event->getError()->getMessage() . "</code>";
 
-        $text =
-            "🛑 TLI is failing" . PHP_EOL . PHP_EOL .
-            "Command: *" . $event->getCommand()?->getName() . "*" . PHP_EOL .
-            "Error: *" . $event->getError()->getMessage() . "*";
-
-        $this->messenger->sendErrorMessage($text);
+        $this->messenger->sendErrorMessage($message);
     }
 }

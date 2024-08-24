@@ -106,6 +106,8 @@ class NewsletterSendCommand extends AbstractBaseCommand
             $errorMessage = 
                 $this->newsletter->sendLowContentNotification();
 
+            $errorMessage = strip_tags($errorMessage);
+
             return $this->endWithWarning($errorMessage);
         }
 

@@ -209,8 +209,10 @@ class Newsletter extends Mailer
 
     public function sendLowContentNotification() : string
     {
-        $message  = "[" . strtoupper( $this->parameters->get("kernel.environment") ) . "] ";
-        $message .= "📭 Contenuti insufficienti per generare la newsletter";
+        $message =
+            "<b>Newsletter error</b>" . PHP_EOL .
+            "Contenuti insufficienti per generare la newsletter";
+
         $this->alertMessenger->sendErrorMessage($message);
 
         return $message;

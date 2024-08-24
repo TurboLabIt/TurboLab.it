@@ -144,10 +144,9 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     protected function shareOnTelegram(string $articleTitle, string $articleUrl) : static
     {
         $this->io->write("✴ Telegram: ");
-        $envTag = $this->getEnvTag();
 
         try {
-            $messageHtml = '<b>' . $envTag . '📰 <a href="' . $articleUrl . '">' . $articleTitle . '</a></b>';
+            $messageHtml = '<b>📰 <a href="' . $articleUrl . '">' . $articleTitle . '</a></b>';
             $result =
                 $this->telegram
                     ->setMessageButtons([
@@ -213,10 +212,10 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
     protected function sendAlert(string $serviceName, \Exception $ex, string $articleTitle, string $articleUrl) : static
     {
-        $envTag   = $this->getEnvTag(true);
-        $message  = "<b>{$envTag}SHARING ERROR on $serviceName</b>" . PHP_EOL;
-        $message .= "<code>" . $ex->getMessage() . "</code>" . PHP_EOL;
-        $message .= "URL: $articleUrl";
+        $message =
+            "<b>ShareOnSocial error on $serviceName</b>" . PHP_EOL .
+            "<code>" . $ex->getMessage() . "</code>" . PHP_EOL .
+            "URL: $articleUrl";
 
         $this->telegram
             ->setMessageButtons([])
