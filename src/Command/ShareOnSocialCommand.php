@@ -146,7 +146,11 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ Telegram: ");
 
         try {
-            $messageHtml = '<b>📰 <a href="' . $articleUrl . '">' . $articleTitle . '</a></b>';
+            $messageHtml =
+                '<b>📰 <a href="' . $articleUrl . '">'
+                    . html_entity_decode($articleTitle, ENT_COMPAT, 'UTF-8') .
+                '</a></b>';
+
             $result =
                 $this->telegram
                     ->setMessageButtons([
