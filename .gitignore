@@ -113,3 +113,7 @@ drivers/geckodriver
 /var/
 /src/.preload.php
 ###< symfony/framework-bundle ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
