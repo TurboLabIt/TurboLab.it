@@ -99,7 +99,7 @@ class Newsletter extends Mailer
 
         } else {
 
-            $this->subject = '"' . $firstArticleTitle . '" e altre novità: ' . $this->newsletterName;
+            $this->subject = '"' . $firstArticleTitle . '" e altre novità | ' . $this->newsletterName;
         }        
 
         $this->subject .= " (" . $this->getDateString() . ")";
