@@ -147,7 +147,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $envTag = $this->getEnvTag();
 
         try {
-            $messageHtml = '<b>' . $envTag . '<a href="' . $articleUrl . '">📰 ' . $articleTitle . '</a></b>';
+            $messageHtml = '<b>' . $envTag . '📰 <a href="' . $articleUrl . '">' . $articleTitle . '</a></b>';
             $result =
                 $this->telegram
                     ->setMessageButtons([
