@@ -327,7 +327,7 @@ class ArticleRepository extends BaseRepository
                 LIMIT 1
             ";
 
-        $arrResults =
+        $qb =
             $this->getQueryBuilderCompleteFromSqlQuery("
                 ( " . str_ireplace(["##OP##", "##DIR##"], ["<", "DESC"], $sqlSelect) . " )
                 UNION
@@ -336,12 +336,14 @@ class ArticleRepository extends BaseRepository
                 "publishingStatus"  => Article::PUBLISHING_STATUS_PUBLISHED,
                 "articleDate"       => $article->getPublishedAt()->format('Y-m-d H:i:s'),
                 "articleId"         => $article->getId(),
-            ])
-            ->getQuery()->getResult();
+            ]);
 
-        if( empty($arrResults) ) {
+
+        if( empty($qb) ) {
             return [];
         }
+
+        $arrResults = $qb->getQuery()->getResult();
 
         uasort($arrResults, function(Article $a1, Article $a2) {
             return $a1->getPublishedAt() <=> $a2->getPublishedAt();
@@ -365,9 +367,13 @@ class ArticleRepository extends BaseRepository
                     RAND() LIMIT 1
             ";
 
-            return 
-                $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery)
-                ->getQuery()->getResult();
+            $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery);
+
+            if( empty($qb) ) {
+                return [];
+            }
+
+            return $qb->getQuery()->getResult();
         }
 
         $sqlQueryTemplate = "
@@ -397,8 +403,12 @@ class ArticleRepository extends BaseRepository
 
         $sqlQuery .= 'ORDER BY RAND()';
 
-        return 
-            $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery)
-            ->getQuery()->getResult();
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery);
+
+        if( empty($qb) ) {
+            return [];
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

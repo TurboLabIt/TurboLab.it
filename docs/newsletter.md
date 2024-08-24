@@ -2,12 +2,12 @@
 
 La newsletter di TurboLab.it, chiamata *Questa settimana su TLI*, è una email inviata settimanalmente agli iscritti.
 
-Il mittente della mail è `TurboLab.it <newsletter@turbolab.it>`, *alias* della mailbox `info@turbolab.it`.
+Il mittente della mail è impostato nel servizio [Newsletter.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Newsletter.php), ed è un *alias* della mailbox `info@turbolab.it`.
 
-La newsletter raccoglie i link a tutti i contenuti pubblicati sul sito nel corso della settimana. Nello specifico, contiene i link a:
+La newsletter raccoglie i link a tutti i contenuti pubblicati sul sito nel corso della settimana:
 
-- articoli e notizie pubblicati o ri-pubblicati sul sito
-- discussioni del forum: iniziate, oppure che hanno ricevuto nuove risposte, durante la settimana
+- articoli e notizie usciti (o ri-usciti) in home page
+- discussioni del forum: iniziate, oppure che hanno ricevuto nuove risposte
 
 Ogni volta che viene spedita la newsletter, viene generato e pubblicato automaticamente un articolo sul sito con i medesimi contenuti.
 
@@ -23,9 +23,9 @@ L'archivio completo di tutti gli invii è il [tag "newsletter turbolab.it"](http
 
 Le priorità principali nella gestione della newsletter sono:
 
-- **ottenere un servizio completamente automatico**: generazione e invio devono avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
+- **automazione totale**: generazione e invio devono avvenire automaticamente, senza bisogno di alcuna conferma o interventi esterni
 - offrire a quanti più utenti possibile l'occasione di ricevere almeno una volta la newsletter per valutare se possa loro interessare
-- assicurarci che chi non vuole ricevere la newsletter non la riceva più, senza ostacoli o ritardi
+- NO SPAM! Chi non vuole la newsletter  deve riceverla più, senza ostacoli o ritardi
 
 La newsletter viene generata sul server di TurboLab.it e inviata direttamente alle mailbox degli iscritti tramite il servizio SMTP in esecuzione sul server stesso. Abbiamo dunque scelto di **non utilizzare servizi esterni**, per i seguenti motivi:
 
@@ -36,7 +36,7 @@ La newsletter viene generata sul server di TurboLab.it e inviata direttamente al
 
 ## Iscrizione alla newsletter
 
-L'iscrizione alla newsletter dei singoli utenti è gestita tramite l'attributo `Gli amministratori possono inviarti email`, nativo di phpBB e accessibile all'utente tramite il proprio profilo del forum
+L'iscrizione alla newsletter dei singoli utenti è gestita tramite l'attributo `Gli amministratori possono inviarti email`, nativo di phpBB e [accessibile da ogni utente tramite il proprio pannello di controllo sul forum](https://turbolab.it/forum/ucp.php?i=174) (scheda `Preferenze`, gruppo `Preferenze globali`).
 
 ![image](https://turbolab.it/immagini/max/ricevere-turbolab.it-via-email-come-dis-iscriversi-newsletter-iscrizione-newsletter-2480.img)
 
@@ -63,14 +63,17 @@ La newsletter viene spedita periodicamente agli iscritti tramite *cron* ([stagin
 
 Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/newsletter-send.sh), che a sua volta esegue [Command/NewsletterSendCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterSendCommand.php).
 
-Se invocato senza parametri, il comando invia una sola copia della newsletter all'utente `System <info+system@turbolab.it>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages).
+Per inviare manualmente la newsletter** tramite lo script, impartire:
+
+- `bash scripts/newsletter-send.sh`: invia la newsletter solo a `System <info+system@turbolab.it>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages)
+- **⚠⚠** `bash scripts/newsletter-send.sh --unlocked`: invia la newsletter a tutti gli iscritti. Funziona solo sull'ambiente di produzione
 
 Se viene specificata l'opzione `--dry-run`, il comando non invia nessuna mail, ma simula solo l'esecuzione della procedura.
 
 
 ## Rilevazione dei click sui link
 
-Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non vogliano riceverla**. Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca mai alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
+Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere**. Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
 
 Allo scopo, ogni link presente nella newsletter è inserito come parametro della pagina `/newsletter/open`. Tale pagina riceve due parametri:
 
@@ -91,9 +94,9 @@ La pagina `/newsletter/open` si occupa di:
 
 ## Avviso di imminente dis-iscrizione automatica
 
-La procedura [NewsletterWarnInactive](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterWarnInactiveCommand.php) si occupa periodicamente di avvisare gli utenti iscritti alla newsletter, ma che non abbiano mai cliccato alcun link, che la loro iscrizione sarà annullata presto se non la confermano.
+La procedura [NewsletterWarnInactive](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterWarnInactiveCommand.php) si occupa periodicamente di avvisare gli utenti iscritti alla newsletter, ma che non clicchino su alcun link da molto tempo, che la loro iscrizione sarà annullata, se non la confermano.
 
-**Vogliamo minimizzare l'invio di queste email**, che creano comunque "rumore" nella casella dell'utente e sono per lo più inviate come cortesia nei confronti dell'utente che per altro.
+**Vogliamo minimizzare l'invio di queste email**, che creano comunque "rumore" nella casella dell'utente e sono per lo più inviate come cortesia nei confronti di utenti che, per altro, o hanno abbandonato la mailbox in questione oppure non sono interessati alla newsletter.
 
 La procedura inizia con un'attività di manutenzione che consiste nell'estrarre tutti gli utenti NON iscritti alla newsletter. Per ognuno di loro:
 
@@ -107,7 +110,7 @@ Da questa situazione "pulita", la procedura seleziona gli utenti che soddisfino 
 - non hanno una entry nella tabella `newsletter_opener` aggiornata prima di [APP_NEWSLETTER_SUBSCRIPTION_EXPIRE_WARN_MONTHS](https://github.com/TurboLabIt/TurboLab.it/blob/main/.env) mesi fa
 - non hanno una entry nella tabella `newsletter_expiring_warn`
 
-A ognuno degli utenti selezionati, la procedura invia una email di avviso: se non confermeranno l'iscrizione alla newsletter cliccando su un link presente nella mail stessa, la loro iscrizione verrà annullata. Il link proposto usa `/newsletter/open` per condurre a una pagina di conferma.
+A ognuno degli utenti selezionati, la procedura invia una email di avviso: "se non confermi l'iscrizione alla newsletter cliccando sul link presente nella mail stessa, verrai dis-iscritto". Il link proposto usa `/newsletter/open` per condurre a una pagina di conferma.
 
 La procedura salva poi una entry relativa all'invio nella tabella `newsletter_expiring_warn`, di modo che l'utente non venga avvisato nuovamente alla prossima esecuzione.
 

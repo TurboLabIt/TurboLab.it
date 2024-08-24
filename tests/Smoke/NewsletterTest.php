@@ -6,8 +6,6 @@ use App\Service\Cms\Article;
 use App\Service\User;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\Depends;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -40,9 +38,9 @@ class NewsletterTest extends BaseT
         $this->assertStringContainsStringIgnoringCase('Dal forum', $html);
 
         $crawler = $this->fetchDomNode($url, 'body');
-        $H4s = $crawler->filter('h4');
-        $countH4 = $H4s->count();
-        $this->assertGreaterThanOrEqual(2, $countH4);
+        $H2s = $crawler->filter('h2');
+        $countH2 = $H2s->count();
+        $this->assertEquals(4, $countH2);
     }
 
 
@@ -163,14 +161,5 @@ class NewsletterTest extends BaseT
         // system must not receive the newsletter
         $user->unsubscribeFromNewsletter();
         $this->getEntityManager()->flush();
-    }
-
-
-    public function testCommand()
-    {
-        /** @var NewsletterSendCommand $command */
-        $command = static::getService("App\\Command\\NewsletterSendCommand");
-        $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
-        $this->assertEquals($result, NewsletterSendCommand::SUCCESS);
     }
 }

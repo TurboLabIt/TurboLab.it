@@ -9,10 +9,12 @@ use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use TurboLabIt\Encryptor\Encryptor;
+use TurboLabIt\Messengers\TelegramMessenger;
 use Twig\Environment;
 
 
@@ -31,7 +33,8 @@ class Newsletter extends Mailer
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
         protected UserCollection $userCollection, protected Factory $factory,
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
-        protected Environment $twig,
+        protected Environment $twig, protected TelegramMessenger $alertMessenger,
+        protected ParameterBagInterface $parameters,
         //
         MailerInterface $mailer, ProjectDir $projectDir
     )
@@ -56,23 +59,62 @@ class Newsletter extends Mailer
 
     public function loadContent() : static
     {
-        // 👀 https://turbolab.it/617
-        $this->privacyUrl = $this->articleCollection->createService()->load(617)->getUrl();
-
         $this->articleCollection->loadLatestForNewsletter();
         $this->topicCollection->loadLatestForNewsletter();
 
-        //
-        $this->tagNewsletterTli = $this->factory->createTag()->load(Tag::ID_NEWSLETTER_TLI);
-        $this->userSystem       = $this->factory->createUser()->load(User::SYSTEM_USER_ID);
+        return $this->loadAncillaryContent();
+    }
 
-        $firstArticleTitle = $this->articleCollection->first()?->getTitle();
-        if( !empty($firstArticleTitle) ) {
-            $this->subject = '"' . $firstArticleTitle . '" e altre novità: ' . $this->newsletterName;
+
+    protected function loadAncillaryContent() : static
+    {
+        if( empty($this->privacyUrl) ) {
+
+            $this->privacyUrl =
+                $this->articleCollection->createService()->load(Article::ID_PRIVACY_POLICY)
+                    ->getUrl();
         }
 
-        $this->subject .= " (" . $this->getDateString() . ")";
+        if( empty($this->tagNewsletterTli) ) {
+            $this->tagNewsletterTli = $this->factory->createTag()->load(Tag::ID_NEWSLETTER_TLI);
+        }
 
+        if( empty($this->userSystem) ) {
+            $this->userSystem = $this->factory->createUser()->load(User::SYSTEM_USER_ID);
+        }
+
+        return $this->buildSubject();
+    }
+
+
+    public function buildSubject() : static
+    {
+        $firstArticleTitle = $this->articleCollection->first()?->getTitle();
+
+        if( empty($firstArticleTitle) ) {
+
+            $this->subject = $this->newsletterName;
+
+        } else {
+
+            $this->subject = '"' . $firstArticleTitle . '" e altre novità: ' . $this->newsletterName;
+        }        
+
+        $this->subject .= " (" . $this->getDateString() . ")";
+        return $this;
+    }
+
+
+    public function loadTestArticles() : static
+    {
+        $this->articleCollection->loadRandom( rand(2,7) );
+        return $this->loadAncillaryContent();
+    }
+
+
+    public function loadTestTopics() : static
+    {
+        $this->topicCollection->loadRandom( rand(5,20) );
         return $this;
     }
 
@@ -159,14 +201,13 @@ class Newsletter extends Mailer
     }
 
 
-    public function sendLowContentNotification()
+    public function sendLowContentNotification() : string
     {
-        $this
-            ->build(
-            "📭 Contenuti insufficienti per generare la newsletter", "email/newsletter-skipped-notification.html.twig", [],
-            [[ "name" => 'Manager', "address" => "info@turbolab.it" ]]
-            )
-            ->send();
+        $message  = "[" . strtoupper( $this->parameters->get("kernel.environment") ) . "] ";
+        $message .= "📭 Contenuti insufficienti per generare la newsletter";
+        $this->alertMessenger->sendErrorMessage($message);
+
+        return $message;
     }
 
 

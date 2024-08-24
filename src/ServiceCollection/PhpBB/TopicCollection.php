@@ -24,6 +24,13 @@ class TopicCollection extends BaseServiceEntityCollection
         return $this->setEntities($arrTopics);
     }
 
+    
+    public function loadRandom(?int $num = null) : static
+    {
+        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->getRandomComplete($num);
+        return $this->setEntities($arrTopics);
+    }
+    
 
     public function createService(?TopicEntity $entity = null) : TopicService { return $this->factory->createTopic($entity); }
 }

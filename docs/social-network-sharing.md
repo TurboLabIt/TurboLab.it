@@ -27,7 +27,7 @@ Gli ambienti *non-prod* pubblicano gli articoli su canali social di test, divers
 
 Le priorità nella condivisione dei contenuti di TLI sulle pagine social sono:
 
-- **automazione totale**: la condivisione deve avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
+- **automazione totale**: la condivisione deve avvenire automaticamente, senza bisogno di alcuna conferma o interventi esterni
 - **non utilizzare servizi esterni dedicati**
 
 L'indipendenza da servizi esterni, come *Hootsuite* o *dlvrit*, è necessaria per:

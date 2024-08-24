@@ -47,8 +47,7 @@ class TopicRepository extends BaseRepository
                 $this->getSqlSelectQuery() . "
                 ORDER BY topic_last_post_time DESC
                 LIMIT $num
-            "
-        );
+            ");
 
         if( empty($qb) ) {
             return [];
@@ -57,8 +56,7 @@ class TopicRepository extends BaseRepository
         return
             $qb
                 ->orderBy('t.lastPostTime', 'DESC')
-                ->getQuery()
-                ->getResult();
+                ->getQuery()->getResult();
     }
 
 
@@ -70,8 +68,7 @@ class TopicRepository extends BaseRepository
                 AND FROM_UNIXTIME(topic_last_post_time) BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
                 ORDER BY topic_views DESC
                 LIMIT 25
-            "
-            );
+            ");
 
         if( empty($qb) ) {
             return [];
@@ -80,7 +77,26 @@ class TopicRepository extends BaseRepository
         return
             $qb
                 ->orderBy('t.views', 'DESC')
-                ->getQuery()
-                ->getResult();
+                ->getQuery()->getResult();
+    }
+
+
+
+    public function getRandomComplete(?int $num = null) : array
+    {
+        $num = $num ?? 10;
+
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                $this->getSqlSelectQuery() . "
+                ORDER BY
+                    RAND() LIMIT $num
+            ");
+
+        if( empty($qb) ) {
+            return [];
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

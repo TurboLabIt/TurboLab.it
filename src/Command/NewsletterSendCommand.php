@@ -7,30 +7,29 @@ use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use TurboLabIt\BaseCommand\Service\Options;
+
 
 /**
  * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md
  */
 #[AsCommand(
-    name: 'Newsletter',
+    name: 'NewsletterSend',
     description: 'Generate and send the weekly newsletter',
 )]
 class NewsletterSendCommand extends AbstractBaseCommand
 {
-    const string CLI_ARG_ACTION     = 'action';
-    const null CLI_ACTION_TEST      = null;
-    const string CLI_ACTION_DOIT    = 'DOIT';
-    const array CLI_ARG_ACTIONS     = [self::CLI_ACTION_TEST, self::CLI_ACTION_DOIT];
-
-    protected bool $allowDryRunOpt  = true;
+    protected bool $allowDryRunOpt          = true;
+    protected bool $limitedByDefaultOpt     = true;
+    protected ?array $allowUnlockOptIn = null;
 
 
     public function __construct(
+        protected ParameterBagInterface $parameters,
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
         protected Newsletter $newsletter
     )
@@ -39,29 +38,9 @@ class NewsletterSendCommand extends AbstractBaseCommand
     }
 
 
-    protected function configure(): void
-    {
-        $this->addArgument(
-            static::CLI_ARG_ACTION, InputArgument::OPTIONAL,
-            'Action to execute',
-            static::CLI_ACTION_TEST,
-            static::CLI_ARG_ACTIONS
-        );
-
-        parent::configure();
-    }
-
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-
-        $argAction =$this->getCliArgument(static::CLI_ARG_ACTION);
-        $this->fxInfo("Running with " . static::CLI_ARG_ACTION . " ##$argAction##");
-
-        if( !in_array($argAction, static::CLI_ARG_ACTIONS) ) {
-            return $this->endWithError("Invalid " . static::CLI_ARG_ACTION . ". Allowed values: " . implode(' | ', static::CLI_ARG_ACTIONS) );
-        }
 
         $this->fxTitle("Email delivery check");
         if( $this->isDryRun() ) {
@@ -75,47 +54,95 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
         $this->newsletter->block( $this->isDryRun(true) );
 
-        $this
-            ->fxTitle("Loading newsletter content...")
-            ->newsletter->loadContent();
 
-        $countArticles  = $this->newsletter->countArticles();
-        $countTopics    = $this->newsletter->countTopics();
-        $this->fxOK("$countArticles articles(s) and $countTopics topic(s) loaded");
-        $this->fxInfo( $this->newsletter->getSubject() );
+        $countArticles =
+            $this
+                ->fxTitle("Loading newsletter content...")
+                ->newsletter
+                    ->loadContent()
+                    ->countArticles();
+
+        if( $countArticles == 0 ) {
+
+            $this->fxWarning("No articles loaded!");
+
+            if( $this->isLimited(true) ) {
+
+                $this
+                    ->fxWarning("Loading some random articles due to test execution...")
+                    ->newsletter->loadTestArticles();
+
+                $countArticles = $this->newsletter->countArticles();
+            }
+        }
+
+        $this->fxOK("$countArticles articles(s) loaded");
+
+
+        $countTopics = $this->newsletter->countTopics();
+        if( $countTopics == 0 ) {
+
+            $this->fxWarning("No topics loaded!");
+
+            if( $this->isLimited(true) ) {
+
+                $this
+                    ->fxWarning("Loading some random topics due to test execution...")
+                    ->newsletter->loadTestTopics();
+
+                $countTopics = $this->newsletter->countTopics();
+            }
+        }
+
+        $this->fxOK("$countTopics topic(s) loaded");
+
+
+        $this
+            ->fxTitle("Newsletter subject")
+            ->fxInfo( $this->newsletter->getSubject() );
+
 
         if( $countArticles == 0 && $countTopics == 0 ) {
 
-            $this->newsletter->sendLowContentNotification();
-            return
-                $this->endWithError(
-                    "There isn't enough content! You can still check the preview on " . $this->newsletter->getPreviewUrl()
-                );
+            $errorMessage = 
+                $this->newsletter->sendLowContentNotification();
+
+            return $this->endWithWarning($errorMessage);
         }
 
 
-        if( $argAction == static::CLI_ACTION_TEST ) {
+        if( $this->isLimited(true) ) {
 
             $this
-                ->fxTitle("Loading test recipients...")
+                ->fxTitle("Loading TEST recipients...")
                 ->newsletter->loadTestRecipients();
 
         } else {
 
             $this
-                ->fxTitle("Loading recipients...")
+                ->fxTitle("Loading REAL recipients...")
                 ->newsletter->loadRecipients();
         }
 
+
         $recipientsCount = $this->newsletter->countRecipients();
+
+        // this shouldn't happen. It's just me being a maniac
+        if( $recipientsCount > 5 && !$this->isNotProd() ) {
+
+            throw new \RuntimeException(
+                "Fail-safe triggered! There are more than 5 recipients in non-prod!"
+            );
+        }
+
         $this->fxOK("$recipientsCount recipient(s) loaded");
 
+        
+        $this->fxTitle("Generating the article on the website...");
+        $persistArticle = $this->isNotDryRun() && ( $this->isNotProd() || $this->isUnlocked() );
+        $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
 
-        $this->fxTitle("Generating article...");
-        $persist = $argAction != static::CLI_ACTION_TEST && $this->isNotDryRun(true);
-        $articleUrl = $this->newsletter->saveOnTheWeb($persist);
-
-        if($persist) {
+        if($persistArticle) {
 
             $this->fxOK("Article ready: " . $articleUrl);
 
