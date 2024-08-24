@@ -7283,12 +7283,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "febbd46deaa401d31cb2f268c66072187af2c1f7"
+                "reference": "6b3a090951ea4adf23a0becd64842c24a46faaa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-basecommand/zipball/febbd46deaa401d31cb2f268c66072187af2c1f7",
-                "reference": "febbd46deaa401d31cb2f268c66072187af2c1f7",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-basecommand/zipball/6b3a090951ea4adf23a0becd64842c24a46faaa5",
+                "reference": "6b3a090951ea4adf23a0becd64842c24a46faaa5",
                 "shasum": ""
             },
             "require": {
@@ -7325,7 +7325,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-basecommand/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-basecommand/tree/main"
             },
-            "time": "2024-08-24T18:34:35+00:00"
+            "time": "2024-08-24T22:44:38+00:00"
         },
         {
             "name": "turbolabit/php-symfony-messenger",
