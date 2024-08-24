@@ -349,4 +349,56 @@ class ArticleRepository extends BaseRepository
 
         return $arrResults;
     }
+
+
+    public function getRandomComplete(?int $num = null) : array
+    {
+        $num = $num ?? $this->itemsPerPage;
+
+        if( $num == 1 ) {
+
+            $sqlQuery = "
+                SELECT id FROM ". $this->getTableName() . "
+                WHERE
+                    publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " 
+                ORDER BY
+                    RAND() LIMIT 1
+            ";
+
+            return 
+                $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery)
+                ->getQuery()->getResult();
+        }
+
+        $sqlQueryTemplate = "
+            (SELECT id FROM ". $this->getTableName() . " WHERE 
+                publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND 
+                format = ##FORMAT## ORDER BY RAND() LIMIT ##NUM##)
+        ";
+
+        $arrParams = [[
+            "##FORMAT##"=> Article::FORMAT_ARTICLE,
+            "##NUM##"   => (int)ceil( $num / 2 )
+        ],[
+            "##FORMAT##"=> Article::FORMAT_NEWS,
+            "##NUM##"   => (int)floor( $num / 2 )
+        ]];
+        
+        $sqlQuery = '';
+        for($i=0; $i < 2; $i++) {
+            
+            $arrQueryParams = $arrParams[$i];
+            $sqlQuery .= str_replace( array_keys($arrQueryParams), $arrQueryParams, $sqlQueryTemplate);
+
+            if( $i == 0 ) {
+                $sqlQuery .= 'UNION';
+            }
+        }
+
+        $sqlQuery .= 'ORDER BY RAND()';
+
+        return 
+            $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery)
+            ->getQuery()->getResult();
+    }
 }

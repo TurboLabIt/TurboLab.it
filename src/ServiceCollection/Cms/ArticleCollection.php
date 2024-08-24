@@ -137,5 +137,12 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadRandom(?int $num = null) : static
+    {
+        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->getRandomComplete($num);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function createService(?ArticleEntity $entity = null) : ArticleService { return $this->factory->createArticle($entity); }
 }

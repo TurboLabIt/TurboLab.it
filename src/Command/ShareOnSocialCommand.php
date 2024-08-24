@@ -69,12 +69,10 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxWarning(
                 "The execution should stop due to no-articles. " . 
-                "Ignoring in in non-prod. Loading a random article..."
+                "Ignoring in in non-prod. Loading some random articles..."
             );
 
-            $arrArticles = $this->articleCollection->loadTopViewsRecent()->getAll();
-            $randKey = array_rand($arrArticles);
-            $this->articleCollection->setData([ $randKey => $arrArticles[$randKey] ]);
+            $this->articleCollection->loadRandom(2);
         }
 
 
