@@ -3,9 +3,9 @@ namespace App\Command;
 
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\Messengers\FacebookMessenger;
@@ -25,12 +25,11 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     const int QUIET_HOURS_END   =  8;
     const int EXEC_INTERVAL     = 10;
 
-    protected bool $isDevEnv;
     protected \DateTime $oNow;
 
 
     public function __construct(
-        protected EntityManagerInterface $em, KernelInterface $kernel,
+        protected EntityManagerInterface $em, protected ParameterBagInterface $parameters,
         protected ArticleCollection $articleCollection,
         protected TelegramMessenger $telegram,
         protected FacebookMessenger $facebook,
@@ -38,8 +37,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     )
     {
         parent::__construct();
-        $this->isDevEnv = in_array($kernel->getEnvironment(), ['dev', 'test']);
-        $this->oNow     = new \DateTime();
+        $this->oNow = new \DateTime();
     }
 
 
@@ -48,15 +46,16 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         parent::execute($input, $output);
 
         $isQuietHours = $this->isQuietHours();
-        if( $isQuietHours && !$this->isDevEnv ) {
+        if( $isQuietHours && $this->isProd() ) {
 
             $this->fxWarning("Stopping the execution due to quiet hours");
             return $this->endWithSuccess();
 
         } elseif($isQuietHours) {
 
-            $this->fxWarning("👨‍💻 The execution should stop due to quiet hours. Ignoring in DEV...");
+            $this->fxWarning("The execution should stop due to quiet hours. Ignoring in non-prod...");
         }
+        
 
         $this->loadArticles();
 
@@ -64,17 +63,18 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxWarning("There are no articles to share");
 
-            if( !$this->isDevEnv ) {
-
+            if( $this->isProd() ) {
                 return $this->endWithSuccess();
-
-            } else {
-
-                $this->fxWarning("👨‍💻 The execution should stop due to no-articles. Ignoring in DEV, loading a random article...");
-                $arrArticles = $this->articleCollection->loadTopViewsRecent()->getAll();
-                $randKey = array_rand($arrArticles);
-                $this->articleCollection->setData([ $randKey => $arrArticles[$randKey] ]);
             }
+
+            $this->fxWarning(
+                "The execution should stop due to no-articles. " . 
+                "Ignoring in in non-prod. Loading a random article..."
+            );
+
+            $arrArticles = $this->articleCollection->loadTopViewsRecent()->getAll();
+            $randKey = array_rand($arrArticles);
+            $this->articleCollection->setData([ $randKey => $arrArticles[$randKey] ]);
         }
 
 
@@ -215,7 +215,8 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
     protected function sendAlert(string $serviceName, \Exception $ex, string $articleTitle, string $articleUrl) : static
     {
-        $message  = "<b>" . ($this->isDevEnv ? "[DEV] " : "") . "SHARING ERROR on $serviceName</b>" . PHP_EOL;
+        $envText  = "[" . strtoupper( $this->getEnv() ) . "]";
+        $message  = "<b>$envText SHARING ERROR on $serviceName</b>" . PHP_EOL;
         $message .= "<code>" . $ex->getMessage() . "</code>" . PHP_EOL;
         $message .= "URL: $articleUrl";
 

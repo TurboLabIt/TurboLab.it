@@ -25,9 +25,9 @@ Gli ambienti *non-prod* pubblicano gli articoli su canali social di test, divers
 
 ## Priorità
 
-Le priorità principali nella condivisione dei contenuti di TLI sulle pagine social sono:
+Le priorità nella condivisione dei contenuti di TLI sulle pagine social sono:
 
-- **ottenere un servizio completamente automatico**: la condivisione deve avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
+- **automazione totale**: la condivisione deve avvenire automaticamente, senza bisogno di alcuna conferma o intervento esterni
 - **non utilizzare servizi esterni dedicati**
 
 L'indipendenza da servizi esterni, come *Hootsuite* o *dlvrit*, è necessaria per:
@@ -52,7 +52,7 @@ Non sono previsti parametri: credenziali ed endpoint vengono letti dal `.env` co
 
 Il comando viene eseguito automaticamente tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
 
-ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio di messaggi in orari inappropriati ("di notte", ad esempio). L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
+ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio dei messaggi di notte. L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
 
 - se si tratta della prima esecuzione della mattina, al termine dell'orario del silenzio ➡ condivide tutti gli articoli pubblicati dall'inizio dell'orario del silenzio sino a ora
 - se si tratta di una regolare esecuzione periodica ➡ invia gli articoli pubblicati su TLI negli ultimi [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php) minuti.
