@@ -34,7 +34,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 ## every xx minutes: share on Telegram, WhatsApp, ...
 # ⚠ Keep the interval synced with ShareOnSocialCommand::EXEC_INTERVAL
-*/10 * * * * root bash ${SCRIPT_DIR}social-share.sh >> ${LOG_PATH}social-share.sh.log 2>&1
+*/10 * * * * root bash ${SCRIPT_DIR}social-share.sh --cron >> ${LOG_PATH}social-share.sh.log 2>&1
 
 ## every hour: dump server configuration for the info page
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1

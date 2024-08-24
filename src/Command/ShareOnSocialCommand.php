@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 {
     const int QUIET_HOURS_END   =  8;
     const int EXEC_INTERVAL     = 10;
+    const string CLI_OPT_CRON   = 'cron';
 
     protected \DateTime $oNow;
 
@@ -37,6 +39,16 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     {
         parent::__construct();
         $this->oNow = new \DateTime();
+    }
+
+
+    protected function configure(): void
+    {
+        parent::configure();
+        $this->addOption(
+            static::CLI_OPT_CRON, null, InputOption::VALUE_NONE,
+            'Set if the command was started by a cron job'
+        );
     }
 
 
@@ -62,7 +74,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxWarning("There are no articles to share");
 
-            if( $this->isProd() ) {
+            if( $this->isProd() || $this->getCliOption(static::CLI_OPT_CRON) ) {
                 return $this->endWithSuccess();
             }
 
@@ -153,12 +165,10 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $result =
                 $this->telegram
-                    ->setMessageButtons([
-                        [
-                            "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
-                            "url"   => $articleUrl
-                        ]
-                    ])
+                    ->setMessageButtons([[
+                        "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
+                        "url"   => $articleUrl
+                    ]])
                     ->sendMessageToChannel($messageHtml);
 
             $url = $this->telegram->buildNewMessageUrl($result);
@@ -198,7 +208,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ Twitter: ");
 
         try {
-            $message = $this->getEnvTag() . $articleTitle . " " . $articleUrl;
+            $message = "$articleTitle  $articleUrl";
             $postId  = $this->twitter->sendMessage($message);
 
             $url = $this->twitter->buildMessageUrl($postId);
