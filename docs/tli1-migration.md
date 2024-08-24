@@ -5,7 +5,7 @@ Per lanciare il nuovo sito è necessario importare dalla versione precedente di 
 
 ## Sito
 
-- database `turbolab_it` - contiene articoli, autori, tag e indicizza immagini e file
+- database `turbolab_it`: contiene articoli, autori, tag e indicizza immagini e file
 - immagini caricate negli articoli
 - file allegati agli articoli
 
@@ -17,8 +17,8 @@ Piuttosto, vanno scaricati e importati tramite [src/Command/TLI1ImporterCommand]
 
 Per quanto riguarda il forum:
 
-- database `turbolab_it_forum` - è il database di phpBB
-- cartella completa `forum` - contiene i file che costituiscono phpBB, avatar caricati dagli utenti ecc.
+- database `turbolab_it_forum`: è il database di phpBB
+- cartella completa `forum`: contiene i file che costituiscono phpBB, avatar caricati dagli utenti ecc.
 
 Questi dati possono essere utilizzati "così come sono".
 

@@ -326,12 +326,13 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $title          = $this->convertValueFromTli1ToTli2($arrArticle["titolo"], true);
         $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
+
         // fix grammar horror on newsletter
-        $abstract        = str_ireplace(
+        $abstract = str_ireplace(
             'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $abstract
         );
 
-        $pubStatus      = match( $arrArticle["finito"] ) {
+        $pubStatus = match( $arrArticle["finito"] ) {
             0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
             1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
         };
@@ -344,7 +345,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
 
         // fix grammar horror on newsletter
-        $body           = str_ireplace(
+        $body = str_ireplace(
             'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $body
         );
 
@@ -398,7 +399,17 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setUpdatedAt($updatedAt);
 
         // AUTHORS
-        $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
+        if( stripos($title, 'Questa settimana su TLI') !== false ) {
+
+            // Newsletters must be authored by "System" => 
+            // getting it from 👀 https://turbolab.it/4181
+            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
+
+        } else {
+
+            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
+        }
+        
         if( empty($arrTli1Authors) ) {
             $this->fxWarning("This Article has no Authors: " . print_r($arrArticle, true) );
         }
