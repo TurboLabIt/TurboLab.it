@@ -47,7 +47,7 @@ class Newsletter extends Mailer
 
         $this->subject = $this->newsletterName;
 
-        parent::__construct($mailer, $projectDir, [
+        parent::__construct($mailer, $projectDir, $parameters, [
             "from" => [
                 "name"      => "TurboLab.it",
                 "address"   => "newsletter@turbolab.it"
@@ -85,11 +85,11 @@ class Newsletter extends Mailer
             $this->userSystem = $this->factory->createUser()->load(User::SYSTEM_USER_ID);
         }
 
-        return $this->buildSubject();
+        return $this->generateSubject();
     }
 
 
-    public function buildSubject() : static
+    public function generateSubject() : static
     {
         $firstArticleTitle = $this->articleCollection->first()?->getTitle();
 
@@ -103,6 +103,7 @@ class Newsletter extends Mailer
         }        
 
         $this->subject .= " (" . $this->getDateString() . ")";
+
         return $this;
     }
 

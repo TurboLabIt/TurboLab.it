@@ -2,6 +2,4 @@
 namespace App\Service;
 
 
-class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
-{
-}
+class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer {}
