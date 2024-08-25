@@ -27,7 +27,7 @@
         "symfony/framework-bundle": "@stable",
         "symfony/http-client": "@stable",
         "symfony/mailer": "@stable",
-        "symfony/monolog-bundle": "^3.10",
+        "symfony/monolog-bundle": "@stable",
         "symfony/runtime": "@stable",
         "symfony/security-bundle": "@stable",
         "symfony/twig-bundle": "@stable",
