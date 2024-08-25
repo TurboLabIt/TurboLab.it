@@ -22,7 +22,7 @@
         "symfony/console": "@stable",
         "symfony/dotenv": "@stable",
         "symfony/expression-language": "@stable",
-        "symfony/flex": "^2",
+        "symfony/flex": "@stable",
         "symfony/form": "@stable",
         "symfony/framework-bundle": "@stable",
         "symfony/http-client": "@stable",
