@@ -13,7 +13,7 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "doctrine/doctrine-bundle": "^2.11",
-        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "@stable",
         "doctrine/orm": "^2.0",
         "imagine/imagine": "*",
         "stof/doctrine-extensions-bundle": "^1.10",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6dd9116568f797282712b630e6ea89e0",
+    "content-hash": "d45bc7e1616574a7506530615ecf3c8e",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -10157,6 +10157,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "doctrine/doctrine-migrations-bundle": 0,
         "symfony/asset": 0,
         "symfony/cache": 0,
         "symfony/console": 0,
