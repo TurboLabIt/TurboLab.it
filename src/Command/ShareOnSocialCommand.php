@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\Article;
 use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
@@ -83,7 +84,9 @@ class ShareOnSocialCommand extends AbstractBaseCommand
                 "Ignoring in in non-prod. Loading some random articles..."
             );
 
-            $this->articleCollection->loadRandom(2);
+            $this->articleCollection
+                ->loadRandom(2)
+                ->addIdComplete(Article::ID_QUALITY_TEST);
         }
 
 
@@ -206,7 +209,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ Twitter: ");
 
         try {
-            $message = "$articleTitle  $articleUrl";
+            $message = "$articleTitle $articleUrl";
             $postId  = $this->twitter->sendMessage($message);
 
             $url = $this->twitter->buildMessageUrl($postId);

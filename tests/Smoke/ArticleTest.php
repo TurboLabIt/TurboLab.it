@@ -31,7 +31,7 @@ class ArticleTest extends BaseT
 
         /** @var Article $article */
         $article = static::getService("App\\Service\\Cms\\Article");
-        $article->load(1939);
+        $article->load(Article::ID_QUALITY_TEST);
 
         $url = $article->getUrl();
 

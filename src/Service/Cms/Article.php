@@ -34,6 +34,7 @@ class Article extends BaseCmsService
     const int ID_PUBLISH_ARTICLE    = 3990;     // 👀 https://turbolab.it/3990
     const int ID_SIGN_ARTICLE       = 2329;     // 👀 https://turbolab.it/2329
     const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
+    const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }

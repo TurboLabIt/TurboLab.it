@@ -43,6 +43,7 @@ rm -rf "${WEBROOT_DIR}forum/cache/production"
 fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
 bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
 
+source "${WEBSTACKUP_SCRIPT_DIR}node.js/webpack_build.sh"
 
 
 if [ "$APP_ENV" = "dev" ]; then
@@ -57,8 +58,6 @@ if [ "$APP_ENV" = "dev" ]; then
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwx "${PROJECT_DIR}" -R
 
-  source "${WEBSTACKUP_SCRIPT_DIR}node.js/webpack_watch.sh"
 fi
-
 
 source "${SCRIPT_DIR}script_end.sh"

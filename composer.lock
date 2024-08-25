@@ -7427,12 +7427,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "6b33ce4bcb6b9c4b380aaa95df0dad339038fe42"
+                "reference": "8f7efe0edcb31c921f46d89adf28ecb27efe6c03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/6b33ce4bcb6b9c4b380aaa95df0dad339038fe42",
-                "reference": "6b33ce4bcb6b9c4b380aaa95df0dad339038fe42",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/8f7efe0edcb31c921f46d89adf28ecb27efe6c03",
+                "reference": "8f7efe0edcb31c921f46d89adf28ecb27efe6c03",
                 "shasum": ""
             },
             "require": {
@@ -7468,7 +7468,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
             },
-            "time": "2024-08-25T09:47:13+00:00"
+            "time": "2024-08-25T10:41:42+00:00"
         },
         {
             "name": "turbolabit/service-entity-plus-bundle",
@@ -7476,12 +7476,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle.git",
-                "reference": "6ffebf0bb2b98aa3cf18925467d27092ab08c362"
+                "reference": "a6c37a5762baa9125b9a75f39ff32e00fc3e3532"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/6ffebf0bb2b98aa3cf18925467d27092ab08c362",
-                "reference": "6ffebf0bb2b98aa3cf18925467d27092ab08c362",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/a6c37a5762baa9125b9a75f39ff32e00fc3e3532",
+                "reference": "a6c37a5762baa9125b9a75f39ff32e00fc3e3532",
                 "shasum": ""
             },
             "require": {
@@ -7515,7 +7515,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/tree/main"
             },
-            "time": "2024-08-18T17:02:05+00:00"
+            "time": "2024-08-25T10:28:49+00:00"
         },
         {
             "name": "twig/cssinliner-extra",

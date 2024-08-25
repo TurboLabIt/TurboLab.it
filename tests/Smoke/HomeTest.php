@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class HomeTest extends BaseT
 {
-    const HOME_TOTAL_PAGES = 163;
+    const HOME_TOTAL_PAGES = 164;
 
 
     public static function homeRedirectionProvider()
