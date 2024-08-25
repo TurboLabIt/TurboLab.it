@@ -26,7 +26,8 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 {
     const int QUIET_HOURS_END   =  8;
     const int EXEC_INTERVAL     = 10;
-    const string CLI_OPT_CRON   = 'cron';
+    const string CLI_OPT_CRON       = 'cron';
+    const string CLI_OPT_SERVICES   = 'service';
 
     protected \DateTime $oNow;
 
@@ -46,10 +47,16 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     protected function configure(): void
     {
         parent::configure();
-        $this->addOption(
-            static::CLI_OPT_CRON, null, InputOption::VALUE_NONE,
-            'Set if the command was started by a cron job'
-        );
+        $this
+            ->addOption(
+                static::CLI_OPT_CRON, null, InputOption::VALUE_NONE,
+                'Set if the command was started by a cron job'
+            )
+            ->addOption(
+                static::CLI_OPT_SERVICES, null, 
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Limit to these services'
+            );
     }
 
 
@@ -98,10 +105,32 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $articleUrl = $article->getShortUrl();
             $this->io->writeLn("🔗 $articleUrl");
 
-            $this
-                ->shareOnTelegram($articleTitle, $articleUrl)
-                ->shareOnFacebook($articleTitle, $articleUrl)
-                ->shareOnTwitter($articleTitle, $articleUrl);
+            $arrServiceFilter = $this->getCliOption(static::CLI_OPT_SERVICES);
+            $arrServiceFilter = array_map('strtolower', $arrServiceFilter);
+
+            if( !empty($arrServiceFilter) && in_array(TwitterMessenger::SERVICE_X, $arrServiceFilter) ) {
+                $arrServiceFilter[] = TwitterMessenger::SERVICE_TWITTER;
+            }
+
+            $arrServicesMap = [
+                TelegramMessenger::SERVICE_NAME => 'shareOnTelegram',
+                FacebookMessenger::SERVICE_NAME => 'shareOnFacebook',
+                TwitterMessenger::SERVICE_NAME  => 'shareOnTwitter',
+            ];
+
+            foreach($arrServicesMap as $serviceName => $fx) {
+
+                if( empty($arrServiceFilter) || in_array($serviceName, $arrServiceFilter) ) {
+
+                    $this->$fx($articleTitle, $articleUrl);
+                    continue;
+                }
+
+                $this->fxWarning(
+                    'Sharing on ' . ucfirst($serviceName) . ' ' .
+                    'skipped due to --' . static::CLI_OPT_SERVICES
+                );
+            }
         }
 
         return $this->endWithSuccess();
