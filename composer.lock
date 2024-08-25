@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "456f5512f1a757ff050f9f8e5f4ebac1",
+    "content-hash": "012269dc2723cc2de7253c32a9b20d0c",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -10186,6 +10186,7 @@
         "twig/extra-bundle": 0,
         "twig/inky-extra": 0,
         "twig/twig": 0,
+        "phpunit/phpunit": 0,
         "rector/rector": 0,
         "symfony/browser-kit": 0,
         "symfony/css-selector": 0,

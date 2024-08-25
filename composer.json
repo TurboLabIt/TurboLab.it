@@ -88,7 +88,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^11",
+        "phpunit/phpunit": "@stable",
         "rector/rector": "@stable",
         "symfony/browser-kit": "@stable",
         "symfony/css-selector": "@stable",
