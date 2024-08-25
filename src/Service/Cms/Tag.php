@@ -38,14 +38,14 @@ class Tag extends BaseCmsService
 
     use ViewableServiceTrait;
 
-    protected ?TagEntity $entity                    = null;
     protected ?ArticleCollection $articlesTagged    = null;
     protected ?Article $firstArticle                = null;
 
 
-    public function __construct(protected TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
+    public function __construct(TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
     {
         $this->clear();
+        $this->urlGenerator = $urlGenerator;
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">

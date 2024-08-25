@@ -167,7 +167,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $this->fxInfo("🌅 This is the very first execution of the day");
 
             $defaultTimeZone = new \DateTimeZone(date_default_timezone_get());
-            $oLastMidnight  = \DateTime::createFromFormat('U', strtotime('midnight'))->setTimezone($defaultTimeZone);
+            $oLastMidnight  = \DateTime::createFromFormat('U', (string)strtotime('midnight'))->setTimezone($defaultTimeZone);
             $maxMinutes = ( $this->oNow->format('U') - $oLastMidnight->format('U') ) / 60;
             $maxMinutes = ceil($maxMinutes);
 

@@ -15,8 +15,6 @@ class Topic extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/viewtopic.php?t=12749
     const int ID_NEWSLETTER_COMMENTS = 12749;
 
-    protected ?TopicEntity $entity = null;
-
 
     public function __construct(
         protected ForumUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory

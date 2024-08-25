@@ -99,7 +99,7 @@ class UserUrlGenerator extends UrlGenerator
             return false;
         }
 
-        $match = preg_match('/utenti/^\/[^\/]+$/', $urlPath);
+        $match = preg_match('/utenti\/[^\/]+\/?$/', $urlPath);
         return (bool)$match;
     }
 }

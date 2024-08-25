@@ -62,17 +62,16 @@ class Image extends BaseCmsService
 
     const string UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
-    protected ?ImageEntity $entity = null;
     protected static ?string $buildFileExtension    = null;
     protected ?string $lastBuiltImageMimeType       = null;
 
 
     public function __construct(
-        protected ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
+        ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
     )
     {
         $this->clear();
-
+        $this->urlGenerator = $urlGenerator;
         if( empty(static::$buildFileExtension) ) {
             static::$buildFileExtension = static::getClientSupportedBestFormat();
         }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3cd39c53b5a70f249df0bef665f36c2",
+    "content-hash": "ebfa6e01c737e250f8588f08ae7c7a98",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -7364,12 +7364,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "6b3a090951ea4adf23a0becd64842c24a46faaa5"
+                "reference": "1b3c1e0d614bdde42eacd40bf37d69dde42badb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-basecommand/zipball/6b3a090951ea4adf23a0becd64842c24a46faaa5",
-                "reference": "6b3a090951ea4adf23a0becd64842c24a46faaa5",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-basecommand/zipball/1b3c1e0d614bdde42eacd40bf37d69dde42badb5",
+                "reference": "1b3c1e0d614bdde42eacd40bf37d69dde42badb5",
                 "shasum": ""
             },
             "require": {
@@ -7406,7 +7406,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-basecommand/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-basecommand/tree/main"
             },
-            "time": "2024-08-24T22:44:38+00:00"
+            "time": "2024-08-25T21:57:17+00:00"
         },
         {
             "name": "turbolabit/php-symfony-messenger",
@@ -10174,6 +10174,7 @@
         "twig/extra-bundle": 0,
         "twig/inky-extra": 0,
         "twig/twig": 0,
+        "phpstan/phpstan": 0,
         "phpunit/phpunit": 0,
         "rector/rector": 0,
         "symfony/browser-kit": 0,

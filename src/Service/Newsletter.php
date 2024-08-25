@@ -24,6 +24,8 @@ class Newsletter extends Mailer
     protected string $privacyUrl;
     protected string $newsletterName    = "Questa settimana su TLI";
     protected string $subject;
+    protected Tag $tagNewsletterTli;
+    protected User $userSystem;
     protected array $arrRecipients      = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;

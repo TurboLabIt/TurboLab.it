@@ -42,7 +42,6 @@ class Article extends BaseCmsService
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
-    protected ?ArticleEntity $entity        = null;
     protected ?array $arrTags               = null;
     protected ?array $arrAuthors            = null;
     protected ?array $arrFiles              = null;
@@ -54,9 +53,10 @@ class Article extends BaseCmsService
     protected array $arrPrevNextArticles    = [];
     //</editor-fold>
 
-    public function __construct(protected ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
+    public function __construct(ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
     {
         $this->clear();
+        $this->urlGenerator = $urlGenerator;
         $this->htmlProcessor = new HtmlProcessor($factory);
     }
 

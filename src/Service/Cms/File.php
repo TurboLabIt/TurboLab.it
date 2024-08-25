@@ -20,15 +20,14 @@ class File extends BaseCmsService
     use ViewableServiceTrait;
     use UrlableServiceTrait;
 
-    protected ?FileEntity $entity = null;
-
 
     public function __construct(
-        protected FileUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory,
+        FileUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory,
         protected ProjectDir $projectDir
     )
     {
         $this->clear();
+        $this->urlGenerator = $urlGenerator;
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">

@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity\PhpBB;
 
+use App\Entity\BaseEntity;
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleTag;
@@ -21,7 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
-class User implements UserInterface
+class User extends BaseEntity implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

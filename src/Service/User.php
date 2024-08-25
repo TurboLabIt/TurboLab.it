@@ -19,7 +19,6 @@ class User extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
     const int TESTER_USER_ID    = 4015;
 
-    protected ?UserEntity $entity                   = null;
     protected ?array $arrAdditionalFields           = null;
     protected ?ArticleCollection $articlesAuthored  = null;
     protected ?int $articlesNum                     = null;

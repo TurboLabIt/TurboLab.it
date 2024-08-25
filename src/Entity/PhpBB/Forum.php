@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity\PhpBB;
 
+use App\Entity\BaseEntity;
 use App\Repository\PhpBB\ForumRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
 #[ORM\Table(name: "turbolab_it_forum.phpbb_forums")]
-class Forum
+class Forum extends BaseEntity
 {
     /**
      *  4 : area staff

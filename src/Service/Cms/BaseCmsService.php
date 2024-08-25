@@ -9,6 +9,8 @@ abstract class BaseCmsService extends BaseServiceEntity
     const string UPLOADED_ASSET_FOLDER_NAME = 'uploaded-assets';
     const string UPLOADED_ASSET_XSEND_PATH  = 'xsend-uploaded-assets';
 
+    protected UrlGenerator $urlGenerator;
+
 
     public function loadBySlugDashId(string $slugDashId) : static
         { return $this->internalLoadBySlugDashId($slugDashId, 'getOneById'); }

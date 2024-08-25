@@ -189,7 +189,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
     }
 
 
-    protected function sendOne(int $key, User $user)
+    protected function sendOne(int $key, User $user) : void
     {
         $this->newsletter
             ->buildForOne($user)

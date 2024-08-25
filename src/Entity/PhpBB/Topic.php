@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity\PhpBB;
 
+use App\Entity\BaseEntity;
 use App\Entity\Cms\Article;
 use App\Repository\PhpBB\TopicRepository;
 use App\Trait\ViewableEntityTrait;
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TopicRepository::class)]
 #[ORM\Table(name: "turbolab_it_forum.phpbb_topics")]
-class Topic
+class Topic extends BaseEntity
 {
     use ViewableEntityTrait;
 

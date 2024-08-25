@@ -1,13 +1,18 @@
 <?php
 namespace App\Service;
 
-
+use App\Entity\BaseEntity;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 abstract class BaseServiceEntity
 {
     const ENTITY_CLASS          = null;
     const NOT_FOUND_EXCEPTION   = NotFoundHttpException::class;
+
+    protected EntityManagerInterface $em;
+    protected BaseEntity $entity;
 
 
     public function clear() : static

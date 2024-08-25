@@ -2,7 +2,7 @@
 namespace App\ServiceCollection;
 
 use App\Service\User;
-use App\Entity\phpBB\User as UserEntity;
+use App\Entity\PhpBB\User as UserEntity;
 
 
 class UserCollection extends BaseServiceEntityCollection

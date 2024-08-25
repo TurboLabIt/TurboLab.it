@@ -191,7 +191,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $createdAt      = \DateTime::createFromFormat('YmdHis', $arrOldAuthor["data"]);
 
             if( empty($createdAt) ) {
-                return $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true) );
+                $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true) );
             }
 
             $user = $this->repoUsers->selectOrNull($userId);
@@ -247,7 +247,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         ");
         $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
-            return $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true) );
+            $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true) );
         }
         $this->fxOK();
 
@@ -266,7 +266,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
 
-            return $this->endWithError(
+            $this->endWithError(
                 "There are multiple pages related to the same article on TLI1: " . print_r($arrInvalidPages, true)
             );
         }
@@ -469,7 +469,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         };
 
         if (!in_array($format, ['png', 'jpg'])) {
-            return $this->endWithError("This is not a png/jpg image: " . print_r($arrImage, true) );
+            $this->endWithError("This is not a png/jpg image: " . print_r($arrImage, true) );
         }
 
         /** @var ImageEntity $entityTli2Image */
@@ -488,7 +488,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $article = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
-            return $this->endWithError("No related article: " . print_r($arrImage, true) );
+            $this->endWithError("No related article: " . print_r($arrImage, true) );
         }
 
         $articleCreatedAt = $article->getCreatedAt();
@@ -539,7 +539,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $copyResult = copy($sourceFilePath, $destFilePath);
         if( $copyResult !== true ) {
-            return $this->endWithError("Failed to copy image file ##$sourceFilePath## to ##$destFilePath##");
+            $this->endWithError("Failed to copy image file ##$sourceFilePath## to ##$destFilePath##");
         }
 
         return $this;
@@ -699,14 +699,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $article    = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
-            return $this->endWithError("No related article: " . print_r($arrTagAssoc, true) );
+            $this->endWithError("No related article: " . print_r($arrTagAssoc, true) );
         }
 
         $tagId  = $arrTagAssoc["id_tag"];
         $tag    = $this->arrNewTags[$tagId] ?? null;
 
         if ( empty($tag) ) {
-            return $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
+            $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
 
         $attacherId = $arrTagAssoc["id_utente"];
@@ -782,7 +782,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrFile["data_creazione"]);
 
         if( empty($createdAt) ) {
-            return $this->endWithError("This File has no date: " . print_r($arrFile, true) );
+            $this->endWithError("This File has no date: " . print_r($arrFile, true) );
         }
 
         /** @var FileEntity $entityTli2File */
@@ -839,7 +839,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $copyResult = copy($sourceFilePath, $destFilePath);
         if( $copyResult !== true ) {
-            return $this->endWithError("Failed to copy file file ##$sourceFilePath## to ##$destFilePath##");
+            $this->endWithError("Failed to copy file file ##$sourceFilePath## to ##$destFilePath##");
         }
 
         return $this;
@@ -887,18 +887,18 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $articleId  = $arrFileAssoc["id_opera"];
         $article    = $this->arrNewArticles[$articleId] ?? null;
         if ( empty($article) ) {
-            return $this->endWithError("No related article: " . print_r($arrFileAssoc, true) );
+            $this->endWithError("No related article: " . print_r($arrFileAssoc, true) );
         }
 
         $fileId  = $arrFileAssoc["id_file"];
         $file    = $this->arrNewFiles[$fileId] ?? null;
         if ( empty($file) ) {
-            return $this->endWithError("No related file: " . print_r($arrFileAssoc, true) );
+            $this->endWithError("No related file: " . print_r($arrFileAssoc, true) );
         }
 
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrFileAssoc["data"]) ?: $file->getCreatedAt();
         if ( empty($createdAt) ) {
-            return $this->endWithError("Invalid attach file date: " . print_r($arrFileAssoc, true) );
+            $this->endWithError("Invalid attach file date: " . print_r($arrFileAssoc, true) );
         }
 
         // we didn't track who attached the file to the article on TLI1 => falling back to the first author of the file
@@ -931,7 +931,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->io->text("Loading TLI2 badges...");
         $arrTli2Badges = $this->em->getRepository(BadgeEntity::class)->getAllComplete();
         $this->fxOK( count($arrTli2Badges) . " item(s) loaded");
-        unset($arrTli2Articles);
 
         $this->io->text("Processing every TLI1 badge...");
         $this->processItems($arrTli1Badges, [$this, 'processTli1Badge'], null, [$this, 'buildItemTitle']);
@@ -989,18 +988,18 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $badge = $this->arrNewBadges[$badgeId] ?? null;
 
         if ( empty($badge) ) {
-            return $this->endWithError("No related badge: " . print_r($arrTagAssoc, true) );
+            $this->endWithError("No related badge: " . print_r($arrTagAssoc, true) );
         }
 
         $tagId  = $arrTagAssoc["id_opera"];
         $tag    = $this->arrNewTags[$tagId] ?? null;
         if ( empty($tag) ) {
-            return $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
+            $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
 
         $createdAt = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
         if ( empty($createdAt) ) {
-            return $this->endWithError("No date on this badge assoc: " . print_r($arrTagAssoc, true) );
+            $this->endWithError("No date on this badge assoc: " . print_r($arrTagAssoc, true) );
         }
 
         // we didn't have the createdAt for the badge => using this one
