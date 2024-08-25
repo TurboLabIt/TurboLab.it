@@ -89,12 +89,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11",
-        "rector/rector": "^1.2",
+        "rector/rector": "@stable",
         "symfony/browser-kit": "@stable",
         "symfony/css-selector": "@stable",
         "symfony/debug-bundle": "@stable",
-        "symfony/maker-bundle": "^1.52",
-        "symfony/phpunit-bridge": "^7.0",
+        "symfony/maker-bundle": "@stable",
+        "symfony/phpunit-bridge": "@stable",
         "symfony/stopwatch": "@stable",
         "symfony/web-profiler-bundle": "@stable"
     }
