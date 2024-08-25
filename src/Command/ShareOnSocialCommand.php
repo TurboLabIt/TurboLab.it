@@ -159,9 +159,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         try {
             $messageHtml =
-                '<b>📰 <a href="' . $articleUrl . '">'
-                    . html_entity_decode($articleTitle, ENT_COMPAT, 'UTF-8') .
-                '</a></b>';
+                "<b>📰 <a href=\"$articleUrl\">$articleTitle</a></b>";
 
             $result =
                 $this->telegram
