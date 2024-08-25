@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42372b3be885ac92841071f4b826bb2a",
+    "content-hash": "d1c21e337dc2ec60f7a8145dfce847be",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -10171,6 +10171,7 @@
         "symfony/security-bundle": 0,
         "symfony/twig-bundle": 0,
         "symfony/validator": 0,
+        "symfony/webpack-encore-bundle": 0,
         "symfony/yaml": 0,
         "turbolabit/service-entity-plus-bundle": 20,
         "turbolabit/paginatorbundle": 20,
