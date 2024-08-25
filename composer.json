@@ -16,7 +16,7 @@
         "doctrine/doctrine-migrations-bundle": "@stable",
         "doctrine/orm": "^2.0",
         "imagine/imagine": "*",
-        "stof/doctrine-extensions-bundle": "^1.10",
+        "stof/doctrine-extensions-bundle": "@stable",
         "symfony/asset": "@stable",
         "symfony/cache": "@stable",
         "symfony/console": "@stable",
