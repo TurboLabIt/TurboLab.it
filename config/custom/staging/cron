@@ -32,7 +32,7 @@ LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
 0 1 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-async.log 2>&1
 
 
-######## THIS IS A COPY OF THE PROD CRON, TO ACCOUNT FOR DIFFERENT PATHS ########
+######## THIS IS A COPY OF THE PROD CRON, TO HANDLE DIFFERENT PATHS ########
 ## every minute: symfony cron job
 * * * * * root bash ${SCRIPT_DIR}cron.sh >> ${LOG_PATH}symfony.sh.log 2>&1
 
@@ -57,7 +57,7 @@ LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
 
 ## every friday: send the weekly newsletter
 # ⚠ Any argument provided to "newsletter-send.sh" will deliver emails to the real users!
-30 9 * * * root bash ${SCRIPT_DIR}newsletter-send.sh >> ${LOG_PATH}newsletter-send.sh.log 2>&1
+30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh >> ${LOG_PATH}newsletter-send.sh.log 2>&1
 ####################################################################################
 
 
