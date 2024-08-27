@@ -47,7 +47,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 ## every friday: send the weekly newsletter
 # ⚠ Any argument provided to "newsletter-send.sh" will deliver emails to the real users!
-30 9 * * * root bash ${SCRIPT_DIR}newsletter-send.sh >> ${LOG_PATH}newsletter-send.sh.log 2>&1
+30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh >> ${LOG_PATH}newsletter-send.sh.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇
