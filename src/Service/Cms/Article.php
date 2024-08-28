@@ -62,13 +62,6 @@ class Article extends BaseCmsService
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function setEntity(?ArticleEntity $entity = null) : static
-    {
-        $this->localViewCount   = $entity->getViews();
-        $this->entity           = $entity;
-        return $this;
-    }
-
     public function getEntity() : ?ArticleEntity { return $this->entity; }
     //</editor-fold>
 

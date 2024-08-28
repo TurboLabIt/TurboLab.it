@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Entity\BaseEntity;
 use App\Service\BaseServiceEntity;
 
 
@@ -36,6 +37,17 @@ abstract class BaseCmsService extends BaseServiceEntity
     }
 
 
+    public function setEntity(?BaseEntity $entity = null) : static
+    {
+        if( property_exists($this, 'localViewCount') ) {
+            $this->localViewCount = $entity->getViews();
+        }
+
+        return parent::setEntity($entity);
+    }
+
+
     public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
+
     public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 }

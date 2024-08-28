@@ -24,12 +24,6 @@ class Topic extends BaseServiceEntity
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function setEntity(?TopicEntity $entity = null) : static
-    {
-        $this->entity = $entity;
-        return $this;
-    }
-
     public function getEntity() : ?TopicEntity { return $this->entity; }
     //</editor-fold>
 

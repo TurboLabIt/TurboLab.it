@@ -31,13 +31,6 @@ class File extends BaseCmsService
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function setEntity(?FileEntity $entity = null) : static
-    {
-        $this->localViewCount   = $entity->getViews();
-        $this->entity           = $entity;
-        return $this;
-    }
-
     public function getEntity() : ?FileEntity { return $this->entity; }
     //</editor-fold>
 

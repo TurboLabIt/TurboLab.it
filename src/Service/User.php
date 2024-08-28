@@ -32,12 +32,6 @@ class User extends BaseServiceEntity
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function setEntity(?UserEntity $entity = null) : static
-    {
-        $this->entity = $entity;
-        return $this;
-    }
-
     public function getEntity() : ?UserEntity { return $this->entity; }
     //</editor-fold>
 
