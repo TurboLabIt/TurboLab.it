@@ -2,5 +2,4 @@
 namespace App\Exception;
 
 
-class InvalidEnumException extends \Exception
-{ }
+class InvalidEnumException extends \Exception {}

@@ -2,5 +2,4 @@
 namespace App\Exception;
 
 
-class InvalidIdException extends \Exception
-{ }
+class InvalidIdException extends \Exception {}
