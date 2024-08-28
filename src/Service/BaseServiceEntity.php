@@ -37,9 +37,9 @@ abstract class BaseServiceEntity
     }
 
 
-    // 🔥 Implement these abstract method as if they were uncommented! (different types in signature make them undeclarable here)
+    // 🔥 Implement this abstract method as if was uncommented! (contravariance in parameter make it undeclarable here)
     // abstract public function setEntity(?BaseEntity $entity = null) : static;
-    // abstract public function getEntity() : ?BaseEntity;
+    abstract public function getEntity() : ?BaseEntity;
 
     public function getId() : ?int { return $this->entity->getId(); }
     public function getTitle() : ?string { return $this->entity->getTitle(); }
