@@ -199,7 +199,7 @@ class ArticleTest extends BaseT
     {
         $assertFailureMessage = "Failing URL: " . $article->getShortUrl();
 
-        $title = $article->getTitle();
+        $title = $article->getTitleWithFreshUpdatedAt();
         $this->assertNotEmpty($title, $assertFailureMessage);
 
         foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {

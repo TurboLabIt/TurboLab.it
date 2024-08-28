@@ -21,7 +21,7 @@ class NewsController extends BaseController
         { return $this->tliStandardControllerResponse(["app_news"], $page); }
 
 
-    protected function buildHtml(?int $page) : Response|string
+    protected function buildHtmlNumPage(?int $page) : Response|string
     {
         $articleCollection = $this->factory->createArticleCollection()->loadLatestNewsPublished($page);
 
