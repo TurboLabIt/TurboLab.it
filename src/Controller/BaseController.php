@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Exception\NotImplementedException;
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
@@ -28,9 +29,7 @@ abstract class BaseController extends AbstractController
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
         protected FrontendHelper $frontendHelper, protected Environment $twig
     )
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
+        { $this->request = $requestStack->getCurrentRequest(); }
 
 
     protected function tliStandardControllerResponse(
@@ -41,7 +40,7 @@ abstract class BaseController extends AbstractController
 
         if( !$this->isCachable() ) {
 
-            $buildHtmlResult = empty($fxBuildHtml) ? $this->buildHtml($page) : $fxBuildHtml($page);
+            $buildHtmlResult = empty($fxBuildHtml) ? $this->buildHtmlNumPage($page) : $fxBuildHtml($page);
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
@@ -51,7 +50,7 @@ abstract class BaseController extends AbstractController
         $buildHtmlResult =
             $this->cache->get($cacheKey, function(CacheItem $cache) use($cacheKey, $that, $fxBuildHtml, $page, $arrCacheTags) {
 
-                $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtml($page) : $fxBuildHtml($page);
+                $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtmlNumPage($page) : $fxBuildHtml($page);
 
                 if( is_string($buildHtmlResult) ) {
 
@@ -102,7 +101,15 @@ abstract class BaseController extends AbstractController
         if( in_array($currentEnv, ["dev", "test"]) ) {
             return false;
         }
-        
+
         return true;
+    }
+
+
+    protected function buildHtmlNumPage(?int $page) : Response|string
+    {
+        throw new NotImplementedException(
+            "BaseController::buildHtmlNumPag() requires a specific implementation in each controller"
+        );
     }
 }

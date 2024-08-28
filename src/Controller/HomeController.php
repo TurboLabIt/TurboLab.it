@@ -35,7 +35,7 @@ class HomeController extends BaseController
     }
 
 
-    protected function buildHtml(?int $page) : Response|string
+    protected function buildHtmlNumPage(?int $page) : Response|string
     {
         $mainArticleCollection = $this->factory->createArticleCollection()->loadLatestPublished($page);
 

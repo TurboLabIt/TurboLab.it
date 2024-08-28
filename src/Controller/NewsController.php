@@ -18,9 +18,7 @@ class NewsController extends BaseController
 
     #[Route('/news/{page<[1-9]+[0-9]*>}', name: 'app_news')]
     public function index(?int $page = null): Response
-    {
-        return $this->tliStandardControllerResponse(["app_news"], $page);
-    }
+        { return $this->tliStandardControllerResponse(["app_news"], $page); }
 
 
     protected function buildHtml(?int $page) : Response|string
