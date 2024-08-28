@@ -43,7 +43,7 @@
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
                         <div class="post-content">
-                            <h1 class="title">{{ Article.titleFormatted|raw }}</h1>
+                            <h1 class="title">{{ Article.titleWithFreshUpdatedAt|raw }}</h1>
                             <div class="post-categories d-flex justify-content-between align-content-center">
                                 <div class="categories-share">
                                     <ul>
@@ -108,7 +108,7 @@
                                                 {% endfor %}
                                                 <br>
                                                 <span class="tli-author-articles-counter">
-                                                    <i class="fa-solid fa-flask-vial"></i> 
+                                                    <i class="fa-solid fa-flask-vial"></i>
                                                     Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
                                                     {% if File.isBitTorrent %}
                                                         <i class="fa-solid fa-circle-nodes"></i>
@@ -170,8 +170,8 @@
                                             <a href="{{ Author.url }}">{{ Author.fullName }}</a><br>
                                             <span class="tli-author-articles-counter">
                                                 <a href="{{ Author.url }}">
-                                                    <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }} 
-                                                    {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} 
+                                                    <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }}
+                                                    {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
                                                 </a>
                                             </span>
                                         </p>
@@ -243,7 +243,7 @@
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url|raw }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" 
+                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}"
                                                      {% if loop.index > 2 %}loading="lazy"{% endif %}>
                                             </a>
                                         </div>

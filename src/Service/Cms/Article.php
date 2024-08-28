@@ -13,6 +13,7 @@ use App\Trait\PublishingStatusesTrait;
 use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use IntlDateFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -205,7 +206,7 @@ class Article extends BaseCmsService
 
 
     public function getSpotlightUrl(string $size) : ?string
-        { return $this->getSpotlight()?->getUrl($this, $size); }    
+        { return $this->getSpotlight()?->getUrl($this, $size); }
 
     public function getSpotlight() : ?ImageService
     {
@@ -312,6 +313,31 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🛋️ Text ***">
+    public function getTitleWithFreshUpdatedAt() : ?string
+    {
+        $title      = $this->getTitleFormatted();
+        $updatedAt  = $this->getUpdatedAt();
+        $dateLimit  = (new \DateTime())->modify('-2 months');
+
+        if( !$this->isPublished() || $updatedAt < $dateLimit) {
+            return $title;
+        }
+
+        $txtUpdatedAt =
+            (new IntlDateFormatter(
+                'it_IT', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, IntlDateFormatter::GREGORIAN,
+                /**
+                 * news     : 28 agosto 2024, ore 22:37
+                 * article  : agosto 2024
+                 */
+                $this->isNews() ? "d MMMM yyyy, 'ore' HH:mm" : 'MMMM yyyy'
+
+            ))->format($updatedAt);
+
+        return "$title (aggiornato: $txtUpdatedAt)";
+    }
+
+
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
 
     public function getBody() : ?string { return $this->entity->getBody(); }
