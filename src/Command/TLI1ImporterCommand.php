@@ -401,7 +401,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         // AUTHORS
         if( stripos($title, 'Questa settimana su TLI') !== false ) {
 
-            // Newsletters must be authored by "System" => 
+            // Newsletters must be authored by "System" =>
             // getting it from 👀 https://turbolab.it/4181
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
 
@@ -409,7 +409,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
         }
-        
+
         if( empty($arrTli1Authors) ) {
             $this->fxWarning("This Article has no Authors: " . print_r($arrArticle, true) );
         }
@@ -696,7 +696,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $articleId  = $arrTagAssoc["id_opera"];
         /** @var ArticleEntity $article */
-        $article    = $this->arrNewArticles[$articleId] ?? null;
+        $article = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
             $this->endWithError("No related article: " . print_r($arrTagAssoc, true) );
@@ -991,8 +991,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $this->endWithError("No related badge: " . print_r($arrTagAssoc, true) );
         }
 
-        $tagId  = $arrTagAssoc["id_opera"];
-        $tag    = $this->arrNewTags[$tagId] ?? null;
+        $tagId = $arrTagAssoc["id_opera"];
+        $tag = $this->arrNewTags[$tagId] ?? null;
         if ( empty($tag) ) {
             $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
