@@ -24,8 +24,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     const string COOKIE_BASENAME_PHPBB = 'turbocookie_2021_';
 
 
-    public function __construct(protected Security $security, protected UserRepository $userRepository)
-    { }
+    public function __construct(protected Security $security, protected UserRepository $userRepository) {}
 
 
     /**
@@ -60,10 +59,6 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
             $arrLoginData[$oneCookieName] = $value;
         }
 
-        if(empty($arrLoginData)) {
-            return null;
-        }
-
         $user = $this->userRepository->findOneByPhpBBCookiesValues($arrLoginData["u"], $arrLoginData["sid"], $arrLoginData["k"]);
         if( empty($user) ) {
             return null;
@@ -81,12 +76,9 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
          * $user = $this->security->getUser();
          */
 
+        $user = $this->getUserFromPhpBBCookies($request);
         if( empty($user) ) {
-
-            $user = $this->getUserFromPhpBBCookies($request);
-            if( empty($user) ) {
-                throw new AuthenticationException("No login data from phpBB cookies");
-            }
+            throw new AuthenticationException("No login data from phpBB cookies");
         }
 
         $userIdentifier = $user->getUserIdentifier();
