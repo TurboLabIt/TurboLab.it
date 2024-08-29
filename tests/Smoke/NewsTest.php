@@ -3,25 +3,29 @@ namespace App\Tests\Smoke;
 
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 
 class NewsTest extends BaseT
 {
-    const NEWS_TOTAL_PAGES = 42;
+    const int NEWS_TOTAL_PAGES = 42;
 
 
-    public static function newsRedirectionProvider()
+    public static function newsRedirectionProvider() : Generator
     {
-        yield ['/news/0', '/news/1'];
+        yield from [
+            ['/news/0'], ['/news/1']
+        ];
     }
 
 
     #[DataProvider('newsRedirectionProvider')]
     public function testPaginationRedirectToNews(string $url)
     {
-        $this->expectRedirect($url, $_ENV["APP_SITE_URL"] . 'news');
+        $homeUrl = $this->generateUrl('app_news');
+        $this->expectRedirect($url, $homeUrl);
     }
 
 

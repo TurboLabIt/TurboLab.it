@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Command\NewsletterSendCommand;
 use App\Service\Cms\Article;
 use App\Service\User;
 use App\Tests\BaseT;
@@ -21,9 +20,7 @@ class NewsletterTest extends BaseT
 
 
     protected function getPreviewUrl() : string
-    {
-        return $_ENV["APP_SITE_URL"] . 'newsletter/anteprima';
-    }
+        { return $this->generateUrl() . 'newsletter/anteprima'; }
 
 
     public function testPreview()

@@ -2,6 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpClient\HttpClient;
@@ -10,9 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FeedTest extends BaseT
 {
-    public static function feedToTestProvider()
+    public static function feedToTestProvider()  : Generator
     {
-        yield ['/feed', '/feed/nuovi-finiti', '/feed/fullfeed'];
+        yield from [
+            ['/feed'], ['/feed/nuovi-finiti'], ['/feed/fullfeed']
+        ];
     }
 
 

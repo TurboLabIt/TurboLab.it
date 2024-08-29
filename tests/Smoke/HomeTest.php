@@ -3,25 +3,28 @@ namespace App\Tests\Smoke;
 
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\DomCrawler\Crawler;
 
 
 class HomeTest extends BaseT
 {
-    const HOME_TOTAL_PAGES = 165;
+    const int HOME_TOTAL_PAGES = 165;
 
 
-    public static function homeRedirectionProvider()
+    public static function homeRedirectionProvider() : Generator
     {
-        yield ['/home', '/home/0', '/home/1'];
+        yield from [
+            ['/home'], ['/home/0'], ['/home/1']
+        ];
     }
 
 
     #[DataProvider('homeRedirectionProvider')]
     public function testPaginationRedirectToHome(string $url)
     {
-        $this->expectRedirect($url, $_ENV["APP_SITE_URL"]);
+        $homeUrl = $this->generateUrl();
+        $this->expectRedirect($url, $homeUrl);
     }
 
 

@@ -8,6 +8,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 abstract class BaseT extends WebTestCase
@@ -41,9 +42,11 @@ abstract class BaseT extends WebTestCase
 
 
     protected static function getEntityManager() : EntityManagerInterface
-    {
-        return static::getService('doctrine.orm.entity_manager');
-    }
+        { return static::getService('doctrine.orm.entity_manager'); }
+
+
+    protected function generateUrl($name = 'app_home', $arrUrlParams = [], $urlType = UrlGeneratorInterface::ABSOLUTE_URL)
+        { return static::getService('router.default')->generate($name, $arrUrlParams, $urlType); }
 
 
     protected function fetchHtml(string $url, string $method = Request::METHOD_GET, bool $toLower = true) : string

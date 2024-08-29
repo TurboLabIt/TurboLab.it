@@ -1,17 +1,18 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 
 class ArticleTest extends BaseT
 {
-    protected static iterable $arrArticleEntity;
+    protected static array $arrTestArticles;
+
 
     public function testingPlayground()
     {
@@ -27,8 +28,6 @@ class ArticleTest extends BaseT
 
     public function testSpecialArticle()
     {
-        // 👀 https://turbolab.it/1939
-
         /** @var Article $article */
         $article = static::getService("App\\Service\\Cms\\Article");
         $article->load(Article::ID_QUALITY_TEST);
@@ -155,42 +154,36 @@ class ArticleTest extends BaseT
     }
 
 
-    public static function articleToTestProvider()
+    public static function articleToTestProvider() : Generator
     {
-        if( empty(static::$arrArticleEntity) ) {
-            static::$arrArticleEntity = static::getEntityManager()->getRepository(ArticleEntity::class)->findLatestPublished();
+        if( empty(static::$arrTestArticles) ) {
+
+            static::$arrTestArticles =
+                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
+                    ->loadLatestPublished()
+                    ->getAll();
         }
 
-        /** @var ArticleEntity $entity */
-        foreach(static::$arrArticleEntity as $entity) {
-            yield [[
-                "entity"    => $entity,
-                "service"   => static::getService("App\\Service\\Factory")->createArticle($entity)
-            ]];
-        }
+        yield static::$arrTestArticles;
     }
 
 
     #[DataProvider('articleToTestProvider')]
-    public function testOpenAllArticles(array $arrData)
+    public function testOpenAllArticles(Article $article)
     {
         static::$client = null;
 
-        $entity  = $arrData["entity"];
-        $article = $arrData["service"];
-
         $shortUrl = $article->getShortUrl();
         $assertFailureMessage = "Failing URL: $shortUrl";
-        $this->assertStringEndsWith("/" . $entity->getId(), $shortUrl, $assertFailureMessage);
+        $this->assertStringEndsWith("/" . $article->getId(), $shortUrl, $assertFailureMessage);
 
         $url = $article->getUrl();
-        $this->assertStringEndsWith("-" . $entity->getId(), $url, $assertFailureMessage);
+        $this->assertStringEndsWith("-" . $article->getId(), $url, $assertFailureMessage);
 
         $this->expectRedirect($shortUrl, $url);
 
         $crawler = $this->fetchDomNode($url);
 
-        //
         $this->articleTitleAsH1Checker($article, $crawler);
     }
 

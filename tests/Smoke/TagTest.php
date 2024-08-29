@@ -1,11 +1,10 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Cms\Tag;
 use App\Service\Cms\HtmlProcessor;
-use App\ServiceCollection\Cms\TagCollection;
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -15,8 +14,8 @@ class TagTest extends BaseT
     // 👀 https://turbolab.it/something-12600
     const int NO_ARTICLES_TAG_ID = 12600;
 
-    protected static array $arrTagEntity;
-    protected static TagCollection $categories;
+    protected static array $arrTestTags;
+    protected static array $arrCategories;
 
 
     public function testingPlayground()
@@ -35,7 +34,7 @@ class TagTest extends BaseT
 
     public function testAppTagPage0Or1()
     {
-        $realTagUrl = $_ENV["APP_SITE_URL"] . "windows-10";
+        $realTagUrl = $this->generateUrl() . "windows-10";
 
         // 👀 https://turbolab.it/windows-10/0
         // 👀 https://turbolab.it/windows-10/1
@@ -48,7 +47,7 @@ class TagTest extends BaseT
 
     public function testAppTagLegacy()
     {
-        $realTagUrl = $_ENV["APP_SITE_URL"] . "windows-10";
+        $realTagUrl = $this->generateUrl() . "windows-10";
 
         // 👀 https://turbolab.it/tag/windows
         // 👀 https://turbolab.it/tag/windows/
@@ -65,40 +64,39 @@ class TagTest extends BaseT
     }
 
 
-    public static function specialTagToTestProvider() : \Generator
+    public static function tagsToTestThoroughlyProvider() : Generator
     {
-        yield [
+        yield from [
             // 👀 https://turbolab.it/turbolab.it-1
             [
                 "id"            => 1,
-                "title"         => "TurboLab.it",
+                "tagTitle"      => "TurboLab.it",
                 "totalPageNum"  => 2
             ],
             // 👀 https://turbolab.it/windows-10
             [
                 "id"            => 10,
-                "title"         => "Windows",
+                "tagTitle"      => "Windows",
                 "totalPageNum"  => 62
             ],
         ];
     }
 
 
-    #[DataProvider('specialTagToTestProvider')]
-    public function testSpecialTag(array $arrSpecialTag)
+    #[DataProvider('tagsToTestThoroughlyProvider')]
+    public function testSpecialTags(int $id, string $tagTitle, int $totalPageNum)
     {
         /** @var Tag $tag */
         $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load( $arrSpecialTag["id"] );
+        $tag->load($id);
         $url = $tag->getUrl();
 
-        $wrongTagUrl = '/wrong-tag-slug-' . $arrSpecialTag["id"];
+        $wrongTagUrl = "/wrong-tag-slug-$id";
         $this->expectRedirect($wrongTagUrl, $url);
 
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $tagTitle = $arrSpecialTag["title"];
         $this->tagTitleAsH1Checker($tag, $crawler, "$tagTitle: articoli, guide e news");
 
         // H2
@@ -110,7 +108,7 @@ class TagTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($url, $arrSpecialTag["totalPageNum"]);
+            ->internalPaginatorChecker($url, $totalPageNum);
     }
 
 
@@ -142,55 +140,59 @@ class TagTest extends BaseT
     }
 
 
-    public static function tagToTestProvider(): \Generator
+    public static function latestArticlesTagsProvider() : Generator
     {
-        if( empty(static::$arrTagEntity) ) {
-            static::$arrTagEntity = static::getEntityManager()->getRepository(TagEntity::class)->findLatest(10);
+        if( empty(static::$arrTestTags) ) {
+
+            $latestArticles =
+                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
+                    ->loadLatestPublished();
+
+            foreach($latestArticles as $article) {
+
+                $tags = $article->getTags();
+                foreach($tags as $tag) {
+
+                    $tagId = $tag->getId();
+                    static::$arrTestTags[$tagId] = $tag;
+                }
+            }
         }
 
-        /** @var TagEntity $entity */
-        foreach(static::$arrTagEntity as $entity) {
-            yield [[
-                "entity"    => $entity,
-                "service"   => static::getService("App\\Service\\Factory")->createTag($entity)
-            ]];
-        }
+        yield static::$arrTestTags;
     }
 
 
-    #[DataProvider('tagToTestProvider')]
-    public function testOpenAllTags(array $arrData)
+    #[DataProvider('latestArticlesTagsProvider')]
+    public function testOpenLatestArticlesTags(Tag $tag)
     {
         static::$client = null;
 
-        $entity = $arrData["entity"];
-        $tag    = $arrData["service"];
-
         $url = $tag->getUrl();
         $assertFailureMessage = "Failing URL: $url";
-        $this->assertStringEndsWith("-" . $entity->getId(), $url, $assertFailureMessage);
+        $this->assertStringEndsWith("-" . $tag->getId(), $url, $assertFailureMessage);
 
         $crawler = $this->fetchDomNode($url);
 
-        //
         $this->tagTitleAsH1Checker($tag, $crawler);
     }
 
 
-    public static function categoryToTestProvider(): \Generator
+    public static function categoryProvider() : Generator
     {
-        if( empty(static::$categories) ) {
-            static::$categories =
-                static::getService("App\\Service\\Factory")->createTagCollection()->loadCategories();
+        if( empty(static::$arrCategories) ) {
+
+            static::$arrCategories =
+                static::getService("App\\ServiceCollection\\Cms\\TagCollection")
+                    ->loadCategories()
+                    ->getAll();
         }
 
-        foreach(static::$categories as $category) {
-            yield [$category];
-        }
+        yield static::$arrCategories;
     }
 
 
-    #[DataProvider('categoryToTestProvider')]
+    #[DataProvider('categoryProvider')]
     public function testOpenAllCategories(Tag $category)
     {
         static::$client = null;

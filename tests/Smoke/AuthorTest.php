@@ -1,11 +1,10 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User;
-use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -15,7 +14,7 @@ class AuthorTest extends BaseT
     // 👀 https://turbolab.it/utenti/tecniconapoletano
     const int NO_ARTICLES_AUTHOR_ID = 91;
 
-    protected static array $arrUserEntity = [];
+    protected static array $arrTestAuthors;
 
 
     public function testingPlayground()
@@ -34,7 +33,7 @@ class AuthorTest extends BaseT
 
     public function testAppAuthorPage0Or1()
     {
-        $realAuthorUrl = $_ENV["APP_SITE_URL"] . "utenti/zane";
+        $realAuthorUrl = $this->generateUrl() . "utenti/zane";
 
         // 👀 https://turbolab.it/utenti/zane/0
         // 👀 https://turbolab.it/utenti/zane/1
@@ -45,31 +44,30 @@ class AuthorTest extends BaseT
     }
 
 
-    public static function specialAuthorToTestProvider() : \Generator
+    public static function authorsToTestThoroughlyProvider() : Generator
     {
-        yield [
+        yield from [
             // 👀 https://turbolab.it/utenti/zane
             [
                 "id"            => 2,
-                "name"          => "Zane (Gianluigi Zanettini)",
+                "authorName"    => "Zane (Gianluigi Zanettini)",
                 "totalPageNum"  => 66
-            ],
+            ]
         ];
     }
 
 
-    #[DataProvider('specialAuthorToTestProvider')]
-    public function testSpecialAuthor(array $arrSpecialAuthor)
+    #[DataProvider('authorsToTestThoroughlyProvider')]
+    public function testSpecialAuthors(int $id, string $authorName, int $totalPageNum)
     {
         /** @var User $author */
         $author = static::getService("App\\Service\\User");
-        $author->load( $arrSpecialAuthor["id"] );
+        $author->load($id);
         $url = $author->getUrl();
 
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $authorName = $arrSpecialAuthor["name"];
         $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di $authorName");
 
         // H2
@@ -90,7 +88,7 @@ class AuthorTest extends BaseT
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker($url, $arrSpecialAuthor["totalPageNum"]);
+            ->internalPaginatorChecker($url, $totalPageNum);
     }
 
 
@@ -128,48 +126,37 @@ class AuthorTest extends BaseT
     }
 
 
-    public static function authorToTestProvider(): \Generator
+    public static function latestArticlesAuthorsProvider() : Generator
     {
-        if( empty(static::$arrUserEntity) ) {
+        if( empty(static::$arrTestAuthors) ) {
 
-            $arrLatestArticles = static::getEntityManager()->getRepository(ArticleEntity::class)->findLatestPublished(10);
+            $latestArticles =
+                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
+                    ->loadLatestPublished();
 
-            /** @var ArticleEntity $article */
-            foreach($arrLatestArticles as $article) {
+            foreach($latestArticles as $article) {
 
                 $authors = $article->getAuthors();
-                foreach($authors as $authorJunction) {
+                foreach($authors as $author) {
 
-                    $author     = $authorJunction->getUser();
-                    $authorId   = $author->getId();
-                    if( !array_key_exists($authorId, static::$arrUserEntity) ) {
-                        static::$arrUserEntity[$authorId] = $author;
-                    }
+                    $authorId = $author->getId();
+                    static::$arrTestAuthors[$authorId] = $author;
                 }
             }
         }
 
-        /** @var UserEntity $entity */
-        foreach(static::$arrUserEntity as $entity) {
-            yield [[
-                "entity"    => $entity,
-                "service"   => static::getService("App\\Service\\Factory")->createUser($entity)
-            ]];
-        }
+        yield static::$arrTestAuthors;
     }
 
 
-    #[DataProvider('authorToTestProvider')]
-    public function testOpenAllAuthors(array $arrData)
+    #[DataProvider('latestArticlesAuthorsProvider')]
+    public function testOpenLatestArticlesAuthors(User $author)
     {
         static::$client = null;
 
-        $entity = $arrData["entity"];
-        $author = $arrData["service"];
-
         $url = $author->getUrl();
         $assertFailureMessage = "Failing URL: $url";
-        $this->assertStringEndsWith($entity->getUsernameClean(), $url, $assertFailureMessage);
+        $this->assertStringEndsWith($author->getUsernameClean(), $url, $assertFailureMessage);
 
         $crawler = $this->fetchDomNode($url);
 
