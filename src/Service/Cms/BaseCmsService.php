@@ -33,8 +33,5 @@ abstract class BaseCmsService extends BaseServiceEntity
         return $this->setEntity($entity);
     }
 
-
-    public function getSlug() : ?string { return $this->urlGenerator->buildSlug($this); }
-
     public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
 }

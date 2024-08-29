@@ -59,7 +59,7 @@ class Tag extends BaseCmsService
     public function getEntity() : ?TagEntity { return $this->entity ?? null; }
     //</editor-fold>
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🛋️ Text ***">
     public function getTitleFormatted() : ?string
     {
         // TODO DB-driven titleFormatted for tags
@@ -96,25 +96,34 @@ class Tag extends BaseCmsService
 
         return ucwords($title);
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
+    public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->factory->getTagUrlGenerator()->generateUrl($this, $page, $urlType); }
 
     public function checkRealUrl(string $tagSlugDashId, ?int $page = null) : ?string
     {
         $pageSlug       = empty($page) || $page < 2 ? null : ("/$page");
         $candidateUrl   = '/' . $tagSlugDashId . $pageSlug;
         $realUrl =
-            $this->factory->getTagUrlGenerator()->generateUrl($this, $page, UrlGeneratorInterface::ABSOLUTE_PATH);
+            $this->factory->getTagUrlGenerator()->generateUrl(
+                $this, $page, UrlGeneratorInterface::ABSOLUTE_PATH
+            );
 
         return $candidateUrl == $realUrl ? null : $this->getUrl();
     }
+
+    public function getSlug() : ?string { return $this->factory->getTagUrlGenerator()->buildSlug($this); }
+    //</editor-fold>
+
+
 
 
     public function loadByTitle(string $title) : static
     {
         $this->clear();
-        /** @var TagRepository $repoTag */
-        $repoTag    = $this->getRepository();
-        $entity     = $repoTag->findByTitle($title);
+        $entity = $this->getRepository()->findByTitle($title);
 
         if( empty($entity) ) {
 
@@ -188,10 +197,6 @@ class Tag extends BaseCmsService
 
         return $firstArticle->getSpotlightOrDefaultUrl($size);
     }
-
-
-    public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->factory->getTagUrlGenerator()->generateUrl($this, $page, $urlType); }
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }

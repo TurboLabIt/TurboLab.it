@@ -206,9 +206,7 @@ class Article extends BaseCmsService
     public function getSpotlightOrDefaultUrl(string $size) : string
         { return $this->getSpotlightOrDefault()->getUrl($this, $size); }
 
-
-    public function getSpotlightUrl(string $size) : ?string
-        { return $this->getSpotlight()?->getUrl($this, $size); }
+    public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($this, $size); }
 
     public function getSpotlight() : ?ImageService
     {
@@ -381,6 +379,8 @@ class Article extends BaseCmsService
         $realUrl        = $this->factory->getArticleUrlGenerator()->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
         return $candidateUrl == $realUrl ? null : $this->getUrl();
     }
+
+    public function getSlug() : ?string { return $this->factory->getArticleUrlGenerator()->buildSlug($this); }
     //</editor-fold>
 
 

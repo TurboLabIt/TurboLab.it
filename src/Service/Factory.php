@@ -68,7 +68,7 @@ class Factory
 
     public function createArticleEditor(?ArticleEntity $entity = null) : ArticleEditor
     {
-        $service = new ArticleEditor($this->articleUrlGenerator, $this->em, $this);
+        $service = new ArticleEditor($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

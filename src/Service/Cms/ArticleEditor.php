@@ -14,9 +14,9 @@ class ArticleEditor extends Article
     protected HtmlProcessorReverse $htmlProcessorReverse;
 
 
-    public function __construct(ArticleUrlGenerator $urlGenerator, EntityManagerInterface $em, Factory $factory)
+    public function __construct(Factory $factory)
     {
-        parent::__construct($urlGenerator, $em, $factory);
+        parent::__construct($factory);
         $this->htmlProcessorReverse = new HtmlProcessorReverse($factory);
     }
 
@@ -124,8 +124,8 @@ class ArticleEditor extends Article
 
         if($persist) {
 
-            $this->em->persist($this->entity);
-            $this->em->flush();
+            $this->factory->getEntityManager()->persist($this->entity);
+            $this->factory->getEntityManager()->flush();
         }
 
         return $this;
