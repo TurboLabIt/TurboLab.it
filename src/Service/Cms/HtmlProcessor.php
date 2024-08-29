@@ -44,7 +44,7 @@ class HtmlProcessor extends HtmlProcessorBase
 
             foreach($arrThisImgDomOccurrences as $oneImgNode) {
 
-                /** @var Image $srvImage */
+                /** @var ?Image $srvImage */
                 $srvImage = $imageCollection->get($imgId);
 
                 if( empty($srvImage) ) {

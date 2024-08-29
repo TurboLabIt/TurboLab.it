@@ -484,7 +484,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         // LINK TO ARTICLE
         $articleId = $arrImage["id_opera"];
-        /** @var ArticleEntity $article */
+        /** @var ?ArticleEntity $article */
         $article = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
@@ -695,7 +695,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1TagAssoc(int $none, array $arrTagAssoc)
     {
         $articleId  = $arrTagAssoc["id_opera"];
-        /** @var ArticleEntity $article */
+        /** @var ?ArticleEntity $article */
         $article = $this->arrNewArticles[$articleId] ?? null;
 
         if ( empty($article) ) {
@@ -984,7 +984,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1TagBadgeAssoc(int $none, array $arrTagAssoc)
     {
         $badgeId  = $arrTagAssoc["id_bollino"];
-        /** @var BadgeEntity $badge */
+        /** @var ?BadgeEntity $badge */
         $badge = $this->arrNewBadges[$badgeId] ?? null;
 
         if ( empty($badge) ) {

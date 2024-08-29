@@ -84,7 +84,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
 
             $arrMatches = [];
             $extractResult = preg_match('/(\d+)(?!.*\d)/', $src, $arrMatches);
-            if( !$extractResult && empty($arrMatches) ) {
+            if( !$extractResult ) {
 
                 $nodeImageRemovedAlert = $domDoc->createElement('p');
                 $nodeImageRemovedAlert->textContent = '*** IMMAGINE MALFORMATA RIMOSSA AUTOMATICAMENTE ***';
