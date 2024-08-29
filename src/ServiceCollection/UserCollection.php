@@ -1,6 +1,7 @@
 <?php
 namespace App\ServiceCollection;
 
+use App\Repository\PhpBB\UserRepository;
 use App\Service\User;
 use App\Entity\PhpBB\User as UserEntity;
 
@@ -11,16 +12,24 @@ class UserCollection extends BaseServiceEntityCollection
     protected array $arrTopEmailProviders = [];
 
 
+    protected function getRepository() : UserRepository
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->em->getRepository(UserEntity::class);
+        return $repository;
+    }
+
+
     public function loadNewsletterTestRecipients() : static
     {
-        $testUser = $this->em->getRepository(static::ENTITY_CLASS)->find(User::SYSTEM_USER_ID);
+        $testUser = $this->getRepository()->find(User::SYSTEM_USER_ID);
         return $this->setEntities([$testUser]);
     }
 
 
     public function loadNewsletterSubscribers() : static
     {
-        $arrSubscribers = $this->em->getRepository(static::ENTITY_CLASS)->findNewsletterSubscribers();
+        $arrSubscribers = $this->getRepository()->findNewsletterSubscribers();
         return $this->setEntities($arrSubscribers);
     }
 

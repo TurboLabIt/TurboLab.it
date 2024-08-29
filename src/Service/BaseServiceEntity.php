@@ -6,14 +6,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
+/**
+ * @property BaseEntity $entity
+ */
 abstract class BaseServiceEntity
 {
     const ENTITY_CLASS          = null;
     const NOT_FOUND_EXCEPTION   = NotFoundHttpException::class;
 
     protected EntityManagerInterface $em;
-    protected BaseEntity $entity;
 
+    // this must be specialized in each Service with its own entity (ArticleEntity, FileEntity, ...)
+    //protected BaseEntity $entity;
 
     public function clear() : static
     {
@@ -25,7 +29,7 @@ abstract class BaseServiceEntity
     public function load(int $id) : static
     {
         $this->clear();
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->find($id);
+        $entity = $this->getRepository()->find($id);
 
         if( empty($entity) ) {
 
@@ -36,22 +40,25 @@ abstract class BaseServiceEntity
         return $this->setEntity($entity);
     }
 
+    /*
+     🔥 Implement this method as if was uncommented! (contravariance in parameter make it undeclarable here)
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
+    public function getRepository() : SpecificTypeRepository
+        { return $this->factory->getEntityManager()->getRepository(SpecificTypeEntity::class); }
 
-    public function setEntity(?BaseEntity $entity = null) : static
+    public function setEntity(?SpecificTypeEntity $entity = null) : static
     {
-        $entityClass = get_class($entity);
-        $entityClass = str_ireplace('Proxies\\__CG__\\', '', $entityClass);
-
-        if( $entityClass != static::ENTITY_CLASS ) {
-            throw new \TypeError("Wrong entity class. Expected: " . static::ENTITY_CLASS . ". Got: " . $entityClass);
+        if( property_exists($this, 'localViewCount') ) {
+            $this->localViewCount = $entity->getViews();
         }
 
         $this->entity = $entity;
         return $this;
     }
 
-
-    abstract public function getEntity() : ?BaseEntity;
+    public function getEntity() : ?SpecificTypeEntity { return $this->entity ?? null; }
+    //</editor-fold>
+    */
 
     public function getId() : ?int { return $this->entity->getId(); }
 

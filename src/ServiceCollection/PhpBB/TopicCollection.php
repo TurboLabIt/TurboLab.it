@@ -2,6 +2,7 @@
 namespace App\ServiceCollection\PhpBB;
 
 use App\Entity\PhpBB\Topic as TopicEntity;
+use App\Repository\PhpBB\TopicRepository;
 use App\Service\PhpBB\Topic as TopicService;
 use App\ServiceCollection\BaseServiceEntityCollection;
 
@@ -11,26 +12,34 @@ class TopicCollection extends BaseServiceEntityCollection
     const string ENTITY_CLASS = TopicService::ENTITY_CLASS;
 
 
+    protected function getRepository() : TopicRepository
+    {
+        /** @var TopicRepository $repository */
+        $repository = $this->em->getRepository(TopicEntity::class);
+        return $repository;
+    }
+
+
     public function loadLatest(?int $num = null) : static
     {
-        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findLatest($num);
+        $arrTopics = $this->getRepository()->findLatest($num);
         return $this->setEntities($arrTopics);
     }
 
 
     public function loadLatestForNewsletter() : static
     {
-        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findLatestForNewsletter();
+        $arrTopics = $this->getRepository()->findLatestForNewsletter();
         return $this->setEntities($arrTopics);
     }
 
-    
+
     public function loadRandom(?int $num = null) : static
     {
-        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->getRandomComplete($num);
+        $arrTopics = $this->getRepository()->getRandomComplete($num);
         return $this->setEntities($arrTopics);
     }
-    
+
 
     public function createService(?TopicEntity $entity = null) : TopicService { return $this->factory->createTopic($entity); }
 }

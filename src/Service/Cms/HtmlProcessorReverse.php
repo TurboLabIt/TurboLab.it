@@ -129,7 +129,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
         $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('a');
 
-        /** @var \DOMElement $img */
+        /** @var \DOMElement $a */
         foreach($arrNodes as $a) {
 
             $safeLinkNode = $domDoc->createElement('a');

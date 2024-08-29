@@ -22,8 +22,7 @@ class ImageCollection extends BaseServiceEntityCollection
                 ->setId(Image::ID_404)
                 ->setFormat(ImageEntity::FORMAT_JPG);
 
-        $image404 = $this->createService($entity);
-        return $image404;
+        return $this->createService($entity);
     }
 
 

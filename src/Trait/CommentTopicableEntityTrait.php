@@ -3,7 +3,6 @@ namespace App\Trait;
 
 use App\Entity\PhpBB\Topic;
 use App\Exception\InvalidEnumException;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -19,11 +18,7 @@ trait CommentTopicableEntityTrait
     //#[ORM\Column(type: Types::SMALLINT, options: ["unsigned" => true])]
     protected ?int $commentTopicNeedsUpdate = 0;
 
-
-    public function getCommentsTopic() : ?Topic
-    {
-        return $this->commentsTopic;
-    }
+    public function getCommentsTopic() : ?Topic { return $this->commentsTopic; }
 
     public function setCommentsTopic(?Topic $commentsTopic) : static
     {
@@ -34,14 +29,14 @@ trait CommentTopicableEntityTrait
 
     public function getCommentTopicNeedsUpdateStatuses() : array
     {
-        return [static::COMMENT_TOPIC_UPDATE_NO, static::COMMENT_TOPIC_UPDATE_YES, static::COMMENT_TOPIC_UPDATE_NEVER];
+        return [
+            static::COMMENT_TOPIC_UPDATE_NO, static::COMMENT_TOPIC_UPDATE_YES,
+            static::COMMENT_TOPIC_UPDATE_NEVER
+        ];
     }
 
 
-    public function getCommentTopicNeedsUpdate() : ?int
-    {
-        return $this->commentTopicNeedsUpdate;
-    }
+    public function getCommentTopicNeedsUpdate() : ?int { return $this->commentTopicNeedsUpdate; }
 
     public function setCommentTopicNeedsUpdate(int $commentTopicNeedsUpdate) : static
     {

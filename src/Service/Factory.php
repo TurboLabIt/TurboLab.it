@@ -49,14 +49,15 @@ class Factory
     //</editor-fold>
 
 
-    public function getEm() : EntityManagerInterface { return $this->em; }
     public function getEntityManager() : EntityManagerInterface { return $this->em; }
+
+    public function getProjectDir() : ProjectDir { return $this->projectDir; }
 
 
     //<editor-fold defaultstate="collapsed" desc="*** Article ***">
     public function createArticle(?ArticleEntity $entity = null) : ArticleService
     {
-        $service = new ArticleService($this->articleUrlGenerator, $this->em, $this);
+        $service = new ArticleService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -78,11 +79,7 @@ class Factory
 
     public function getArticleUrlGenerator() : ArticleUrlGenerator { return $this->articleUrlGenerator; }
 
-
-    public function createArticleCollection() : ArticleCollection
-    {
-        return new ArticleCollection($this->em, $this);
-    }
+    public function createArticleCollection() : ArticleCollection { return new ArticleCollection($this); }
     //</editor-fold>
 
 
@@ -101,9 +98,10 @@ class Factory
         return $this->defaultTag = $this->createTag($entity);
     }
 
+
     public function createTag(?TagEntity $entity = null) : TagService
     {
-        $service = new TagService($this->tagUrlGenerator, $this->em, $this);
+        $service = new TagService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -114,11 +112,7 @@ class Factory
 
     public function getTagUrlGenerator() : TagUrlGenerator { return $this->tagUrlGenerator; }
 
-
-    public function createTagCollection() : TagCollection
-    {
-        return new TagCollection($this->em, $this);
-    }
+    public function createTagCollection() : TagCollection { return new TagCollection($this); }
     //</editor-fold>
 
 
@@ -143,7 +137,7 @@ class Factory
 
     public function createImage(?ImageEntity $entity = null) : ImageService
     {
-        $service = new ImageService($this->imageUrlGenerator, $this->em, $this->projectDir);
+        $service = new ImageService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -155,17 +149,14 @@ class Factory
     public function getImageUrlGenerator() : ImageUrlGenerator { return $this->imageUrlGenerator; }
 
 
-    public function createImageCollection() : ImageCollection
-    {
-        return new ImageCollection($this->em, $this);
-    }
+    public function createImageCollection() : ImageCollection { return new ImageCollection($this); }
     //</editor-fold>
 
 
     //<editor-fold defaultstate="collapsed" desc="*** File ***">
     public function createFile(?FileEntity $entity = null) : FileService
     {
-        $service = new FileService($this->fileUrlGenerator, $this->em, $this, $this->projectDir);
+        $service = new FileService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -174,17 +165,16 @@ class Factory
     }
 
 
-    public function createFileCollection() : FileCollection
-    {
-        return new FileCollection($this->em, $this);
-    }
+    public function createFileCollection() : FileCollection { return new FileCollection($this); }
+
+    public function getFileUrlGenerator() : FileUrlGenerator { return $this->fileUrlGenerator; }
     //</editor-fold>
 
 
     //<editor-fold defaultstate="collapsed" desc="*** Topic ***">
     public function createTopic(?TopicEntity $entity = null) : TopicService
     {
-        $service = new TopicService($this->forumUrlGenerator, $this->em, $this);
+        $service = new TopicService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -193,17 +183,16 @@ class Factory
     }
 
 
-    public function createTopicCollection() : TopicCollection
-    {
-        return new TopicCollection($this->em, $this);
-    }
+    public function createTopicCollection() : TopicCollection { return new TopicCollection($this); }
+
+    public function getForumUrlGenerator() : ForumUrlGenerator { return $this->forumUrlGenerator; }
     //</editor-fold>
 
 
     //<editor-fold defaultstate="collapsed" desc="*** User ***">
     public function createUser(?UserEntity $entity = null) : UserService
     {
-        $service = new UserService($this->userUrlGenerator, $this->em, $this);
+        $service = new UserService($this);
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -212,9 +201,8 @@ class Factory
     }
 
 
-    public function createUserCollection() : UserCollection
-    {
-        return new UserCollection($this->em, $this);
-    }
+    public function createUserCollection() : UserCollection { return new UserCollection($this); }
+
+    public function getUserUrlGenerator() : UserUrlGenerator { return $this->userUrlGenerator; }
     //</editor-fold>
 }

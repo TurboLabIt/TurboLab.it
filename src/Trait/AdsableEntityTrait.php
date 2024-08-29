@@ -9,10 +9,7 @@ trait AdsableEntityTrait
     #[ORM\Column]
     protected ?bool $showAds = true;
 
-    public function showAds(): ?bool
-    {
-        return $this->showAds;
-    }
+    public function showAds(): ?bool { return $this->showAds; }
 
     public function setShowAds(bool $showAds): static
     {

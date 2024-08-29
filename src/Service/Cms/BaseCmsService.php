@@ -1,7 +1,6 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Entity\BaseEntity;
 use App\Service\BaseServiceEntity;
 
 
@@ -9,8 +8,6 @@ abstract class BaseCmsService extends BaseServiceEntity
 {
     const string UPLOADED_ASSET_FOLDER_NAME = 'uploaded-assets';
     const string UPLOADED_ASSET_XSEND_PATH  = 'xsend-uploaded-assets';
-
-    protected UrlGenerator $urlGenerator;
 
 
     public function loadBySlugDashId(string $slugDashId) : static
@@ -25,7 +22,7 @@ abstract class BaseCmsService extends BaseServiceEntity
         $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
 
         $this->clear();
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->$method($entityId);
+        $entity = $this->getRepository()->$method($entityId);
 
         if( empty($entity) ) {
 
@@ -34,16 +31,6 @@ abstract class BaseCmsService extends BaseServiceEntity
         }
 
         return $this->setEntity($entity);
-    }
-
-
-    public function setEntity(?BaseEntity $entity = null) : static
-    {
-        if( property_exists($this, 'localViewCount') ) {
-            $this->localViewCount = $entity->getViews();
-        }
-
-        return parent::setEntity($entity);
     }
 
 

@@ -3,8 +3,8 @@ namespace App\Service;
 
 use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\UserNotFoundException;
+use App\Repository\PhpBB\UserRepository;
 use App\ServiceCollection\Cms\ArticleCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -19,20 +19,25 @@ class User extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
     const int TESTER_USER_ID    = 4015;
 
+    protected ?UserEntity $entity = null;
     protected ?array $arrAdditionalFields           = null;
     protected ?ArticleCollection $articlesAuthored  = null;
     protected ?int $articlesNum                     = null;
 
 
-    public function __construct(
-        protected UserUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory
-    )
-    {
-        $this->clear();
-    }
+    public function __construct(protected Factory $factory) { $this->clear(); }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getEntity() : ?UserEntity { return $this->entity; }
+    public function getRepository() : UserRepository
+        { return $this->factory->getEntityManager()->getRepository(UserEntity::class); }
+
+    public function setEntity(?UserEntity $entity = null) : static
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?UserEntity { return $this->entity ?? null; }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Load methods ***">
@@ -40,7 +45,7 @@ class User extends BaseServiceEntity
     {
         $this->clear();
 
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->getByUsernameClean($usernameClean);
+        $entity = $this->getRepository()->getByUsernameClean($usernameClean);
 
         if( empty($entity) ) {
 
@@ -111,9 +116,7 @@ class User extends BaseServiceEntity
             return $this->arrAdditionalFields;
         }
 
-        return
-            $this->arrAdditionalFields =
-                $this->em->getRepository(UserEntity::class)->getAdditionalFields( $this->getEntity() );
+        return $this->arrAdditionalFields = $this->getRepository()->getAdditionalFields( $this->getEntity() );
     }
     //</editor-fold>
 
@@ -158,25 +161,25 @@ class User extends BaseServiceEntity
 
 
     public function getNewsletterUnsubscribeUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateNewsletterUnsubscribeUrl($this, $urlType); }
+        { return $this->factory->getUserUrlGenerator()->generateNewsletterUnsubscribeUrl($this, $urlType); }
 
     public function getNewsletterSubscribeUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateNewsletterSubscribeUrl($this, $urlType); }
+        { return $this->factory->getUserUrlGenerator()->generateNewsletterSubscribeUrl($this, $urlType); }
 
 
     public function getNewsletterOpenerUrl(
         ?string $redirectToUrl = null, bool $requiresUrlEncode = true, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL
     ) : string
     {
-        return $this->urlGenerator->generateNewsletterOpenerUrl($this, $redirectToUrl, $requiresUrlEncode, $urlType);
+        return $this->factory->getUserUrlGenerator()->generateNewsletterOpenerUrl($this, $redirectToUrl, $requiresUrlEncode, $urlType);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
     public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateUrl($this, $page, $urlType); }
+        { return $this->factory->getUserUrlGenerator()->generateUrl($this, $page, $urlType); }
 
     public function getForumUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateForumProfileUrl($this, $urlType); }
+        { return $this->factory->getUserUrlGenerator()->generateForumProfileUrl($this, $urlType); }
     //</editor-fold>
 }

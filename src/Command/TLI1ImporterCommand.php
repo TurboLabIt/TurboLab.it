@@ -14,8 +14,11 @@ use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
 use App\Entity\Cms\TagBadge;
-use App\Entity\PhpBB\Topic;
-use App\Entity\PhpBB\User;
+use App\Repository\Cms\ArticleRepository;
+use App\Repository\Cms\BadgeRepository;
+use App\Repository\Cms\FileRepository;
+use App\Repository\Cms\ImageRepository;
+use App\Repository\Cms\TagRepository;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\HtmlProcessor;
@@ -42,8 +45,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected bool $allowDryRunOpt = true;
 
     protected \PDO $dbTli1;
-    protected UserRepository $repoUsers;
-    protected TopicRepository $repoTopics;
 
     protected array $arrAuthorsByContributionType = [];
 
@@ -57,6 +58,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     public function __construct(
         array $arrConfig,
+
+        protected ArticleRepository $articleRepository, protected ImageRepository $imageRepository,
+        protected TagRepository $tagRepository, protected FileRepository $fileRepository,
+        protected TopicRepository $topicRepository, protected BadgeRepository $badgeRepository,
+        protected UserRepository $userRepository,
+
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
         protected Factory $Factory, protected HtmlProcessor $htmlProcessor
     )
@@ -159,9 +166,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function loadUsers() : static
     {
-        $this->repoUsers = $this->em->getRepository(User::class);
-        $arrUsers = $this->repoUsers->getAllComplete();
-
+        $arrUsers = $this->userRepository->getAllComplete();
         return $this->fxOK(count($arrUsers) . " item(s) loaded");
     }
 
@@ -194,7 +199,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true) );
             }
 
-            $user = $this->repoUsers->selectOrNull($userId);
+            $user = $this->userRepository->selectOrNull($userId);
             if( empty($user) ) {
                 continue;
             }
@@ -215,8 +220,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             return $this->fxWarning('🦘 Skipped!');
         }
 
-        $this->repoTopics = $this->em->getRepository(Topic::class);
-        $arrTopics = $this->repoTopics->getAllComplete();
+        $arrTopics = $this->topicRepository->getAllComplete();
 
         return $this->fxOK(count($arrTopics) . " item(s) loaded");
     }
@@ -295,7 +299,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         if( $this->getCliOption(static::OPT_SKIP_ARTICLES) ) {
 
-            $this->arrNewArticles = $this->em->getRepository(ArticleEntity::class)->getAllComplete();
+            $this->arrNewArticles = $this->articleRepository->getAllComplete();
             return $this->fxWarning('🦘 Skipped!');
         }
 
@@ -311,7 +315,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Articles) . " items loaded");
 
         $this->io->text("Loading TLI2 articles...");
-        $arrTli2Articles = $this->em->getRepository(ArticleEntity::class)->getAllComplete();
+        $arrTli2Articles = $this->articleRepository->getAllComplete();
         $this->fxOK( count($arrTli2Articles) . " item(s) loaded");
         unset($arrTli2Articles);
 
@@ -341,7 +345,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $format         = (int)$arrArticle["formato"];
         $rating         = (int)$arrArticle["rating"];
         $ads            = (bool)$arrArticle["ads"];
-        $commentsTopic  = $this->repoTopics->selectOrNull($arrArticle["id_commenti_phpbb"]);
+        $commentsTopic  = $this->topicRepository->selectOrNull($arrArticle["id_commenti_phpbb"]);
         $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
 
         // fix grammar horror on newsletter
@@ -383,7 +387,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         /** @var ArticleEntity $entityTli2Article */
         $entityTli2Article =
-            $this->em->getRepository(ArticleEntity::class)
+            $this->articleRepository
                 ->selectOrNew($articleId)
                     ->setTitle($title)
                     ->setFormat($format)
@@ -443,7 +447,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Images) . " items loaded");
 
         $this->io->text("Loading TLI2 images...");
-        $arrTli2Images = $this->em->getRepository(ImageEntity::class)->getAllComplete();
+        $arrTli2Images = $this->imageRepository->getAllComplete();
         $this->fxOK( count($arrTli2Images) . " item(s) loaded");
         unset($arrTli2Images);
 
@@ -474,7 +478,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         /** @var ImageEntity $entityTli2Image */
         $entityTli2Image =
-            $this->em->getRepository(ImageEntity::class)
+            $this->imageRepository
                 ->selectOrNew($imageId)
                 ->setTitle($title)
                 ->setFormat($format)
@@ -560,7 +564,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         if( $this->getCliOption(static::OPT_SKIP_TAGS) ) {
 
-            $this->arrNewTags = $this->em->getRepository(TagEntity::class)->getAllComplete();
+            $this->arrNewTags = $this->tagRepository->getAllComplete();
             return $this->fxWarning('🦘 Skipped!');
         }
 
@@ -592,7 +596,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Tags) . " items loaded");
 
         $this->io->text("Loading TLI2 tags...");
-        $arrTli2Tags = $this->em->getRepository(TagEntity::class)->getAllComplete();
+        $arrTli2Tags = $this->tagRepository->getAllComplete();
         $this->fxOK( count($arrTli2Tags) . " item(s) loaded");
         unset($arrTli2Tags);
 
@@ -626,7 +630,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         /** @var TagEntity $entityTli2Tag */
         $entityTli2Tag =
-            $this->em->getRepository(TagEntity::class)
+            $this->tagRepository
                 ->selectOrNew($tagId)
                 ->setTitle($title)
                 ->setRanking($ranking)
@@ -710,7 +714,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $attacherId = $arrTagAssoc["id_utente"];
-        $attacher   = $this->repoUsers->selectOrNull($attacherId) ?? $article->getAuthors()->first()->getUser();
+        $attacher   = $this->userRepository->selectOrNull($attacherId) ?? $article->getAuthors()->first()->getUser();
         if( empty($attacher) ) {
             $this->fxWarning(
                 "This Tag Assoc has no Authors: " . print_r([
@@ -762,7 +766,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Files) . " items loaded");
 
         $this->io->text("Loading TLI2 files...");
-        $arrTli2Files = $this->em->getRepository(FileEntity::class)->getAllComplete();
+        $arrTli2Files = $this->fileRepository->getAllComplete();
         $this->fxOK( count($arrTli2Files) . " item(s) loaded");
         unset($arrTli2Files);
 
@@ -787,7 +791,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         /** @var FileEntity $entityTli2File */
         $entityTli2File =
-            $this->em->getRepository(FileEntity::class)
+            $this->fileRepository
                 ->selectOrNew($fileId)
                 ->setTitle($title)
                 ->setViews($views)
@@ -802,7 +806,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         // we don't have the author for multiple Files - assigning them to "User 2"
         if( empty($arrTli1Authors) ) {
             $arrTli1Authors = [[
-                "user"  => $this->repoUsers->selectOrNull(2),
+                "user"  => $this->userRepository->selectOrNull(2),
                 "date"  => $entityTli2File->getCreatedAt()
             ]];
         }
@@ -929,7 +933,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli1Badges) . " items loaded");
 
         $this->io->text("Loading TLI2 badges...");
-        $arrTli2Badges = $this->em->getRepository(BadgeEntity::class)->getAllComplete();
+        $arrTli2Badges = $this->badgeRepository->getAllComplete();
         $this->fxOK( count($arrTli2Badges) . " item(s) loaded");
 
         $this->io->text("Processing every TLI1 badge...");
@@ -946,7 +950,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         /** @var BadgeEntity $entityTli2Badge */
         $entityTli2Badge =
-            $this->em->getRepository(BadgeEntity::class)
+            $this->badgeRepository
                 ->selectOrNew($badgeId)
                 ->setTitle( $this->convertValueFromTli1ToTli2($arrBadge["titolo"], true) )
                 ->setAbstract( $this->convertValueFromTli1ToTli2($arrBadge["testo_breve"]) )

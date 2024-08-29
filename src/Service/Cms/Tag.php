@@ -2,11 +2,11 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Tag as TagEntity;
+use App\Repository\Cms\TagRepository;
 use App\Service\Factory;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\Trait\ViewableServiceTrait;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -38,18 +38,25 @@ class Tag extends BaseCmsService
 
     use ViewableServiceTrait;
 
+    protected ?TagEntity $entity;
     protected ?ArticleCollection $articlesTagged    = null;
     protected ?Article $firstArticle                = null;
 
 
-    public function __construct(TagUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
-    {
-        $this->clear();
-        $this->urlGenerator = $urlGenerator;
-    }
+    public function __construct(protected Factory $factory) { $this->clear(); }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getEntity() : ?TagEntity { return $this->entity; }
+    public function getRepository(): TagRepository
+        { return $this->factory->getEntityManager()->getRepository(TagEntity::class); }
+
+    public function setEntity(?TagEntity $entity = null) : static
+    {
+        $this->localViewCount = $entity->getViews();
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?TagEntity { return $this->entity ?? null; }
     //</editor-fold>
 
 
@@ -95,16 +102,19 @@ class Tag extends BaseCmsService
     {
         $pageSlug       = empty($page) || $page < 2 ? null : ("/$page");
         $candidateUrl   = '/' . $tagSlugDashId . $pageSlug;
-        $realUrl        = $this->urlGenerator->generateUrl($this, $page, UrlGeneratorInterface::ABSOLUTE_PATH);
-        $result         = $candidateUrl == $realUrl ? null : $this->getUrl();
-        return $result;
+        $realUrl =
+            $this->factory->getTagUrlGenerator()->generateUrl($this, $page, UrlGeneratorInterface::ABSOLUTE_PATH);
+
+        return $candidateUrl == $realUrl ? null : $this->getUrl();
     }
 
 
     public function loadByTitle(string $title) : static
     {
         $this->clear();
-        $entity = $this->em->getRepository(static::ENTITY_CLASS)->findByTitle($title);
+        /** @var TagRepository $repoTag */
+        $repoTag    = $this->getRepository();
+        $entity     = $repoTag->findByTitle($title);
 
         if( empty($entity) ) {
 
@@ -181,9 +191,10 @@ class Tag extends BaseCmsService
 
 
     public function getUrl(?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->urlGenerator->generateUrl($this, $page, $urlType); }
+        { return $this->factory->getTagUrlGenerator()->generateUrl($this, $page, $urlType); }
 
 
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
+
     public function getRanking() : ?int { return $this->entity->getRanking(); }
 }

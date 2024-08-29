@@ -4,7 +4,8 @@ namespace App\Service\Cms;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\Cms\ImageRepository;
+use App\Service\Factory;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
@@ -62,29 +63,37 @@ class Image extends BaseCmsService
 
     const string UPLOADED_IMAGES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/images";
 
+    protected ProjectDir $projectDir;
+    protected ImageEntity $entity;
     protected static ?string $buildFileExtension    = null;
     protected ?string $lastBuiltImageMimeType       = null;
 
 
-    public function __construct(
-        ImageUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected ProjectDir $projectDir
-    )
+    public function __construct(protected Factory $factory)
     {
         $this->clear();
-        $this->urlGenerator = $urlGenerator;
+        $this->projectDir = $factory->getProjectDir();
         if( empty(static::$buildFileExtension) ) {
             static::$buildFileExtension = static::getClientSupportedBestFormat();
         }
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getEntity() : ?ImageEntity { return $this->entity; }
+    public function getRepository(): ImageRepository
+        { return $this->factory->getEntityManager()->getRepository(ImageEntity::class); }
+
+    public function setEntity(?ImageEntity $entity = null) : static
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?ImageEntity { return $this->entity ?? null; }
     //</editor-fold>
 
+
     public function getSizes() : array
-    {
-        return array_keys(static::SIZE_DIMENSIONS);
-    }
+        { return array_keys(static::SIZE_DIMENSIONS); }
 
 
     public function checkSize(string $size) : static
@@ -118,11 +127,10 @@ class Image extends BaseCmsService
     {
         $imageFolderMod = $this->getFolderMod();
         $fileName       = $this->getOriginalFileName();
-        $imageFilePath  = $this->projectDir->createVarDirFromFilePath(
-            static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"
-        );
-
-        return $imageFilePath;
+        return
+            $this->projectDir->createVarDirFromFilePath(
+                static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"
+            );
     }
 
 
@@ -376,6 +384,9 @@ class Image extends BaseCmsService
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
-    public function getUrl(Article $article, string $size) : string { return $this->urlGenerator->generateUrl($this, $article, $size); }
-    public function getShortUrl(string $size) : string { return $this->urlGenerator->generateShortUrl($this, $size); }
+    public function getUrl(Article $article, string $size) : string
+        { return $this->factory->getImageUrlGenerator()->generateUrl($this, $article, $size); }
+
+    public function getShortUrl(string $size) : string
+        { return $this->factory->getImageUrlGenerator()->generateShortUrl($this, $size); }
 }

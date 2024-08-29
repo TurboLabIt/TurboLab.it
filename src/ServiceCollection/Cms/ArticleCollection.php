@@ -1,8 +1,8 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
+use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Article;
-use App\Service\Cms\Article as ArticleService;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
@@ -13,19 +13,25 @@ use App\ServiceCollection\BaseServiceEntityCollection;
 
 class ArticleCollection extends BaseServiceEntityCollection
 {
-    const string ENTITY_CLASS = ArticleService::ENTITY_CLASS;
+    const string ENTITY_CLASS = Article::ENTITY_CLASS;
 
+    protected function getRepository() : ArticleRepository
+    {
+        /** @var ArticleRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);
+        return $repository;
+    }
 
     public function loadAllPublished() : static
     {
-        $arrTopics = $this->em->getRepository(static::ENTITY_CLASS)->findAllPublished();
+        $arrTopics = $this->getRepository()->findAllPublished();
         return $this->setEntities($arrTopics);
     }
 
 
     public function loadLatestPublished(?int $page = 1) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestPublished($page);
+        $arrArticles = $this->getRepository()->findLatestPublished($page);
         return $this->setEntities($arrArticles);
     }
 
@@ -57,7 +63,7 @@ class ArticleCollection extends BaseServiceEntityCollection
 
     public function loadLatestReadyForReview() : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestReadyForReview();
+        $arrArticles = $this->getRepository()->findLatestReadyForReview();
         return $this->setEntities($arrArticles);
     }
 
@@ -65,7 +71,7 @@ class ArticleCollection extends BaseServiceEntityCollection
     public function loadByTag(TagEntity|TagService $tag, ?int $page = 1) : static
     {
         $tag = $tag instanceof TagService ? $tag->getEntity() : $tag;
-        $paginator = $this->em->getRepository(static::ENTITY_CLASS)->findByTag($tag, $page) ?? [];
+        $paginator = $this->getRepository()->findByTag($tag, $page) ?? [];
         return $this->setEntities($paginator);
     }
 
@@ -73,49 +79,49 @@ class ArticleCollection extends BaseServiceEntityCollection
     public function loadByAuthor(UserEntity|UserService $user, ?int $page = 1) : static
     {
         $user = $user instanceof UserService ? $user->getEntity() : $user;
-        $paginator = $this->em->getRepository(static::ENTITY_CLASS)->findByAuthor($user, $page) ?? [];
+        $paginator = $this->getRepository()->findByAuthor($user, $page) ?? [];
         return $this->setEntities($paginator);
     }
 
 
     public function loadLatestForNewsletter() : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestForNewsletter();
+        $arrArticles = $this->getRepository()->findLatestForNewsletter();
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadLatestForSocialSharing(int $maxPublishedMinutes) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestForSocialSharing($maxPublishedMinutes);
+        $arrArticles = $this->getRepository()->findLatestForSocialSharing($maxPublishedMinutes);
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadLatestNewsPublished(?int $page = 1) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestNewsPublished($page);
+        $arrArticles = $this->getRepository()->findLatestNewsPublished($page);
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadLatestSecurityNews(?int $num = null) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findLatestSecurityNews($num);
+        $arrArticles = $this->getRepository()->findLatestSecurityNews($num);
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadTopViewsRecent(?int $page = 1) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findTopViewsLastYear($page);
+        $arrArticles = $this->getRepository()->findTopViewsLastYear($page);
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadTopViews(?int $page = 1) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->findTopViews($page);
+        $arrArticles = $this->getRepository()->findTopViews($page);
         return $this->setEntities($arrArticles);
     }
 
@@ -132,17 +138,17 @@ class ArticleCollection extends BaseServiceEntityCollection
 
     public function loadPrevNextArticle(Article $article) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->getPrevNextArticle( $article->getEntity() );
+        $arrArticles = $this->getRepository()->getPrevNextArticle( $article->getEntity() );
         return $this->setEntities($arrArticles);
     }
 
 
     public function loadRandom(?int $num = null) : static
     {
-        $arrArticles = $this->em->getRepository(static::ENTITY_CLASS)->getRandomComplete($num);
+        $arrArticles = $this->getRepository()->getRandomComplete($num);
         return $this->setEntities($arrArticles);
     }
 
 
-    public function createService(?ArticleEntity $entity = null) : ArticleService { return $this->factory->createArticle($entity); }
+    public function createService(?ArticleEntity $entity = null) : Article { return $this->factory->createArticle($entity); }
 }

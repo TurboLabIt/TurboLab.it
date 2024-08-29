@@ -34,10 +34,7 @@ trait PublishableEntityTrait
         ];
     }
 
-    public function getPublishingStatus(): ?int
-    {
-        return $this->publishingStatus;
-    }
+    public function getPublishingStatus(): ?int { return $this->publishingStatus; }
 
     public function setPublishingStatus(int $status): static
     {
@@ -49,10 +46,7 @@ trait PublishableEntityTrait
         return $this;
     }
 
-    public function getPublishedAt(): ?\DateTimeInterface
-    {
-        return $this->publishedAt;
-    }
+    public function getPublishedAt(): ?\DateTimeInterface { return $this->publishedAt; }
 
     public function setPublishedAt(?\DateTimeInterface $publishedAt): static
     {

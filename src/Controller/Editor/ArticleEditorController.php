@@ -26,7 +26,6 @@ class ArticleEditorController extends BaseController
 
         $this->articleEditor->load($articleId)
             ->setBody($html)
-            ->setNeedsCommentTopicUpdate(true)
             ->save();
 
         $this->article->load($articleId);

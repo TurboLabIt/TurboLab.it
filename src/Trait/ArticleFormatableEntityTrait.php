@@ -13,15 +13,9 @@ trait ArticleFormatableEntityTrait
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $format = null;
 
-    public static function getFormats() : array
-    {
-        return [static::FORMAT_ARTICLE, static::FORMAT_NEWS];
-    }
+    public static function getFormats() : array { return [static::FORMAT_ARTICLE, static::FORMAT_NEWS]; }
 
-    public function getFormat(): ?int
-    {
-        return $this->format;
-    }
+    public function getFormat(): ?int { return $this->format; }
 
     public function setFormat(int $format): static
     {

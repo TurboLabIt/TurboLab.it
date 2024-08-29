@@ -8,10 +8,7 @@ trait ViewableServiceTrait
     protected int $localViewCount = 0;
 
 
-    public function getClientIpAddress() : string
-    {
-        return $this->clientIpAddress;
-    }
+    public function getClientIpAddress() : string { return $this->clientIpAddress; }
 
 
     public function setClientIpAddress(string $clientIpAddress): static
@@ -34,7 +31,7 @@ trait ViewableServiceTrait
         }
 
         $this->localViewCount++;
-        $this->em->getRepository(static::ENTITY_CLASS)->countOneView( $this->getId() );
+        $this->getRepository()->countOneView( $this->getId() );
         return $this;
     }
 

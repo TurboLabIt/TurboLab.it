@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Service\Cms\Image;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -79,10 +78,10 @@ class AuthorContoller extends BaseController
 
         return
             $this->twig->render('user/author.html.twig', [
-                'metaTitle'         => "Articoli, guide e news a cura di " . 
+                'metaTitle'         => "Articoli, guide e news a cura di " .
                                             $user->getFullName() . ( $page < 2 ? '' : " - Pagina $page"),
                 'metaCanonicalUrl'  => $user->getUrl($page),
-                'metaPageImageUrl'  => $user->getAvatarUrl(Image::SIZE_MAX),
+                'metaPageImageUrl'  => $user->getAvatarUrl(),
                 'activeMenu'        => 'null',
                 'FrontendHelper'    => $this->frontendHelper,
                 'Author'            => $user,

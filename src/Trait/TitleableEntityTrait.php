@@ -9,10 +9,7 @@ trait TitleableEntityTrait
     #[ORM\Column(length: 512)]
     protected ?string $title = null;
 
-    public function getTitle() : ?string
-    {
-        return $this->title;
-    }
+    public function getTitle() : ?string { return $this->title; }
 
     public function setTitle(string $title) : static
     {

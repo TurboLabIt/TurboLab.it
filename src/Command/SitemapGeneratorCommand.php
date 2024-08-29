@@ -2,15 +2,14 @@
 namespace App\Command;
 
 use App\Entity\PhpBB\Forum;
+use App\Repository\PhpBB\ForumRepository;
 use App\Service\Cms\Article;
-use App\Service\Cms\Paginator;
 use App\Service\Cms\Tag;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -51,7 +50,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
 
     public function __construct(
-        protected EntityManagerInterface $entityManager,
+        protected ForumRepository $forumRepository,
         protected ArticleCollection $articleCollection, protected TagCollection $tagCollection,
         protected TopicCollection $topicCollection,
         protected Environment $twig, protected ProjectDir $projectDir,
@@ -272,7 +271,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $this->fxOK("##$url## added");
 
         $this->fxTitle("Adding Forums...");
-        $arrForums = $this->entityManager->getRepository(Forum::class)->getAll();
+        $arrForums = $this->forumRepository->getAll();
         $countForums = count($arrForums);
         $this->fxOK("$countForums forum(s) loaded");
 

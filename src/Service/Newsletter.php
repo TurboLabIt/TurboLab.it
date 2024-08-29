@@ -3,6 +3,8 @@ namespace App\Service;
 
 use App\Entity\NewsletterExpiringWarn;
 use App\Entity\NewsletterOpener;
+use App\Repository\NewsletterExpiringWarnRepository;
+use App\Repository\NewsletterOpenerRepository;
 use App\Service\Cms\Article;
 use App\Service\Cms\Tag;
 use App\Service\PhpBB\Topic;
@@ -38,9 +40,9 @@ class Newsletter extends Mailer
         protected UserCollection $userCollection, protected Factory $factory,
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
         protected Environment $twig, protected TelegramMessenger $alertMessenger,
-        protected ParameterBagInterface $parameters,
+
         //
-        MailerInterface $mailer, ProjectDir $projectDir
+        MailerInterface $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters
     )
     {
         // init to homepage (failsafe)
@@ -59,6 +61,13 @@ class Newsletter extends Mailer
             ]
         ]);
     }
+
+
+    public function getRepositoryExpiringWarn() : NewsletterExpiringWarnRepository
+        { return $this->factory->getEntityManager()->getRepository(NewsletterExpiringWarn::class); }
+
+    public function getRepositoryOpener() : NewsletterOpenerRepository
+        { return $this->factory->getEntityManager()->getRepository(NewsletterOpener::class); }
 
 
     public function loadContent() : static
@@ -102,7 +111,7 @@ class Newsletter extends Mailer
         } else {
 
             $this->subject = '"' . $firstArticleTitle . '" e altre novità | ' . $this->newsletterName;
-        }        
+        }
 
         $this->subject .= " (" . $this->getDateString() . ")";
 
@@ -266,15 +275,15 @@ class Newsletter extends Mailer
     public function confirmOpener(int $userId) : bool
     {
         try {
-            $em         = $this->factory->getEm();
             $userEntity = $this->factory->createUser()->load($userId)->getEntity();
-            $opener     = $em->getRepository(NewsletterOpener::class)->getByUserOrNew($userEntity);
+
+            $opener = $this->getRepositoryOpener()->getByUserOrNew($userEntity);
             $opener->setUpdatedAt( new \DateTime() );
 
-            $em->getRepository(NewsletterExpiringWarn::class)->deleteByUserId($userId);
+            $this->getRepositoryExpiringWarn()->deleteByUserId($userId);
 
-            $em->persist($opener);
-            $em->flush();
+            $this->factory->getEntityManager()->persist($opener);
+            $this->factory->getEntityManager()->flush();
 
         } catch (\Exception) { return false; }
 
@@ -285,11 +294,12 @@ class Newsletter extends Mailer
     public function unsubscribeUser(User $user) : static
     {
         $user->unsubscribeFromNewsletter();
-        $em = $this->factory->getEm();
+
         $userId = $user->getId();
-        $em->getRepository(NewsletterOpener::class)->deleteByUserId($userId);
-        $em->getRepository(NewsletterExpiringWarn::class)->deleteByUserId($userId);
-        $em->flush();
+        $this->getRepositoryOpener()->deleteByUserId($userId);
+        $this->getRepositoryExpiringWarn()->deleteByUserId($userId);
+
+        $this->factory->getEntityManager()->flush();
 
         return $this;
     }

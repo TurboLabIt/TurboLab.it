@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
@@ -10,9 +11,7 @@ use App\Service\User;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
-use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
-use Doctrine\ORM\EntityManagerInterface;
 use IntlDateFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -37,9 +36,10 @@ class Article extends BaseCmsService
     const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
-
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use UrlableServiceTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
+    use PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
+
+    protected ArticleEntity $entity;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
@@ -54,15 +54,24 @@ class Article extends BaseCmsService
     protected array $arrPrevNextArticles    = [];
     //</editor-fold>
 
-    public function __construct(ArticleUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory)
+    public function __construct(protected Factory $factory)
     {
         $this->clear();
-        $this->urlGenerator = $urlGenerator;
         $this->htmlProcessor = new HtmlProcessor($factory);
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getEntity() : ?ArticleEntity { return $this->entity; }
+    public function getRepository(): ArticleRepository
+        { return $this->factory->getEntityManager()->getRepository(ArticleEntity::class); }
+
+    public function setEntity(?ArticleEntity $entity = null) : static
+    {
+        $this->localViewCount = $entity->getViews();
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?ArticleEntity { return $this->entity ?? null; }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
@@ -360,12 +369,17 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
+    public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->factory->getArticleUrlGenerator()->generateUrl($this, $urlType); }
+
+    public function getShortUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->factory->getArticleUrlGenerator()->generateShortUrl($this, $urlType); }
+
     public function checkRealUrl(string $tagSlugDashId, string $articleSlugDashId) : ?string
     {
         $candidateUrl   = '/' . $tagSlugDashId . '/' . $articleSlugDashId;
-        $realUrl        = $this->urlGenerator->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
-        $result         = $candidateUrl == $realUrl ? null : $this->getUrl();
-        return $result;
+        $realUrl        = $this->factory->getArticleUrlGenerator()->generateUrl($this, UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $candidateUrl == $realUrl ? null : $this->getUrl();
     }
     //</editor-fold>
 

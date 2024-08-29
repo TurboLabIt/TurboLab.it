@@ -3,10 +3,10 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\File as FileEntity;
 use App\Exception\FileLogicException;
+use App\Repository\Cms\FileRepository;
 use App\Service\Factory;
-use App\Trait\UrlableServiceTrait;
 use App\Trait\ViewableServiceTrait;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
@@ -18,20 +18,29 @@ class File extends BaseCmsService
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
     use ViewableServiceTrait;
-    use UrlableServiceTrait;
+
+    protected ProjectDir $projectDir;
+    protected FileEntity $entity;
 
 
-    public function __construct(
-        FileUrlGenerator $urlGenerator, protected EntityManagerInterface $em, protected Factory $factory,
-        protected ProjectDir $projectDir
-    )
+    public function __construct(protected Factory $factory)
     {
         $this->clear();
-        $this->urlGenerator = $urlGenerator;
+        $this->projectDir = $factory->getProjectDir();
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getEntity() : ?FileEntity { return $this->entity; }
+    public function getRepository(): FileRepository
+        { return $this->factory->getEntityManager()->getRepository(FileEntity::class); }
+
+    public function setEntity(?FileEntity $entity = null) : static
+    {
+        $this->localViewCount = $entity->getViews();
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntity() : ?FileEntity { return $this->entity ?? null; }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👽 Local or remote hosted ***">
@@ -41,7 +50,6 @@ class File extends BaseCmsService
 
     public function isExternal() : bool { return !$this->isLocal(); }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 File type ***">
     public function getMimeType() : ?string
@@ -131,11 +139,7 @@ class File extends BaseCmsService
         }
 
         $fileName = $this->getOriginalFileName();
-        $filePath = $this->projectDir->createVarDirFromFilePath(
-            static::UPLOADED_FILES_FOLDER_NAME . "/$fileName"
-        );
-
-        return $filePath;
+        return $this->projectDir->createVarDirFromFilePath(static::UPLOADED_FILES_FOLDER_NAME . "/$fileName");
     }
 
 
@@ -182,4 +186,7 @@ class File extends BaseCmsService
         $fileName .= "." . $format;
         return $fileName;
     }
+
+    public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+        { return $this->factory->getFileUrlGenerator()->generateUrl($this, $urlType); }
 }
