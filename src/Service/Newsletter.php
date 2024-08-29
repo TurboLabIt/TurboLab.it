@@ -235,11 +235,11 @@ class Newsletter extends Mailer
     {
         $articleBody =
             $this->twig->render('newsletter/article.html.twig', [
-                    "Articles"                      => $this->articleCollection,
-                    "Topics"                        => $this->topicCollection,
-                    "newsletterUrl"                 => $this->articleCollection->createService()->load(Article::ID_NEWSLETTER)->getUrl(),
-                    "subscriberCount"               => $this->totalSubscribersCount,
-                    "TopEmailProviders"             => $this->arrTopProviders,
+                    "Articles"          => $this->articleCollection,
+                    "Topics"            => $this->topicCollection,
+                    "newsletterUrl"     => $this->articleCollection->createService()->load(Article::ID_NEWSLETTER)->getUrl(),
+                    "subscriberCount"   => $this->totalSubscribersCount,
+                    "TopEmailProviders" => $this->arrTopProviders,
                 ]
             );
 
