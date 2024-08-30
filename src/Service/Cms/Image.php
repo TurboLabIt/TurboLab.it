@@ -33,7 +33,6 @@ class Image extends BaseCmsService
     const string WATERMARK_FILEPATH     = 'images/logo/turbolab.it.png';
     const int WATERMARK_WIDTH_PERCENT   = 25;
     const int WATERMARK_OPACITY         = 100;
-    const null WATERMARK_FORCED_POSITION= null;
     const int WATERMARK_MIN_SIZE        = 175;
     const array MIN_WATERMARKABLE_SIZES = [
         self::WIDTH     => 300,
@@ -239,7 +238,7 @@ class Image extends BaseCmsService
     {
         $this->checkSize($size);
 
-        $watermarkPosition = static::WATERMARK_FORCED_POSITION ?? $this->entity->getWatermarkPosition();
+        $watermarkPosition = $this->entity->getWatermarkPosition();
 
         $imageW = $phpImagine->getSize()->getWidth();
         $imageH = $phpImagine->getSize()->getHeight();
