@@ -2,7 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Factory;
+use DOMDocument;
 
 
 class HtmlProcessor extends HtmlProcessorBase
@@ -29,7 +29,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function imagesFromPlaceholderToUrl(\DOMDocument $domDoc, Article $article): static
+    protected function imagesFromPlaceholderToUrl(DOMDocument $domDoc, Article $article): static
     {
         $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);
@@ -70,7 +70,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function articleLinksFromPlaceholderToUrl(\DOMDocument $domDoc) : static
+    protected function articleLinksFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $artRegEx       = '/(?<=(==###contenuto::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $artRegEx);
@@ -103,7 +103,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function tagLinksFromPlaceholderToUrl(\DOMDocument $domDoc)
+    protected function tagLinksFromPlaceholderToUrl(DOMDocument $domDoc)
     {
         $tagRegEx       = '/(?<=(==###tag::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $tagRegEx);
@@ -136,7 +136,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function YouTubeIframesFromPlaceholderToUrl(\DOMDocument $domDoc) : static
+    protected function YouTubeIframesFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $ytRegEx        = '/(?<=(==###youtube::code::))[a-zA-z0-9-_]+(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'iframe', 'src', $ytRegEx);
@@ -159,7 +159,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function extractNodes(\DOMDocument $domDoc, $tagName, $attributeToCheck, $attributeRegEx)
+    protected function extractNodes(DOMDocument $domDoc, $tagName, $attributeToCheck, $attributeRegEx)
     {
         $arrNodes = $domDoc->getElementsByTagName($tagName);
         $arrMatchingNodes = [];

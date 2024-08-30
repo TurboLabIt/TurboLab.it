@@ -8,6 +8,7 @@ use App\Service\FrontendHelper;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,7 +84,7 @@ class NewsletterController extends BaseController
         $arrParsedUrl   = parse_url($goToUrl);
         // prevent open redirection
         if( !in_array($arrParsedUrl["host"], UrlGenerator::INTERNAL_DOMAINS) ) {
-            throw new \Exception("Bad redirection hostname");
+            throw new Exception("Bad redirection hostname");
         }
 
         $encryptedUserData = $this->request->get("opener");
@@ -91,12 +92,12 @@ class NewsletterController extends BaseController
         try {
             $arrUserData = $this->encryptor->decrypt($encryptedUserData);
             if( $arrUserData["scope"] != 'newsletterOpenerUrl' ) {
-                throw new \Exception("Pretty Try (For a White Guy) | Invalid scope");
+                throw new Exception("Pretty Try (For a White Guy) | Invalid scope");
             }
 
             $newsletter->confirmOpener($arrUserData["userId"]);
 
-        } catch(\Exception) {}
+        } catch(Exception) {}
 
         return $this->redirect($goToUrl);
     }

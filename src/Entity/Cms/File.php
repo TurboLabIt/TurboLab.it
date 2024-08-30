@@ -20,11 +20,11 @@ class File extends BaseCmsEntity
     #[ORM\Column(length: 2500, nullable: true)]
     protected ?string $url = null;
 
-    #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'file', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'file', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $articles;
 

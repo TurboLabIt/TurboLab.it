@@ -5,6 +5,7 @@ use App\Service\Newsletter;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -103,7 +104,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
         if( $countArticles == 0 && $countTopics == 0 ) {
 
-            $errorMessage = 
+            $errorMessage =
                 $this->newsletter->sendLowContentNotification();
 
             $errorMessage = strip_tags($errorMessage);
@@ -131,14 +132,14 @@ class NewsletterSendCommand extends AbstractBaseCommand
         // this shouldn't happen. It's just me being a maniac
         if( $recipientsCount > 5 && !$this->isNotProd() ) {
 
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "Fail-safe triggered! There are more than 5 recipients in non-prod!"
             );
         }
 
         $this->fxOK("$recipientsCount recipient(s) loaded");
 
-        
+
         $this->fxTitle("Generating the article on the website...");
         $persistArticle = $this->isNotDryRun() && ( $this->isNotProd() || $this->isUnlocked() );
         $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);

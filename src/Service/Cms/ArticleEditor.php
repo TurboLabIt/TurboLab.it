@@ -6,7 +6,9 @@ use App\Entity\Cms\ArticleTag;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\User;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 
 class ArticleEditor extends Article
@@ -76,7 +78,7 @@ class ArticleEditor extends Article
                 $spotlight = $this->factory->createImage()->load($spotlightId)->getEntity();
                 $this->entity->setSpotlight($spotlight);
 
-            } catch(\Exception) {
+            } catch(Exception) {
                 $this->entity->setSpotlight(null);
             }
         }
@@ -95,7 +97,7 @@ class ArticleEditor extends Article
     }
 
 
-    public function setPublishedAt(?\DateTimeInterface $publishedAt) : static
+    public function setPublishedAt(?DateTimeInterface $publishedAt) : static
     {
         $this->entity->setPublishedAt($publishedAt);
         return $this;

@@ -16,15 +16,15 @@ class Tag extends BaseCmsEntity
 {
     use TitleableEntityTrait, AbstractableEntityTrait, RankableEntityTrait, ViewableEntityTrait;
 
-    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $articles;
 
-    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagBadge::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagBadge::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $badges;
 
 

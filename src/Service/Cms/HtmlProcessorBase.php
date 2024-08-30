@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Service\Factory;
+use DOMDocument;
 
 
 abstract class HtmlProcessorBase
@@ -36,9 +37,9 @@ abstract class HtmlProcessorBase
     }
 
 
-    protected function parseHTML(string $text): \DOMDocument|bool
+    protected function parseHTML(string $text): DOMDocument|bool
     {
-        $domDoc = new \DOMDocument();
+        $domDoc = new DOMDocument();
 
         // pretty output https://www.php.net/manual/en/class.domdocument.php
         // doesn't work
@@ -79,7 +80,7 @@ abstract class HtmlProcessorBase
     }
 
 
-    protected function renderDomDocAsHTML(\DOMDocument $domDoc): string
+    protected function renderDomDocAsHTML(DOMDocument $domDoc): string
     {
         // pretty output https://www.php.net/manual/en/class.domdocument.php
         // doesn't work, likely due to "whitespace nodes being created by the load

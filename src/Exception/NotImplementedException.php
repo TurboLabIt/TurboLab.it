@@ -2,4 +2,6 @@
 namespace App\Exception;
 
 
-class NotImplementedException extends \LogicException {}
+use LogicException;
+
+class NotImplementedException extends LogicException {}

@@ -1,7 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
-use \TurboLabIt\PaginatorBundle\Service\Paginator as BasePaginator;
+use TurboLabIt\PaginatorBundle\Service\Paginator as BasePaginator;
 
 
 class Paginator extends BasePaginator

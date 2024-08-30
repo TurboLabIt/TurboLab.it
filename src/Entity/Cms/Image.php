@@ -36,11 +36,11 @@ class Image extends BaseCmsEntity
     #[ORM\Column]
     protected ?bool $reusable = false;
 
-    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ArticleImage::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'image', targetEntity: ArticleImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $articles;
 

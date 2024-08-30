@@ -11,6 +11,9 @@ use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
+use DateTime;
+use Exception;
+use IntlDateFormatter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -220,8 +223,8 @@ class Newsletter extends Mailer
     protected function getDateString() : string
     {
         return
-            (new \IntlDateFormatter('it_IT', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, NULL, NULL, "dd MMMM y"))
-                ->format( new \DateTime() );
+            (new IntlDateFormatter('it_IT', IntlDateFormatter::NONE, IntlDateFormatter::NONE, NULL, NULL, "dd MMMM y"))
+                ->format( new DateTime() );
     }
 
 
@@ -261,7 +264,7 @@ class Newsletter extends Mailer
                 ->setFormat(Article::FORMAT_ARTICLE)
                 ->setBody($articleBody)
                 ->setPublishedAt(
-                    ( new \DateTime() )
+                    ( new DateTime() )
                         ->modify('+1 day')
                         ->setTime(0, 0)
                 )
@@ -284,14 +287,14 @@ class Newsletter extends Mailer
             $userEntity = $this->factory->createUser()->load($userId)->getEntity();
 
             $opener = $this->getRepositoryOpener()->getByUserOrNew($userEntity);
-            $opener->setUpdatedAt( new \DateTime() );
+            $opener->setUpdatedAt( new DateTime() );
 
             $this->getRepositoryExpiringWarn()->deleteByUserId($userId);
 
             $this->factory->getEntityManager()->persist($opener);
             $this->factory->getEntityManager()->flush();
 
-        } catch (\Exception) { return false; }
+        } catch (Exception) { return false; }
 
         return true;
     }

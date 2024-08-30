@@ -1,6 +1,8 @@
 <?php
 namespace App\Twig;
 
+use DateTime;
+use NumberFormatter;
 use Twig\Extension\RuntimeExtensionInterface;
 
 
@@ -8,17 +10,17 @@ class TliRuntime implements RuntimeExtensionInterface
 {
     public function friendlyNum(string|float|int $input): string
     {
-        return (new \NumberFormatter('it_IT', \NumberFormatter::DECIMAL))->format($input);
+        return (new NumberFormatter('it_IT', NumberFormatter::DECIMAL))->format($input);
     }
 
 
-    public function friendlyDate(\DateTime $date = null): ?string
+    public function friendlyDate(DateTime $date = null): ?string
     {
         if( empty($date) ) {
             return null;
         }
 
-        $oNow = new \DateTime();
+        $oNow = new DateTime();
         $secDiff = $oNow->getTimestamp() - $date->getTimestamp();
         $oneDayInSec = 3600 * 24;
 

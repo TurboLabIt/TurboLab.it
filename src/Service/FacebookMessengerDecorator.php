@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 
+use Exception;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\HttpClient\HttpClient;
 use TurboLabIt\Messengers\FacebookMessenger;
@@ -19,7 +21,7 @@ class FacebookMessengerDecorator extends FacebookMessenger
     {
         $this->inner = $inner;
         $this->arrConfig =
-            (new \ReflectionClass($this->inner))
+            (new ReflectionClass($this->inner))
                 ->getProperty('arrConfig')->getValue($inner);
 
         $this->pageId = $this->arrConfig["Facebook"]["page"]["id"];
@@ -46,11 +48,11 @@ class FacebookMessengerDecorator extends FacebookMessenger
         $oJson = json_decode($content);
 
         if( empty($oJson) ) {
-            throw new \Exception("JSON response decoding error");
+            throw new Exception("JSON response decoding error");
         }
 
         if( !empty($oJson->error) ) {
-            throw new \Exception($oJson->error->message);
+            throw new Exception($oJson->error->message);
         }
 
         return $oJson->id;

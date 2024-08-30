@@ -12,6 +12,8 @@ use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
 use App\Trait\ViewableServiceTrait;
+use DateTime;
+use DateTimeInterface;
 use IntlDateFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -87,7 +89,7 @@ class Article extends BaseCmsService
     }
 
 
-    public function getPublishedAt() : ?\DateTimeInterface { return $this->entity->getPublishedAt(); }
+    public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
 
     public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
     //</editor-fold>
@@ -321,7 +323,7 @@ class Article extends BaseCmsService
     {
         $title      = $this->getTitleFormatted();
         $updatedAt  = $this->getUpdatedAt();
-        $dateLimit  = (new \DateTime())->modify('-2 months');
+        $dateLimit  = (new DateTime())->modify('-2 months');
 
         if( !$this->isPublished() || $updatedAt < $dateLimit) {
             return $title;

@@ -26,18 +26,18 @@ class Article extends BaseCmsEntity
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
     protected ?Image $spotlight = null;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleImage::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $files;
 
 

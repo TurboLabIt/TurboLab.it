@@ -2,6 +2,7 @@
 namespace App\Trait;
 
 use App\Exception\InvalidEnumException;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,7 +15,7 @@ trait PublishableEntityTrait
     protected ?int $publishingStatus = 0; // default to PUBLISHING_STATUS_DRAFT;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    protected ?\DateTimeInterface $publishedAt = null;
+    protected ?DateTimeInterface $publishedAt = null;
 
     public function publishingStatusCountOneView() : bool
     {
@@ -44,9 +45,9 @@ trait PublishableEntityTrait
         return $this;
     }
 
-    public function getPublishedAt(): ?\DateTimeInterface { return $this->publishedAt; }
+    public function getPublishedAt(): ?DateTimeInterface { return $this->publishedAt; }
 
-    public function setPublishedAt(?\DateTimeInterface $publishedAt): static
+    public function setPublishedAt(?DateTimeInterface $publishedAt): static
     {
         $this->publishedAt = $publishedAt;
         return $this;

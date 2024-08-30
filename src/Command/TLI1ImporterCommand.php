@@ -23,8 +23,10 @@ use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\HtmlProcessor;
 use App\Service\Factory;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use PDO;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,7 +46,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected bool $allowDryRunOpt = true;
 
-    protected \PDO $dbTli1;
+    protected PDO $dbTli1;
 
     protected array $arrAuthorsByContributionType = [];
 
@@ -153,12 +155,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $dsn = "mysql:host=" . $arrDbConfig["host"] . ";dbname=" . $this->arrConfig["tli1DbName"] . ";charset=" . $arrDbConfig["charset"];
 
         $options = [
-            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            \PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
-        $this->dbTli1 = new \PDO($dsn, $arrDbConfig["user"], $arrDbConfig["password"], $options);
+        $this->dbTli1 = new PDO($dsn, $arrDbConfig["user"], $arrDbConfig["password"], $options);
 
         return $this;
     }
@@ -184,7 +186,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             SELECT id_utente, id_tag AS id_opera, 'tag' AS tipo, data_creazione AS data FROM tag
             ORDER BY data ASC
         ");
-        $arrOldAuthors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $arrOldAuthors = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $this->fxOK( "OK, " . count($arrOldAuthors) . " author associations loaded!");
 
         $this->io->text("Building the authors data structure...");
@@ -193,7 +195,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $userId         = $arrOldAuthor["id_utente"];
             $contributionId = $arrOldAuthor["id_opera"];
             $contribType    = $arrOldAuthor["tipo"];
-            $createdAt      = \DateTime::createFromFormat('YmdHis', $arrOldAuthor["data"]);
+            $createdAt      = DateTime::createFromFormat('YmdHis', $arrOldAuthor["data"]);
 
             if( empty($createdAt) ) {
                 $this->endWithError("This author assignment has no date: " . print_r($arrOldAuthor, true) );
@@ -249,7 +251,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             pagine.id_contenuto IS NULL OR pagine.id_contenuto = '' OR
             contenuti.id_contenuto IS NULL OR contenuti.id_contenuto = ''
         ");
-        $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $arrInvalidPages = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
             $this->endWithError("There are dangling pages on TLI1: " . print_r($arrInvalidPages, true) );
         }
@@ -267,7 +269,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ORDER BY id_contenuto,id_pagina
         ");
 
-        $arrInvalidPages = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $arrInvalidPages = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         if( !empty($arrInvalidPages) ) {
 
             $this->endWithError(
@@ -311,7 +313,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ON contenuti.id_contenuto = pagine.id_contenuto
             ORDER BY id_contenuto ASC
         ");
-        $arrTli1Articles = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $arrTli1Articles = $stmt->fetchAll(PDO::FETCH_GROUP| PDO::FETCH_UNIQUE| PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Articles) . " items loaded");
 
         $this->io->text("Loading TLI2 articles...");
@@ -365,8 +367,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $createdAt  = $createdAt ?: $updatedAt ?: $publishedAt;
         $updatedAt  = $updatedAt ?: $publishedAt ?: $createdAt;
-        $createdAt  = \DateTime::createFromFormat('YmdHis', $createdAt);
-        $updatedAt  = \DateTime::createFromFormat('YmdHis', $updatedAt);
+        $createdAt  = DateTime::createFromFormat('YmdHis', $createdAt);
+        $updatedAt  = DateTime::createFromFormat('YmdHis', $updatedAt);
 
         if( $rating == -1 ) {
 
@@ -375,7 +377,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         } else if( !empty($publishedAt) ) {
 
-            $publishedAt    = \DateTime::createFromFormat('YmdHis', $publishedAt);
+            $publishedAt    = DateTime::createFromFormat('YmdHis', $publishedAt);
             $pubStatus      = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
         }
 
@@ -443,7 +445,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 images...");
         $stmt = $this->dbTli1->query("SELECT id_immagine AS pdokey, immagini.* FROM immagini ORDER BY id_immagine ASC");
-        $arrTli1Images = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $arrTli1Images = $stmt->fetchAll(PDO::FETCH_GROUP| PDO::FETCH_UNIQUE| PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Images) . " items loaded");
 
         $this->io->text("Loading TLI2 images...");
@@ -466,7 +468,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         $title      = $this->convertValueFromTli1ToTli2($arrImage["titolo"], true);
         $format     = mb_strtolower($arrImage["formato"]);
-        $createdAt  = \DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
+        $createdAt  = DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark  = match ($arrImage["watermarked"]) {
             0 => ImageEntity::WATERMARK_DISABLED,
             1 => ImageEntity::WATERMARK_BOTTOM_LEFT
@@ -592,7 +594,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ORDER BY
               id_tag ASC
         ");
-        $arrTli1Tags = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $arrTli1Tags = $stmt->fetchAll(PDO::FETCH_GROUP| PDO::FETCH_UNIQUE| PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Tags) . " items loaded");
 
         $this->io->text("Loading TLI2 tags...");
@@ -626,7 +628,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $ranking    = (int)$arrTag["peso"];
-        $createdAt = \DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
+        $createdAt = DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
         /** @var TagEntity $entityTli2Tag */
         $entityTli2Tag =
@@ -686,7 +688,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 tag associations...");
         $stmt = $this->dbTli1->query("SELECT * FROM etichette WHERE tipo = 'contenuto' ORDER BY data_creazione ASC");
-        $arrTli1TagAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $arrTli1TagAssoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1TagAssoc) . " items loaded");
 
         $this->io->text("Processing every TLI1 tag association...");
@@ -724,7 +726,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             );
         }
 
-        $createdAt  = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
+        $createdAt  = DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
 
         $articleTag =
             (new ArticleTag())
@@ -762,7 +764,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             ORDER BY
               file.id_file ASC
         ");
-        $arrTli1Files = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $arrTli1Files = $stmt->fetchAll(PDO::FETCH_GROUP| PDO::FETCH_UNIQUE| PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Files) . " items loaded");
 
         $this->io->text("Loading TLI2 files...");
@@ -783,7 +785,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $views      = (int)$arrFile["visite"];
         $url        = $arrFile["url"] ?: null;
         $format     = $arrFile["formato"] ?: null;
-        $createdAt = \DateTime::createFromFormat('YmdHis', $arrFile["data_creazione"]);
+        $createdAt = DateTime::createFromFormat('YmdHis', $arrFile["data_creazione"]);
 
         if( empty($createdAt) ) {
             $this->endWithError("This File has no date: " . print_r($arrFile, true) );
@@ -876,7 +878,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 file associations...");
         $stmt = $this->dbTli1->query("SELECT * FROM allegati WHERE tipo = 'contenuto' ORDER BY data ASC");
-        $arrTli1FileAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $arrTli1FileAssoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1FileAssoc) . " items loaded");
 
         $this->io->text("Processing every TLI1 file association...");
@@ -900,7 +902,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $this->endWithError("No related file: " . print_r($arrFileAssoc, true) );
         }
 
-        $createdAt = \DateTime::createFromFormat('YmdHis', $arrFileAssoc["data"]) ?: $file->getCreatedAt();
+        $createdAt = DateTime::createFromFormat('YmdHis', $arrFileAssoc["data"]) ?: $file->getCreatedAt();
         if ( empty($createdAt) ) {
             $this->endWithError("Invalid attach file date: " . print_r($arrFileAssoc, true) );
         }
@@ -929,7 +931,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 badges...");
         $stmt = $this->dbTli1->query("SELECT * FROM bollini");
-        $arrTli1Badges = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+        $arrTli1Badges = $stmt->fetchAll(PDO::FETCH_GROUP| PDO::FETCH_UNIQUE| PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1Badges) . " items loaded");
 
         $this->io->text("Loading TLI2 badges...");
@@ -946,7 +948,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1Badge(int $badgeId, array $arrBadge)
     {
         // we don't have any dates for the badge itself => using static value, updating later with the date from the badge assoc
-        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', '2014-03-13 13:12:13');
+        $createdAt = DateTime::createFromFormat('Y-m-d H:i:s', '2014-03-13 13:12:13');
 
         /** @var BadgeEntity $entityTli2Badge */
         $entityTli2Badge =
@@ -975,7 +977,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $this->io->text("Loading TLI1 tag-badge associations...");
         $stmt = $this->dbTli1->query("SELECT * FROM bollini_assegnati WHERE tipo = 'tag' ORDER BY data_creazione ASC");
-        $arrTli1TagAssoc = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $arrTli1TagAssoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $this->fxOK( count($arrTli1TagAssoc) . " items loaded");
 
         $this->io->text("Processing every TLI1 tag-badge association...");
@@ -1001,7 +1003,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
 
-        $createdAt = \DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
+        $createdAt = DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
         if ( empty($createdAt) ) {
             $this->endWithError("No date on this badge assoc: " . print_r($arrTagAssoc, true) );
         }
@@ -1025,7 +1027,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : mixed
+    protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : ?string
     {
         if( !is_string($value) ) {
             return $value;

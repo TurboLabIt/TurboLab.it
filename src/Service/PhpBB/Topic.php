@@ -5,6 +5,8 @@ use App\Entity\PhpBB\Topic as TopicEntity;
 use App\Repository\PhpBB\TopicRepository;
 use App\Service\BaseServiceEntity;
 use App\Service\Factory;
+use DateTime;
+use DateTimeZone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -48,10 +50,10 @@ class Topic extends BaseServiceEntity
         { return $this->factory->getForumUrlGenerator()->generateCommentsAjaxLoadingUrl($this, $urlType); }
     //</editor-fold>
 
-    public function getLastPostDateTime() : \DateTime
+    public function getLastPostDateTime() : DateTime
     {
-        $oDateTime = \DateTime::createFromFormat('U', $this->entity->getLastPostTime());
-        $oDateTime->setTimezone(new \DateTimeZone('Europe/Rome'));
+        $oDateTime = DateTime::createFromFormat('U', $this->entity->getLastPostTime());
+        $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
         return $oDateTime;
     }
 

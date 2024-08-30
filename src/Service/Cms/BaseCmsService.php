@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Service\BaseServiceEntity;
+use DateTime;
 
 
 abstract class BaseCmsService extends BaseServiceEntity
@@ -33,5 +34,5 @@ abstract class BaseCmsService extends BaseServiceEntity
         return $this->setEntity($entity);
     }
 
-    public function getUpdatedAt() : ?\DateTime { return $this->entity->getUpdatedAt(); }
+    public function getUpdatedAt() : ?DateTime { return $this->entity->getUpdatedAt(); }
 }

@@ -1,4 +1,6 @@
 <?php
 namespace App\Exception;
 
-class FileLogicException extends \LogicException {}
+use LogicException;
+
+class FileLogicException extends LogicException {}

@@ -21,7 +21,7 @@ class Badge extends BaseCmsEntity
     #[ORM\Column]
     protected bool $userSelectable = true;
 
-    #[ORM\OneToMany(mappedBy: 'badge', targetEntity: TagBadge::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'badge', targetEntity: TagBadge::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $tags;
 
 

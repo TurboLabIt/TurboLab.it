@@ -2,6 +2,9 @@
 namespace App\Service;
 
 use App\Exception\YouTubeException;
+use DateTime;
+use DateTimeZone;
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -61,17 +64,17 @@ class YouTubeChannelApi
             $txtResponse= $response->getContent(false);
             $statusCode = $response->getStatusCode() ?? 0;
             if( $statusCode != Response::HTTP_OK ) {
-                throw new \Exception($txtResponse, $statusCode);
+                throw new Exception($txtResponse, $statusCode);
             }
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
             throw new YouTubeException($ex->getCode(), $ex->getMessage());
         }
 
         $objResponse = json_decode($txtResponse);
 
-        $utcTimeZone    = new \DateTimeZone('UTC');
-        $currentTimeZone= new \DateTimeZone(date_default_timezone_get());
+        $utcTimeZone    = new DateTimeZone('UTC');
+        $currentTimeZone= new DateTimeZone(date_default_timezone_get());
 
         $arrVideos = [];
         foreach($objResponse->items as $oneVideoItem) {
@@ -85,7 +88,7 @@ class YouTubeChannelApi
                 "abstract"      => trim($oneVideoItem->snippet->description),
                 "thumbnails"    => $oneVideoItem->snippet->thumbnails,
                 "publishedAt"   =>
-                    \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $oneVideoItem->snippet->publishedAt, $utcTimeZone)
+                    DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $oneVideoItem->snippet->publishedAt, $utcTimeZone)
                         ->setTimezone($currentTimeZone)
             ];
         }

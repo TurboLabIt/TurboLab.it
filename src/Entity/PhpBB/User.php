@@ -59,22 +59,22 @@ class User extends BaseEntity implements UserInterface
     //#[ORM\Column]
     protected array $roles = [];
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $articles;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ImageAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TagAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TagAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $articlesTagged;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FileAuthor::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FileAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $files;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $articlesAttachedToFiles;
 
 

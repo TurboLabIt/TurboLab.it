@@ -3,6 +3,9 @@ namespace App\Command;
 
 use App\Service\Cms\Article;
 use App\ServiceCollection\Cms\ArticleCollection;
+use DateTime;
+use DateTimeZone;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -29,7 +32,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     const string CLI_OPT_CRON       = 'cron';
     const string CLI_OPT_SERVICES   = 'service';
 
-    protected \DateTime $oNow;
+    protected DateTime $oNow;
 
 
     public function __construct(
@@ -40,7 +43,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     )
     {
         parent::__construct();
-        $this->oNow = new \DateTime();
+        $this->oNow = new DateTime();
     }
 
 
@@ -53,7 +56,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
                 'Set if the command was started by a cron job'
             )
             ->addOption(
-                static::CLI_OPT_SERVICES, null, 
+                static::CLI_OPT_SERVICES, null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Limit to these services'
             );
@@ -74,7 +77,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxWarning("The execution should stop due to quiet hours. Ignoring in non-prod...");
         }
-        
+
 
         $this->loadArticles();
 
@@ -87,7 +90,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             }
 
             $this->fxWarning(
-                "The execution should stop due to no-articles. " . 
+                "The execution should stop due to no-articles. " .
                 "Ignoring in in non-prod. Loading some random articles..."
             );
 
@@ -166,8 +169,8 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxInfo("🌅 This is the very first execution of the day");
 
-            $defaultTimeZone = new \DateTimeZone(date_default_timezone_get());
-            $oLastMidnight  = \DateTime::createFromFormat('U', (string)strtotime('midnight'))->setTimezone($defaultTimeZone);
+            $defaultTimeZone = new DateTimeZone(date_default_timezone_get());
+            $oLastMidnight  = DateTime::createFromFormat('U', (string)strtotime('midnight'))->setTimezone($defaultTimeZone);
             $maxMinutes = ( $this->oNow->format('U') - $oLastMidnight->format('U') ) / 60;
             $maxMinutes = ceil($maxMinutes);
 
@@ -204,7 +207,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $url = $this->telegram->buildNewMessageUrl($result);
             $this->io->writeln("<info>$url</info>");
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
             $this->sendAlert("Telegram", $ex, $articleTitle, $articleUrl);
@@ -223,7 +226,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $url = $this->facebook->buildMessageUrl($postId);
             $this->io->writeln("<info>$url</info>");
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
             $this->sendAlert("Facebook", $ex, $articleTitle, $articleUrl);
@@ -244,7 +247,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $url = $this->twitter->buildMessageUrl($postId);
             $this->io->writeln("<info>$url</info>");
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
             $this->sendAlert("Twitter", $ex, $articleTitle, $articleUrl);
@@ -254,7 +257,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function sendAlert(string $serviceName, \Exception $ex, string $articleTitle, string $articleUrl) : static
+    protected function sendAlert(string $serviceName, Exception $ex, string $articleTitle, string $articleUrl) : static
     {
         $message =
             "<b>ShareOnSocial error on $serviceName</b>" . PHP_EOL .

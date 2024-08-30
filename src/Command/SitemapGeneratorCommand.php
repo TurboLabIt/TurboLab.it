@@ -10,6 +10,11 @@ use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
+use DateTime;
+use DateTimeZone;
+use DOMDocument;
+use Exception;
+use FilesystemIterator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -144,7 +149,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = trim($url, "/");
         $this->arrSections["site"][0][] = [
             "url"           => $url,
-            "lastmod"       => (new \DateTime())->format(DATE_W3C),
+            "lastmod"       => (new DateTime())->format(DATE_W3C),
             "changefreq"    => 'hourly',
             "priority"      => 0.9
         ];
@@ -159,7 +164,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = $this->symfonyUrlGenerator->generate('app_news', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->arrSections["site"][0][] = [
             "url"           => $url,
-            "lastmod"       => (new \DateTime())->format(DATE_W3C),
+            "lastmod"       => (new DateTime())->format(DATE_W3C),
             "changefreq"    => 'hourly',
             "priority"      => 0.8
         ];
@@ -179,7 +184,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $currentFileItem    = count($this->arrSections["site"][$lastSiteFileIndex]);
         $currentFileIndex   = $lastSiteFileIndex;
 
-        $oNow = new \DateTime();
+        $oNow = new DateTime();
 
         /** @var Tag $tag */
         foreach($this->tagCollection as $tag) {
@@ -212,7 +217,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $currentFileItem    = count($this->arrSections["site"][0]);
         $currentFileIndex   = 0;
 
-        $oNow = new \DateTime();
+        $oNow = new DateTime();
 
        /** @var Article $article */
         foreach($this->articleCollection as $article) {
@@ -241,9 +246,9 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildScanFrequencyFromDateTime(\DateTime $date) : string
+    protected function buildScanFrequencyFromDateTime(DateTime $date) : string
     {
-        $diff       = (new \DateTime())->format('U') - $date->getTimestamp();
+        $diff       = (new DateTime())->format('U') - $date->getTimestamp();
         $diffDays   = round($diff / 86400);
 
         if( $diffDays < 7 ) {
@@ -264,7 +269,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = $this->forumUrlGenerator->generateHomeUrl();
         $this->arrSections["forum"][0][] = [
             "url"       => $url,
-            "lastmod"   => (new \DateTime())->format(DATE_W3C),
+            "lastmod"   => (new DateTime())->format(DATE_W3C),
             "changefreq"=> 'hourly'
         ];
 
@@ -278,8 +283,8 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         /** @var Forum $forum */
         foreach($arrForums as $forum) {
 
-            $oDateTime = \DateTime::createFromFormat('U', $forum->getLastPostTime());
-            $oDateTime->setTimezone(new \DateTimeZone('Europe/Rome'));
+            $oDateTime = DateTime::createFromFormat('U', $forum->getLastPostTime());
+            $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
 
             $this->arrSections["forum"][0][] = [
                 "url"       => $this->forumUrlGenerator->generateForumUrlFromId($forum->getId()),
@@ -338,7 +343,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
                     "Items" => $arrData
                 ]);
 
-                $XMLDoc = new \DOMDocument();
+                $XMLDoc = new DOMDocument();
                 $XMLDoc->preserveWhiteSpace = false;
                 $XMLDoc->formatOutput = true;
                 $XMLDoc->loadXML($txtXml);
@@ -387,7 +392,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
             $arrItems[] = [
                 "url"       => $url,
-                "lastmod"   => (new \DateTime())->format(DATE_W3C)
+                "lastmod"   => (new DateTime())->format(DATE_W3C)
             ];
         }
 
@@ -399,7 +404,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
             "Items" => $arrItems
         ]);
 
-        $XMLDoc = new \DOMDocument();
+        $XMLDoc = new DOMDocument();
         $XMLDoc->preserveWhiteSpace = false;
         $XMLDoc->formatOutput = true;
         $XMLDoc->loadXML($txtXml);
@@ -433,8 +438,8 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $this->fxTitle("Move the new directory to the final, public path...");
 
         // the new dir must exist and have some files in it
-        if( !is_dir($this->outDir) || !(new \FilesystemIterator($this->outDir))->valid() ) {
-            throw new \Exception("##" . $this->outDir . "## must exist and have some XML in it!");
+        if( !is_dir($this->outDir) || !(new FilesystemIterator($this->outDir))->valid() ) {
+            throw new Exception("##" . $this->outDir . "## must exist and have some XML in it!");
         }
 
         if( $this->isNotDryRun() && is_dir($this->outDirFinal) ) {

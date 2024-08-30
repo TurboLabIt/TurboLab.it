@@ -6,6 +6,7 @@ use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -169,7 +170,7 @@ class ArticleRepository extends BaseRepository
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
                 ->andWhere('t.updatedAt >= :dateLimit')
-                    ->setParameter('dateLimit', (new \DateTime())->modify('-45 days') )
+                    ->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
                 ->getQuery()
                 ->getResult();
     }
@@ -200,13 +201,13 @@ class ArticleRepository extends BaseRepository
 
     public function findLatestForSocialSharing(int $maxPublishedMinutes) : array
     {
-        $lowLimit   = (new \DateTime())->modify('-' . $maxPublishedMinutes . " minutes");
+        $lowLimit   = (new DateTime())->modify('-' . $maxPublishedMinutes . " minutes");
         // reset the time to zero seconds
         $lowHour    = (int)$lowLimit->format('G');
         $lowMinute  = (int)$lowLimit->format('i');
         $lowLimit->setTime($lowHour, $lowMinute);
 
-        $highLimit  = (new \DateTime());
+        $highLimit  = (new DateTime());
         // reset the time to zero seconds
         $highHour   = (int)$highLimit->format('G');
         $highMinute = (int)$highLimit->format('i');
@@ -281,9 +282,9 @@ class ArticleRepository extends BaseRepository
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('t.updatedAt >= :oneYearAgo')
-                    ->setParameter('oneYearAgo', new \DateTime('-1 year'))
+                    ->setParameter('oneYearAgo', new DateTime('-1 year'))
                 ->andWhere('t.updatedAt <= :now')
-                    ->setParameter('now', new \DateTime())
+                    ->setParameter('now', new DateTime())
                 ->orderBy('t.views', 'DESC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($numItems)

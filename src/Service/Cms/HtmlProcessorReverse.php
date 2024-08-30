@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use DOMDocument;
+use DOMElement;
 
 
 class HtmlProcessorReverse extends HtmlProcessorBase
@@ -34,7 +35,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
         $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('a');
 
-        /** @var \DOMElement $a */
+        /** @var DOMElement $a */
         foreach($arrNodes as $a) {
 
             $arrImgs = $a->getElementsByTagName('img');
@@ -64,7 +65,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
         $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('img');
 
-        /** @var \DOMElement $img */
+        /** @var DOMElement $img */
         foreach($arrNodes as $img) {
 
             $src = $img->getAttribute('src');
@@ -127,7 +128,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
         $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('a');
 
-        /** @var \DOMElement $a */
+        /** @var DOMElement $a */
         foreach($arrNodes as $a) {
 
             $safeLinkNode = $domDoc->createElement('a');
