@@ -21,23 +21,22 @@ class YouTubeChannelApi
     public function getLatestVideos(int $results = 10): array
     {
         $cacheKey   = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
-        $value = $this->cache->get($cacheKey, function (CacheItem $item) use($results) {
+        return
+            $this->cache->get($cacheKey, function (CacheItem $item) use($results) {
 
-            $response = $this->getLatestVideosUncached($results);
+                $response = $this->getLatestVideosUncached($results);
 
-            if( empty($response) ) {
+                if( empty($response) ) {
 
-                $item->expiresAfter(1);
+                    $item->expiresAfter(1);
 
-            } else {
+                } else {
 
-                $item->expiresAfter(static::CACHE_MINUTES * 60);
-            }
+                    $item->expiresAfter(static::CACHE_MINUTES * 60);
+                }
 
-            return $response;
-        });
-
-        return $value;
+                return $response;
+            });
     }
 
 

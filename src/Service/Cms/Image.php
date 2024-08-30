@@ -122,8 +122,7 @@ class Image extends BaseCmsService
             throw new ImageLogicException("Cannot get the name of an Image without format");
         }
 
-        $imageFileName = implode('.', [$imageId, $format]);
-        return $imageFileName;
+        return implode('.', [$imageId, $format]);
     }
 
 
@@ -145,16 +144,14 @@ class Image extends BaseCmsService
             throw new ImageLogicException("Cannot get the FolderMod of an Image without ID");
         }
 
-        $imageFolderMod = (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
-        return $imageFolderMod;
+        return (int)ceil($imageId / static::HOW_MANY_FILES_PER_FOLDER);
     }
 
 
     public function getBuiltFileName() : string
     {
         $fileName = $this->getOriginalFileName();
-        $fileName = pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
-        return $fileName;
+        return pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
     }
 
 
@@ -165,12 +162,10 @@ class Image extends BaseCmsService
         $imageFolderMod     = $this->getFolderMod();
         $fileName           = $this->getBuiltFileName();
         $relativeFilePath   = static::UPLOADED_IMAGES_FOLDER_NAME . "/cache/$size/$imageFolderMod/$fileName";
-        $imageFilePath      =
+        return
             $createBuildFolder
                 ? $this->projectDir->createVarDirFromFilePath($relativeFilePath)
                 : $this->projectDir->getVarDirFromFilePath($relativeFilePath);
-
-        return $imageFilePath;
     }
 
 
@@ -324,8 +319,7 @@ class Image extends BaseCmsService
             }
         }
 
-        $point = new Point($x, $y);
-        return $point;
+        return new Point($x, $y);
     }
 
 
@@ -337,13 +331,11 @@ class Image extends BaseCmsService
 
     public function getXSendPath(string $size) : string
     {
-        $xSendPath =
+        return
             DIRECTORY_SEPARATOR .
             implode(DIRECTORY_SEPARATOR, [
                 static::UPLOADED_ASSET_XSEND_PATH, 'images', 'cache', $size, $this->getFolderMod(), $this->getBuiltFileName()
             ]);
-
-        return $xSendPath;
     }
 
 
@@ -356,8 +348,7 @@ class Image extends BaseCmsService
         }
 
         $filePath   = $this->getBuiltFilePath($size, false);
-        $data       = file_get_contents($filePath);
-        return $data;
+        return file_get_contents($filePath);
     }
 
 

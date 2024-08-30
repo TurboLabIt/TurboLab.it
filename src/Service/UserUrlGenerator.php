@@ -24,22 +24,20 @@ class UserUrlGenerator extends UrlGenerator
             $arrUrlParams["page"] = $page;
         }
 
-        $authorUrl = $this->symfonyUrlGenerator->generate('app_author', $arrUrlParams, $urlType);
-        return $authorUrl;
+        return $this->symfonyUrlGenerator->generate('app_author', $arrUrlParams, $urlType);
     }
 
 
     public function generateForumProfileUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : ?string
     {
         $userId = $user->getId();
-        $url    = $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/memberlist.php?mode=viewprofile&u=$userId";
-        return $url;
+        return $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . "forum/memberlist.php?mode=viewprofile&u=$userId";
     }
 
 
     public function generateNewsletterUnsubscribeUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $unsubscribeUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_newsletter_unsubscribe', [
                 "encryptedSubscriberData" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
@@ -47,14 +45,12 @@ class UserUrlGenerator extends UrlGenerator
                     "scope"     => "newsletterUnsubscribeUrl"
                 ])
             ], $urlType);
-
-        return $unsubscribeUrl;
     }
 
 
     public function generateNewsletterSubscribeUrl(User $user, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $subscribeUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_newsletter_subscribe', [
                 "encryptedSubscriberData" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
@@ -62,8 +58,6 @@ class UserUrlGenerator extends UrlGenerator
                     "scope"     => "newsletterSubscribeUrl"
                 ])
             ], $urlType);
-
-        return $subscribeUrl;
     }
 
 
@@ -75,7 +69,7 @@ class UserUrlGenerator extends UrlGenerator
             $redirectToUrl = urlencode($redirectToUrl);
         }
 
-        $subscribeUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_newsletter_opener', [
                 "opener" => $this->encryptor->encrypt([
                     "userId"    => $user->getId(),
@@ -83,8 +77,6 @@ class UserUrlGenerator extends UrlGenerator
                     "scope"     => "newsletterOpenerUrl"
                 ])
             ], $urlType) . "&url=" . $redirectToUrl;
-
-        return $subscribeUrl;
     }
 
 

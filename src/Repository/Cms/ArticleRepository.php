@@ -92,8 +92,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -133,8 +132,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -162,8 +160,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -207,13 +204,13 @@ class ArticleRepository extends BaseRepository
         // reset the time to zero seconds
         $lowHour    = (int)$lowLimit->format('G');
         $lowMinute  = (int)$lowLimit->format('i');
-        $lowLimit->setTime($lowHour, $lowMinute, 0);
+        $lowLimit->setTime($lowHour, $lowMinute);
 
         $highLimit  = (new \DateTime());
         // reset the time to zero seconds
         $highHour   = (int)$highLimit->format('G');
         $highMinute = (int)$highLimit->format('i');
-        $highLimit->setTime($highHour, $highMinute, 0);
+        $highLimit->setTime($highHour, $highMinute);
 
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
@@ -241,8 +238,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -272,8 +268,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($num)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -294,8 +289,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($numItems)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -311,8 +305,7 @@ class ArticleRepository extends BaseRepository
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
 
-        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        return $paginator;
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 
@@ -362,7 +355,7 @@ class ArticleRepository extends BaseRepository
             $sqlQuery = "
                 SELECT id FROM ". $this->getTableName() . "
                 WHERE
-                    publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " 
+                    publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . "
                 ORDER BY
                     RAND() LIMIT 1
             ";
@@ -377,8 +370,8 @@ class ArticleRepository extends BaseRepository
         }
 
         $sqlQueryTemplate = "
-            (SELECT id FROM ". $this->getTableName() . " WHERE 
-                publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND 
+            (SELECT id FROM ". $this->getTableName() . " WHERE
+                publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
                 format = ##FORMAT## ORDER BY RAND() LIMIT ##NUM##)
         ";
 
@@ -389,10 +382,10 @@ class ArticleRepository extends BaseRepository
             "##FORMAT##"=> Article::FORMAT_NEWS,
             "##NUM##"   => (int)floor( $num / 2 )
         ]];
-        
+
         $sqlQuery = '';
         for($i=0; $i < 2; $i++) {
-            
+
             $arrQueryParams = $arrParams[$i];
             $sqlQuery .= str_replace( array_keys($arrQueryParams), $arrQueryParams, $sqlQueryTemplate);
 

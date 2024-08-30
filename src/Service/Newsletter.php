@@ -219,11 +219,9 @@ class Newsletter extends Mailer
 
     protected function getDateString() : string
     {
-        $text =
+        return
             (new \IntlDateFormatter('it_IT', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, NULL, NULL, "dd MMMM y"))
                 ->format( new \DateTime() );
-
-        return $text;
     }
 
 

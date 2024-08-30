@@ -18,7 +18,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
             return $body;
         }
 
-        $processedText =
+        return
             $this
                 ->removeLinksFromImages($domDoc)
                 ->imagesFromUrlToPlaceholder($domDoc)
@@ -26,8 +26,6 @@ class HtmlProcessorReverse extends HtmlProcessorBase
                 ->extractAbstract($domDoc)
                 //->YouTubeIframesFromUrlToPlaceholder($domDoc)
                 ->renderDomDocAsHTML($domDoc);
-
-        return $processedText;
     }
 
 

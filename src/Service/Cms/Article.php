@@ -400,13 +400,11 @@ class Article extends BaseCmsService
 
     public function getFeedGuId() : string
     {
-        $guid =
+        return
             implode(',', array_filter([
                 $this->entity->getId(),  $this->entity->getPublishingStatus(),
                 $this->getPublishedAt()?->format('Y-m-d-H:i:s')
             ]));
-
-        return $guid;
     }
 
 

@@ -19,15 +19,13 @@ class HtmlProcessor extends HtmlProcessorBase
             return $text;
         }
 
-        $processedText =
+        return
             $this
                 ->imagesFromPlaceholderToUrl($domDoc, $article)
                 ->articleLinksFromPlaceholderToUrl($domDoc)
                 ->tagLinksFromPlaceholderToUrl($domDoc)
                 ->YouTubeIframesFromPlaceholderToUrl($domDoc)
                 ->renderDomDocAsHTML($domDoc);
-
-        return $processedText;
     }
 
 

@@ -8,26 +8,22 @@ class ImageUrlGenerator extends UrlGenerator
 {
     public function generateUrl(Image $image, Article $article, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $imageUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_image', [
                 "size"              => $size,
                 "imageFolderMod"    => $image->getFolderMod(),
                 "slugDashId"        => $article->getSlug() . "-" . $image->getId(),
                 "format"            => Image::getClientSupportedBestFormat(),
             ], $urlType);
-
-        return $imageUrl;
     }
 
 
     public function generateShortUrl(Image $image, string $size = Image::SIZE_MAX, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $imageUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_image_shorturl', [
                 "id"    => $image->getId(),
                 "size"  => $size
             ], $urlType);
-
-        return $imageUrl;
     }
 }

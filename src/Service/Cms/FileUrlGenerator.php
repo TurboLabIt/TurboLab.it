@@ -8,12 +8,10 @@ class FileUrlGenerator extends UrlGenerator
 {
     public function generateUrl(File $file, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $fileUrl =
+        return
             $this->symfonyUrlGenerator->generate('app_file', [
                 "fileId" => $file->getId()
             ], $urlType);
-
-        return $fileUrl;
     }
 
 

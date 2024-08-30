@@ -1043,7 +1043,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $valueConverted = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $valueConverted);
         }
 
-        $valueConverted = $this->htmlProcessor->convertEntitiesToUtf8Chars($valueConverted);
-        return $valueConverted;
+        return $this->htmlProcessor->convertEntitiesToUtf8Chars($valueConverted);
     }
 }

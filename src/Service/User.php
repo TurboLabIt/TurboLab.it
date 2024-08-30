@@ -92,9 +92,7 @@ class User extends BaseServiceEntity
         }
 
         $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
-        $bio = str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
-
-        return $bio;
+        return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
     }
 
 

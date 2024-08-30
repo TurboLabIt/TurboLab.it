@@ -50,7 +50,7 @@ class UserRepository extends BaseRepository
             return null;
         }
 
-        $user =
+        return
             (new User())
                 ->setId( $arrUser["user_id"] )
                 ->setUsername( $arrUser["username"] )
@@ -60,8 +60,6 @@ class UserRepository extends BaseRepository
                 ->setPostNum( $arrUser["user_posts"] )
                 ->setColor( $arrUser["user_colour"] )
                 ->setAllowMassEmail( $arrUser["user_allow_massemail"] );
-
-        return $user;
     }
 
 

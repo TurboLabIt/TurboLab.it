@@ -14,8 +14,7 @@ class TagUrlGenerator extends UrlGenerator
             $arrUrlParams["page"] = $page;
         }
 
-        $tagUrl = $this->symfonyUrlGenerator->generate('app_tag', $arrUrlParams, $urlType);
-        return $tagUrl;
+        return $this->symfonyUrlGenerator->generate('app_tag', $arrUrlParams, $urlType);
     }
 
 

@@ -22,16 +22,14 @@ class UrlGenerator
 
     public function buildSlug(BaseCmsService $service) : string
     {
-        $title      = $service->getTitle();
-        $builtValue = $this->slugify($title);
-        return $builtValue;
+        $title = $service->getTitle();
+        return $this->slugify($title);
     }
 
 
     protected function buildSlugDashIdString(BaseCmsService $service) : string
     {
-        $builtValue = $this->buildSlug($service) . "-" . $service->getId();
-        return $builtValue;
+        return $this->buildSlug($service) . "-" . $service->getId();
     }
 
 
@@ -48,9 +46,7 @@ class UrlGenerator
             'turbolab-it'   => 'turbolab.it'
         ];
 
-        $slug = str_ireplace(array_keys($arrReplaceMap), $arrReplaceMap, $slug);
-
-        return $slug;
+        return str_ireplace(array_keys($arrReplaceMap), $arrReplaceMap, $slug);
     }
 
 
@@ -59,8 +55,7 @@ class UrlGenerator
         $arrUrlComponents = parse_url($urlCandidate);
         $urlDomain = $arrUrlComponents["host"] ?? null;
 
-        $isInternal = empty($urlDomain) || in_array($urlDomain, static::INTERNAL_DOMAINS);
-        return $isInternal;
+        return empty($urlDomain) || in_array($urlDomain, static::INTERNAL_DOMAINS);
     }
 
 

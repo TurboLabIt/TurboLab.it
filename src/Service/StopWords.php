@@ -81,22 +81,19 @@ class StopWords
 
     protected function getSourceFilePath() : string
     {
-        $sourceFilePath = $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt";
-        return $sourceFilePath;
+        return $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt";
     }
 
 
     protected function getWordsCacheFilePath() : string
     {
-        $cacheFilePath = $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
-        return $cacheFilePath;
+        return $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
     }
 
 
     protected function getProcessedStringCacheFilePath() : string
     {
-        $cacheFilePath = $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
-        return $cacheFilePath;
+        return$this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
     }
 
 
@@ -105,9 +102,7 @@ class StopWords
         $symfonyCacheDirPath = $this->projectDir->getVarDir('cache');
 
         // 📚 https://symfony.com/doc/current/components/cache/adapters/php_array_cache_adapter.html
-        $cacheAdapter = new PhpArrayAdapter($cacheFilePath, new FilesystemAdapter(static::FILENAME, 0, $symfonyCacheDirPath));
-
-        return $cacheAdapter;
+        return new PhpArrayAdapter($cacheFilePath, new FilesystemAdapter(static::FILENAME, 0, $symfonyCacheDirPath));
     }
 
 

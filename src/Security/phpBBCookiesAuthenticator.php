@@ -35,14 +35,13 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     public function supports(Request $request): ?bool
     {
         $route = $request->attributes->get('_route');
-        $supported = in_array($route, [
-            'app_article', 'app_file',
-            'app_home', 'app_home_paginated',
-            'app_newsletter', 'app_newsletter_preview',
-            'app_tag'
-        ]);
-
-        return $supported;
+        return
+            in_array($route, [
+                'app_article', 'app_file',
+                'app_home', 'app_home_paginated',
+                'app_newsletter', 'app_newsletter_preview',
+                'app_tag'
+            ]);
     }
 
 

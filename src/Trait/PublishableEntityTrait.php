@@ -18,11 +18,9 @@ trait PublishableEntityTrait
 
     public function publishingStatusCountOneView() : bool
     {
-        $result =
+        return
             $this->publishingStatus > static::PUBLISHING_STATUS_DRAFT &&
             $this->publishingStatus <= static::PUBLISHING_STATUS_PUBLISHED;
-
-        return $result;
     }
 
     public function getStatuses() : array

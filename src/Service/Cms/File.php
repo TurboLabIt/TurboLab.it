@@ -63,8 +63,7 @@ class File extends BaseCmsService
         }
 
         $filePath = $this->getOriginalFilePath();
-        $mime = mime_content_type($filePath);
-        return $mime;
+        return mime_content_type($filePath);
     }
 
 
@@ -131,8 +130,7 @@ class File extends BaseCmsService
             throw new FileLogicException("Cannot get the name of a File without format");
         }
 
-        $fileName = implode('.', [$fileId, $format]);
-        return $fileName;
+        return implode('.', [$fileId, $format]);
     }
 
 
@@ -149,21 +147,18 @@ class File extends BaseCmsService
 
     public function getXSendPath() : string
     {
-        $xSendPath =
+        return
             DIRECTORY_SEPARATOR .
             implode(DIRECTORY_SEPARATOR, [
                 static::UPLOADED_ASSET_XSEND_PATH, 'files', $this->getOriginalFileName()
             ]);
-
-        return $xSendPath;
     }
 
 
     public function getContent() : string
     {
         $filePath   = $this->getOriginalFilePath();
-        $data       = file_get_contents($filePath);
-        return $data;
+        return file_get_contents($filePath);
     }
 
 

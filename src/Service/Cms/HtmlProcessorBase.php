@@ -32,8 +32,7 @@ abstract class HtmlProcessorBase
 
         $processedText = str_ireplace( array_keys($entityToKeep), $entityToKeep, $text);
         $processedText = html_entity_decode($processedText, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
-        $processedText = str_ireplace( $entityToKeep, array_keys($entityToKeep), $processedText);
-        return $processedText;
+        return str_ireplace( $entityToKeep, array_keys($entityToKeep), $processedText);
     }
 
 
@@ -88,7 +87,6 @@ abstract class HtmlProcessorBase
         //$domDoc->formatOutput = true;
 
         $text = $domDoc->saveHTML();
-        $text = $this->convertEntitiesToUtf8Chars($text);
-        return $text;
+        return $this->convertEntitiesToUtf8Chars($text);
     }
 }
