@@ -62,7 +62,7 @@ class YouTubeChannelApi
 
         try {
             $txtResponse= $response->getContent(false);
-            $statusCode = $response->getStatusCode() ?? 0;
+            $statusCode = $response->getStatusCode();
             if( $statusCode != Response::HTTP_OK ) {
                 throw new Exception($txtResponse, $statusCode);
             }

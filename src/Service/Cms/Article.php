@@ -84,14 +84,14 @@ class Article extends BaseCmsService
     public function isPublished() : bool
     {
         return
-            $this->entity?->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
+            $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
             !empty( $this->getPublishedAt() );
     }
 
 
     public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
 
-    public function isNews() : bool { return $this->entity?->getFormat() == ArticleEntity::FORMAT_NEWS; }
+    public function isNews() : bool { return $this->entity->getFormat() == ArticleEntity::FORMAT_NEWS; }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">

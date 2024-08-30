@@ -339,8 +339,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         );
 
         $pubStatus = match( $arrArticle["finito"] ) {
-            0 => ArticleEntity::PUBLISHING_STATUS_DRAFT,
-            1 => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW
+            0       => ArticleEntity::PUBLISHING_STATUS_DRAFT,
+            1       => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW,
+            default => $this->endWithError("Article ##$articleId## has an unexpected status")
         };
 
         $views          = (int)$arrArticle["visite"];
@@ -470,8 +471,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $format     = mb_strtolower($arrImage["formato"]);
         $createdAt  = DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark  = match ($arrImage["watermarked"]) {
-            0 => ImageEntity::WATERMARK_DISABLED,
-            1 => ImageEntity::WATERMARK_BOTTOM_LEFT
+            0       => ImageEntity::WATERMARK_DISABLED,
+            1       => ImageEntity::WATERMARK_BOTTOM_LEFT,
+            default => $this->endWithError("Image ##$imageId## has an unexpected watermark position")
         };
 
         if (!in_array($format, ['png', 'jpg'])) {

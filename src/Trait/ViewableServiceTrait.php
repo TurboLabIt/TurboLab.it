@@ -24,7 +24,7 @@ trait ViewableServiceTrait
             filter_var(
                 $this->clientIpAddress, FILTER_VALIDATE_IP,
                 FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-            ) ?? null;
+            );
 
         if( empty($countableIpAddress) ) {
             return $this;
