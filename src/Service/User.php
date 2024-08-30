@@ -29,7 +29,11 @@ class User extends BaseServiceEntity
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : UserRepository
-        { return $this->factory->getEntityManager()->getRepository(UserEntity::class); }
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(UserEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?UserEntity $entity = null) : static
     {

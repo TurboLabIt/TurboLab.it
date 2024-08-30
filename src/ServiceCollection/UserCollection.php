@@ -9,13 +9,14 @@ use App\Entity\PhpBB\User as UserEntity;
 class UserCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = User::ENTITY_CLASS;
+
     protected array $arrTopEmailProviders = [];
 
 
-    protected function getRepository() : UserRepository
+    public function getRepository() : UserRepository
     {
         /** @var UserRepository $repository */
-        $repository = $this->em->getRepository(UserEntity::class);
+        $repository = $this->factory->getEntityManager()->getRepository(UserEntity::class);
         return $repository;
     }
 

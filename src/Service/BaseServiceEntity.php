@@ -44,7 +44,11 @@ abstract class BaseServiceEntity
      🔥 Implement this method as if was uncommented! (contravariance in parameter make it undeclarable here)
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : SpecificTypeRepository
-        { return $this->factory->getEntityManager()->getRepository(SpecificTypeEntity::class); }
+    {
+        ** @var SpecificTypeRepository $repository *
+        $repository = $this->factory->getEntityManager()->getRepository(SpecificTypeEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?SpecificTypeEntity $entity = null) : static
     {

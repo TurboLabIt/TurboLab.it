@@ -15,7 +15,7 @@ class ArticleCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = Article::ENTITY_CLASS;
 
-    protected function getRepository() : ArticleRepository
+    public function getRepository() : ArticleRepository
     {
         /** @var ArticleRepository $repository */
         $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);

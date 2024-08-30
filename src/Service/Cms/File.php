@@ -30,8 +30,12 @@ class File extends BaseCmsService
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getRepository(): FileRepository
-        { return $this->factory->getEntityManager()->getRepository(FileEntity::class); }
+    public function getRepository() : FileRepository
+    {
+        /** @var FileRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(FileEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?FileEntity $entity = null) : static
     {

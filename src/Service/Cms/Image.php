@@ -79,8 +79,12 @@ class Image extends BaseCmsService
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getRepository(): ImageRepository
-        { return $this->factory->getEntityManager()->getRepository(ImageEntity::class); }
+    public function getRepository() : ImageRepository
+    {
+        /** @var ImageRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(ImageEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?ImageEntity $entity = null) : static
     {

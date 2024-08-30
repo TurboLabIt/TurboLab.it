@@ -22,7 +22,11 @@ class Topic extends BaseServiceEntity
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : TopicRepository
-        { return $this->factory->getEntityManager()->getRepository(TopicEntity::class); }
+    {
+        /** @var TopicRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(TopicEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?TopicEntity $entity = null) : static
     {

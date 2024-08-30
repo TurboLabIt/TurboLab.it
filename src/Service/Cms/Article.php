@@ -61,8 +61,12 @@ class Article extends BaseCmsService
     }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getRepository(): ArticleRepository
-        { return $this->factory->getEntityManager()->getRepository(ArticleEntity::class); }
+    public function getRepository() : ArticleRepository
+    {
+        /** @var ArticleRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?ArticleEntity $entity = null) : static
     {

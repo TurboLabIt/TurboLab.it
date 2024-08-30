@@ -46,8 +46,12 @@ class Tag extends BaseCmsService
     public function __construct(protected Factory $factory) { $this->clear(); }
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
-    public function getRepository(): TagRepository
-        { return $this->factory->getEntityManager()->getRepository(TagEntity::class); }
+    public function getRepository() : TagRepository
+    {
+        /** @var TagRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(TagEntity::class);
+        return $repository;
+    }
 
     public function setEntity(?TagEntity $entity = null) : static
     {

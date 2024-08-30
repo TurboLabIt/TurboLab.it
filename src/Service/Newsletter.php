@@ -64,10 +64,18 @@ class Newsletter extends Mailer
 
 
     public function getRepositoryExpiringWarn() : NewsletterExpiringWarnRepository
-        { return $this->factory->getEntityManager()->getRepository(NewsletterExpiringWarn::class); }
+    {
+        /** @var NewsletterExpiringWarnRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(NewsletterExpiringWarn::class);
+        return $repository;
+    }
 
     public function getRepositoryOpener() : NewsletterOpenerRepository
-        { return $this->factory->getEntityManager()->getRepository(NewsletterOpener::class); }
+    {
+        /** @var NewsletterOpenerRepository $repository */
+        $repository = $this->factory->getEntityManager()->getRepository(NewsletterOpener::class);
+        return $repository;
+    }
 
 
     public function loadContent() : static
