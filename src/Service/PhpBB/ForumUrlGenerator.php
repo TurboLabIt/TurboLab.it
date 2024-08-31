@@ -20,8 +20,42 @@ class ForumUrlGenerator
         { return $this->generateHomeUrl($urlType) . 'viewtopic.php?t=' . $topic->getId() . "#p" . $topic->getFirstPostId(); }
 
     public function generateTopicReplyUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->generateHomeUrl($urlType) . "forum/posting.php?mode=reply&t=" . $topic->getId(); }
+        { return $this->generateHomeUrl($urlType) . "posting.php?mode=reply&t=" . $topic->getId(); }
 
     public function generateCommentsAjaxLoadingUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
         { return $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . static::AJAX_LOADING_PATH . $topic->getId(); }
+
+
+    public function generateLoginUrl(?string $redirectToUrl = '', int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return
+            $this->generateUcpUrl([
+                'mode'      => 'login',
+                'redirect'  => $redirectToUrl,
+            ], $urlType);
+    }
+
+
+    public function generateRegisterUrl(?string $redirectToUrl = '', int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return
+            $this->generateUcpUrl([
+                'mode'      => 'register',
+                // the redirection DOESN'T WORK!
+                'redirect'  => $redirectToUrl,
+            ], $urlType);
+    }
+
+
+    protected function generateUcpUrl(array $parameters = [], int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        $url = $this->generateHomeUrl($urlType). 'ucp.php';
+
+        $parameters = array_filter($parameters);
+        if( !empty($parameters) ) {
+            $url .= '?' . http_build_query($parameters);
+        }
+
+        return $url;
+    }
 }

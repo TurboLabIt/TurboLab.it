@@ -15,16 +15,12 @@ class HomeController extends BaseController
 
     #[Route('/', name: 'app_home')]
     public function index(YouTubeChannelApi $YouTubeChannel) : Response
-    {
-        return $this->indexPaginated(1, $YouTubeChannel);
-    }
+        { return $this->indexPaginated(1, $YouTubeChannel); }
 
 
     #[Route('/home/{page<0|1>?}', name: 'app_home_page_0-1')]
     public function appHomePage0Or1() : Response
-    {
-        return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY);
-    }
+        { return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY); }
 
 
     #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]

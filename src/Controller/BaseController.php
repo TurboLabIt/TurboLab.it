@@ -8,6 +8,7 @@ use App\Service\FrontendHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,5 +112,13 @@ abstract class BaseController extends AbstractController
         throw new NotImplementedException(
             "BaseController::buildHtmlNumPag() requires a specific implementation in each controller"
         );
+    }
+
+
+    protected function ajaxOnly() : void
+    {
+        if( !$this->request->isXmlHttpRequest() ) {
+            throw new BadRequestException('This page can only be requested via AJAX');
+        }
     }
 }

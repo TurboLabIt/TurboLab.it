@@ -1,0 +1,15 @@
+{% extends 'user/userbar-base.html.twig' %}
+
+{% block userbarContent %}
+    <strong>
+        <a href="{{ loginUrl }}">
+            <i class="fa-solid fa-user fa-shake" style="color: #000000;"></i> Esegui login
+        </a>
+    </strong> |
+    <a href="{{ registerUrl|raw }}">
+        Non sei registrato? <i class="fa-solid fa-users" style="color: #000000;"></i>
+        <strong>Iscriviti ora (gratis!)</strong>
+    </a>
+    per <a href="{{ path('app_home') }}forum">partecipare al forum</a>, pubblicare sul sito e
+    <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_NEWSLETTER')}) }}">ricevere la newsletter</a>!
+{% endblock %}

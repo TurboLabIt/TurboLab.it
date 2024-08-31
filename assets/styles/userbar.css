@@ -1,0 +1,20 @@
+#tli-userbar-load-target {
+    font-size: 16px;
+    font-weight: bolder;
+    color: black;
+    position: sticky;
+    top: 0px;
+    z-index: 998;
+}
+
+#tli-userbar {
+    padding: 10px;
+}
+
+#tli-userbar.user-logged {
+
+}
+
+#tli-userbar.user-anonymous {
+    background: linear-gradient(to right, orangered, orange);
+}
