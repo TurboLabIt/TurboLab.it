@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Service\PhpBB\ForumUrlGenerator;
+use App\Service\User;
 use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CacheHolePunchingController extends BaseController
 {
     #[Route('/ajax/userbar', name: 'app_cache-hole-punching_userbar', methods: ['POST'])]
-    public function userbar(ForumUrlGenerator $urlGenerator): Response
+    public function userbar(ForumUrlGenerator $urlGenerator, User $user): Response
     {
         $this->ajaxOnly();
 
@@ -27,22 +28,19 @@ class CacheHolePunchingController extends BaseController
             $originUrl = '/';
         }
 
-        $user = $this->getUser();
+        $userEntity = $this->getUser();
 
-        if( empty($user) ) {
+        if( empty($userEntity) ) {
             return $this->render('user/userbar-anonymous.html.twig', [
                 // the redirection works
-                'loginUrl'      => $urlGenerator->generateLoginUrl($originUrl),
+                'loginUrl'          => $urlGenerator->generateLoginUrl($originUrl),
                 // the redirection DOESN'T WORK :-(
-                'registerUrl'   => $urlGenerator->generateRegisterUrl($originUrl)
+                'registerUrl'       => $urlGenerator->generateRegisterUrl($originUrl)
             ]);
         }
 
         return $this->render('user/userbar-logged.html.twig', [
-            // the redirection works
-            'loginUrl'      => $urlGenerator->generateLoginUrl($originUrl),
-            // the redirection DOESN'T WORK :-(
-            'registerUrl'   => $urlGenerator->generateRegisterUrl($originUrl)
+            'User'              => $user->setEntity($userEntity),
         ]);
     }
 }
