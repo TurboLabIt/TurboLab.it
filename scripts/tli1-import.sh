@@ -7,6 +7,10 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 fxHeader "TLI1 importer"
 devOnlyCheck
 
+source "/etc/turbolab.it/mysql-turbolab_it.conf"
+mysql -u${MYSQL_USER} -p"${MYSQL_PASSWORD}" -h "${MYSQL_HOSTNAME}" -e "DROP TABLE IF EXISTS turbolab_it.doctrine_migration_versions"
+bash "${SCRIPT_DIR}migrate.sh"
+
 rm -rf ${PROJECT_DIR}backup/db-dumps/*.sql
 bash "${SCRIPT_DIR}db-restore.sh"
 
