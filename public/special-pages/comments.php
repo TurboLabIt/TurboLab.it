@@ -17,6 +17,7 @@ if( preg_match('/^[1-9]+[0-9]*$/', $topicId) !== 1 ) {
     tliHtmlResponse('Formato input errato', 400);
 }
 
+require '../../src/Entity/BaseEntity.php';
 require '../../src/Entity/PhpBB/Forum.php';
 $commentsForumId = \App\Entity\PhpBB\Forum::COMMENTS_FORUM_ID;
 if( preg_match('/^[1-9]+[0-9]*$/', $commentsForumId) !== 1 ) {
