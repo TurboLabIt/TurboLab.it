@@ -3,6 +3,7 @@ namespace App\Security;
 
 use App\Entity\PhpBB\User;
 use App\Repository\PhpBB\UserRepository;
+use App\Trait\phpBBCookiesAuthenticatorTrait;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
  */
 class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSubscriberInterface
 {
-    const string COOKIE_BASENAME_PHPBB = 'turbocookie_2021_';
+    use phpBBCookiesAuthenticatorTrait;
 
 
     public function __construct(protected Security $security, protected UserRepository $userRepository) {}
@@ -52,18 +53,40 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
 
             $value = trim( $request->cookies->get(self::COOKIE_BASENAME_PHPBB . $oneCookieName) ?? '' );
             if( empty($value) || $value == 1 ) {
-                return null;
+                continue;
             }
 
             $arrLoginData[$oneCookieName] = $value;
         }
 
-        $user = $this->userRepository->findOneByPhpBBCookiesValues($arrLoginData["u"], $arrLoginData["sid"], $arrLoginData["k"]);
-        if( empty($user) ) {
+        if( empty($arrLoginData["sid"]) || empty($arrLoginData["u"]) ) {
+
+            $this->removeNoRememberMeCookie();
             return null;
         }
 
-        return $user;
+        // "remember me" flow
+        if( !empty($arrLoginData["k"]) ) {
+
+            $user = $this->userRepository->findOneByUserSidKey($arrLoginData["u"], $arrLoginData["sid"], $arrLoginData["k"]);
+            return empty($user) ? null : $user;
+        }
+
+
+        // "no-remember me" workaround flow
+        $arrFallbackCookie = $this->getNoRememberMeCookie('../');
+        if(
+            empty($arrFallbackCookie) ||
+            $arrLoginData["sid"] != $arrFallbackCookie["session_id"] ||
+            $arrLoginData["u"] != $arrFallbackCookie["id"]
+        ) {
+            $this->removeNoRememberMeCookie();
+            return null;
+        }
+
+        $user = $this->userRepository->findOneByUserSid($arrFallbackCookie["id"], $arrFallbackCookie["session_id"]);
+
+        return empty($user) ? null : $user;
     }
 
 

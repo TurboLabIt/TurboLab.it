@@ -1,0 +1,13 @@
+{% extends 'user/userbar-base.html.twig' %}
+
+{% block userbarContent %}
+    <span class="d-flex justify-content-between">
+        <span><i class="fa-solid fa-user" style="color: #000000;"></i> Ciao <strong>{{ User.username }}!</strong></span>
+        <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_NEWSLETTER')}) }}">
+            <i class="fa-solid fa-envelope-open-text"></i> Iscrizione newsletter
+        </a> &nbsp;
+        <a href="{{ User.url }}"><i class="fa-solid fa-list"></i> I tuoi articoli</a> &nbsp;
+        <a href="{{ path('app_editor_new') }}"><i class="fa-solid fa-pen"></i> Nuovo articolo</a> &nbsp;
+        <a href="{{ path('app_logout') }}"> <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Logout</a>
+    </span>
+{% endblock %}

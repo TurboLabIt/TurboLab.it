@@ -11,16 +11,13 @@
  * 429: too many retries
  * 200: OK
  */
-
 const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
 require './includes/00_begin.php';
 
-
-$devCredentialsFilePath = '../../backup/dev-credentials.php';
+/*$devCredentialsFilePath = '../../backup/dev-credentials.php';
 if( stripos($siteUrl, 'https://dev') === 0 && file_exists($devCredentialsFilePath) ) {
     include($devCredentialsFilePath);
-}
-
+}*/
 
 foreach (["username", "password"] as $field) {
 
@@ -36,11 +33,28 @@ foreach (["username", "password"] as $field) {
     $$field = $fieldValue;
 }
 
+$rememberMe = !empty($_POST['remember-me']);
+unset($_POST['remember-me']);
+
 require './includes/10_phpbb_start.php';
 
 // from: public/forum/phpbb/auth/auth.php
 // sign: function login($username, $password, $autologin = false, $viewonline = 1, $admin = 0)
-$result = $auth->login($username, $password, true, 1, 0);
+$result = $auth->login($username, $password, $rememberMe);
+
+if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
+
+    require_once '../../vendor/turbolabit/php-encryptor/src/Encryptor.php';
+    require_once 'includes/phpBBCookies.php';
+
+    (new phpBBCookies())
+        ->setNoRememberMeCookie([
+            "id"            => $user->id(),
+            "session_id"    => $user->session_id,
+            "timestamp"     => (new DateTime())->modify('-1 minute')->format('Y-m-d H:i:s')
+        ], '../../');
+}
+
 
 $forumLoginUrl              = $siteUrl . "/forum/ucp.php?mode=login";
 $forumRegisterUrl           = $siteUrl . "/forum/ucp.php?mode=register";
