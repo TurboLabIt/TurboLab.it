@@ -1,6 +1,7 @@
 <?php
 namespace App\Trait;
 
+use Exception;
 use TurboLabIt\Encryptor\Encryptor;
 
 
@@ -90,7 +91,7 @@ trait phpBBCookiesAuthenticatorTrait
     {
         try {
             return $this->encryptor->decrypt($_COOKIE[static::COOKIE_NO_REMEMBER_ME_WORKAROUND] ?? null);
-        } catch (Exception) { return null; }
+        } catch(Exception) { return null; }
     }
     //</editor-fold>
 }

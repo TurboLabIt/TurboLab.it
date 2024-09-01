@@ -19,7 +19,7 @@ class ArticleEditorController extends BaseController
     #[Route('/scrivi', name: 'app_editor_new')]
     public function new(int $articleId) : JsonResponse
     {
-        return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
+        return new JsonResponse("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
 
