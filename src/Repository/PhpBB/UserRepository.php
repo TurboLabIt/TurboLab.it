@@ -41,7 +41,7 @@ class UserRepository extends BasePhpBBRepository
                 sessions_keys.key_id	= :sessionKey
         ";
 
-        $stmt = $$this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $userId, ParameterType::INTEGER);
         $stmt->bindValue('sessionId', $sessionId);
         $stmt->bindValue('sessionKey', md5($sessionKey) );
