@@ -21,7 +21,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
+// this entity maps a table from the phpBB database.
+// the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
+//#[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
 class User extends BaseEntity implements UserInterface
 {
     #[ORM\Id]

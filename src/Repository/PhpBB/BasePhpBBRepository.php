@@ -17,16 +17,20 @@ abstract class BasePhpBBRepository extends BaseRepository
     protected function getPhpBBTableName(?string $tableName = null) : string
     {
         if( empty($tableName) ) {
+
+            // this is something like: "turbolab_it_forum.phpbb_users"
             $tableName = $this->getTableName('');
+            $prefixToRemoveForAlias = $this->arrConfig["forumDatabaseName"] . "." . static::TABLE_PREFIX;
+            $tableAlias = substr($tableName, strlen($prefixToRemoveForAlias));
+            return "$tableName AS $tableAlias";
         }
 
         if( stripos($tableName, static::TABLE_PREFIX) !== 0 ) {
             $tableName = static::TABLE_PREFIX . $tableName;
         }
 
-        $wrapper    = "`";
         $dbName     = $this->arrConfig["forumDatabaseName"];
         $tableAlias = substr($tableName, strlen(static::TABLE_PREFIX));
-        return "{$wrapper}{$dbName}{$wrapper}.{$wrapper}{$tableName}{$wrapper} AS $tableAlias";
+        return "{$dbName}.{$tableName} AS $tableAlias";
     }
 }

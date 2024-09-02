@@ -34,6 +34,10 @@ services:
         tags:
             - { name: kernel.event_listener, method: onCommandFailure,  event: console.error }
 
+    App\Doctrine\TLINamingStrategy:
+        arguments:
+            $forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
+
     App\Service\YouTubeChannelApi:
         arguments:
             $arrConfig:
