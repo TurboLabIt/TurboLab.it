@@ -2,11 +2,10 @@
 namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
-use App\Repository\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 
 
-class ForumRepository extends BaseRepository
+class ForumRepository extends BasePhpBBRepository
 {
     const string ENTITY_CLASS = Forum::class;
 

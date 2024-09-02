@@ -3,11 +3,10 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
 use App\Entity\PhpBB\Topic;
-use App\Repository\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 
 
-class TopicRepository extends BaseRepository
+class TopicRepository extends BasePhpBBRepository
 {
     const string ENTITY_CLASS       = Topic::class;
     const string DEFAULT_INDEXED_BY = 't.id';
@@ -27,13 +26,14 @@ class TopicRepository extends BaseRepository
     protected function getSqlSelectQuery() : string
     {
         return "
-            SELECT topic_id FROM turbolab_it_forum." . $this->getTableName() . "
+            SELECT topic_id
+            FROM " . $this->getPhpBBTableName() . "
             WHERE
-                (
-                  forum_id != " . Forum::COMMENTS_FORUM_ID . " OR
-                  (forum_id = " . Forum::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
-                ) AND
-                forum_id NOT IN (" . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ")
+              (
+                forum_id != " . Forum::COMMENTS_FORUM_ID . " OR
+                (forum_id = " . Forum::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
+              ) AND
+            forum_id NOT IN (" . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ")
         ";
     }
 

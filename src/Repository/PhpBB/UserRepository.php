@@ -2,12 +2,11 @@
 namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\User;
-use App\Repository\BaseRepository;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 
 
-class UserRepository extends BaseRepository
+class UserRepository extends BasePhpBBRepository
 {
     const string ENTITY_CLASS       = User::class;
     const string DEFAULT_INDEXED_BY = 't.user_id';
@@ -21,18 +20,17 @@ class UserRepository extends BaseRepository
 
     public function findOneByUserSidKey(int $userId, string $sessionId, string $sessionKey)
     {
-        $db  = $this->getEntityManager()->getConnection();
         $sql = "
             SELECT
                 " . static::AUTHENTICATED_USER_FIELDS . "
             FROM
-                turbolab_it_forum.phpbb_users AS users
+                " . $this->getPhpBBTableName() . "
             INNER JOIN
-                turbolab_it_forum.phpbb_sessions AS sessions
+                " . $this->getPhpBBTableName('sessions') . "
             ON
                 users.user_id = sessions.session_user_id
             INNER JOIN
-                turbolab_it_forum.phpbb_sessions_keys AS sessions_keys
+                " . $this->getPhpBBTableName('sessions_keys') . "
             ON
                 users.user_id = sessions_keys.user_id
             WHERE
@@ -43,7 +41,7 @@ class UserRepository extends BaseRepository
                 sessions_keys.key_id	= :sessionKey
         ";
 
-        $stmt = $db->prepare($sql);
+        $stmt = $$this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $userId, ParameterType::INTEGER);
         $stmt->bindValue('sessionId', $sessionId);
         $stmt->bindValue('sessionKey', md5($sessionKey) );
@@ -54,14 +52,13 @@ class UserRepository extends BaseRepository
 
     public function findOneByUserSid(int $userId, string $sessionId)
     {
-        $db  = $this->getEntityManager()->getConnection();
         $sql = "
             SELECT
                 " . static::AUTHENTICATED_USER_FIELDS . "
             FROM
-                turbolab_it_forum.phpbb_users AS users
+                " . $this->getPhpBBTableName() . "
             INNER JOIN
-                turbolab_it_forum.phpbb_sessions AS sessions
+                " . $this->getPhpBBTableName("sessions") . "
             ON
                 users.user_id = sessions.session_user_id
             WHERE
@@ -71,7 +68,7 @@ class UserRepository extends BaseRepository
                 sessions.session_id		= :sessionId
         ";
 
-        $stmt = $db->prepare($sql);
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $userId, ParameterType::INTEGER);
         $stmt->bindValue('sessionId', $sessionId);
 
@@ -115,9 +112,13 @@ class UserRepository extends BaseRepository
 
     public function getAdditionalFields(User $user) : array
     {
-        $db     = $this->getEntityManager()->getConnection();
-        $sql    = "SELECT * FROM turbolab_it_forum.phpbb_profile_fields_data WHERE user_id = :userId";
-        $stmt   = $db->prepare($sql);
+        $sql= "
+            SELECT *
+            FROM " . $this->getPhpBBTableName("profile_fields_data") . " 
+            WHERE user_id = :userId
+        ";
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $user->getId(), ParameterType::INTEGER);
         return $stmt->executeQuery()->fetchAssociative() ?: [];
     }

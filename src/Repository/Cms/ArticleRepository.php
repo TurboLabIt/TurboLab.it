@@ -179,7 +179,7 @@ class ArticleRepository extends BaseRepository
     public function findLatestForNewsletter() : array
     {
         $sqlSelect = "
-            SELECT id FROM article
+            SELECT id FROM " . $this->getTableName() . "
             WHERE
               published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
               title NOT LIKE 'Questa settimana su TLI%'

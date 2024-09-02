@@ -45,3 +45,18 @@ services:
             -
                 name: web_debug_toolbar_extension
                 id: 'App\DataCollector\WebDebugToolbarExtension'
+
+    App\Repository\PhpBB\ForumRepository:
+         arguments:
+            $arrConfig:
+                forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
+
+    App\Repository\PhpBB\TopicRepository:
+         arguments:
+            $arrConfig:
+                forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
+
+    App\Repository\PhpBB\UserRepository:
+         arguments:
+            $arrConfig:
+                forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
