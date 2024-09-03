@@ -10,6 +10,7 @@ use App\Entity\Cms\Badge as BadgeEntity;
 use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\Image;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
@@ -333,11 +334,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $title          = $this->convertValueFromTli1ToTli2($arrArticle["titolo"], true);
         $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
 
-        // fix grammar horror on newsletter
-        $abstract = str_ireplace(
-            'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $abstract
-        );
-
         $pubStatus = match( $arrArticle["finito"] ) {
             0       => ArticleEntity::PUBLISHING_STATUS_DRAFT,
             1       => ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW,
@@ -350,11 +346,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $ads            = (bool)$arrArticle["ads"];
         $commentsTopic  = $this->topicRepository->selectOrNull($arrArticle["id_commenti_phpbb"]);
         $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
-
-        // fix grammar horror on newsletter
-        $body = str_ireplace(
-            'tutti i giorni? nessun problema! ecco a te', 'tutti i giorni? Nessun problema! Ecco a te', $body
-        );
 
         $commentTopicNeedsUpdate = mb_stripos($body, 'tutti i giorni? Nessun problema! Ecco a te') !== false;
 
@@ -382,8 +373,37 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $pubStatus      = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
         }
 
-        // this will be handled later on
-        $spotlightId = $arrArticle["spotlight"];
+
+        // newsletter special handling
+        if( stripos($title, 'Questa settimana su TLI') !== false ) {
+
+            $spotlightId = Image::getNewsletterSpotlightId();
+
+            // fix grammar horror on newsletter
+            $newsletterError = 'tutti i giorni? nessun problema! ecco a te';
+            $newsletterFixed = 'tutti i giorni? Nessun problema! Ecco a te';
+            
+            $abstract   = str_ireplace($newsletterError, $newsletterFixed, $abstract);
+            $body       = str_ireplace($newsletterError, $newsletterFixed, $body);
+
+            $newsletterIntroEnd = 'quanto proposto da TurboLab.it nel corso della settimana in conclusione.</p>';
+            $newsletterIntroEndWithImage = $newsletterIntroEnd . '
+                <p><img src="==###immagine::id::' . $spotlightId . '###=="></p>
+            ';
+
+            $body = str_ireplace($newsletterIntroEnd, $newsletterIntroEndWithImage, $body);
+
+            // Newsletters must be authored by "System" =>
+            // getting it from 👀 https://turbolab.it/4181
+            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
+
+        } else {
+
+            $spotlightId    = $arrArticle["spotlight"];
+            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
+        }
+
+
         if( !empty($spotlightId) && $spotlightId != 1 ) {
             $this->arrSpotlightIds[$articleId] = $spotlightId;
         }
@@ -406,17 +426,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setUpdatedAt($updatedAt);
 
         // AUTHORS
-        if( stripos($title, 'Questa settimana su TLI') !== false ) {
-
-            // Newsletters must be authored by "System" =>
-            // getting it from 👀 https://turbolab.it/4181
-            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
-
-        } else {
-
-            $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
-        }
-
         if( empty($arrTli1Authors) ) {
             $this->fxWarning("This Article has no Authors: " . print_r($arrArticle, true) );
         }

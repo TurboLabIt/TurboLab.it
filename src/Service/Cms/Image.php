@@ -23,6 +23,12 @@ class Image extends BaseCmsService
 
     const int ID_404                    = 24297;    // 👀 https://turbolab.it/immagini/24297/med
     const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/med
+    const array IDS_NEWSLETTER_SPOTLIGHT = [
+        // uploaded here: https://turbolab.it/179
+        25141,  // 👀 https://turbolab.it/immagini/25141/med
+        25142,  // 👀 https://turbolab.it/immagini/25142/med
+        25143,  // 👀 https://turbolab.it/immagini/25143/med
+    ];
 
     const bool BUILD_CACHE_ENABLED      = true;
     const BUILD_FORMAT_FORCED           = null;
@@ -375,6 +381,8 @@ class Image extends BaseCmsService
         return reset($arrImageFormats);
     }
 
+
+    public static function getNewsletterSpotlightId() : int { return array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT)); }
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
