@@ -15,7 +15,7 @@ class TLINamingStrategy extends UnderscoreNamingStrategy
     {
         // this returns "article", "article_author", "user", "topic", ...
         $tableName = parent::classToTableName($className);
-        if( stripos($className, 'App\\Entity\\PhpBB\\') === false ) {
+        if( stripos($className, 'App\\Entity\\PhpBB\\') !== 0 ) {
             return $tableName;
         }
 
