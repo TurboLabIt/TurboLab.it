@@ -152,11 +152,10 @@
                             <div class="section-title">
                                 <h3 class="title">Seguici</h3>
                             </div>
-                            <div id="social-links">
+                            <div class="social-links">
                                 {% for Link in FrontendHelper.FollowUsLinks %}
                                     <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                        <img src="{{ asset(Link.icon) }}" width="48"
-                                             alt="{{ Link.name }}" title="{{ Link.name }}">
+                                        <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}">
                                     </a>
                                 {% endfor %}
                             </div>

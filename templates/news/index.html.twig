@@ -22,12 +22,10 @@
         <div class="container">
             <div class="row">
                 <div class="trending-social">
-                    <div id="social-links">
-                        <span class="cta-social-top">Seguici in tempo reale</span>
+                    <div class="social-links">
                         {% for Link in FrontendHelper.ownFollowUsPages|merge(FrontendHelper.socialMediaPages) %}
                             <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                <img src="{{ asset(Link.icon) }}" width="32px"
-                                     alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
+                                <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}" loading="lazy">
                             </a>
                         {% endfor %}
                     </div>
