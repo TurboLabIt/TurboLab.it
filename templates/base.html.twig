@@ -28,6 +28,13 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://kit.fontawesome.com">
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <link rel="preconnect" href="https://code.jquery.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
     <link rel="alternate" type="application/rss+xml" title="Feed" href="{% block metaFeedUrl %}{{ absolute_url(path('app_feed')) }}{% endblock %}">
 
     {% if (Pages.prev.url ?? null) is not empty %}
