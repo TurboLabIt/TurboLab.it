@@ -82,7 +82,7 @@ class AuthorContoller extends BaseController
                                             $user->getFullName() . ( $page < 2 ? '' : " - Pagina $page"),
                 'metaCanonicalUrl'  => $user->getUrl($page),
                 'metaPageImageUrl'  => $user->getAvatarUrl(),
-                'activeMenu'        => 'null',
+                'activeMenu'        => null,
                 'FrontendHelper'    => $this->frontendHelper,
                 'Author'            => $user,
                 'Articles'          => $authorArticles,

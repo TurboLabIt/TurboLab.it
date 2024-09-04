@@ -405,4 +405,59 @@ class ArticleRepository extends BaseRepository
 
         return $qb->getQuery()->getResult();
     }
+
+
+    public function getFirstAndLastPublished() : array
+    {
+        $sqlQueryTemplate = "
+            (SELECT id FROM ". $this->getTableName() . " WHERE
+                publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . " AND
+                published_at IS NOT NULL
+                ORDER BY published_at ##DIRECTION## LIMIT 1)
+        ";
+
+        $arrParams = [[
+            "##DIRECTION##" => 'ASC'
+        ],[
+            "##DIRECTION##" => 'DESC'
+        ]];
+
+        $sqlQuery = '';
+        for($i=0; $i < 2; $i++) {
+
+            $arrQueryParams = $arrParams[$i];
+            $sqlQuery .= str_replace( array_keys($arrQueryParams), $arrQueryParams, $sqlQueryTemplate);
+
+            if( $i == 0 ) {
+                $sqlQuery .= 'UNION';
+            }
+        }
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlQuery);
+
+        if( empty($qb) ) {
+            return [];
+        }
+
+        $arrEntities = $qb->getQuery()->getResult();
+        uasort($arrEntities, function(Article $a, Article $b) {
+            return $a->getPublishedAt() <=> $b->getPublishedAt();
+        });
+
+        return $arrEntities;
+    }
+
+
+    public function getByPublishedDateInterval(DateTime $startDate, DateTime $endDate) : array
+    {
+        return
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.publishedAt >= :lowLimit')
+                    ->setParameter('lowLimit', $startDate)
+                ->andWhere('t.publishedAt < :highLimit')
+                    ->setParameter('highLimit', $endDate)
+                ->orderBy('t.publishedAt', 'ASC')
+                ->getQuery()
+                ->getResult();
+    }
 }
