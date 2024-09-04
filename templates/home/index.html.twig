@@ -3,9 +3,11 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    {{ encore_entry_link_tags('home') }}
+    <link rel="preload" href="{{ asset('build/home.css') }}"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" defer />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
 
 {% endblock %}
 
@@ -155,7 +157,8 @@
                             <div class="social-links">
                                 {% for Link in FrontendHelper.FollowUsLinks %}
                                     <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                        <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}">
+                                        <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}"
+                                        width="54" height="54">
                                     </a>
                                 {% endfor %}
                             </div>
@@ -280,7 +283,7 @@
                                     <h3 class="title">{{ Videos|first.title|raw }}</h3>
                                     <div style="text-align: center; margin-top: 10px;">
                                         <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">
-                                            <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24"
+                                            <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24" height="24"
                                                  alt="YouTube" title="YouTube" loading="lazy">
                                             ISCRIVITI AL NOSTRO CANALE YOUTUBE
                                         </a>

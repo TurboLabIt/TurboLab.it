@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+
     {{ parent() }}
-    {{ encore_entry_link_tags('calendar') }}
+    <link rel="preload" href="{{ asset('build/calendar.css') }}"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+        
 {% endblock %}
 
 {% block bodyMainContent %}

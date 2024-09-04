@@ -3,8 +3,9 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    {{ encore_entry_link_tags('archive') }}
-
+    <link rel="preload" href="{{ asset('build/archive.css') }}"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+        
 {% endblock %}
 
 
