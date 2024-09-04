@@ -27,7 +27,7 @@
                                 <div class="trending-news-item">
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url|raw }}">
-                                            <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                            <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                  class="tli-uniform-slider-image" alt="{{ Article.title|raw }}">
                                         </a>
                                     </div>
@@ -92,7 +92,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
@@ -133,7 +133,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
@@ -213,7 +213,7 @@
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
@@ -299,8 +299,7 @@
                                     {% for Video in Videos|slice(0, 4) %}
                                         <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl|raw }}">
                                             <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url|raw }}"
-                                                     alt="Video" loading="lazy">
+                                                <img src="{{ Video.thumbnails.default.url|raw }}" alt="Video" loading="lazy">
                                             </div>
                                             <div class="gallery_item_content">
                                                 <h4 class="title">{{ Video.title|raw }}</h4>
@@ -312,8 +311,7 @@
                                     {% for Video in Videos|slice(4) %}
                                         <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl|raw }}">
                                             <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url|raw }}"
-                                                     alt="Video" loading="lazy">
+                                                <img src="{{ Video.thumbnails.default.url|raw }}" alt="Video" loading="lazy">
                                             </div>
                                             <div class="gallery_item_content">
                                                 <h4 class="title">{{ Video.title|raw }}</h4>
@@ -340,7 +338,7 @@
                                     <div class="trending-news-item mb-30">
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                      class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
@@ -386,7 +384,7 @@
                                         <div class="col-lg-6 col-md-6">
                                             <div class="business-post-thumb">
                                                 <a href="{{ Article.url|raw }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                                    <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                          class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
                                             </div>
@@ -467,7 +465,7 @@
                                         <div class="gallery_item gallery_item-style-2">
                                             <div class="gallery_item_thumb">
                                                 <a href="{{ Article.url|raw }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl('min')|raw }}"
+                                                    <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                          class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
                                             </div>

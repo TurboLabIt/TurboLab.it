@@ -17,14 +17,14 @@ class ImageController extends BaseController
     public function __construct(protected Image $image, protected ImageCollection $imageCollection) {}
 
 
-    #[Route('/immagini/{size<min|med|max>}/{imageFolderMod}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
+    #[Route('/immagini/{size<micro|slider|min|med|max>}/{imageFolderMod}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
     public function index($size, $slugDashId) : Response
     {
         return $this->build($size, $slugDashId);
     }
 
 
-    #[Route('/immagini/{id<[1-9]+[0-9]*>}/{size<min|med|max>}', name: 'app_image_shorturl')]
+    #[Route('/immagini/{id<[1-9]+[0-9]*>}/{size<micro|slider|min|med|max>}', name: 'app_image_shorturl')]
     public function shortUrl($id, $size = Image::SIZE_MAX) : Response
     {
         return $this->build($size, "image-$id");
@@ -107,7 +107,7 @@ class ImageController extends BaseController
     }
 
 
-    #[Route('/immagini/{size<min|med|max>}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
+    #[Route('/immagini/{size<micro|slider|min|med|max>}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
     public function legacyNoFolderMod($size, $slugDashId) : Response
     {
         return $this->build($size, $slugDashId);
