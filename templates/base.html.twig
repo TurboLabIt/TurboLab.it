@@ -82,7 +82,8 @@
                     <div class="col-lg-4">
                         <div class="logo">
                             <a href="{{ path('app_home') }}">
-                                <img src="{{ asset('images/logo/turbolab.it.png') }}" alt="Il logo di TurboLab.it">
+                                <img src="{{ asset('images/logo/turbolab.it.png') }}" 
+                                width="416" height="71" alt="Il logo di TurboLab.it">
                             </a>
                         </div>
                     </div>
@@ -163,7 +164,8 @@
                     <div class="col-lg-7 col-md-5">
                         <div class="footer-logo">
                             <a href="{{ path('app_file', {fileId: 18}) }}" target="_blank">
-                                <img src="{{ asset('images/logo/turbolab.it.png') }}" alt="Il logo di TurboLab.it">
+                                <img src="{{ asset('images/logo/turbolab.it.png') }}"
+                                    width="416" height="71" alt="Il logo di TurboLab.it">
                             </a>
                             <ul>
                                 {% for Link in FrontendHelper.FollowUsLinks %}
@@ -305,7 +307,12 @@
                             is licensed under
                             <a href="https://creativecommons.org/licenses/by-nd/4.0/?ref=chooser-v1" target="_blank"
                                rel="license noopener noreferrer" style="display:inline-block;">CC BY-ND 4.0
-                                <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg?ref=chooser-v1" alt="">
+                                <img width="22" height="22" style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                                    src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="">
+                                <img width="22" height="22" style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                                    src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt="">
+                                <img width="22" height="22" style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                                    src="https://mirrors.creativecommons.org/presskit/icons/nd.svg?ref=chooser-v1" alt="">
                             </a>
                         </p>
                     </div>
