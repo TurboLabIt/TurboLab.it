@@ -39,16 +39,25 @@ class FrontendHelper
     public function getSocialMediaPages() : array
     {
         return [
-            $this->buildLink("YouTube", 'https://www.youtube.com/c/turbolabit?sub_confirmation=1'),
-            $this->buildLink("Telegram", 'https://t.me/turbolab'),
-            $this->buildLink("Facebook", 'https://www.facebook.com/TurboLab.it'),
-            $this->buildLink(
-                "X (Twitter)", 'https://twitter.com/TurboLabIt', true,
-                '/images/social-icons/x-twitter.svg', 'fab fa-x-twitter'
-            ),
-            $this->buildLink("GitHub", 'https://github.com/TurboLabIt/'),
-            $this->buildLink("LinkedIn", 'https://linkedin.com/company/turbolabit')
+            'youtube'   => $this->buildLink("YouTube", 'https://www.youtube.com/c/turbolabit?sub_confirmation=1'),
+            'telegram'  => $this->buildLink("Telegram", 'https://t.me/turbolab'),
+            'facebook'  => $this->buildLink("Facebook", 'https://www.facebook.com/TurboLab.it'),
+            'x'         => $this->buildLink(
+                        "X (Twitter)", 'https://twitter.com/TurboLabIt', true,
+                            '/images/social-icons/x-twitter.svg', 'fab fa-x-twitter'
+                            ),
+            'github'    => $this->buildLink("GitHub", 'https://github.com/TurboLabIt/'),
+            'linkedin'  => $this->buildLink("LinkedIn", 'https://linkedin.com/company/turbolabit')
         ];
+    }
+
+
+    public function getInCaseOfDownSocialLinks() : array
+    {
+        return
+            array_intersect_key($this->getSocialMediaPages(), array_flip([
+                'telegram', 'facebook', 'x'
+            ]));
     }
     //</editor-fold>
 

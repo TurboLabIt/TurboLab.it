@@ -227,61 +227,8 @@
                 </article>
                 <!-- ARTICLE main END -->
 
-                <!-- ARTICLE side column START -->
-                <div class="col-lg-4 mt-20">
-                    <div class="about-tab-btn">
-                        <div class="about-post-items">
-                            <div class="row">
-                                {% for Article in SideArticles %}
+                {% include 'parts/column-articles.html.twig' %}
 
-                                    <div class="trending-news-item mb-30">
-
-                                        <div class="trending-news-content">
-                                            <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
-                                        </div>
-
-                                        <div class="trending-news-thumb">
-                                            <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}"
-                                                     {% if loop.index > 2 %}loading="lazy"{% endif %}>
-                                            </a>
-                                        </div>
-
-                                        <div class="tli-mosaic-post-meta">
-                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
-                                                {{ Article.TopTagOrDefault.title|upper|raw }}
-                                            </a>
-                                            <span class="tli-meta-slash"> · </span>
-                                            <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
-                                        </div>
-
-                                        <div class="tli-mosaic-post-meta">
-                                            {% if Article.AuthorsNotSystem is not empty %}
-                                                <span class="tli-meta-authors">
-                                                        a cura di
-                                                        {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
-                                                        {% endfor %}
-                                                    </span>
-                                            {% endif %}
-                                            {% if Article.commentsUrl is not empty %}
-                                                <span class="tli-meta-slash">&nbsp;</span>
-                                                <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
-                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                                </a>
-                                            {% endif %}
-                                        </div>
-
-                                    </div>
-
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- ARTICLE side column END -->
             </div>
         </div>
     </section>

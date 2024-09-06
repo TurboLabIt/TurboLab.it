@@ -26,7 +26,10 @@ class InfoController extends BaseController
                 'metaTitle'         => 'Informazioni tecniche',
                 'activeMenu'        => null,
                 'FrontendHelper'    => $this->frontendHelper,
-                'ServerInfo'        => $serverInfo->getServerInfo()
+                'ServerInfo'        => $serverInfo->getServerInfo(),
+                'IssueReportGuide'  => $this->factory->createArticle()->load(Article::ID_ISSUE_REPORT),
+                'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()
+                                        ->getItems(3)
             ]);
     }
 
