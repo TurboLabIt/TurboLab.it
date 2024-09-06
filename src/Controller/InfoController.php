@@ -66,9 +66,10 @@ class InfoController extends BaseController
         /** @var Article $article */
         foreach($articles as $article) {
 
-            //$id = (string)$article->getId();
             $arrResponseData[] = [
-                'title'         => $article->getTitle(),
+                'title'         => html_entity_decode(
+                    $article->getTitleFormatted(), ENT_QUOTES | ENT_HTML5, 'UTF-8'
+                ),
                 'url'           => $article->getUrl(),
                 'start'         => $article->getPublishedAt()->format('Y-m-d H:i'),
                 'color'         => $article->isNews() ? 'green' : 'blue'
