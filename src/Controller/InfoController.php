@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Service\Cms\Article;
+use App\Service\ServerInfo;
 use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,15 @@ class InfoController extends BaseController
 
 
     #[Route('/info', name: 'app_info')]
-    public function info(): Response
+    public function info(ServerInfo $serverInfo): Response
     {
-        return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
+        return
+            $this->render('info/info.html.twig', [
+                'metaTitle'         => 'Informazioni tecniche',
+                'activeMenu'        => null,
+                'FrontendHelper'    => $this->frontendHelper,
+                'ServerInfo'        => $serverInfo->getServerInfo()
+            ]);
     }
 
 
