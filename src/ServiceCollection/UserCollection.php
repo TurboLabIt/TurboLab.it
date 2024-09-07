@@ -23,8 +23,29 @@ class UserCollection extends BaseServiceEntityCollection
 
     public function loadNewsletterTestRecipients() : static
     {
-        $testUser = $this->getRepository()->find(User::SYSTEM_USER_ID);
-        return $this->setEntities([$testUser]);
+        $arrTestUsers = [
+            "system" => $this->getRepository()->find(User::SYSTEM_USER_ID)
+        ];
+
+        $arrTestAddresses = [
+            // https://www.mail-tester.com/test-m8dwvnnnt
+            "test-m8dwvnnnt@srv1.mail-tester.com",
+            // https://mxtoolbox.com/deliverability
+            "ping@tools.mxtoolbox.com",
+            // https://app.mailgenius.com/spam-test/6e3913
+            "test-6e3913@test.mailgenius.com"
+        ];
+
+        foreach($arrTestAddresses as $address) {
+
+            $arrTestUsers[$address] =
+                (new UserEntity())
+                    ->setId( rand(999999, PHP_INT_MAX) )
+                    ->setUsername($address)
+                    ->setEmail($address);
+        }
+
+        return $this->setEntities($arrTestUsers);
     }
 
 
