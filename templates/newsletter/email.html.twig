@@ -14,7 +14,7 @@
 
     <row><columns>
         <p class="text-center tli-alert-warning">
-            Non vuoi più ricevere queste email? Allora 
+            Non vuoi più ricevere queste email? Allora
             <a href="{{ unsubscribeUrl }}">dis-iscriviti con un solo click!</a>
         </p>
     </columns></row>
@@ -42,7 +42,7 @@
             <columns>
                 <h4 class="tli-article-title"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.title|raw }}</a></h4>
                 <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
-                    <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}">
+                    <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}" alt="{{ Article.title|raw }}">
                 </a>
                 <p class="tli-article-abstract"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.abstract|raw }}</a></p>
             </columns>
