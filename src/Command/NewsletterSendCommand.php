@@ -9,6 +9,7 @@ use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
@@ -24,6 +25,8 @@ use TurboLabIt\BaseCommand\Service\Options;
 )]
 class NewsletterSendCommand extends AbstractBaseCommand
 {
+    const string CLI_OPT_USE_LOCAL_SMTP = 'local-smtp';
+
     protected bool $allowDryRunOpt      = true;
     protected bool $limitedByDefaultOpt = true;
 
@@ -33,8 +36,17 @@ class NewsletterSendCommand extends AbstractBaseCommand
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
         protected Newsletter $newsletter
     )
+    { parent::__construct(); }
+
+
+
+    protected function configure() : void
     {
-        parent::__construct();
+        parent::configure();
+        $this->addOption(
+            static::CLI_OPT_USE_LOCAL_SMTP, null, InputOption::VALUE_NONE,
+            'Change the DSN to smtp://localhost'
+        );
     }
 
 
@@ -138,6 +150,14 @@ class NewsletterSendCommand extends AbstractBaseCommand
         }
 
         $this->fxOK("$recipientsCount recipient(s) loaded");
+
+
+        if( $this->isLimited(true) && $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
+
+            $this
+                ->fxTitle("Switching to smtp://localhost...")
+                ->newsletter->useLocalSmtp();
+        }
 
 
         $this->fxTitle("Generating the article on the website...");
