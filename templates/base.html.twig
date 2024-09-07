@@ -82,8 +82,8 @@
                     <div class="col-lg-4">
                         <div class="logo">
                             <a href="{{ path('app_home') }}">
-                                <img src="{{ asset('images/logo/turbolab.it.png') }}" 
-                                width="416" height="71" alt="Il logo di TurboLab.it">
+                                <img src="{{ asset('images/logo/turbolab.it.png') }}"
+                                     width="416" height="71" alt="Il logo di TurboLab.it">
                             </a>
                         </div>
                     </div>
@@ -205,14 +205,55 @@
                                         </div>
                                         <div class="list d-flex justify-content-between">
                                             <ul>
-                                                <li><a href="{{ path('app_home') }}forum/ucp.php?mode=register">Registrazione (gratuita)</a></li>
-                                                <li><a href="{{ path('app_info') }}">Info tecniche piattaforma</a></li>
-                                                <li><a href="{{ path('app_stats') }}">Statistiche</a></li>
-                                                <li><a href="{{ path('app_calendar') }}">Calendario pubblicazioni</a></li>
+                                                <li>
+                                                    <a href="{{ path('app_home') }}forum/ucp.php?mode=register">
+                                                        <i class="fa-solid fa-users"></i> Registrazione (gratuita)
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ path('app_newsletter_preview') }}">
+                                                        <i class="fa-solid fa-envelope-open-text"></i> Anteprima newsletter
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ path('app_calendar') }}">
+                                                        <i class="fa-solid fa-calendar-days"></i> Calendario pubblicazioni
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ path('app_info') }}">
+                                                        <i class="fa-solid fa-server"></i> Info tecniche server
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ path('app_stats') }}">
+                                                        <i class="fa-solid fa-chart-simple"></i> Statistiche
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="https://github.com/TurboLabIt/TurboLab.it" target="_blank">
+                                                        <i class="fa-brands fa-github"></i> Codice sorgente (GitHub)
+                                                    </a>
+                                                </li>
                                             </ul>
+
                                             <ul>
-                                                <li><a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">Donazioni</a></li>
-                                                <li><a href="https://v1.turbolab.it">TLI 1.0 (vecchio sito)</a></li>
+                                                <li>
+                                                    <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">
+                                                        <i class="fa-solid fa-heart-circle-plus fa-beat" style="color: #ed333b;"></i> Donazioni
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="https://v1.turbolab.it">
+                                                        <i class="fa-solid fa-folder-closed"></i> TLI 1.0 (vecchio sito)
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>

@@ -1,6 +1,6 @@
 //import $ from 'jquery';
 
-jQuery('.prevent-change-url').click(function() {
+jQuery(document).on( 'click', '.prevent-change-url', function() {
 
     let originalUrl = window.location.href;
     setTimeout(function() {
