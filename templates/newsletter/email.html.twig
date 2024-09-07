@@ -3,13 +3,11 @@
 <container>
 
     <row><columns>
-        <a href="{{ homeWithOpenerUrl }}">
-            <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it">
-        </a>
+        <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it">
     </columns></row>
 
     <row><columns>
-        <strong>Ciao {{ ToFirst.name }}</strong>! 👋🏻 Queste sono le novità pubblicate su <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a> nel corso della settimana.
+        <strong>Ciao {{ ToFirst.name }}</strong>! 👋🏻 Queste sono le novità pubblicate su TurboLab.it nel corso della settimana.
     </columns></row>
 
     <row><columns>
@@ -40,11 +38,11 @@
     {% for Article in Articles %}
         <row>
             <columns>
-                <h4 class="tli-article-title"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.title|raw }}</a></h4>
                 <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
+                    <h4 class="tli-article-title">{{ Article.title|raw }}</h4>
                     <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}" alt="{{ Article.title|raw }}">
+                    <p class="tli-article-abstract">{{ Article.abstract|raw }}</p>
                 </a>
-                <p class="tli-article-abstract"><a href="{{ openerUrl }}{{ Article.url|url_encode }}">{{ Article.abstract|raw }}</a></p>
             </columns>
         </row>
     {% endfor %}
@@ -118,7 +116,7 @@
 
 
     <row><columns>
-        Abbiamo inviato questa email a <span class="tli-code">{{ ToFirst.address }}</span> poiché ti sei registrato a <a href="{{ homeWithOpenerUrl }}">TurboLab.it</a>
+        Abbiamo inviato questa email a <span class="tli-code">{{ ToFirst.address }}</span> poiché ti sei registrato a TurboLab.it
         con lo username <span class="tli-code">{{ ToFirst.name }}</span>, e hai scelto di ricevere la newsletter.
     </columns></row>
 
