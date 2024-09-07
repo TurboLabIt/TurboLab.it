@@ -2,4 +2,4 @@ framework:
     mailer:
         transports:
             main: '%env(MAILER_DSN)%'
-            localSmtp: !php/const 'TurboLabIt\BaseCommand\Service\Mailer::DSN_LOCAL_SMTP'
+            localsmtp: !php/const 'TurboLabIt\BaseCommand\Service\Mailer::DSN_LOCAL_SMTP'

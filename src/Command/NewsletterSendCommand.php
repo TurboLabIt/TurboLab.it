@@ -152,14 +152,6 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $this->fxOK("$recipientsCount recipient(s) loaded");
 
 
-        if( $this->isLimited(true) && $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
-
-            $this
-                ->fxTitle("Switching to smtp://localhost...")
-                ->newsletter->useLocalSmtp();
-        }
-
-
         $this->fxTitle("Generating the article on the website...");
         $persistArticle = $this->isNotDryRun() && ( $this->isNotProd() || $this->isUnlocked() );
         $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
@@ -212,6 +204,10 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
     protected function sendOne(int $key, User $user) : void
     {
+        if( $this->isLimited(true) && $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
+            $this->newsletter->useLocalSmtpOnce();
+        }
+
         $this->newsletter
             ->buildForOne($user)
             ->send();
