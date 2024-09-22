@@ -1,6 +1,6 @@
 # [Gestione blacklist Cloudmark](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/email-blacklist-cloudmark.md)
 
-Capita di sovente che *Cloudmark* metta il nostro server in blacklist. È utilizzato da vari provider italiani (*Libero*, *Wind*),
+Capita di sovente che *Cloudmark* metta il nostro server in blacklist. È utilizzato da vari provider italiani (*Libero*, *Virgilio*, ...),
 i cui utenti non ricevono più le notifiche del forum, la newsletter e tutte le altre email che inviamo direttamente dal server.
 
 [MXToolbox non rileva](https://mxtoolbox.com/SuperTool.aspx?action=blacklist%3aturbolab.it&run=toolpage) il blocco.
