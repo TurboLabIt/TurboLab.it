@@ -13,7 +13,7 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TurboLabIt\Messengers\FacebookMessenger;
+use TurboLabIt\Messengers\FacebookPageMessenger;
 use TurboLabIt\Messengers\TelegramMessenger;
 use TurboLabIt\Messengers\TwitterMessenger;
 
@@ -32,13 +32,15 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     const string CLI_OPT_CRON       = 'cron';
     const string CLI_OPT_SERVICES   = 'service';
 
+    protected bool $allowDryRunOpt  = true;
+
     protected DateTime $oNow;
 
 
     public function __construct(
         protected EntityManagerInterface $em, protected ParameterBagInterface $parameters,
         protected ArticleCollection $articleCollection,
-        protected TelegramMessenger $telegram, protected FacebookMessenger $facebook,
+        protected TelegramMessenger $telegram, protected FacebookPageMessenger $facebook,
         protected TwitterMessenger $twitter
     )
     {
@@ -91,12 +93,12 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->fxWarning(
                 "The execution should stop due to no-articles. " .
-                "Ignoring in in non-prod. Loading some random articles..."
+                "Ignoring in in non-prod+non-cron. Loading some random articles..."
             );
 
             $this->articleCollection
-                ->loadRandom(2)
-                ->addIdComplete(Article::ID_QUALITY_TEST);
+                ->loadRandom(2);
+                //->addIdComplete(Article::ID_QUALITY_TEST);
         }
 
 
@@ -116,9 +118,9 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             }
 
             $arrServicesMap = [
-                TelegramMessenger::SERVICE_NAME => 'shareOnTelegram',
-                FacebookMessenger::SERVICE_NAME => 'shareOnFacebook',
-                TwitterMessenger::SERVICE_NAME  => 'shareOnTwitter',
+                TelegramMessenger::SERVICE_NAME     => 'shareOnTelegram',
+                FacebookPageMessenger::SERVICE_NAME => 'shareOnFacebook',
+                TwitterMessenger::SERVICE_NAME      => 'shareOnTwitter',
             ];
 
             foreach($arrServicesMap as $serviceName => $fx) {
@@ -196,16 +198,18 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $messageHtml =
                 "<b>📰 <a href=\"$articleUrl\">$articleTitle</a></b>";
 
-            $result =
-                $this->telegram
-                    ->setMessageButtons([[
-                        "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
-                        "url"   => $articleUrl
-                    ]])
-                    ->sendMessageToChannel($messageHtml);
+            $this->telegram
+                ->setMessageButtons([[
+                    "text"  => "👉🏻 LEGGI TUTTO 👈🏻",
+                    "url"   => $articleUrl
+                ]]);
 
-            $url = $this->telegram->buildNewMessageUrl($result);
-            $this->io->writeln("<info>$url</info>");
+            if( $this->isNotDryRun() ) {
+
+                $result = $this->telegram->sendMessageToChannel($messageHtml);
+                $url = $this->telegram->buildNewMessageUrl($result);
+                $this->io->writeln("<info>$url</info>");
+            }
 
         } catch(Exception $ex) {
 
@@ -221,10 +225,26 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     {
         $this->io->write("✴ Facebook: ");
 
+        //
+        $parts  = parse_url($articleUrl);
+        $host   = $parts['host'];
+        $arrHostParts = explode('.', $host);
+
+        if( count($arrHostParts) > 2 ) {
+
+            $arrNewHostParts    = array_slice($arrHostParts, -2);
+            $newHost            = implode('.', $arrNewHostParts);
+            $articleUrl         = str_replace("https://$host", "https://$newHost", $articleUrl);
+        }
+
         try {
-            $postId = $this->facebook->sendUrlToPage($articleUrl);
-            $url = $this->facebook->buildMessageUrl($postId);
-            $this->io->writeln("<info>$url</info>");
+
+            if( $this->isNotDryRun() ) {
+
+                $postId = $this->facebook->sendUrl($articleUrl);
+                $url = $this->facebook->buildMessageUrl($postId);
+                $this->io->writeln("<info>$url</info>");
+            }
 
         } catch(Exception $ex) {
 
@@ -242,10 +262,13 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         try {
             $message = "$articleTitle $articleUrl";
-            $postId  = $this->twitter->sendMessage($message);
 
-            $url = $this->twitter->buildMessageUrl($postId);
-            $this->io->writeln("<info>$url</info>");
+            if( $this->isNotDryRun() ) {
+
+                $postId = $this->twitter->sendMessage($message);
+                $url    = $this->twitter->buildMessageUrl($postId);
+                $this->io->writeln("<info>$url</info>");
+            }
 
         } catch(Exception $ex) {
 
