@@ -27,8 +27,8 @@ use TurboLabIt\Messengers\TwitterMessenger;
 )]
 class ShareOnSocialCommand extends AbstractBaseCommand
 {
-    const int QUIET_HOURS_END   =  8;
-    const int EXEC_INTERVAL     = 10;
+    const int QUIET_HOURS_END       =  8;
+    const int EXEC_INTERVAL         = 10;
     const string CLI_OPT_CRON       = 'cron';
     const string CLI_OPT_SERVICES   = 'service';
 
@@ -167,7 +167,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         // on the very first execution after quiet hours => select all the articles from the start of quiet hours
         $currentHour    = $this->oNow->format('G');
         $currentMin     = $this->oNow->format('i');
-        if( $currentHour == static::QUIET_HOURS_END && $currentMin <= static::EXEC_INTERVAL ) {
+        if( $currentHour == static::QUIET_HOURS_END && $currentMin < static::EXEC_INTERVAL ) {
 
             $this->fxInfo("🌅 This is the very first execution of the day");
 
