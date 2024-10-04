@@ -43,7 +43,7 @@ class YouTubeChannelApi
     }
 
 
-    protected function getLatestVideosUncached(int $results = 5): array
+    public function getLatestVideosUncached(int $results = 5): array
     {
         $apiEndpoint = static::API_ENDPOINT . "search";
 
@@ -79,12 +79,17 @@ class YouTubeChannelApi
         $arrVideos = [];
         foreach($objResponse->items as $oneVideoItem) {
 
+            // this happens when the item is a playlist
+            if( empty($oneVideoItem->id->videoId) ) {
+                continue;
+            }
+
             $arrVideos[] = (object)[
                 "id"            => $oneVideoItem->id->videoId,
                 "source"        => 'youtube',
                 "url"           => "https://www.youtube.com/watch?v=" . $oneVideoItem->id->videoId,
                 "embedUrl"      => "https://www.youtube-nocookie.com/embed/" . $oneVideoItem->id->videoId . "?rel=0&enablejsapi=1",
-                "title"         => ucfirst(mb_strtolower(trim($oneVideoItem->snippet->title))),
+                "title"         => trim($oneVideoItem->snippet->title),
                 "abstract"      => trim($oneVideoItem->snippet->description),
                 "thumbnails"    => $oneVideoItem->snippet->thumbnails,
                 "publishedAt"   =>
