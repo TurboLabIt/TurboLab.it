@@ -22,7 +22,7 @@
     "dependencies": {
         "file-loader": ">=6.2.0",
         "sass": ">=1.69.6",
-        "sass-loader": ">=13.3.3 <15"
+        "sass-loader": ">=16.0"
     },
-    "packageManager": "yarn@4.4.1"
+    "packageManager": "yarn@4.5.0"
 }
