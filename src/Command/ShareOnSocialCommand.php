@@ -183,7 +183,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     protected function loadVideos() : static
     {
         $this->fxTitle('Loading videos from YouTube....');
-        $arrVideos = $this->YouTubeChannel->getLatestVideosUncached();
+        $arrVideos = $this->YouTubeChannel->getLatestVideos();
 
         $maxMinutes = $this->getMaxEligibleMinutesAgo();
 
