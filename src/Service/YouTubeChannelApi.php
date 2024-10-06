@@ -11,6 +11,13 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
+/**
+ * Quota usage: https://console.cloud.google.com/apis/api/youtube.googleapis.com/quotas?invt=AbeCrw&project=turbolabit
+ * Quota calculator: https://developers.google.com/youtube/v3/determine_quota_cost
+ *
+ * Default budget: 10.000 per day
+ * Search API cost: 100 ➡10.000/100 = **max 100 calls per day**
+ */
 class YouTubeChannelApi
 {
     const int CACHE_MINUTES     = 60;
@@ -21,7 +28,7 @@ class YouTubeChannelApi
     { }
 
 
-    public function getLatestVideos(int $results = 10): array
+    public function getLatestVideos(int $results = 8): array
     {
         $cacheKey   = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
         return
@@ -43,7 +50,7 @@ class YouTubeChannelApi
     }
 
 
-    public function getLatestVideosUncached(int $results = 5): array
+    protected function getLatestVideosUncached(int $results): array
     {
         $apiEndpoint = static::API_ENDPOINT . "search";
 
