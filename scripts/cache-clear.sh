@@ -22,6 +22,9 @@ if [ "$APP_ENV" = "dev" ]; then
   fxTitle "Removing yarn stuff..."
   rm -f ${PROJECT_DIR}yarn.lock
 
+  fxTitle "npm-check-updates..."
+  yarn npm-check-updates -u
+
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
