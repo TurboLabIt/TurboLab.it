@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
 /**
@@ -16,7 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * Quota calculator: https://developers.google.com/youtube/v3/determine_quota_cost
  *
  * Default budget: 10.000 per day
- * Search API cost: 100 ➡10.000/100 = **max 100 calls per day**
+ * Search API cost: 100 ➡ 10.000/100 = **max 100 calls per day**
  */
 class YouTubeChannelApi
 {
@@ -24,25 +25,31 @@ class YouTubeChannelApi
     const string API_ENDPOINT   = "https://youtube.googleapis.com/youtube/v3/";
 
 
-    public function __construct(protected array $arrConfig, protected HttpClientInterface $httpClient, protected TagAwareCacheInterface $cache)
-    { }
+    public function __construct(
+        protected array $arrConfig, protected HttpClientInterface $httpClient,
+        protected TagAwareCacheInterface $cache, protected ProjectDir $projectDir
+    ) {}
 
 
     public function getLatestVideos(int $results = 8): array
     {
-        $cacheKey   = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
+        $cacheKey = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
         return
-            $this->cache->get($cacheKey, function (CacheItem $item) use($results) {
+            $this->cache->get($cacheKey, function (CacheItem $item) use($results, $cacheKey) {
 
-                $response = $this->getLatestVideosUncached($results);
-
-                if( empty($response) ) {
-
-                    $item->expiresAfter(1);
-
-                } else {
-
+                try {
+                    $response = $this->getLatestVideosUncached($results, $cacheKey);
                     $item->expiresAfter(static::CACHE_MINUTES * 60);
+
+                } catch(YouTubeException $ex) {
+
+                    $response = $this->getStoredResponse($cacheKey);
+
+                    if( empty($response) ) {
+                        throw $ex;
+                    }
+
+                    $item->expiresAfter(static::CACHE_MINUTES * 60 * 10);
                 }
 
                 return $response;
@@ -50,7 +57,7 @@ class YouTubeChannelApi
     }
 
 
-    protected function getLatestVideosUncached(int $results): array
+    protected function getLatestVideosUncached(int $results, string $storeFileName): array
     {
         $apiEndpoint = static::API_ENDPOINT . "search";
 
@@ -62,23 +69,32 @@ class YouTubeChannelApi
             "order"         => "date"
         ];
 
-        $response = $this->httpClient->request('GET', $apiEndpoint, [
-            'query'     => $arrParams,
-            'timeout'   => 5
-        ]);
+        $response =
+            $this->httpClient->request('GET', $apiEndpoint, [
+                'query'     => $arrParams,
+                'timeout'   => 5
+            ]);
 
         try {
-            $txtResponse= $response->getContent(false);
+            $txtJsonResponse= $response->getContent(false);
             $statusCode = $response->getStatusCode();
             if( $statusCode != Response::HTTP_OK ) {
-                throw new Exception($txtResponse, $statusCode);
+                throw new Exception($txtJsonResponse, $statusCode);
             }
+
+            $this->storeResponse($txtJsonResponse, $storeFileName);
 
         } catch(Exception $ex) {
             throw new YouTubeException($ex->getCode(), $ex->getMessage());
         }
 
-        $objResponse = json_decode($txtResponse);
+        return $this->parseLatestVideosResponse($txtJsonResponse);
+    }
+
+
+    protected function parseLatestVideosResponse(string $txtJsonResponse) : array
+    {
+        $objResponse = json_decode($txtJsonResponse);
 
         $utcTimeZone    = new DateTimeZone('UTC');
         $currentTimeZone= new DateTimeZone(date_default_timezone_get());
@@ -106,5 +122,31 @@ class YouTubeChannelApi
         }
 
         return $arrVideos;
+    }
+
+
+    protected function storeResponse(string $txtJsonResponse, string $storeFileName) : static
+    {
+        $fullFileName = $this->projectDir->getVarDirFromFilePath("$storeFileName.json");
+        file_put_contents($fullFileName, $txtJsonResponse);
+        return $this;
+    }
+
+
+    protected function getStoredResponse(string $storeFileName) : ?array
+    {
+        $fullFileName = $this->projectDir->getVarDirFromFilePath("$storeFileName.json");
+
+        if( !is_readable($fullFileName) ) {
+            return null;
+        }
+
+        $txtJsonResponse = file_get_contents($fullFileName);
+
+        if( empty($fullFileName) ) {
+            return null;
+        }
+
+        return $this->parseLatestVideosResponse($txtJsonResponse);
     }
 }
