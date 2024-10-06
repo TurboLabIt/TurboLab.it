@@ -98,7 +98,7 @@ class HomeController extends BaseController
 
         //
         $arrArticlesMiddleSlideShow = $mainArticleCollection->getItems($numLatestSlider);
-        $arrVideos                  = $this->YouTubeChannel->getLatestVideos(8);
+        $arrVideos                  = $this->YouTubeChannel->getLatestVideos();
         $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViewsRecent();
 
         return
