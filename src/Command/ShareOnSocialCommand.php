@@ -1,11 +1,13 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\Article;
 use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use stdClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -109,10 +111,12 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $this->arrYouTubeVideos = [ $arrVideos[$randomKey] ];
         }
 
+        /** @var Article $article */
         foreach($this->articleCollection as $article) {
-            $this->shareOnAll($article->getTitle(), $article->getShortUrl(), "📰", "LEGGI TUTTO");
+            $this->shareOnAll($article->getTitle(), $article->getUrl(), "📰", "LEGGI TUTTO");
         }
 
+        /** @var stdClass $video */
         foreach($this->arrYouTubeVideos as $video) {
             $this->shareOnAll($video->title, $video->url, "📺", "GUARDA IL VIDEO");
         }
