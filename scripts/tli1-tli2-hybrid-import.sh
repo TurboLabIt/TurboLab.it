@@ -3,39 +3,55 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Copy data from TLI1 to TLI2 hybrid server"
+fxEnvNotDev
+
 TLI1_SOURCE_DIR=/var/www/turbolab_it/website/www/
-TLI2_FORUM_DIR=${PROJECT_DIR}public/forum/
 
 
-fxTitle "Copying the whole forum directory..."
-sudo mv "${TLI2_FORUM_DIR}config.php" "${PROJECT_DIR}backup/phpbb-next-config.php"
-sudo rm -rf "${TLI2_FORUM_DIR}"
-sudo cp -a "${TLI1_SOURCE_DIR}public/forum" "${TLI2_FORUM_DIR%/}"
-sudo rm -f "${TLI2_FORUM_DIR}config.php"
-sudo mv "${PROJECT_DIR}backup/phpbb-next-config.php" "${TLI2_FORUM_DIR}config.php"
-sudo chown webstackup:www-data "${TLI2_FORUM_DIR}" -R
+bash "${TLI1_SOURCE_DIR}scripts/db-dump.sh"
 
-if ! grep -q turbolab_it_next_forum "${TLI2_FORUM_DIR}config.php"; then
-  fxCatastrophicError "config.php doesn't contain ##turbolab_it_next_forum##"
+
+if [ "$APP_ENV" == "staging" ]; then
+
+  TLI2_DATABASE_NAME=turbolab_it_next
+
+  TLI2_FORUM_DIR=${PROJECT_DIR}public/forum/
+
+  fxTitle "Copying the whole forum directory..."
+  sudo mv "${TLI2_FORUM_DIR}config.php" "${PROJECT_DIR}backup/phpbb-next-config.php"
+  sudo rm -rf "${TLI2_FORUM_DIR}"
+  sudo cp -a "${TLI1_SOURCE_DIR}public/forum" "${TLI2_FORUM_DIR%/}"
+  sudo rm -f "${TLI2_FORUM_DIR}config.php"
+  sudo mv "${PROJECT_DIR}backup/phpbb-next-config.php" "${TLI2_FORUM_DIR}config.php"
+  sudo chown webstackup:www-data "${TLI2_FORUM_DIR}" -R
+
+  if ! grep -q turbolab_it_next_forum "${TLI2_FORUM_DIR}config.php"; then
+    fxCatastrophicError "config.php doesn't contain ##turbolab_it_next_forum##"
+  fi
+
+  cd "${TLI1_SOURCE_DIR}backup/db-dumps"
+  zzmysqlimp "$(hostname)_turbolab_it_forum_$(date +'%u').sql.7z" turbolab_it_next_forum
+
+  fxTitle "Changing some forum settings..."
+  bash "${SCRIPT_DIR}phpbb-cli.sh" config:set email_enable 0
+  bash "${SCRIPT_DIR}phpbb-cli.sh" config:set smtp_host "null.turbolab.it"
+  bash "${SCRIPT_DIR}phpbb-cli.sh" config:set sitename "next.turbolab.it"
+  bash "${SCRIPT_DIR}phpbb-cli.sh" config:set site_home_url "https://next.turbolab.it"
+  bash "${SCRIPT_DIR}phpbb-cli.sh" config:set server_name "next.turbolab.it"
+  bash "${SCRIPT_DIR}phpbb-cli.sh" cache:purge
+
+elif [ "$APP_ENV" == "prod" ]; then
+
+  TLI2_DATABASE_NAME=turbolab_it
+
 fi
 
-fxTitle "Copying the forum database..."
-bash "${TLI1_SOURCE_DIR}scripts/db-dump.sh"
+
 cd "${TLI1_SOURCE_DIR}backup/db-dumps"
-zzmysqlimp "$(hostname)_turbolab_it_forum_$(date +'%u').sql.7z" turbolab_it_next_forum
+zzmysqlimp "$(hostname)_turbolab_it_v1_$(date +'%u').sql.7z" turbolab_it_next_tli1_to_import
 
-fxTitle "Copying the TLI1 database (to import from)..."
-zzmysqlimp "$(hostname)_turbolab_it_$(date +'%u').sql.7z" turbolab_it_next_tli1_to_import
+
 cd "${PROJECT_DIR}"
-
-
-fxTitle "Changing some forum settings..."
-bash "${SCRIPT_DIR}phpbb-cli.sh" config:set email_enable 0
-bash "${SCRIPT_DIR}phpbb-cli.sh" config:set smtp_host "null.turbolab.it"
-bash "${SCRIPT_DIR}phpbb-cli.sh" config:set sitename "next.turbolab.it"
-bash "${SCRIPT_DIR}phpbb-cli.sh" config:set site_home_url "https://next.turbolab.it"
-bash "${SCRIPT_DIR}phpbb-cli.sh" config:set server_name "next.turbolab.it"
-bash "${SCRIPT_DIR}phpbb-cli.sh" cache:purge
 
 
 fxTitle "Removing TLI2 assets store var/uploaded-assets/..."
@@ -57,7 +73,7 @@ cd "${PROJECT_DIR}"
 
 
 fxTitle "Dropping doctrine_migration_versions..."
-wsuMysql -e 'DROP TABLE IF EXISTS turbolab_it_next.doctrine_migration_versions'
+wsuMysql -e "DROP TABLE IF EXISTS ${TLI2_DATABASE_NAME}.doctrine_migration_versions"
 
 bash ${SCRIPT_DIR}migrate.sh
 
