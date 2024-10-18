@@ -46,7 +46,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
 
 ## every morning: deploy and import TLI1
-0 5 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-async.log 2>&1
+0 5 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
 
 ## every friday: send the weekly newsletter
 # ⚠ Any argument provided to "newsletter-send.sh" will deliver emails to the real users!
