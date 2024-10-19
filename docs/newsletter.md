@@ -25,7 +25,7 @@ Le priorità principali nella gestione della newsletter sono:
 
 - **automazione totale**: generazione e invio devono avvenire automaticamente, senza bisogno di alcuna conferma o interventi esterni
 - offrire a quanti più utenti possibile l'occasione di ricevere almeno una volta la newsletter per valutare se possa loro interessare
-- NO SPAM! Chi non vuole la newsletter  deve riceverla più, senza ostacoli o ritardi
+- **NO SPAM**! Chi non vuole la newsletter non deve riceverla, senza ostacoli o ritardi
 
 La newsletter viene generata sul server di TurboLab.it e inviata direttamente alle mailbox degli iscritti tramite il servizio SMTP in esecuzione sul server stesso. Abbiamo dunque scelto di **non utilizzare servizi esterni**, per i seguenti motivi:
 

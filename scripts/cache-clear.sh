@@ -19,11 +19,11 @@ if [ "$APP_ENV" = "dev" ]; then
   fxTitle "Removing composer stuff..."
   rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
 
-  fxTitle "Removing yarn stuff..."
-  rm -f ${PROJECT_DIR}yarn.lock
-
   fxTitle "npm-check-updates..."
   yarn npm-check-updates -u
+
+  fxTitle "Removing yarn stuff..."
+  rm -f ${PROJECT_DIR}yarn.lock
 
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
