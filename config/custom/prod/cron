@@ -49,8 +49,8 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 0 5 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
 
 ## every friday: send the weekly newsletter
-# ⚠ Any argument provided to "newsletter-send.sh" will deliver emails to the real users!
-#30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh >> ${LOG_PATH}newsletter-send.sh.log 2>&1
+# For delivery to real users: --real-recipients --send-messages
+30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh --send-messages >> ${LOG_PATH}newsletter-send.sh.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

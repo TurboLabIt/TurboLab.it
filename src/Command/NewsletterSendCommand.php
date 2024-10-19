@@ -25,10 +25,13 @@ use TurboLabIt\BaseCommand\Service\Options;
 )]
 class NewsletterSendCommand extends AbstractBaseCommand
 {
-    const string CLI_OPT_USE_LOCAL_SMTP = 'local-smtp';
+    const string CLI_OPT_REAL_RECIPIENTS    = 'real-recipients';
+    const string CLI_OPT_USE_LOCAL_SMTP     = 'local-smtp';
 
-    protected bool $allowDryRunOpt      = true;
-    protected bool $limitedByDefaultOpt = true;
+    protected bool $allowSendMessagesOpt    = true;
+    protected bool $allowDryRunOpt          = true;
+
+    protected Newsletter $mailer;
 
 
     public function __construct(
@@ -36,13 +39,17 @@ class NewsletterSendCommand extends AbstractBaseCommand
         protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
         protected Newsletter $newsletter
     )
-    { parent::__construct(); }
-
+    {
+        // this is required for the auto-check performed by AbstractBaseCommand
+        $this->mailer = $newsletter;
+        parent::__construct();
+    }
 
 
     protected function configure() : void
     {
         parent::configure();
+        $this->addOption(static::CLI_OPT_REAL_RECIPIENTS, null, InputOption::VALUE_NONE);
         $this->addOption(
             static::CLI_OPT_USE_LOCAL_SMTP, null, InputOption::VALUE_NONE,
             'Change the DSN to smtp://localhost'
@@ -54,17 +61,36 @@ class NewsletterSendCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->fxTitle("Email delivery check");
-        if( $this->isDryRun() ) {
+        $this->fxTitle("📬 Loading the recipients...");
+        $realRecipients = $this->getCliOption(static::CLI_OPT_REAL_RECIPIENTS);
+        if( $realRecipients && $this->isSendingMessageAllowed(true) && $this->isNotProd() ) {
+            return $this->endWithError("Cannot use real recipients with hot emails in non-prod environment!");
+        }
 
-            $this->fxWarning("Email delivery is BLOCKED");
+        if($realRecipients) {
+
+            $this
+                ->fxWarning("👤👤👤 REAL RECIPIENTS 👤👤👤")
+                ->newsletter->loadRecipients();
 
         } else {
 
-            $this->fxWarning("📨🔥 Emails are HOT! 🔥📨");
+            $this
+                ->fxInfo("🧪 TEST recipients")
+                ->newsletter->loadTestRecipients();
+
+            $this->io->newLine();
+
+            $arrRecipients = $this->newsletter->getRecipients();
+            foreach($arrRecipients as $recipient) {
+                $this->fxInfo( "📬 " . $recipient->getEmail() );
+            }
+
+            $this->io->newLine();
         }
 
-        $this->newsletter->block( $this->isDryRun(true) );
+        $recipientsCount = $this->newsletter->countRecipients();
+        $this->fxOK("$recipientsCount recipient(s) loaded");
 
 
         $countArticles =
@@ -74,14 +100,16 @@ class NewsletterSendCommand extends AbstractBaseCommand
                     ->loadContent()
                     ->countArticles();
 
+        $canLoadTestContent = !$this->isSendingMessageAllowed(true) || !$realRecipients;
+
         if( $countArticles == 0 ) {
 
             $this->fxWarning("No articles loaded!");
 
-            if( $this->isLimited(true) ) {
+            if($canLoadTestContent) {
 
                 $this
-                    ->fxWarning("Loading some random articles due to test execution...")
+                    ->fxWarning("🧪 Loading some random articles...")
                     ->newsletter->loadTestArticles();
 
                 $countArticles = $this->newsletter->countArticles();
@@ -96,10 +124,10 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
             $this->fxWarning("No topics loaded!");
 
-            if( $this->isLimited(true) ) {
+            if($canLoadTestContent) {
 
                 $this
-                    ->fxWarning("Loading some random topics due to test execution...")
+                    ->fxWarning("🧪 Loading some random topics...")
                     ->newsletter->loadTestTopics();
 
                 $countTopics = $this->newsletter->countTopics();
@@ -122,36 +150,15 @@ class NewsletterSendCommand extends AbstractBaseCommand
         }
 
 
-        if( $this->isLimited(true) ) {
-
-            $this
-                ->fxTitle("Loading TEST recipients...")
-                ->newsletter->loadTestRecipients();
-
-        } else {
-
-            $this
-                ->fxTitle("Loading REAL recipients...")
-                ->newsletter->loadRecipients();
-        }
-
-
-        $recipientsCount = $this->newsletter->countRecipients();
-
-        // this shouldn't happen. It's just me being a maniac
-        if( $recipientsCount > 5 && !$this->isNotProd() ) {
-
-            throw new RuntimeException(
-                "Fail-safe triggered! There are more than 5 recipients in non-prod!"
-            );
-        }
-
-        $this->fxOK("$recipientsCount recipient(s) loaded");
-
-
         $this->fxTitle("Generating the article on the website...");
+        $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
+        $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
+
         // while TLI1 is still live, don't save the web article in prod
-        $persistArticle = $this->isNotDryRun() && $this->isNotProd() && $this->isUnlocked();
+        if( $this->isProd() ) {
+            $persistArticle = false;
+        }
+
         $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
 
         if($persistArticle) {
@@ -202,7 +209,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
     protected function sendOne(int $key, User $user) : void
     {
-        if( $this->isLimited(true) && $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
+        if( $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
             $this->newsletter->useLocalSmtpOnce();
         }
 
