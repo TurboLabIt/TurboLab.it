@@ -23,9 +23,7 @@
     </columns></row>
 
 
-    <row><columns>
-        <h2 class="text-center tli-group-title">Articoli e news</h2>
-    </columns></row>
+    <row><columns><h2 class="text-center tli-group-title">Articoli e news</h2></columns></row>
 
     {% if Articles is empty or showingTestArticles %}
         <row><columns>🌴 Questa settimana non sono stati pubblicati nuovi articoli.</columns></row>
@@ -46,6 +44,41 @@
             </columns>
         </row>
     {% endfor %}
+
+
+    <row><columns><h2 class="text-center tli-group-title">Ultimo video</h2></columns></row>
+
+    {% if Videos is empty %}
+
+        <row><columns>🎥 Nessun video disponibile</columns></row>
+
+    {% else %}
+
+        <row>
+            <columns>
+                <a href="{{ Videos|first.url|raw }}">
+                    <h4 class="tli-article-title">{{ Videos|first.title|raw }}</h4>
+                    <img class="float-center" style="width: 720px"
+                         src="{{ Videos|first.thumbnails.high.url|raw }}" alt="{{ Videos|first.title|raw }}">
+                </a>
+            </columns>
+        </row>
+
+        <row><columns>Video precedenti:</columns></row>
+
+        <row>
+            <columns>
+                <ul>
+                    {% for Video in Videos %}
+                        {% if not loop.first %}
+                            <li><a href="{{ Video.url|raw }}">▶️ {{ Video.title|raw }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </columns>
+        </row>
+
+    {% endif %}
 
 
     <row><columns>
@@ -79,7 +112,7 @@
     {# The following <center> is from INKY, it's NOT deprecated. #}
     {# 📚 https://get.foundation/emails/docs/alignment.html #}
     <row><columns><center>
-        <button href="{{ forumWithOpenerUrl }}">Inizia una nuova discussione</button
+        <button href="{{ forumWithOpenerUrl }}">Inizia una nuova discussione</button>
     </center></columns></row>
 
 

@@ -17,6 +17,7 @@ use IntlDateFormatter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use TurboLabIt\BaseCommand\Service\DateMagician;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use TurboLabIt\Encryptor\Encryptor;
 use TurboLabIt\Messengers\TelegramMessenger;
@@ -27,8 +28,9 @@ class Newsletter extends Mailer
 {
     protected string $newsletterOnSiteUrl;
     protected string $privacyUrl;
-    protected string $newsletterName    = "Questa settimana su TLI";
+    protected string $newsletterName;
     protected string $subject;
+    protected array $arrVideos;
     protected Tag $tagNewsletterTli;
     protected User $userSystem;
     protected array $arrRecipients      = [];
@@ -39,20 +41,26 @@ class Newsletter extends Mailer
 
 
     public function __construct(
-        protected ArticleCollection $articleCollection, protected TopicCollection $topicCollection,
+        protected ArticleCollection $articleCollection, protected YouTubeChannelApi $YouTube,
+        protected TopicCollection $topicCollection,
         protected UserCollection $userCollection, protected Factory $factory,
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
         protected Environment $twig, protected TelegramMessenger $alertMessenger,
 
         //
-        MailerInterface $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters
+        MailerInterface                 $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters,
     )
     {
         // init to homepage (failsafe)
         $this->newsletterOnSiteUrl = $this->privacyUrl =
             $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $this->subject = $this->newsletterName;
+        $newsletterDate =
+            (new DateMagician())->intlFormat(
+                (new DateTime())->modify('+1 day'), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
+            );
+
+        $this->newsletterName = "Questa settimana su TLI ($newsletterDate)";
 
         parent::__construct($mailer, $projectDir, $parameters, [
             "from" => [
@@ -84,6 +92,11 @@ class Newsletter extends Mailer
     public function loadContent() : static
     {
         $this->articleCollection->loadLatestForNewsletter();
+
+        if( empty($this->arrVideos) ) {
+            $this->arrVideos = $this->YouTube->getLatestVideos(4);
+        }
+
         $this->topicCollection->loadLatestForNewsletter();
 
         return $this->loadAncillaryContent();
@@ -113,7 +126,9 @@ class Newsletter extends Mailer
 
     public function generateSubject() : static
     {
-        $firstArticleTitle = $this->articleCollection->first()?->getTitle();
+        // this function generates and set the "most viewed article" as subject
+        // do we relly want this?
+        $firstArticleTitle = null; //$this->articleCollection->first()?->getTitle();
 
         if( empty($firstArticleTitle) ) {
 
@@ -123,8 +138,6 @@ class Newsletter extends Mailer
 
             $this->subject = '"' . $firstArticleTitle . '" e altre novità | ' . $this->newsletterName;
         }
-
-        $this->subject .= " (" . $this->getDateString() . ")";
 
         return $this;
     }
@@ -189,6 +202,7 @@ class Newsletter extends Mailer
         $arrTemplateParams = [
             "Articles"                      => $this->articleCollection,
             "showingTestArticles"           => $this->showingTestArticles,
+            "Videos"                        => $this->arrVideos,
             "Topics"                        => $this->topicCollection,
             "showingTestTopics"             => $this->showingTestTopics,
             "openerUrl"                     => $user->getNewsletterOpenerUrl(),
@@ -220,14 +234,6 @@ class Newsletter extends Mailer
     }
 
 
-    protected function getDateString() : string
-    {
-        return
-            (new IntlDateFormatter('it_IT', IntlDateFormatter::NONE, IntlDateFormatter::NONE, NULL, NULL, "dd MMMM y"))
-                ->format( new DateTime() );
-    }
-
-
     public function sendLowContentNotification() : string
     {
         $message =
@@ -252,13 +258,11 @@ class Newsletter extends Mailer
                 ]
             );
 
-        $title = $this->newsletterName . " (" . $this->getDateString() . ")";
-
         $topicComment = $this->factory->createTopic()->load(Topic::ID_NEWSLETTER_COMMENTS);
 
         $article =
             $this->factory->createArticleEditor()
-                ->setTitle($title)
+                ->setTitle($this->newsletterName)
                 ->addAuthor($this->userSystem)
                 ->addTag($this->tagNewsletterTli, $this->userSystem)
                 ->setFormat(Article::FORMAT_ARTICLE)
