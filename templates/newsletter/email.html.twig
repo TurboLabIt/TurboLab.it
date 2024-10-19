@@ -3,7 +3,8 @@
 <container>
 
     <row><columns>
-        <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it" title="TurboLab.it">
+        <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}"
+             alt="TurboLab.it" title="TurboLab.it">
     </columns></row>
 
     <row><columns>
@@ -12,14 +13,17 @@
 
     <row><columns>
         <p class="text-center tli-alert-warning">
-            Non vuoi più ricevere queste email? Allora
-            <a href="{{ unsubscribeUrl }}">dis-iscriviti con un solo click!</a>
+            Non vuoi più ricevere queste email? Allora <a href="{{ unsubscribeUrl }}">dis-iscriviti con un solo click!</a>
         </p>
     </columns></row>
 
     <row><columns>
         🎗 Ricorda di aggiungere l'indirizzo <a href="mailto:{{ From.address }}">{{ From.address }}</a> alla rubrica per
         evitare che queste newsletter finiscano nella posta indesiderata.
+    </columns></row>
+
+    <row><columns>
+        🩹 Problemi di visualizzazione? <a href="{{ newsletterOnSiteWithOpenerUrl }}">Apri nel browser</a>.
     </columns></row>
 
 

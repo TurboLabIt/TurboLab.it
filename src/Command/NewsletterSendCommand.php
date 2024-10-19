@@ -116,11 +116,8 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
         if( $countArticles == 0 && $countTopics == 0 ) {
 
-            $errorMessage =
-                $this->newsletter->sendLowContentNotification();
-
+            $errorMessage = $this->newsletter->sendLowContentNotification();
             $errorMessage = strip_tags($errorMessage);
-
             return $this->endWithWarning($errorMessage);
         }
 
@@ -153,7 +150,8 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
 
         $this->fxTitle("Generating the article on the website...");
-        $persistArticle = $this->isNotDryRun() && ( $this->isNotProd() || $this->isUnlocked() );
+        // while TLI1 is still live, don't save the web article in prod
+        $persistArticle = $this->isNotDryRun() && $this->isNotProd() && $this->isUnlocked();
         $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
 
         if($persistArticle) {
@@ -162,7 +160,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
         } else {
 
-            $this->fxWarning('The article was NOT saved due to test mode or --' . Options::CLI_OPT_DRY_RUN);
+            $this->fxWarning('The web article was NOT saved');
         }
 
         $this->fxTitle("Processing every recipient...");
