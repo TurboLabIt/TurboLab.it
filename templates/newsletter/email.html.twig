@@ -3,8 +3,7 @@
 <container>
 
     <row><columns>
-        <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}"
-             alt="TurboLab.it" title="TurboLab.it">
+        <img id="tli-email-logo" class="float-center" src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}" alt="TurboLab.it">
     </columns></row>
 
     <row><columns>
@@ -42,7 +41,7 @@
             <columns>
                 <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
                     <h4 class="tli-article-title">{{ Article.title|raw }}</h4>
-                    <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}" alt="{{ Article.title|raw }}">
+                    <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}" alt="Copertina">
                     <p class="tli-article-abstract">{{ Article.abstract|raw }}</p>
                 </a>
             </columns>
