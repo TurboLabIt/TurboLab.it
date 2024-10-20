@@ -30,7 +30,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 * * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
 
 ## every xx minutes: TLI Cache Warmer
-*/5 * * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
+*/5 7-23 * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
 
 ## every xx minutes: share on Telegram, WhatsApp, ...
 # ⚠ Keep the interval synced with EXEC_INTERVAL from https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php
