@@ -20,6 +20,30 @@
 {% endif %}
 
 
+<h2>Ultimo video</h2>
+
+{% if Videos is not empty %}
+
+    <p>{{ Videos|first.title|raw }}</p>
+    <p><iframe src="//www.youtube-nocookie.com/embed/{{ Videos|first.id|raw }}?rel=0" width="100%" height="360"></iframe></p>
+
+    Video precedenti:
+
+    <ul>
+        {% for Video in Videos %}
+            {% if not loop.first %}
+                <li><a href="{{ Video.url|raw }}">▶️ {{ Video.title|raw }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+{% else %}
+
+    <p>🎥 Nessun video disponibile</p>
+
+{% endif %}
+
+
 <h2>Messaggi dal forum</h2>
 {% if Topics is not empty %}
 

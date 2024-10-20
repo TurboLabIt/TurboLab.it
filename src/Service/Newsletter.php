@@ -252,6 +252,7 @@ class Newsletter extends Mailer
             $this->twig->render('newsletter/article.html.twig', [
                     "Articles"          => $this->articleCollection,
                     "Topics"            => $this->topicCollection,
+                    "Videos"            => $this->arrVideos,
                     "newsletterUrl"     => $this->articleCollection->createService()->load(Article::ID_NEWSLETTER)->getUrl(),
                     "subscriberCount"   => $this->totalSubscribersCount,
                     "TopEmailProviders" => $this->arrTopProviders,
