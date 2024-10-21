@@ -21,7 +21,7 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
  */
 class YouTubeChannelApi
 {
-    const int CACHE_MINUTES     = 60;
+    const int CACHE_MINUTES     = 14;
     const string API_ENDPOINT   = "https://youtube.googleapis.com/youtube/v3/";
 
 
@@ -37,9 +37,11 @@ class YouTubeChannelApi
         return
             $this->cache->get($cacheKey, function (CacheItem $item) use($results, $cacheKey) {
 
+                $cacheLife = date('H:i') < '07:00' ? 3600 : (static::CACHE_MINUTES * 60);
+
                 try {
                     $response = $this->getLatestVideosUncached($results, $cacheKey);
-                    $item->expiresAfter(static::CACHE_MINUTES * 60);
+                    $item->expiresAfter($cacheLife);
 
                 } catch(YouTubeException $ex) {
 

@@ -30,7 +30,9 @@ use TurboLabIt\Messengers\TwitterMessenger;
 class ShareOnSocialCommand extends AbstractBaseCommand
 {
     const int QUIET_HOURS_END       =  8;
-    const int EXEC_INTERVAL         = 10;
+    // Keep the interval synced with the cron https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron
+    // Keep the interval one minute higher than CACHE_MINUTES https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/YouTubeChannelApi.php
+    const int EXEC_INTERVAL         = 15;
     const string CLI_OPT_CRON       = 'cron';
     const string CLI_OPT_SERVICES   = 'service';
 
