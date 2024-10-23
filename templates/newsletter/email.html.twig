@@ -79,8 +79,8 @@
                     <columns>
                         <a href="{{ Videos|first.url|raw }}">
                             <h4 class="tli-article-title">{{ Videos|first.title|raw }}</h4>
-                            {#<img class="float-center" style="width: 720px"
-                                  src="{{ Videos|first.thumbnails.high.url|raw }}" alt="{{ Videos|first.title|raw }}">#}
+                            <img class="float-center"
+                                  src="{{ Videos|first.thumbnails.high.url|raw }}" alt="{{ Videos|first.title|raw }}">
                         </a>
                     </columns>
                 </row>
