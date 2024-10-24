@@ -142,7 +142,7 @@
                     Questa newsletter viene recapitata a {{ subscriberCount|friendlyNum }} iscritti, fra i quali ci sei anche tu!<br>
                     I domini più usati sono
                     {% for domain,Provider in TopEmailProviders %}
-                        <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %})
+                        <em>{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %})
                         {% if not loop.last %},{% else %}.{% endif %}
                     {% endfor %}
                 </columns>
