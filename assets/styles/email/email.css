@@ -9,6 +9,13 @@
     padding: .75rem 1.25rem;
 }
 
+.tli-alert-primary {
+    color: #004085;
+    background-color:#cce5ff;
+    border-color:#2199e8;
+    padding: .75rem 1.25rem;
+}
+
 h2.tli-group-title {
     margin-bottom: 0px;
 }
