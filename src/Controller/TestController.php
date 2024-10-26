@@ -8,6 +8,7 @@ use App\Service\Cms\Image;
 use App\Service\Cms\Tag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Pinky;
 
 
 class TestController extends BaseController
@@ -19,5 +20,16 @@ class TestController extends BaseController
     ) : Response
     {
         dd("OK");
+    }
+
+
+
+    #[Route('/test/inky/', name: 'app_test_inky', condition: "'%kernel.environment%' == 'dev'")]
+    public function inky() : Response
+    {
+        /*$transpiled = Pinky\transformString('<row>Contents</row>');
+        echo $transpiled->saveHTML();
+        dd("OK");*/
+        return $this->render('newsletter/email.html.twig');
     }
 }
