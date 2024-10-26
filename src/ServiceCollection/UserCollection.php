@@ -24,7 +24,9 @@ class UserCollection extends BaseServiceEntityCollection
     public function loadNewsletterTestRecipients() : static
     {
         $arrTestUsers = [
-            "system" => $this->getRepository()->find(User::SYSTEM_USER_ID)
+            "system"            => $this->getRepository()->find(User::SYSTEM_USER_ID),
+            'tli-dev-libero'    => $this->getRepository()->find(7238),
+            'tli-dev-outlook'   => $this->getRepository()->find(7239),
         ];
 
         $arrTestAddresses = [
@@ -35,8 +37,7 @@ class UserCollection extends BaseServiceEntityCollection
             // https://app.mailgenius.com/spam-test/6e3913
             //"test-6e3913@test.mailgenius.com",
             // https://www.lemwarm.com/deliverability-test
-            //"deliverability-test+g57u4j6806x1@lemwarm.com",
-            "turbolab.it@libero.it"
+            //"deliverability-test+g57u4j6806x1@lemwarm.com"
         ];
 
         foreach($arrTestAddresses as $address) {
