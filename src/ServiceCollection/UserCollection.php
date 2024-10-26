@@ -33,9 +33,10 @@ class UserCollection extends BaseServiceEntityCollection
             // https://mxtoolbox.com/deliverability
             "ping@tools.mxtoolbox.com",
             // https://app.mailgenius.com/spam-test/6e3913
-            "test-6e3913@test.mailgenius.com",
+            //"test-6e3913@test.mailgenius.com",
             // https://www.lemwarm.com/deliverability-test
-            "deliverability-test+g57u4j6806x1@lemwarm.com"
+            //"deliverability-test+g57u4j6806x1@lemwarm.com",
+            "turbolab.it@libero.it"
         ];
 
         foreach($arrTestAddresses as $address) {
