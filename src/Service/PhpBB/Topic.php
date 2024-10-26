@@ -14,8 +14,8 @@ class Topic extends BaseServiceEntity
 {
     const string ENTITY_CLASS = TopicEntity::class;
 
-    // 👀 https://turbolab.it/forum/viewtopic.php?t=12749
-    const int ID_NEWSLETTER_COMMENTS = 12749;
+    // 👀 https://turbolab.it/forum/viewtopic.php?t=2676
+    const int ID_NEWSLETTER_COMMENTS = 2676;
 
     protected ?TopicEntity $entity;
 
