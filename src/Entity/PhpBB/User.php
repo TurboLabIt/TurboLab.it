@@ -194,6 +194,15 @@ class User extends BaseEntity implements UserInterface
     }
 
 
+    public function getUserType() : int { return $this->user_type; }
+
+    public function setUserType(int $userType) : static
+    {
+        $this->user_type = $userType;
+        return $this;
+    }
+
+
     /**
      * A visual identifier that represents this user.
      *
@@ -212,6 +221,11 @@ class User extends BaseEntity implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+
+        // 3: founder
+        if( $this->user_type == "3" ) {
+            $roles[] = 'ROLE_ADMIN';
+        }
 
         return array_unique($roles);
     }
