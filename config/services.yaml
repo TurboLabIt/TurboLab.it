@@ -44,12 +44,6 @@ services:
                 apiKey: '%env(APP_YOUTUBE_API_KEY)%'
                 channelId: '%env(APP_YOUTUBE_CHANNEL_ID)%'
 
-    App\DataCollector\WebDebugToolbarExtension:
-        tags:
-            -
-                name: web_debug_toolbar_extension
-                id: 'App\DataCollector\WebDebugToolbarExtension'
-
     App\Repository\PhpBB\ForumRepository:
          arguments:
             $arrConfig:
