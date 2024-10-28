@@ -2,7 +2,7 @@
 namespace App\EventListener;
 
 use Symfony\Component\Console\Event\ConsoleErrorEvent;
-use TurboLabIt\Messengers\TelegramMessenger;
+use TurboLabIt\MessengersBundle\TelegramMessenger;
 
 
 class CommandFailureListener

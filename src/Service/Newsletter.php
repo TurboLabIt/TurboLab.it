@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\DateMagician;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use TurboLabIt\Encryptor\Encryptor;
-use TurboLabIt\Messengers\TelegramMessenger;
+use TurboLabIt\MessengersBundle\TelegramMessenger;
 use Twig\Environment;
 
 

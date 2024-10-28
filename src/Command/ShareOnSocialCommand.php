@@ -15,9 +15,9 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TurboLabIt\Messengers\FacebookPageMessenger;
-use TurboLabIt\Messengers\TelegramMessenger;
-use TurboLabIt\Messengers\TwitterMessenger;
+use TurboLabIt\MessengersBundle\FacebookPageMessenger;
+use TurboLabIt\MessengersBundle\TelegramMessenger;
+use TurboLabIt\MessengersBundle\TwitterMessenger;
 
 /**
  * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/social-network-sharing.md
