@@ -1,0 +1,3 @@
+turbolabit_messengers_routes:
+    resource: '@TurboLabItMessengersBundle/src/Controller/'
+    type: attribute
