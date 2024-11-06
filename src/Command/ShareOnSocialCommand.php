@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\Image;
 use App\Service\Cms\Article;
 use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
@@ -16,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\MessengersBundle\FacebookPageMessenger;
+use TurboLabIt\MessengersBundle\LinkedInPageMessenger;
 use TurboLabIt\MessengersBundle\TelegramMessenger;
 use TurboLabIt\MessengersBundle\TwitterMessenger;
 
@@ -46,7 +48,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         protected EntityManagerInterface $em, protected ParameterBagInterface $parameters,
         protected ArticleCollection $articleCollection, protected YouTubeChannelApi $YouTubeChannel,
         protected TelegramMessenger $telegram, protected FacebookPageMessenger $facebook,
-        protected TwitterMessenger $twitter
+        protected TwitterMessenger $twitter, protected LinkedInPageMessenger $linkedIn
     )
     {
         parent::__construct();
@@ -115,12 +117,26 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         /** @var Article $article */
         foreach($this->articleCollection as $article) {
-            $this->shareOnAll($article->getTitle(), $article->getUrl(), "📰", "LEGGI TUTTO");
+            $this->shareOnAll([
+                "title"     => $article->getTitle(),
+                "url"       => $article->getUrl(),
+                "prodUrl"   => $this->buildProductionUrl( $article->getUrl() ),
+                "spotlight" => $this->buildProductionUrl( $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX) ),
+                "emoji"     => "📰",
+                "cta"       => "LEGGI TUTTO"
+            ]);
         }
 
         /** @var stdClass $video */
         foreach($this->arrYouTubeVideos as $video) {
-            $this->shareOnAll($video->title, $video->url, "📺", "GUARDA IL VIDEO");
+            $this->shareOnAll([
+                "title"     => $video->title,
+                "url"       => $video->url,
+                "prodUrl"   => $video->url,
+                "spotlight" => $video->thumbnails->high->url,
+                "emoji"     => "📺",
+                "cta"       => "GUARDA IL VIDEO"
+            ]);
         }
 
         return $this->endWithSuccess();
@@ -210,8 +226,12 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function shareOnAll(string $title, string $url, string $emoji, string $cta) : static
+    protected function shareOnAll(array $arrParams) : static
     {
+        $title  = html_entity_decode($arrParams["title"], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $url    = $arrParams["url"];
+        $emoji  = $arrParams["emoji"];
+
         $this->fxTitle("$emoji $title");
         $this->io->writeLn("🔗 $url");
 
@@ -226,13 +246,14 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             TelegramMessenger::SERVICE_NAME     => 'shareOnTelegram',
             FacebookPageMessenger::SERVICE_NAME => 'shareOnFacebook',
             TwitterMessenger::SERVICE_NAME      => 'shareOnTwitter',
+            LinkedInPageMessenger::SERVICE_NAME => 'shareOnLinkedIn'
         ];
 
         foreach($arrServicesMap as $serviceName => $fx) {
 
             if( empty($arrServiceFilter) || in_array($serviceName, $arrServiceFilter) ) {
 
-                $this->$fx($title, $url, $emoji, $cta);
+                $this->$fx($arrParams);
                 continue;
             }
 
@@ -246,9 +267,35 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function shareOnTelegram(string $title, string $url, string $emoji, string $buttonLabel) : static
+    protected function buildProductionUrl(string $url) : string
+    {
+        $parts  = parse_url($url);
+        $host   = $parts['host'];
+        $arrHostParts = explode('.', $host);
+
+        if( count($arrHostParts) > 2 ) {
+
+            $arrNewHostParts    = array_slice($arrHostParts, -2);
+            $newHost            = implode('.', $arrNewHostParts);
+            $prodUrl            = str_replace("https://$host", "https://$newHost", $url);
+
+        } else {
+
+            $prodUrl = $url;
+        }
+
+        return $prodUrl;
+    }
+
+
+    protected function shareOnTelegram(array $arrParams) : static
     {
         $this->io->write("✴ Telegram: ");
+
+        $title          = $arrParams["title"];
+        $url            = $arrParams["prodUrl"];
+        $emoji          = $arrParams["emoji"];
+        $buttonLabel    = $arrParams["cta"];
 
         try {
             $messageHtml =
@@ -277,21 +324,13 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function shareOnFacebook(string $title, string $url) : static
+    protected function shareOnFacebook(array $arrParams) : static
     {
         $this->io->write("✴ Facebook: ");
 
+        $title  = $arrParams["title"];
         // Facebook could ban the app (???) for posting unreachable URLs => forcing production URLs, even on dev/staging
-        $parts  = parse_url($url);
-        $host   = $parts['host'];
-        $arrHostParts = explode('.', $host);
-
-        if( count($arrHostParts) > 2 ) {
-
-            $arrNewHostParts    = array_slice($arrHostParts, -2);
-            $newHost            = implode('.', $arrNewHostParts);
-            $url                = str_replace("https://$host", "https://$newHost", $url);
-        }
+        $url    = $arrParams["prodUrl"];
 
         try {
             if( $this->isNotDryRun() ) {
@@ -311,12 +350,16 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function shareOnTwitter(string $title, string $url) : static
+    protected function shareOnTwitter(array $arrParams) : static
     {
         $this->io->write("✴ Twitter: ");
 
+        $emoji  = $arrParams["emoji"];
+        $title  = $arrParams["title"];
+        $url    = $arrParams["prodUrl"];
+
         try {
-            $message = "$title $url";
+            $message = "$emoji $title $url";
 
             if( $this->isNotDryRun() ) {
 
@@ -329,6 +372,32 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
             $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
             $this->sendAlert("Twitter", $ex, $title, $url);
+        }
+
+        return $this;
+    }
+
+
+    protected function shareOnLinkedIn(array $arrParams) : static
+    {
+        $this->io->write("✴ LinkedIn: ");
+
+        $title          = $arrParams["title"];
+        $url            = $arrParams["prodUrl"];;
+        $spotlight      = $arrParams["spotlight"];
+
+        try {
+            if( $this->isNotDryRun() ) {
+
+                $result = $this->linkedIn->sendUrl($title, $url, $spotlight);
+                $url    = $this->linkedIn->buildNewMessageUrl($result);
+                $this->io->writeln("<info>$url</info>");
+            }
+
+        } catch(Exception $ex) {
+
+            $this->io->writeln("<error>ERROR: " . $ex->getMessage()  . "</error>");
+            $this->sendAlert("LinkedIn", $ex, $title, $url);
         }
 
         return $this;
