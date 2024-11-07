@@ -3,6 +3,8 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Copy data from TLI1 to TLI2 hybrid server"
+fxCatastrophicError "Disabled due to forum symlink in staging"
+exit
 fxEnvNotDev
 
 TLI1_SOURCE_DIR=/var/www/turbolab_it/website/www/
