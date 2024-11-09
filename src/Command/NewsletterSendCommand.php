@@ -5,7 +5,6 @@ use App\Service\Newsletter;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
-use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
-use TurboLabIt\BaseCommand\Service\Options;
 
 
 /**
