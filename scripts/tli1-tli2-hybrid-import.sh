@@ -3,8 +3,6 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Copy data from TLI1 to TLI2 hybrid server"
-fxCatastrophicError "Disabled due to forum symlink in staging"
-exit
 fxEnvNotDev
 
 TLI1_SOURCE_DIR=/var/www/turbolab_it/website/www/
@@ -16,13 +14,12 @@ bash "${TLI1_SOURCE_DIR}scripts/db-dump.sh"
 if [ "$APP_ENV" == "staging" ]; then
 
   TLI2_DATABASE_NAME=turbolab_it_next
-
   TLI2_FORUM_DIR=${PROJECT_DIR}public/forum/
 
   fxTitle "Copying the whole forum directory..."
   sudo mv "${TLI2_FORUM_DIR}config.php" "${PROJECT_DIR}backup/phpbb-next-config.php"
   sudo rm -rf "${TLI2_FORUM_DIR}"
-  sudo cp -a "${TLI1_SOURCE_DIR}public/forum" "${TLI2_FORUM_DIR%/}"
+  sudo cp -rL --preserve "${TLI1_SOURCE_DIR}public/forum" "${TLI2_FORUM_DIR%/}"
   sudo rm -f "${TLI2_FORUM_DIR}config.php"
   sudo mv "${PROJECT_DIR}backup/phpbb-next-config.php" "${TLI2_FORUM_DIR}config.php"
   sudo chown webstackup:www-data "${TLI2_FORUM_DIR}" -R
@@ -45,7 +42,6 @@ if [ "$APP_ENV" == "staging" ]; then
 elif [ "$APP_ENV" == "prod" ]; then
 
   TLI2_DATABASE_NAME=turbolab_it
-
 fi
 
 
