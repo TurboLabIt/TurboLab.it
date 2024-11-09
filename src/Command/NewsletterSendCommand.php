@@ -17,10 +17,7 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 /**
  * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md
  */
-#[AsCommand(
-    name: 'NewsletterSend',
-    description: 'Generate and send the weekly newsletter',
-)]
+#[AsCommand(name: 'NewsletterSend', description: 'Generate and send the weekly newsletter')]
 class NewsletterSendCommand extends AbstractBaseCommand
 {
     const string CLI_OPT_REAL_RECIPIENTS    = 'real-recipients';
@@ -55,7 +52,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
     }
 
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         parent::execute($input, $output);
 
