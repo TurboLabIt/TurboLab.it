@@ -29,10 +29,10 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every minute: phpBB cron job
 * * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
 
-## every xx minutes: TLI Cache Warmer
+## every xx minutes, during day-time: TLI Cache Warmer
 */5 7-23 * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
 
-## every xx minutes: share on Telegram, WhatsApp, ...
+## every xx minutes, during day-time: share on Telegram, WhatsApp, ...
 # ⚠ Keep the interval synced with EXEC_INTERVAL from https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php
 */15 8-23 * * * root bash ${SCRIPT_DIR}social-share.sh --cron >> ${LOG_PATH}social-share.sh.log 2>&1
 
@@ -46,11 +46,14 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
 
 ## every morning: deploy and import TLI1
-0 5 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
+0 5 * * * root bash ${SCRIPT_DIR}deploy.sh && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
+
+## every morning: unsubscribe bouncing email addresses
+0 11 * * * root bash ${SCRIPT_DIR}email-bounce-manager.sh > ${LOG_PATH}email-bounce-manager.sh.log 2>&1
 
 ## every friday: send the weekly newsletter
 # For delivery to real users: --real-recipients --send-messages
-30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh --real-recipients --send-messages --local-smtp >> ${LOG_PATH}newsletter-send.sh.log 2>&1
+30 9 * * fri root bash ${SCRIPT_DIR}newsletter-send.sh --real-recipients --send-messages --local-smtp && bash ${SCRIPT_DIR}email-bounce-manager.sh >> ${LOG_PATH}newsletter.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

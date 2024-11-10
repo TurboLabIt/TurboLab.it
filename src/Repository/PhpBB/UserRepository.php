@@ -136,4 +136,47 @@ class UserRepository extends BasePhpBBRepository
                 ->getQuery()
                 ->getOneOrNullResult();
     }
+
+
+    public function handleBounceEmailAddress(array $arrAddresses) : static
+    {
+        if( empty($arrAddresses) ) {
+            return $this;
+        }
+
+        $arrUserIds =
+            $this->getEntityManager()->createQueryBuilder()
+                ->select('u.user_id')
+                ->from(static::ENTITY_CLASS, 'u')
+                ->where('u.user_email IN (:emails)')
+                ->setParameter('emails', $arrAddresses)
+                ->getQuery()
+                ->getScalarResult();
+
+        if( empty($arrUserIds) ) {
+            return $this;
+        }
+
+        $arrUserIds = array_column($arrUserIds, 'user_id');
+
+        // unsubscribing from the newsletter
+        $this->createQueryBuilder('u')
+            ->update()
+            ->set('u.user_allow_massemail', 0)
+            ->where('u.user_id IN (:ids)')
+            ->setParameter('ids', $arrUserIds)
+        ->getQuery()->execute();
+
+        // mark all the watches as "notified, not viewed"
+        foreach(["topics_watch", "forums_watch"] as $watchTableName) {
+
+            $fullyQualifiedTableName = $this->arrConfig["forumDatabaseName"] . '.' . static::TABLE_PREFIX . $watchTableName;
+            $this->sqlQueryExecute(
+                "UPDATE $fullyQualifiedTableName SET notify_status = 1 WHERE user_id IN(:ids)", [
+                "ids" => implode(",", $arrUserIds)
+            ]);
+        }
+
+        return $this;
+    }
 }

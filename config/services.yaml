@@ -30,6 +30,14 @@ services:
             $arrConfig:
                 tli1DbName: '%env(APP_TLI1_DB_NAME)%'
 
+    App\Command\EmailBounceManagerCommand:
+        arguments:
+            $arrConfig:
+                mailbox:
+                    hostname: '%env(APP_BOUNCE_MAILBOX_HOSTNAME)%'
+                    username: '%env(APP_BOUNCE_MAILBOX_ADDRESS)%'
+                    password: '%env(APP_BOUNCE_MAILBOX_PASSWORD)%'
+
     App\EventListener\CommandFailureListener:
         tags:
             - { name: kernel.event_listener, method: onCommandFailure,  event: console.error }

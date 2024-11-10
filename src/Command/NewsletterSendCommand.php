@@ -25,6 +25,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
     protected bool $allowSendMessagesOpt    = true;
     protected bool $allowDryRunOpt          = true;
+    protected int $pauseBetweenSends        = 2;
 
     protected Newsletter $mailer;
 
@@ -81,11 +82,18 @@ class NewsletterSendCommand extends AbstractBaseCommand
                 $this->fxInfo( "📬 " . $recipient->getEmail() );
             }
 
+            $this->pauseBetweenSends = 0;
+
             $this->io->newLine();
         }
 
         $recipientsCount = $this->newsletter->countRecipients();
         $this->fxOK("$recipientsCount recipient(s) loaded");
+
+
+        if( !$this->isSendingMessageAllowed(true) ) {
+            $this->pauseBetweenSends = 0;
+        }
 
 
         $countArticles =
@@ -211,5 +219,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $this->newsletter
             ->buildForOne($user)
             ->send();
+
+        sleep( $this->pauseBetweenSends );
     }
 }
