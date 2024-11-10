@@ -163,6 +163,7 @@ class UserRepository extends BasePhpBBRepository
         $this->createQueryBuilder('u')
             ->update()
             ->set('u.user_allow_massemail', 0)
+            ->set('u.user_notify_pm', 0)
             ->where('u.user_id IN (:ids)')
             ->setParameter('ids', $arrUserIds)
         ->getQuery()->execute();
