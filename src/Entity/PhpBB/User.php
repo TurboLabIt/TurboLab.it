@@ -55,6 +55,9 @@ class User extends BaseEntity implements UserInterface
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $user_allow_massemail = 1;
 
+    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    protected ?int $user_notify_pm = 1;
+
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
     protected ?int $user_type = 0;
 
@@ -182,14 +185,20 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getAllowMassEmail() : bool
-    {
-        return (bool)$this->user_allow_massemail;
-    }
+    public function getAllowMassEmail() : bool { return (bool)$this->user_allow_massemail; }
 
     public function setAllowMassEmail(int|bool $allow) : static
     {
         $this->user_allow_massemail = (int)$allow;
+        return $this;
+    }
+
+
+    public function getUserNotifyPm() : bool { return (bool)$this->user_notify_pm; }
+
+    public function setUserNotifyPm(int|bool $allow) : static
+    {
+        $this->user_notify_pm = (int)$allow;
         return $this;
     }
 
