@@ -16,7 +16,9 @@ use Ddeboer\Imap\Server;
 class EmailBounceManagerCommand extends AbstractBaseCommand
 {
     const array MAILBOXES_TO_CHECK  = ['inbox', 'spam'];
-    const array SUBJECT_TO_PROCESS  = ['Undelivered mail returned to sender'];
+    const array SUBJECT_TO_PROCESS  = [
+        'Undelivered mail returned to sender', 'Delivery status notification'
+    ];
 
     protected bool $allowDryRunOpt  = true;
 
@@ -177,7 +179,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
             $address = mb_strtolower($address);
             $address = trim($address);
 
-            if( str_contains($address, '@turbolab.it') ) {
+            if( str_contains($address, '@turbolab.it') || str_contains($address, 'postmaster@') || str_contains($address, 'mailer-daemon@') ) {
 
                 unset($arrAddresses[$k]);
                 continue;
