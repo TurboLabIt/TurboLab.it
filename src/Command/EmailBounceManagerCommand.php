@@ -19,7 +19,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     const array SUBJECT_TO_PROCESS  = [
         'Undelivered mail returned to sender', 'Delivery status notification',
         'Undeliverable:', 'failure notice', 'Mail system error',
-        'Mail delivery failed'
+        'Mail delivery failed', 'Rejected:'
     ];
 
     protected bool $allowDryRunOpt  = true;
