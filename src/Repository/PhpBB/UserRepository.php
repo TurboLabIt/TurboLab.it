@@ -159,6 +159,10 @@ class UserRepository extends BasePhpBBRepository
 
         $arrUserIds = array_column($arrUserIds, 'user_id');
 
+        if( empty($arrUserIds) ) {
+            return $this;
+        }
+
         // unsubscribing from the newsletter
         $this->createQueryBuilder('u')
             ->update()
@@ -169,13 +173,11 @@ class UserRepository extends BasePhpBBRepository
         ->getQuery()->execute();
 
         // mark all the watches as "notified, not viewed"
+        $csvIds = implode(",", $arrUserIds);
         foreach(["topics_watch", "forums_watch"] as $watchTableName) {
 
             $fullyQualifiedTableName = $this->arrConfig["forumDatabaseName"] . '.' . static::TABLE_PREFIX . $watchTableName;
-            $this->sqlQueryExecute(
-                "UPDATE $fullyQualifiedTableName SET notify_status = 1 WHERE user_id IN(:ids)", [
-                "ids" => implode(",", $arrUserIds)
-            ]);
+            $this->sqlQueryExecute("UPDATE $fullyQualifiedTableName SET notify_status = 1 WHERE user_id IN($csvIds)");
         }
 
         return $this;
