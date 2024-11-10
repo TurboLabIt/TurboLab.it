@@ -78,6 +78,8 @@ Quando la mailbox collegata all'invio della newsletter (`newsletter@tli`) riceve
 1. un filtro impostato nella webmail inoltra il messaggio verso una casella dedicata su [gmx.com](https://www.gmx.com/)
 2. il comando [scripts/email-bounce-manager.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/email-bounce-manager.sh) (ovvero [Command/EmailBounceManagerCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/EmailBounceManagerCommand.php)) si collega alla casella GMX via IMAP, estrae gli indirizzi problematici e li dis-iscrive
 
+Tale comando viene eseguito quotidianamente via *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)), ma può anche essere lanciato manualmente.
+
 
 ## Rilevazione dei click sui link
 
