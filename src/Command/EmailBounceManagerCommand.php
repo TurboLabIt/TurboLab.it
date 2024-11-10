@@ -17,7 +17,8 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
 {
     const array MAILBOXES_TO_CHECK  = ['inbox', 'spam'];
     const array SUBJECT_TO_PROCESS  = [
-        'Undelivered mail returned to sender', 'Delivery status notification'
+        'Undelivered mail returned to sender', 'Delivery status notification',
+        'Undeliverable:', 'failure notice', 'Mail system error'
     ];
 
     protected bool $allowDryRunOpt  = true;
