@@ -71,6 +71,16 @@ Per inviare manualmente la newsletter** tramite lo script, impartire:
 Se viene specificata l'opzione `--dry-run`, il comando non invia nessuna mail, ma simula solo l'esecuzione della procedura.
 
 
+## Gestione email con errori (bounce)
+
+Quando la mailbox collegata all'invio della newsletter (`newsletter@tli`) riceve una *Delivery status notification* in risposta all'invio di una email:
+
+1. un filtro impostato nella webmail inoltra il messaggio verso una casella dedicata su [gmx.com](https://www.gmx.com/)
+2. il comando [scripts/email-bounce-manager.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/email-bounce-manager.sh) (ovvero [Command/EmailBounceManagerCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/EmailBounceManagerCommand.php)) si collega alla casella GMX via IMAP, estrae gli indirizzi problematici e li dis-iscrive
+
+Tale comando viene eseguito quotidianamente via *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)), ma può anche essere lanciato manualmente.
+
+
 ## Rilevazione dei click sui link
 
 Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere**. Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
