@@ -7492,12 +7492,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "c171b3935abf901c8bd3c87c12089e3a96e9204e"
+                "reference": "6ed6d5db31417c5a089521e9e7e0faab26e23374"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/c171b3935abf901c8bd3c87c12089e3a96e9204e",
-                "reference": "c171b3935abf901c8bd3c87c12089e3a96e9204e",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/6ed6d5db31417c5a089521e9e7e0faab26e23374",
+                "reference": "6ed6d5db31417c5a089521e9e7e0faab26e23374",
                 "shasum": ""
             },
             "require": {
@@ -7533,7 +7533,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
             },
-            "time": "2024-11-06T08:25:24+00:00"
+            "time": "2024-11-11T13:51:30+00:00"
         },
         {
             "name": "turbolabit/service-entity-plus-bundle",
@@ -8181,16 +8181,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.8",
+            "version": "1.12.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f6a60a4d66142b8156c9da923f1972657bc4748c"
+                "reference": "ceb937fb39a92deabc02d20709cf14b2c452502c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f6a60a4d66142b8156c9da923f1972657bc4748c",
-                "reference": "f6a60a4d66142b8156c9da923f1972657bc4748c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ceb937fb39a92deabc02d20709cf14b2c452502c",
+                "reference": "ceb937fb39a92deabc02d20709cf14b2c452502c",
                 "shasum": ""
             },
             "require": {
@@ -8235,7 +8235,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-06T19:06:49+00:00"
+            "time": "2024-11-10T17:10:04+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
