@@ -21,8 +21,8 @@
     },
     "dependencies": {
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^17.1.10",
-        "sass": ">=1.80.6",
+        "npm-check-updates": "^17.1.11",
+        "sass": ">=1.80.7",
         "sass-loader": ">=16.0"
     },
     "packageManager": "yarn@4.5.1"
