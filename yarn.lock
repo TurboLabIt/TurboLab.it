@@ -2326,7 +2326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"braces@npm:^3, braces@npm:^3.0.3":
+"braces@npm:^3.0.3":
   version: 3.0.3
   resolution: "braces@npm:3.0.3"
   dependencies:
@@ -3496,9 +3496,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.41":
-  version: 1.5.57
-  resolution: "electron-to-chromium@npm:1.5.57"
-  checksum: 10c0/42b969681985016be6069ae68cf29e84ba3f2191fcb7f9d3355e83e81da8dbd100e4b5c9d69b88637003e06dc1860125a50332ec0caee49fd9c2c4ab62feb288
+  version: 1.5.58
+  resolution: "electron-to-chromium@npm:1.5.58"
+  checksum: 10c0/a3f5544ef12a84a7046b297195d19937f396683be8f245e1569cb9a877afd59f3630c8de9bb07f57aee1e6cda564c1a80c7d0b2fd28effb70db1558ca4669996
   languageName: node
   linkType: hard
 
@@ -7300,7 +7300,6 @@ __metadata:
     "@babel/core": "npm:>=7.26.0"
     "@babel/preset-env": "npm:>=7.26.0"
     "@symfony/webpack-encore": "npm:>=5.0.1"
-    braces: "npm:^3"
     core-js: "npm:>=3.39.0"
     file-loader: "npm:>=6.2.0"
     html-critical-webpack-plugin: "npm:^2.1.0"
@@ -7312,7 +7311,6 @@ __metadata:
     webpack: "npm:>=5.96.1"
     webpack-cli: "npm:>=5.1.4"
     webpack-notifier: "npm:>=1.15.0"
-    yargs-parser: "npm:^21"
   languageName: unknown
   linkType: soft
 
@@ -8675,7 +8673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^21, yargs-parser@npm:^21.0.0":
+"yargs-parser@npm:^21.0.0":
   version: 21.1.1
   resolution: "yargs-parser@npm:21.1.1"
   checksum: 10c0/f84b5e48169479d2f402239c59f084cfd1c3acc197a05c59b98bab067452e6b3ea46d4dd8ba2985ba7b3d32a343d77df0debd6b343e5dae3da2aab2cdf5886b2
