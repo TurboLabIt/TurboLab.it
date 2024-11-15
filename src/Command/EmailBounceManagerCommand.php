@@ -1,15 +1,16 @@
 <?php
 namespace App\Command;
 
+use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use App\Repository\PhpBB\UserRepository;
+use Ddeboer\Imap\Server;
 use Ddeboer\Imap\Message;
+use Ddeboer\Imap\Message\Attachment;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
-use Ddeboer\Imap\Server;
 
 
 #[AsCommand(name: 'EmailBounceManager', description: 'Unsubscribe bouncing email addresses')]
@@ -21,6 +22,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
         'Undeliverable:', 'failure notice', 'Mail system error',
         'Mail delivery failed', 'Rejected:'
     ];
+    const string EMAIL_ADDRESS_REGEX = '/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/';
 
     protected bool $allowDryRunOpt  = true;
 
@@ -137,7 +139,8 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
 
     protected function processOneMessage($key, $message) : static
     {
-        $arrAddresses = $this->extractAddressesFromBody($message);
+        $arrAddresses = array_merge( $this->extractAddressesFromBody($message), $this->extractAddressesFromSubParts($message) );
+        $arrAddresses = $this->processAddresses($arrAddresses);
 
         if( empty($arrAddresses) ) {
             return $this;
@@ -173,24 +176,51 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
         }
 
         $arrAddresses = [];
-        preg_match_all('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/', $body, $arrAddresses);
+        preg_match_all(static::EMAIL_ADDRESS_REGEX, $body, $arrAddresses);
         $arrAddresses = reset($arrAddresses);
 
-        foreach($arrAddresses as $k => $address) {
+        return $arrAddresses;
+    }
+
+
+    protected function extractAddressesFromSubParts(Message $message) : array
+    {
+        $arrAllAddresses = [];
+
+        $iterator = new \RecursiveIteratorIterator($message, \RecursiveIteratorIterator::SELF_FIRST);
+        foreach($iterator as $part) {
+
+            $arrAddresses = [];
+            $partContent  = $part->getContent();
+
+            preg_match_all(static::EMAIL_ADDRESS_REGEX, $partContent, $arrAddresses);
+            $arrAddresses = reset($arrAddresses);
+
+            $arrAllAddresses = array_merge($arrAllAddresses, $arrAddresses);
+        }
+
+        return $arrAllAddresses;
+    }
+
+
+    protected function processAddresses(array $arrAddresses) : array
+    {
+        $arrCleanAddresses = [];
+        foreach($arrAddresses as $address) {
 
             $address = mb_strtolower($address);
             $address = trim($address);
 
-            if( str_contains($address, '@turbolab.it') || str_contains($address, 'postmaster@') || str_contains($address, 'mailer-daemon@') ) {
-
-                unset($arrAddresses[$k]);
+            if(
+                str_contains($address, '@turbolab.it') || str_contains($address, 'postmaster@') ||
+                str_contains($address, 'mailer-daemon@')
+            ) {
                 continue;
             }
 
-            $arrAddresses[$k] = $address;
+            $arrCleanAddresses[] = $address;
         }
 
-        $arrAddresses = array_unique($arrAddresses);
-        return $arrAddresses;
+        return array_unique($arrCleanAddresses);
     }
 }
