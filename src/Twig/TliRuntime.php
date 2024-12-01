@@ -14,7 +14,7 @@ class TliRuntime implements RuntimeExtensionInterface
     }
 
 
-    public function friendlyDate(DateTime $date = null): ?string
+    public function friendlyDate(?DateTime $date = null): ?string
     {
         if( empty($date) ) {
             return null;
