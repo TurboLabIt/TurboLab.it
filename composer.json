@@ -4,7 +4,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -12,7 +12,6 @@
         "ext-libxml": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "ddeboer/imap": "@stable",
         "doctrine/doctrine-bundle": "@stable",
         "doctrine/doctrine-migrations-bundle": "@stable",
         "doctrine/orm": "@stable",
@@ -43,7 +42,8 @@
         "twig/cssinliner-extra": "@stable",
         "twig/extra-bundle": "@stable",
         "twig/inky-extra": "@stable",
-        "twig/twig": "@stable"
+        "twig/twig": "@stable",
+        "webklex/php-imap": "@stable"
     },
     "config": {
         "allow-plugins": {
