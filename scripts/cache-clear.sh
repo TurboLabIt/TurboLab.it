@@ -32,6 +32,8 @@ if [ "$APP_ENV" = "dev" ]; then
 
   fxTitle "Removing built images cache..."
   rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
+
+  source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
 
 
