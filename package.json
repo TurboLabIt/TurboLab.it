@@ -4,7 +4,6 @@
         "@babel/preset-env": ">=7.26.0",
         "@symfony/webpack-encore": ">=5.0.1",
         "core-js": ">=3.39.0",
-        "html-critical-webpack-plugin": "^2.1.0",
         "jquery-is-in-viewport": ">=1.0.5",
         "regenerator-runtime": ">=0.14.1",
         "webpack": ">=5.96.1",
