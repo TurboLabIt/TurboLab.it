@@ -35,9 +35,11 @@ dello sviluppatore, **NON** sul server di sviluppo.
 🛑 Prima di eseguire lo script, assicurarsi che l'**auto-upload di phpStorm** sia attivo e funzionante.
 
 ````bash
-bash [scripts/tli1-download.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-download.sh)
+bash scripts/tli1-download.sh
 
 ````
+
+([vedi script](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-download.sh))
 
 
 ## Fase 2: Importazione
@@ -47,6 +49,8 @@ Una volta che phpStorm ha finito di caricare tutti i file dal PC locale al serve
 🛑 Il comando seguente va regolarmente eseguito sul server di sviluppo, **NON** sul PC locale.
 
 ````bash
-bash [scripts/tli1-import.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-import.sh)
+bash scripts/tli1-import.sh
 
 ````
+
+([vedi script](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-import.sh))
