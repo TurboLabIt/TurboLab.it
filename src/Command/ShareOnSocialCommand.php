@@ -39,9 +39,10 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     const string CLI_OPT_SERVICES   = 'service';
 
     protected bool $allowDryRunOpt  = true;
+    protected bool $allowIdOpt      = true;
 
     protected DateTime $oNow;
-    protected array $arrYouTubeVideos;
+    protected array $arrYouTubeVideos = [];
 
 
     public function __construct(
@@ -76,9 +77,14 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $isQuietHours = $this->isQuietHours();
+        $isQuietHours   = $this->isQuietHours();
+        $cliArticleId   = $this->getCliId();
 
-        if( $isQuietHours && $this->isProd() ) {
+        if( $isQuietHours && !empty($cliArticleId) ) {
+
+            $this->fxWarning("The execution should stop due to quiet hours. Ignoring due to ID ##$cliArticleId## provided via CLI");
+
+        } elseif( $isQuietHours && $this->isProd() ) {
 
             $this->fxWarning("Stopping the execution due to quiet hours");
             return $this->endWithSuccess();
@@ -89,9 +95,22 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         }
 
 
-        $this
-            ->loadArticles()
-            ->loadVideos();
+        if( empty($cliArticleId) ) {
+
+            $this
+                ->loadArticles()
+                ->loadVideos();
+
+        } else {
+
+            $this->fxWarning("Loading ##$cliArticleId## provided via CLI");
+            $this->articleCollection->load($cliArticleId);
+
+            if( $this->articleCollection->count() == 0 ) {
+                return $this->endWithError("Article ##$cliArticleId## not found!a");
+            }
+        }
+
 
         if( $this->articleCollection->count() == 0 && count($this->arrYouTubeVideos) == 0) {
 
