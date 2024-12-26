@@ -38,8 +38,8 @@ class ForumRepository extends BasePhpBBRepository
         ";
 
         return
-            $this->getEntityManager()->getConnection()->prepare($sql)
-                ->executeQuery($arrConfigNames)
+            $this->getEntityManager()->getConnection()
+                ->executeQuery($sql, $arrConfigNames)
                 ->fetchAllKeyValue();
 
     }

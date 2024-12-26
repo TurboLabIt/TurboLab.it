@@ -11,13 +11,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class InfoController extends BaseController
 {
-    #[Route('/statistiche', name: 'app_stats')]
-    public function stats(): Response
-    {
-        return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
-    }
-
-
     #[Route('/info', name: 'app_info')]
     public function info(ServerInfo $serverInfo): Response
     {
@@ -29,8 +22,15 @@ class InfoController extends BaseController
                 'ServerInfo'        => $serverInfo->getServerInfo(),
                 'IssueReportGuide'  => $this->factory->createArticle()->load(Article::ID_ISSUE_REPORT),
                 'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()
-                                        ->getItems(3)
+                    ->getItems(3)
             ]);
+    }
+
+
+    #[Route('/statistiche', name: 'app_stats')]
+    public function stats(): Response
+    {
+        return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
 
