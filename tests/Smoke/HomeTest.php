@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class HomeTest extends BaseT
 {
-    const int HOME_TOTAL_PAGES = 165;
+    const int HOME_TOTAL_PAGES = 167;
 
 
     public static function homeRedirectionProvider() : Generator
