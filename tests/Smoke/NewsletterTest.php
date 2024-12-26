@@ -30,14 +30,14 @@ class NewsletterTest extends BaseT
         $this->assertStringContainsStringIgnoringCase('Ciao System', $html);
         $this->assertStringContainsStringIgnoringCase('Non vuoi più ricevere queste email', $html);
         $this->assertStringContainsStringIgnoringCase('abbiamo inviato questa email a', $html);
-        $this->assertStringContainsStringIgnoringCase('info+system@turbolab.it', $html);
+        $this->assertStringContainsStringIgnoringCase('info.system@turbolab.it', $html);
         $this->assertStringContainsStringIgnoringCase('Articoli e news', $html);
         $this->assertStringContainsStringIgnoringCase('Dal forum', $html);
 
         $crawler = $this->fetchDomNode($url, 'body');
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
-        $this->assertEquals(4, $countH2);
+        $this->assertEquals(5, $countH2);
     }
 
 

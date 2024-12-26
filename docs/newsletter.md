@@ -65,7 +65,7 @@ Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLa
 
 Per inviare manualmente la newsletter** tramite lo script, impartire:
 
-- `bash scripts/newsletter-send.sh`: invia la newsletter solo a `System <info+system@turbolab.it>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages)
+- `bash scripts/newsletter-send.sh`: invia la newsletter solo a `System <info.system@turbolab.it>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages)
 - **⚠⚠** `bash scripts/newsletter-send.sh --unlocked`: invia la newsletter a tutti gli iscritti. Funziona solo sull'ambiente di produzione
 
 Se viene specificata l'opzione `--dry-run`, il comando non invia nessuna mail, ma simula solo l'esecuzione della procedura.
