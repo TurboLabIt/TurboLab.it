@@ -7,7 +7,7 @@
         "jquery-is-in-viewport": ">=1.0.5",
         "regenerator-runtime": ">=0.14.1",
         "webpack": ">=5.97.1",
-        "webpack-cli": ">=5.1.4",
+        "webpack-cli": "5.1.4",
         "webpack-notifier": ">=1.15.0"
     },
     "license": "UNLICENSED",
@@ -20,8 +20,8 @@
     },
     "dependencies": {
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^17.1.11",
-        "sass": ">=1.82.0",
+        "npm-check-updates": "^17.1.12",
+        "sass": ">=1.83.0",
         "sass-loader": ">=16.0"
     },
     "packageManager": "yarn@4.5.1"
