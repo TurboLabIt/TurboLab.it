@@ -165,14 +165,37 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findLatestReadyForReview() : array
+    public function findDrafts(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
-        return
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_DRAFT, false)
+                ->orderBy('t.updatedAt', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findLatestReadyForReview(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
-                ->andWhere('t.updatedAt >= :dateLimit')
-                    ->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
-                ->getQuery()
-                ->getResult();
+                //->andWhere('t.updatedAt >= :dateLimit')
+                    //->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
+                ->orderBy('t.updatedAt', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
 
 

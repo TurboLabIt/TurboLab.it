@@ -29,6 +29,22 @@ class NginxRedirectTest extends BaseT
             [
                 'requestUrl'    => '/something-245',
                 'redirectToUrl' => '/ssd-dischi-fissi-hard-disk-570'
+            ],
+            [
+                'requestUrl'    => '/viste/tutti',
+                'redirectToUrl' => '/'
+            ],
+            [
+                'requestUrl'    => '/viste/tutti/77',
+                'redirectToUrl' => '/'
+            ],
+            [
+                'requestUrl'    => '/viste/news',
+                'redirectToUrl' => '/news'
+            ],
+            [
+                'requestUrl'    => '/viste/news/100',
+                'redirectToUrl' => '/news'
             ]
             /*[
                 'requestUrl'    => '',

@@ -32,24 +32,4 @@ class ViewsTest extends BaseT
         $url = $this->generateUrl('app_views_multi', ['slug' => $slug]);
         $this->fetchHtml($url);
     }
-
-
-    public static function legacyViewSlugProvider() : Generator
-    {
-        yield from [['tutti']];
-    }
-
-
-    #[DataProvider('legacyViewSlugProvider')]
-    public function testLegacyViewRedirect(string $slug)
-    {
-        $url = $this->generateUrl('app_views_legacy', ['slug' => $slug]);
-        $this->expectRedirect($url, '/');
-
-        foreach([null, 0, 1, 2, 3, 10, 11, 99, 247] as $pageNum) {
-
-            $url = $this->generateUrl('app_views_legacy', ['slug' => $slug]) . "/$pageNum";
-            $this->expectRedirect($url, '/');
-        }
-    }
 }

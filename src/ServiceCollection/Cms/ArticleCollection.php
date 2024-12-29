@@ -16,6 +16,7 @@ class ArticleCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = Article::ENTITY_CLASS;
 
+
     public function getRepository() : ArticleRepository
     {
         /** @var ArticleRepository $repository */
@@ -23,10 +24,11 @@ class ArticleCollection extends BaseServiceEntityCollection
         return $repository;
     }
 
+
     public function loadAllPublished() : static
     {
-        $arrTopics = $this->getRepository()->findAllPublished();
-        return $this->setEntities($arrTopics);
+        $arrArticles = $this->getRepository()->findAllPublished();
+        return $this->setEntities($arrArticles);
     }
 
 
@@ -35,6 +37,7 @@ class ArticleCollection extends BaseServiceEntityCollection
         $arrArticles = $this->getRepository()->findLatestPublished($page);
         return $this->setEntities($arrArticles);
     }
+
 
     public function loadSideBarOf(Article $article) : static
     {
@@ -62,9 +65,17 @@ class ArticleCollection extends BaseServiceEntityCollection
         return $this;
     }
 
-    public function loadLatestReadyForReview() : static
+
+    public function loadDrafts(?int $page = 1) : static
     {
-        $arrArticles = $this->getRepository()->findLatestReadyForReview();
+        $arrArticles = $this->getRepository()->findDrafts($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
+    public function loadLatestReadyForReview(?int $page = 1) : static
+    {
+        $arrArticles = $this->getRepository()->findLatestReadyForReview($page);
         return $this->setEntities($arrArticles);
     }
 
