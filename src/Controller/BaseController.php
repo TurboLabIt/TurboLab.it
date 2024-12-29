@@ -33,9 +33,7 @@ abstract class BaseController extends AbstractController
         { $this->request = $requestStack->getCurrentRequest(); }
 
 
-    protected function tliStandardControllerResponse(
-        array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null
-    ) : Response
+    protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
     {
         $page = empty($page) ? 1 : $page;
 
