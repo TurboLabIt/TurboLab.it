@@ -22,6 +22,8 @@ use TurboLabIt\Encryptor\Encryptor;
  */
 class NewsletterController extends BaseController
 {
+    const string SECTION_SLUG           = "newsletter";
+
     const int ERROR_BAD_ACCESS_KEY      = 1;
     const int ERROR_USER_NOT_FOUND      = 3;
     const int ERROR_USER_NOT_SUBSCRIBED = 5;
@@ -37,7 +39,7 @@ class NewsletterController extends BaseController
     }
 
 
-    #[Route('/newsletter', name: 'app_newsletter')]
+    #[Route('/' . self::SECTION_SLUG, name: 'app_newsletter')]
     public function index(Article $article) : Response
     {
         $url = $article->load(Article::ID_NEWSLETTER)->getUrl();
@@ -45,7 +47,7 @@ class NewsletterController extends BaseController
     }
 
 
-    #[Route('/newsletter/anteprima', name: 'app_newsletter_preview')]
+    #[Route('/' . self::SECTION_SLUG . '/anteprima', name: 'app_newsletter_preview')]
     public function preview(
         NewsletterService $newsletter, User $currentUser, ParameterBagInterface $parameters
     ) : Response
@@ -79,7 +81,7 @@ class NewsletterController extends BaseController
     }
 
 
-    #[Route('/newsletter/open', name: 'app_newsletter_opener')]
+    #[Route('/' . self::SECTION_SLUG . '/open', name: 'app_newsletter_opener')]
     public function opener(NewsletterService $newsletter) : Response
     {
         $goToUrl        = $this->request->get("url");
@@ -105,7 +107,7 @@ class NewsletterController extends BaseController
     }
 
 
-    #[Route('/newsletter/disiscrizione/{encryptedSubscriberData}', name: 'app_newsletter_unsubscribe')]
+    #[Route('/' . self::SECTION_SLUG . '/disiscrizione/{encryptedSubscriberData}', name: 'app_newsletter_unsubscribe')]
     public function unsubscribe(NewsletterService $newsletter, string $encryptedSubscriberData) : Response
     {
         try {
@@ -157,7 +159,7 @@ class NewsletterController extends BaseController
     }
 
 
-    #[Route('/newsletter/iscrizione/{encryptedSubscriberData}', name: 'app_newsletter_subscribe')]
+    #[Route('/' . self::SECTION_SLUG . '/iscrizione/{encryptedSubscriberData}', name: 'app_newsletter_subscribe')]
     public function subscribe(string $encryptedSubscriberData) : Response
     {
         try {

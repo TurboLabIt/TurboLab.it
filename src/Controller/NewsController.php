@@ -9,14 +9,17 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 class NewsController extends BaseController
 {
-    #[Route('/news/{page<0|1>}', name: 'app_news_page_0-1')]
+    const string SECTION_SLUG = "news";
+
+
+    #[Route('/' . self::SECTION_SLUG . '/{page<0|1>}', name: 'app_news_page_0-1')]
     public function appNewsPage0Or1() : Response
     {
         return $this->redirectToRoute('app_news', [], Response::HTTP_MOVED_PERMANENTLY);
     }
 
 
-    #[Route('/news/{page<[1-9]+[0-9]*>}', name: 'app_news')]
+    #[Route('/' . self::SECTION_SLUG . '/{page<[1-9]+[0-9]*>}', name: 'app_news')]
     public function index(?int $page = null): Response
         { return $this->tliStandardControllerResponse(["app_news"], $page); }
 

@@ -9,13 +9,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FileController extends BaseController
 {
+    const string SECTION_SLUG = "scarica";
+
+
     public function __construct(protected File $file, RequestStack $requestStack)
     {
         $this->request = $requestStack->getCurrentRequest();
     }
 
 
-    #[Route('/scarica/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
+    #[Route('/' . self::SECTION_SLUG . '/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
     public function index(int $fileId) : Response
     {
         $file = $this->file->load($fileId);

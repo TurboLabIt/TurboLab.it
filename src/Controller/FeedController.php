@@ -8,7 +8,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FeedController extends BaseController
 {
-    #[Route('/feed', name: 'app_feed')]
+    const string SECTION_SLUG = "feed";
+
+
+    #[Route('/' . self::SECTION_SLUG, name: 'app_feed')]
     public function main() : Response
     {
         return
@@ -19,7 +22,7 @@ class FeedController extends BaseController
     }
 
 
-    #[Route('/feed/fullfeed', name: 'app_feed_fullfeed')]
+    #[Route('/' . self::SECTION_SLUG . '/fullfeed', name: 'app_feed_fullfeed')]
     public function fullFeed(): Response
     {
         return
@@ -31,7 +34,7 @@ class FeedController extends BaseController
     }
 
 
-    #[Route('/feed/nuovi-finiti', name: 'app_feed_new_unpublished')]
+    #[Route('/' . self::SECTION_SLUG . '/nuovi-finiti', name: 'app_feed_new_unpublished')]
     public function newUnpublished(): Response
     {
         $this->cacheIsDisabled = true;

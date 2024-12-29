@@ -13,7 +13,10 @@ use Pinky;
 
 class TestController extends BaseController
 {
-    #[Route('/test/prevent-unused-service/', name: 'app_test_prevent-unused-service', condition: "'%kernel.environment%' == 'dev'")]
+    const string SECTION_SLUG = "test";
+
+
+    #[Route('/' . self::SECTION_SLUG . '/prevent-unused-service/', name: 'app_test_prevent-unused-service', condition: "'%kernel.environment%' == 'dev'")]
     public function preventUnusedService(
         Article $article, ArticleEditor $articleEditor,
         File $file, Image $image, Tag $tag
@@ -24,7 +27,7 @@ class TestController extends BaseController
 
 
 
-    #[Route('/test/inky/', name: 'app_test_inky', condition: "'%kernel.environment%' == 'dev'")]
+    #[Route('/' . self::SECTION_SLUG . '/inky/', name: 'app_test_inky', condition: "'%kernel.environment%' == 'dev'")]
     public function inky() : Response
     {
         /*$transpiled = Pinky\transformString('<row>Contents</row>');

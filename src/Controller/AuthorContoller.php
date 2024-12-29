@@ -10,17 +10,19 @@ use App\Service\User;
 
 class AuthorContoller extends BaseController
 {
+    const string SECTION_SLUG = "utenti";
+
     protected User $mainAuthor;
 
 
-    #[Route('/utenti/{usernameClean}/{page<0|1>}', name: 'app_author_page_0-1')]
+    #[Route('/' . self::SECTION_SLUG . '/{usernameClean}/{page<0|1>}', name: 'app_author_page_0-1')]
     public function appAuthorPage0Or1(string $usernameClean) : Response
     {
         return $this->redirectToRoute('app_author', ["usernameClean" => $usernameClean], Response::HTTP_MOVED_PERMANENTLY);
     }
 
 
-    #[Route('/utenti/{usernameClean}/{page<[1-9]+[0-9]*>}', name: 'app_author')]
+    #[Route('/' . self::SECTION_SLUG . '/{usernameClean}/{page<[1-9]+[0-9]*>}', name: 'app_author')]
     public function index(string $usernameClean, ?int $page = null) : Response
     {
         $page = empty($page) ? 1 : $page;

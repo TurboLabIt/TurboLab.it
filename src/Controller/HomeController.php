@@ -10,6 +10,8 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 class HomeController extends BaseController
 {
+    const string SECTION_SLUG = "home";
+
     protected YouTubeChannelApi $YouTubeChannel;
 
 
@@ -18,12 +20,12 @@ class HomeController extends BaseController
         { return $this->indexPaginated(1, $YouTubeChannel); }
 
 
-    #[Route('/home/{page<0|1>?}', name: 'app_home_page_0-1')]
+    #[Route('/' . self::SECTION_SLUG . '/{page<0|1>?}', name: 'app_home_page_0-1')]
     public function appHomePage0Or1() : Response
         { return $this->redirectToRoute('app_home', [], Response::HTTP_MOVED_PERMANENTLY); }
 
 
-    #[Route('/home/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
+    #[Route('/' . self::SECTION_SLUG . '/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
     public function indexPaginated(?int $page, YouTubeChannelApi $YouTubeChannel): Response
     {
         $this->YouTubeChannel = $YouTubeChannel;
