@@ -24,6 +24,7 @@ class ViewsController extends BaseController
             match($slug) {
                 "bozze"     => 'loadDrafts',
                 "finiti"    => 'loadLatestReadyForReview',
+                "visitati"  => 'loadTopViews',
                 default     => throw new NotFoundHttpException()
             };
 
