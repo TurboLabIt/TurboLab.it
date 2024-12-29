@@ -66,7 +66,6 @@ class FeedController extends BaseController
 
         } else {
 
-
             $cacheKey = "feed_{$routeName}_" . md5(serialize($arrData));
 
             $txtResponseBody =
