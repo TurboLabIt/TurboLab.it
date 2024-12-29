@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 
 class FeedController extends BaseController

@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 
 class SecurityController extends AbstractController

@@ -5,7 +5,7 @@ use App\Service\Cms\Image;
 use App\Service\Cms\Tag;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 
@@ -91,7 +91,7 @@ class TagController extends BaseController
 
         return
             $this->twig->render('tag/index.html.twig', [
-                'metaTitle'         => $tag->getTitleFormatted() . 
+                'metaTitle'         => $tag->getTitleFormatted() .
                                             ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page"),
                 'metaCanonicalUrl'  => $tag->getUrl($page),
                 'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),

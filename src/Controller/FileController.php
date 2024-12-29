@@ -4,7 +4,7 @@ namespace App\Controller;
 use App\Service\Cms\File;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 
 class FileController extends BaseController

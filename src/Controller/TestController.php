@@ -7,7 +7,7 @@ use App\Service\Cms\File;
 use App\Service\Cms\Image;
 use App\Service\Cms\Tag;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Pinky;
 
 

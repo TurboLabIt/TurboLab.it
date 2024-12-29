@@ -5,7 +5,7 @@ use App\Service\Cms\Article;
 use App\Service\Cms\Image;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 
 class ArticleController extends BaseController
@@ -50,7 +50,7 @@ class ArticleController extends BaseController
 
     protected function buildHtml(string $tagSlugDashId, string $articleSlugDashId) : string|Response
     {
-        $this->mainArticle = $article = 
+        $this->mainArticle = $article =
             $this->factory->createArticle()->loadBySlugDashIdComplete($articleSlugDashId);
 
         $articleRealUrl = $article->checkRealUrl($tagSlugDashId, $articleSlugDashId);
