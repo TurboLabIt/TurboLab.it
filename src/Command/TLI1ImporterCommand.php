@@ -364,15 +364,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         if( $rating == -1 ) {
 
-            $publishedAt    = null;
-            $pubStatus      = ArticleEntity::PUBLISHING_STATUS_REMOVED;
+            $pubStatus = ArticleEntity::PUBLISHING_STATUS_REMOVED;
 
-        } else if( !empty($publishedAt) ) {
+        } else if( $pubStatus == ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW && !empty($publishedAt) ) {
 
-            $publishedAt    = DateTime::createFromFormat('YmdHis', $publishedAt);
-            $pubStatus      = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
+            $pubStatus = ArticleEntity::PUBLISHING_STATUS_PUBLISHED;
         }
 
+        $publishedAt = empty($publishedAt) ? null : DateTime::createFromFormat('YmdHis', $publishedAt);
 
         // newsletter special handling
         if( stripos($title, 'Questa settimana su TLI') !== false ) {
@@ -382,7 +381,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             // fix grammar horror on newsletter
             $newsletterError = 'tutti i giorni? nessun problema! ecco a te';
             $newsletterFixed = 'tutti i giorni? Nessun problema! Ecco a te';
-            
+
             $abstract   = str_ireplace($newsletterError, $newsletterFixed, $abstract);
             $body       = str_ireplace($newsletterError, $newsletterFixed, $body);
 
