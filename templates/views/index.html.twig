@@ -1,1 +1,18 @@
 {% extends 'archive/index.html.twig' %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item">Viste</li>
+
+    {% if currentPage < 2 %}
+
+        <li class="breadcrumb-item active">{{ breadcrumbText }}</li>
+
+    {% else %}
+
+        <li class="breadcrumb-item"><a href="{{ Pages.first.url }}">{{ breadcrumbText }}</a></li>
+        {{ parent() }}
+
+    {% endif %}
+
+{% endblock %}
