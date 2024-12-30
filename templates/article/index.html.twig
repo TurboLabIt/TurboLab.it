@@ -126,28 +126,42 @@
                             </div>
                         {% endif %}
 
-                        <div class="post-text mt-30 tli-article-body">{{ Article.bodyForDisplay|raw }}</div>
+                        {% if isVisible %}
 
-                        <h4>
-                            <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
-                            Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
-                        </h4>
-                        <div class="sharethis-inline-share-buttons"></div>
+                            <div class="post-text mt-30 tli-article-body">{{ Article.bodyForDisplay|raw }}</div>
 
-                        <div class="post-tags mt-30">
-                            <ul>
-                                <li><a class="disabled-link" href="#"><i class="fas fa-tag"></i> Tags</a></li>
-                                {% if Article.tags|length > 0 %}
-                                    <li>
-                                        {% for Tag in Article.Tags %}
-                                            <a href="{{ Tag.url }}">
-                                                <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.titleFormatted|raw }}
-                                            </a>
-                                        {% endfor %}
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
+                            <h4>
+                                <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
+                                Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
+                            </h4>
+                            <div class="sharethis-inline-share-buttons"></div>
+
+                            <div class="post-tags mt-30">
+                                <ul>
+                                    <li><a class="disabled-link" href="#"><i class="fas fa-tag"></i> Tags</a></li>
+                                    {% if Article.tags|length > 0 %}
+                                        <li>
+                                            {% for Tag in Article.Tags %}
+                                                <a href="{{ Tag.url }}">
+                                                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.titleFormatted|raw }}
+                                                </a>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+
+                        {% else %}
+
+                            <div class="post-text mt-30 tli-article-body">
+                                <p>
+                                    Questo articolo non è ancora stato marcato dall'autore come "finito".
+                                    Fino a quando questo non avverrà, il pezzo rimane visibile solo agli autori e
+                                    agli utenti con <a href="https://turbolab.it/40">autorevolezza elevata</a>.
+                                </p>
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
