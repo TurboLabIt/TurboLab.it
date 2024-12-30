@@ -29,7 +29,6 @@ class ViewsController extends BaseController
                 default     => throw new NotFoundHttpException()
             };
 
-
         if( !$this->isCachable() ) {
 
             $buildHtmlResult = $this->buildHtml($slug, $fxLoadArticle, $page);
