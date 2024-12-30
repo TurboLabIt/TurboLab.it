@@ -25,6 +25,7 @@ class ViewsController extends BaseController
                 "bozze"     => 'loadDrafts',
                 "finiti"    => 'loadLatestReadyForReview',
                 "visitati"  => 'loadTopViews',
+                "commentati"=> 'loadTopTopComments',
                 default     => throw new NotFoundHttpException()
             };
 

@@ -138,6 +138,13 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadTopTopComments(?int $page = 1) : static
+    {
+        $arrArticles = $this->getRepository()->findTopComments($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function loadGuidesForAuthors() : static
     {
         $this->loadComplete([

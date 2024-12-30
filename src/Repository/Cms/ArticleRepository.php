@@ -333,6 +333,23 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function findTopComments(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('commentsTopic.postNum > 1')
+                ->orderBy('commentsTopic.postNum', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
     public function getPrevNextArticle(Article $article) : array
     {
         $sqlSelect = "
