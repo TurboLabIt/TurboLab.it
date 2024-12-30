@@ -75,10 +75,10 @@ abstract class BaseController extends AbstractController
            return false;
         }
 
-        /*$isLogged = !empty($this->getUser() ?? null);
+        $isLogged = !empty($this->getUser() ?? null);
         if($isLogged) {
             return false;
-        }*/
+        }
 
         $isLocal =
             !filter_var(
