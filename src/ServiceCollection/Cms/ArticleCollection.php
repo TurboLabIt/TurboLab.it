@@ -124,23 +124,16 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
-    public function loadTopViewsRecent(?int $page = 1) : static
+    public function loadTopViews(?int $page = 1, ?int $maxDaysAgo = null) : static
     {
-        $arrArticles = $this->getRepository()->findTopViewsLastYear($page);
+        $arrArticles = $this->getRepository()->findTopViews($page, $maxDaysAgo);
         return $this->setEntities($arrArticles);
     }
 
 
-    public function loadTopViews(?int $page = 1) : static
+    public function loadTopTopComments(?int $page = 1, ?int $maxDaysAgo = null) : static
     {
-        $arrArticles = $this->getRepository()->findTopViews($page);
-        return $this->setEntities($arrArticles);
-    }
-
-
-    public function loadTopTopComments(?int $page = 1) : static
-    {
-        $arrArticles = $this->getRepository()->findTopComments($page);
+        $arrArticles = $this->getRepository()->findTopComments($page, $maxDaysAgo);
         return $this->setEntities($arrArticles);
     }
 

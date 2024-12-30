@@ -296,35 +296,23 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findTopViewsLastYear(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
-    {
-        $page       = $page ?: 1;
-        $numItems   = $this->itemsPerPage % 2 == 0 ? $this->itemsPerPage : ( $this->itemsPerPage - 1 );
-        $startAt    = $numItems * ($page - 1);
-
-        $query =
-            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
-                ->andWhere('t.updatedAt >= :oneYearAgo')
-                    ->setParameter('oneYearAgo', new DateTime('-1 year'))
-                ->andWhere('t.updatedAt <= :now')
-                    ->setParameter('now', new DateTime())
-                ->orderBy('t.views', 'DESC')
-                ->setFirstResult($startAt)
-                ->setMaxResults($numItems)
-                ->getQuery();
-
-        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-    }
-
-
-    public function findTopViews(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findTopViews(?int $page = 1, ?int $maxDaysAgo = null) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', 'DESC');
+
+        if( !empty($maxDaysAgo) ) {
+
+            $query
+                ->andWhere('t.updatedAt >= :daysAgo')
+                    ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"));
+        }
+
+        $query
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -333,7 +321,7 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findTopComments(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findTopComments(?int $page = 1, ?int $maxDaysAgo = null) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
@@ -341,10 +329,19 @@ class ArticleRepository extends BaseRepository
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('commentsTopic.postNum > 1')
-                ->orderBy('commentsTopic.postNum', 'DESC')
-                ->setFirstResult($startAt)
-                ->setMaxResults($this->itemsPerPage)
-                ->getQuery();
+                ->orderBy('commentsTopic.postNum', 'DESC');
+
+        if( !empty($maxDaysAgo) ) {
+
+            $query
+                ->andWhere('t.updatedAt >= :daysAgo')
+                ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"));
+        }
+
+        $query
+            ->setFirstResult($startAt)
+            ->setMaxResults($this->itemsPerPage)
+            ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }

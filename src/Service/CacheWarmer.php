@@ -102,10 +102,10 @@ class CacheWarmer implements CacheWarmerInterface
         $this->bashFx?->fxTitle("Warming top views articles...");
         return
             $this
-                ->requestEach( $this->articleCollection->loadTopViewsRecent() )
+                ->requestEach( $this->articleCollection->loadTopViews(1, 180) )
                 ->requestEach( $this->articleCollection->loadTopViews() );
     }
-    
+
 
     protected function requestEach(BaseServiceEntityCollection $collection, bool $wipeCache = false) : static
     {

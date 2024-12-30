@@ -101,7 +101,7 @@ class HomeController extends BaseController
         //
         $arrArticlesMiddleSlideShow = $mainArticleCollection->getItems($numLatestSlider);
         $arrVideos                  = $this->YouTubeChannel->getLatestVideos();
-        $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViewsRecent();
+        $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViews(1, 180);
 
         return
             $this->twig->render('home/index.html.twig', array_merge($arrTemplateParams, [
