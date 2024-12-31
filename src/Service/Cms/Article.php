@@ -232,6 +232,10 @@ class Article extends BaseCmsService
 
     public function getSpotlightOrDefault() : ImageService
     {
+        if( !$this->isPublished() ) {
+            return $this->spotlight = $this->factory->createDefaultSpotlight();
+        }
+
         $spotlight = $this->getSpotlight();
         if( !empty($spotlight) ) {
             return $spotlight;

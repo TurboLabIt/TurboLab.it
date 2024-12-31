@@ -82,13 +82,15 @@
                                                 </a>
                                             </div>
 
-                                            <div class="tli-mosaic-post-meta">
-                                                <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
-                                                    {{ Article.TopTagOrDefault.title|upper|raw }}
-                                                </a>
-                                                <span class="tli-meta-slash"> · </span>
-                                                <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
-                                            </div>
+                                            {% if Article.isPublished %}
+                                                <div class="tli-mosaic-post-meta">
+                                                    <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                        {{ Article.TopTagOrDefault.title|upper|raw }}
+                                                    </a>
+                                                    <span class="tli-meta-slash"> · </span>
+                                                    <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                                </div>
+                                            {% endif %}
 
                                             <div class="trending-news-content">
                                                 <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
@@ -112,9 +114,11 @@
                                                 {% endif %}
                                             </div>
 
-                                            <div class="trending-news-content">
-                                                <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
-                                            </div>
+                                            {% if Article.isPublished %}
+                                                <div class="trending-news-content">
+                                                    <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                                </div>
+                                            {% endif %}
 
                                         </div>
                                     </div>
