@@ -22,7 +22,7 @@ abstract class BasePhpBBRepository extends BaseRepository
             $tableName = $this->getTableName('');
             $prefixToRemoveForAlias = $this->arrConfig["forumDatabaseName"] . "." . static::TABLE_PREFIX;
             $tableAlias = substr($tableName, strlen($prefixToRemoveForAlias));
-            return "$tableName AS $tableAlias";
+            return "$tableName AS `$tableAlias`";
         }
 
         if( stripos($tableName, static::TABLE_PREFIX) !== 0 ) {
@@ -31,6 +31,6 @@ abstract class BasePhpBBRepository extends BaseRepository
 
         $dbName     = $this->arrConfig["forumDatabaseName"];
         $tableAlias = substr($tableName, strlen(static::TABLE_PREFIX));
-        return "{$dbName}.{$tableName} AS $tableAlias";
+        return "{$dbName}.{$tableName} AS `$tableAlias`";
     }
 }

@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TopicRepository::class)]
 // this entity maps a table from the phpBB database.
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
-//#[ORM\Table(name: "turbolab_it_forum.phpbb_topics")]
 class Topic extends BaseEntity
 {
     use ViewableEntityTrait;

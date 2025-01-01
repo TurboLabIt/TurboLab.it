@@ -120,10 +120,7 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👮 Permissions ***">
-    public function isVip() : bool
-    {
-        return false;
-    }
+    public function isEditor() : bool { return $this->entity->isEditor(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">

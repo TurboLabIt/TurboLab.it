@@ -85,6 +85,25 @@ class UserRepository extends BasePhpBBRepository
             return null;
         }
 
+        $sqlGroups = "
+            SELECT
+                `groups`.group_id AS id, `groups`.group_name AS name
+            FROM
+                " . $this->getPhpBBTableName('phpbb_groups') . "
+            INNER JOIN
+                " . $this->getPhpBBTableName('phpbb_user_group') . "
+            ON
+                `groups`.group_id = user_group.group_id
+            WHERE
+                user_group.user_id = :userId;
+        ";
+
+        $stmtGroups = $this->getEntityManager()->getConnection()->prepare($sqlGroups);
+        $stmtGroups->bindValue('userId', $arrUser["user_id"], ParameterType::INTEGER);
+
+        $ormGroupsResult    = $stmtGroups->executeQuery();
+        $arrUserGroups      = $ormGroupsResult->fetchAllKeyValue();
+
         return
             (new User())
                 ->setId( $arrUser["user_id"] )
@@ -95,7 +114,8 @@ class UserRepository extends BasePhpBBRepository
                 ->setAvatarFile( $arrUser["user_avatar"] )
                 ->setPostNum( $arrUser["user_posts"] )
                 ->setColor( $arrUser["user_colour"] )
-                ->setAllowMassEmail( $arrUser["user_allow_massemail"] );
+                ->setAllowMassEmail( $arrUser["user_allow_massemail"] )
+                ->setGroups($arrUserGroups);
     }
 
 

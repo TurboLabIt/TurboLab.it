@@ -97,7 +97,7 @@ class Article extends BaseCmsService
             return false;
         }
 
-        $isVisible = $this->isAuthor($currentUser) || $currentUser->isVip();
+        $isVisible = $this->isAuthor($currentUser) || $currentUser->isEditor();
         return $isVisible;
     }
 

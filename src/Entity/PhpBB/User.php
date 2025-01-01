@@ -23,9 +23,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 // this entity maps a table from the phpBB database.
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
-//#[ORM\Table(name: "turbolab_it_forum.phpbb_users")]
 class User extends BaseEntity implements UserInterface
 {
+    const string ROLE_ADMIN     = 'ROLE_ADMIN';
+    const string ROLE_EDITOR    = 'ROLE_EDITOR';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ['unsigned' => true])]
@@ -61,7 +63,7 @@ class User extends BaseEntity implements UserInterface
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
     protected ?int $user_type = 0;
 
-    //#[ORM\Column]
+    protected array $arrUserGroups = [];
     protected array $roles = [];
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -222,6 +224,20 @@ class User extends BaseEntity implements UserInterface
         return (string)$this->username;
     }
 
+
+    public function setGroups(?array $arrGroups) : static
+    {
+        if( empty($arrGroups) ) {
+
+            $this->arrUserGroups = [];
+            return $this;
+        }
+
+        $this->arrUserGroups = $arrGroups;
+        return $this;
+    }
+
+
     /**
      * @see UserInterface
      */
@@ -231,19 +247,22 @@ class User extends BaseEntity implements UserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        // 3: founder
-        if( $this->user_type == "3" ) {
-            $roles[] = 'ROLE_ADMIN';
+        if( $this->user_type == "3" || in_array('ADMINISTRATORS', $this->arrUserGroups) ) {
+
+            $roles[] = static::ROLE_ADMIN;
+            $roles[] = static::ROLE_EDITOR;
+        }
+
+        if( in_array('TLI-Staff', $this->arrUserGroups) || in_array('GLOBAL_MODERATORS', $this->arrUserGroups) ) {
+            $roles[] = static::ROLE_EDITOR;
         }
 
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-        return $this;
-    }
+
+    public function isEditor() : bool { return in_array(static::ROLE_EDITOR, $this->getRoles()); }
+
 
     /**
      * @see UserInterface
