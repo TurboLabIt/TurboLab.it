@@ -5,6 +5,7 @@ use App\Entity\PhpBB\User;
 use App\Repository\PhpBB\UserRepository;
 use App\Trait\phpBBCookiesAuthenticatorTrait;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 /**
  * @link https://github.com/TurboLabIt/TurboLab.it/tree/main/docs/users.md
  */
-class phpBBCookiesAuthenticator extends AbstractAuthenticator
+class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSubscriberInterface
 {
     use phpBBCookiesAuthenticatorTrait;
 
