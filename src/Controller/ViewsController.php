@@ -10,7 +10,7 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 class ViewsController extends BaseController
 {
-    const string SECTION_SLUG   = "viste";
+    const string SECTION_SLUG = "viste";
 
 
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', name: 'app_views_multi_0-1')]
