@@ -23,7 +23,6 @@ class CacheHolePunchingController extends BaseController
             throw new InvalidArgumentException('Origin page is not valid');
         }
 
-        //$originUrl = substr($originUrl, strlen($siteUrl) );
         if( empty($originUrl) ) {
             $originUrl = '/';
         }
@@ -33,14 +32,14 @@ class CacheHolePunchingController extends BaseController
         if( empty($userEntity) ) {
             return $this->render('user/userbar-anonymous.html.twig', [
                 // the redirection works
-                'loginUrl'          => $urlGenerator->generateLoginUrl($originUrl),
+                'loginUrl'      => $urlGenerator->generateLoginUrl($originUrl),
                 // the redirection DOESN'T WORK :-(
-                'registerUrl'       => $urlGenerator->generateRegisterUrl($originUrl)
+                'registerUrl'   => $urlGenerator->generateRegisterUrl($originUrl)
             ]);
         }
 
         return $this->render('user/userbar-logged.html.twig', [
-            'User'              => $user->setEntity($userEntity),
+            'User' => $user->setEntity($userEntity),
         ]);
     }
 }
