@@ -190,7 +190,7 @@ class ArticleRepository extends BaseRepository
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
                 //->andWhere('t.updatedAt >= :dateLimit')
                     //->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
-                ->orderBy('t.updatedAt', 'DESC')
+                ->orderBy('t.updatedAt', 'ASC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
