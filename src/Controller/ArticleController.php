@@ -48,10 +48,19 @@ class ArticleController extends BaseController
     }
 
 
+    protected function isCachable() : bool
+    {
+        if( !empty($this->getUser()) ) {
+            return false;
+        }
+
+        return parent::isCachable();
+    }
+
+
     protected function buildHtml(string $tagSlugDashId, string $articleSlugDashId) : string|Response
     {
-        $this->mainArticle = $article =
-            $this->factory->createArticle()->loadBySlugDashIdComplete($articleSlugDashId);
+        $this->mainArticle = $article = $this->factory->createArticle()->loadBySlugDashIdComplete($articleSlugDashId);
 
         $articleRealUrl = $article->checkRealUrl($tagSlugDashId, $articleSlugDashId);
         if( !empty($articleRealUrl) ) {
@@ -63,7 +72,7 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        return
+        $html =
             $this->twig->render('article/index.html.twig', [
                 'isVisible'             => $article->isVisible(),
                 'metaTitle'             => $article->getTitle(),
@@ -71,14 +80,22 @@ class ArticleController extends BaseController
                 'metaCanonicalUrl'      => $article->getUrl(),
                 'metaOgType'            => 'article',
                 'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
+                'metaRobots'            => $article->getMetaRobots(),
                 'activeMenu'            => $article->getActiveMenu(),
                 'FrontendHelper'        => $this->frontendHelper,
                 'Article'               => $article,
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
-                'SideArticles'          => $this->factory->createArticleCollection()
-                                                ->loadSideBarOf($article)
+                'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article)
             ]);
+
+        if( $article->isDraft() ) {
+
+            // return "503, maintenance" + prevent caching
+            return new Response($html, Response::HTTP_SERVICE_UNAVAILABLE, ['Retry-After' => 3600 * 24]);
+        }
+
+        return $html;
     }
 
 

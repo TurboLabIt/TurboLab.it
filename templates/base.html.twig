@@ -23,7 +23,7 @@
     <meta name="twitter:site" content="{% block metaTwitterHandle %}{{ websiteTwitterHandle ?? null }}{% endblock %}">
     <meta name="twitter:creator" content="{% block metaTwitterHandleAuthor %}{{ authorTwitterHandle ?? websiteTwitterHandle ?? null }}{% endblock %}">
 
-    <meta name="robots" content="{%- block metaRobots -%}index,follow{%- endblock -%}">
+    <meta name="robots" content="{%- block metaRobots -%}{{ metaRobots ?? 'index,follow' }}{%- endblock -%}">
 
     <link rel="icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">

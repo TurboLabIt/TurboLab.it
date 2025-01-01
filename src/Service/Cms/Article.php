@@ -466,4 +466,7 @@ class Article extends BaseCmsService
 
         return 'guide';
     }
+
+
+    public function getMetaRobots() : string { return $this->isPublished() ? 'index,follow' : 'index,nofollow'; }
 }
