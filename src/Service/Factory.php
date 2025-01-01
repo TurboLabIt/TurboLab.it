@@ -23,6 +23,7 @@ use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User as UserService;
@@ -33,17 +34,18 @@ class Factory
 {
     protected ?ImageService $defaultSpotlight;
     protected ?TagService $defaultTag;
+    protected ?User $currentUser;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
     public function __construct(
-        protected EntityManagerInterface $em, protected ProjectDir $projectDir,
+        protected EntityManagerInterface $em, protected ProjectDir $projectDir, protected Security $security,
         protected ArticleUrlGenerator $articleUrlGenerator,
         protected TagUrlGenerator $tagUrlGenerator,
         protected ImageUrlGenerator $imageUrlGenerator,
         protected FileUrlGenerator $fileUrlGenerator,
         protected ForumUrlGenerator $forumUrlGenerator,
-        protected UserUrlGenerator $userUrlGenerator
+        protected UserUrlGenerator $userUrlGenerator,
     )
     { }
     //</editor-fold>
@@ -52,6 +54,20 @@ class Factory
     public function getEntityManager() : EntityManagerInterface { return $this->em; }
 
     public function getProjectDir() : ProjectDir { return $this->projectDir; }
+
+    public function getCurrentUser() : ?UserService
+    {
+        if( !empty($this->currentUser) ) {
+            return $this->currentUser;
+        }
+
+        $entity = $this->security->getUser();
+        if( empty($entity) ) {
+            return $this->currentUser = null;
+        }
+
+        return $this->currentUser = $this->createUser($entity);
+    }
 
 
     //<editor-fold defaultstate="collapsed" desc="*** Article ***">

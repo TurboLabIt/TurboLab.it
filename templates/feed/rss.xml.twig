@@ -42,7 +42,7 @@
                         <a href="{{ Article.url }}">
                             <img style="border: 0; display: block;" src="{{ Article.spotlightOrDefaultUrl('med') }}">
                          </a>
-                        <p>{{ Article.abstract|raw }}</p>
+                        <p>{{ Article.abstractOrDefault|raw }}</p>
                         <p>» <a href="{{ Article.url }}">Leggi tutto</a></p>
                     ]]>
                     </description>

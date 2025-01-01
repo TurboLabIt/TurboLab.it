@@ -372,7 +372,7 @@
                                                 {% endif %}
                                             </div>
 
-                                            <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                            <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstractOrDefault|raw }}</a></p>
                                         </div>
                                     </div>
                                 </div>
@@ -421,7 +421,7 @@
                                                         {% endif %}
                                                     </div>
 
-                                                    <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                                    <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstractOrDefault|raw }}</a></p>
                                                 </div>
                                             </div>
                                         </div>

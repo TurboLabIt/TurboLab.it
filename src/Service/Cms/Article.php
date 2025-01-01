@@ -11,6 +11,7 @@ use App\Service\User;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
+use App\Trait\SecurityTrait;
 use App\Trait\ViewableServiceTrait;
 use DateTime;
 use DateTimeInterface;
@@ -39,7 +40,7 @@ class Article extends BaseCmsService
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
+    use PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait, SecurityTrait;
 
     protected ArticleEntity $entity;
 
@@ -81,13 +82,34 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
+    public function isVisible() : bool
+    {
+        $status     = $this->entity->getPublishingStatus();
+        $isVisible  = in_array($status, [ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW, ArticleEntity::PUBLISHING_STATUS_PUBLISHED]);
+
+        if($isVisible) {
+            return true;
+        }
+
+        $currentUser = $this->getCurrentUser();
+
+        if( empty($currentUser) ) {
+            return false;
+        }
+
+        $isVisible = $this->isAuthor($currentUser) || $currentUser->isVip();
+        return $isVisible;
+    }
+
+
+    public function isDraft() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_DRAFT; }
+
     public function isPublished() : bool
     {
         return
             $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
             !empty( $this->getPublishedAt() );
     }
-
 
     public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
 
@@ -163,6 +185,17 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👔 Authors ***">
+    public function isAuthor(?User $user = null) : bool {
+
+        if( empty($user) ) {
+            return false;
+        }
+
+        $arrAuthors = $this->getAuthors();
+        return array_key_exists($user->getId(), $arrAuthors);
+    }
+
+
     public function getAuthors() : array
     {
         if( is_array($this->arrAuthors) ) {
@@ -232,7 +265,7 @@ class Article extends BaseCmsService
 
     public function getSpotlightOrDefault() : ImageService
     {
-        if( !$this->isPublished() ) {
+        if( !$this->isVisible() ) {
             return $this->spotlight = $this->factory->createDefaultSpotlight();
         }
 
@@ -302,7 +335,7 @@ class Article extends BaseCmsService
 
     protected function loadPrevNextArticle(string $index) : ?static
     {
-        if( ! $this->isPublished() ) {
+        if( !$this->isPublished() ) {
             return null;
         }
 
@@ -349,6 +382,12 @@ class Article extends BaseCmsService
 
 
     public function getAbstract() : ?string { return $this->entity->getAbstract(); }
+
+    public function getAbstractOrDefault() : ?string
+    {
+        return $this->isVisible() ? $this->getAbstract() : "";
+    }
+
 
     public function getBody() : ?string { return $this->entity->getBody(); }
 

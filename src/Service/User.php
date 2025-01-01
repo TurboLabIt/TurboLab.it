@@ -84,18 +84,6 @@ class User extends BaseServiceEntity
 
     public function getEmail() : string { return $this->entity->getEmail(); }
 
-    public function getBio() : ?string
-    {
-        $bio = $this->loadAdditionalFields()['pf_tli_bio'] ?? null;
-        if( empty($bio) ) {
-            return null;
-        }
-
-        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
-        return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
-    }
-
-
     public function getAvatarUrl() : ?string
     {
         if( $this->entity->getAvatarType() == 'avatar.driver.gravatar' ) {
@@ -109,9 +97,7 @@ class User extends BaseServiceEntity
 
         return null;
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** 🪪 Additional, custom fields from phpBB ***">
     protected function loadAdditionalFields() : array
     {
         if( is_array($this->arrAdditionalFields) ) {
@@ -119,6 +105,24 @@ class User extends BaseServiceEntity
         }
 
         return $this->arrAdditionalFields = $this->getRepository()->getAdditionalFields( $this->getEntity() );
+    }
+
+    public function getBio() : ?string
+    {
+        $bio = $this->loadAdditionalFields()['pf_tli_bio'] ?? null;
+        if( empty($bio) ) {
+            return null;
+        }
+
+        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
+        return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 👮 Permissions ***">
+    public function isVip() : bool
+    {
+        return false;
     }
     //</editor-fold>
 

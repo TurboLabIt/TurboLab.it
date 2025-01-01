@@ -63,14 +63,11 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        // TODO handle author can view it's own article
-        $isVisible = $article->isPublished();
-
         return
             $this->twig->render('article/index.html.twig', [
-                'isVisible'             => $isVisible,
+                'isVisible'             => $article->isVisible(),
                 'metaTitle'             => $article->getTitle(),
-                'metaDescription'       => $article->getAbstract(),
+                'metaDescription'       => $article->getAbstractOrDefault(),
                 'metaCanonicalUrl'      => $article->getUrl(),
                 'metaOgType'            => 'article',
                 'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),

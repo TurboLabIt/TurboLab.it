@@ -63,12 +63,21 @@
                                             Aggiornato: {{ Article.updatedAt|friendlyDate }}
                                         </li>
                                         <li>
-                                            {% if Article.isPublished %}
+                                            {% if Article.isDraft %}
+
+                                                <i class="fa-solid fa-book" style="color: red;"></i>
+                                                <span style="color: red;">Articolo in lavorazione (bozza)</span>
+
+                                            {% elseif Article.isPublished %}
+
                                                 <i class="fa-solid fa-book" style="color: #33d17a;"></i>
                                                 <span style="color: #33d17a;">Pubblicato</span>: {{ Article.publishedAt|friendlyDate }}
+
                                             {% else %}
+
                                                 <i class="fa-solid fa-book" style="color: #f5c211;"></i>
                                                 <span style="color: #f5c211;">Articolo non ancora pubblicato</span>
+
                                             {% endif %}
                                         </li>
                                         {% if Article.AuthorsNotSystem is not empty %}

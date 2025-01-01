@@ -82,7 +82,7 @@
                                                 </a>
                                             </div>
 
-                                            {% if Article.isPublished %}
+                                            {% if Article.isVisible %}
                                                 <div class="tli-mosaic-post-meta">
                                                     <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
                                                         {{ Article.TopTagOrDefault.title|upper|raw }}
@@ -114,21 +114,16 @@
                                                 {% endif %}
                                             </div>
 
-                                            {% if Article.isPublished %}
-                                                <div class="trending-news-content">
-                                                    <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
-                                                </div>
-                                            {% endif %}
+                                            <div class="trending-news-content">
+                                                <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstractOrDefault|raw }}</a></p>
+                                            </div>
 
                                         </div>
                                     </div>
 
                                 {% else %}
 
-                                    <div class="tli-fullpage-message mb-35" style="font-size: 22px">
-                                        Oops, nessun articolo trovato.
-                                    </div>
-
+                                    <div class="tli-fullpage-message mb-35" style="font-size: 22px">Nessun articolo trovato.</div>
                                     <div class="tli-fullpage-message mb-35" style="font-size: 18px">
                                         <a href="{{ path('app_home') }}">
                                             <i class="fa-solid fa-house"></i> Torna alla Homepage
