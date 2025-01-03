@@ -11,16 +11,24 @@ class SearchController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search')]
-    public function search(?string $termToSearch = null) : Response
+    public function search(string $termToSearch = '') : Response
     {
         // legacy redirect
-        $legacyQueryStringParam = $this->request->get('query');
+        $legacyQueryStringParam = $this->request->get('query') ?? '';
+        $legacyQueryStringParam = trim($legacyQueryStringParam);
+
         if( !empty($legacyQueryStringParam) ){
             return $this->redirectToRoute('app_search', ['termToSearch' => $legacyQueryStringParam], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        if( empty($termToSearch) ) {
+        $trimmedTermToSearch = trim($termToSearch);
+
+        if( empty($trimmedTermToSearch) ) {
             return $this->redirectToRoute('app_home', [],Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        if( $termToSearch != $trimmedTermToSearch ){
+            return $this->redirectToRoute('app_search', ['termToSearch' => $trimmedTermToSearch], Response::HTTP_MOVED_PERMANENTLY);
         }
 
         return
