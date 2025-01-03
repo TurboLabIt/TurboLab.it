@@ -1,1 +1,1 @@
-
+import './styles/article.css';
