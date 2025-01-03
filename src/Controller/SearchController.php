@@ -25,7 +25,11 @@ class SearchController extends BaseController
 
         return
             $this->render('search/index.html.twig', [
-                'termToSearch' => $termToSearch,
+                'metaRobots'            => 'noindex,nofollow',
+                'activeMenu'            => null,
+                'FrontendHelper'        => $this->frontendHelper,
+                'SideArticles'          => $this->factory->createArticleCollection()->loadLatestPublished()->getItems(4),
+                'termToSearch'          => $termToSearch
             ]);
     }
 }
