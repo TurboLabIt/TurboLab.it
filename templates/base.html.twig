@@ -147,6 +147,24 @@
                                             {% endfor %}
                                         </ul>
                                     </li>
+
+                                    <li class="has-sub">
+                                        <a class="{{ activeMenu == 'cerca' ? 'active' : '' }} disabled-link" href="#">
+                                            <i class="fa-solid fa-magnifying-glass fa-shake" style="color: #e66100;"></i>
+                                            Cerca... <i class="fa-solid fa-angle-down"></i>
+                                        </a>
+                                        <ul id="tli-nav-search">
+                                            <li>
+                                                <form action="{{ path('app_search') }}" method="GET">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="query" placeholder="windows su usb" style="margin-bottom: 7px;">
+                                                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cerca su TurboLab.it</button>
+                                                    </div>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </li>
+
                                     <li>
                                         <a href="#contact" class="prevent-change-url">
                                             <i class="fa-solid fa-envelope" style="color: #e01b24;"></i> Contatti

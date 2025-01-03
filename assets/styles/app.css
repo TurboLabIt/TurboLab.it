@@ -2,6 +2,10 @@ body {
     background-color: lightgray;
 }
 
+::placeholder {
+    opacity: 0.3 !important;
+}
+
 .tli-video-thumb {
     cursor: pointer;
 }
@@ -47,4 +51,14 @@ a.disabled-link {
 .tli-web-debug-toolbar-extension-item {
     font-size: 14px !important;
     padding: 4px !important;
+}
+
+#tli-nav-search {
+    padding: 15px;
+    width: 340px;
+}
+
+div.stellarnav.mobile.active ul {
+    max-width: 340px;
+    z-index: 999;
 }

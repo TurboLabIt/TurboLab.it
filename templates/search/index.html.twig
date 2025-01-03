@@ -1,1 +1,99 @@
-{{ termToSearch }}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+    {{ parent() }}
+    <link rel="preload" href="{{ asset('build/search.css') }}"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+{% endblock %}
+
+
+{% block bodyMainContent %}
+
+    <!-- SERP bodyMainContent START -->
+    <section class="post-layout-1-area post-layout-3-area">
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="about-author-content">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                                <li class="breadcrumb-item">Risultati della ricerca</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <article class="col-lg-8">
+
+                    <div class="post-layout-top-content post-layout-top-content-3">
+
+                        <div class="post-content">
+                            <h1 class="title">Risultati della ricerca per: {{ termToSearch }}</h1>
+                        </div>
+
+                        <div class="post-text mt-30">
+
+                            <script>
+
+                                var searchFromURL = function() {
+                                    var element = google.search.cse.element.getElement('searchfromurlgname');
+                                    element.execute("{{ termToSearch }}");
+                                };
+
+                                var myCallback = function() {
+                                    if (document.readyState == 'complete') {
+                                        searchFromURL();
+                                    } else {
+                                        google.setOnLoadCallback(searchFromURL, true);
+                                    }
+                                    $('#serp-loader').css('display','none');
+                                };
+                                window.__gcse = {
+                                    callback: myCallback
+                                };
+                                (function() {
+                                    var cx = '012760061140666844116:2a4sjd06h8w';
+
+                                    var gcse = document.createElement('script'); gcse.type = 'text/javascript';
+                                    gcse.async = true;
+                                    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                                        '//www.google.com/cse/cse.js?cx=' + cx;
+                                    var s = document.getElementsByTagName('script')[0];
+                                    s.parentNode.insertBefore(gcse, s);
+                                })();
+
+                            </script>
+
+                            <gcse:searchresults-only gname="searchfromurlgname"></gcse:searchresults-only>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% include 'parts/column-articles.html.twig' %}
+
+            </div>
+        </div>
+    </section>
+    <!-- SERP bodyMainContent END -->
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="/assets/js/stellarnav.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+
+    <script src="https://kit.fontawesome.com/efe2621351.js" crossorigin="anonymous"></script>
+
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('search') }}
+
+{% endblock %}
