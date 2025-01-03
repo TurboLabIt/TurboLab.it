@@ -36,6 +36,16 @@
                             <h1 class="title">Risultati della ricerca per: {{ termToSearch }}</h1>
                         </div>
 
+                        <form action="{{ path('app_search') }}" class="submit-to-path" method="GET">
+                            <div class="form-group">
+                                <input type="text" class="form-control submit-to-path" name="query" required
+                                       value="{{ termToSearch ?? null }}" style="margin-bottom: 7px;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-magnifying-glass"></i> Cerca su TurboLab.it
+                                </button>
+                            </div>
+                        </form>
+
                         <div class="post-text mt-30">
 
                             <script>
