@@ -10,7 +10,7 @@ class SearchController extends BaseController
     const string SECTION_SLUG = "cerca";
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{termToSearch}', name: 'app_search')]
+    #[Route('/' . self::SECTION_SLUG . '/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search')]
     public function search(?string $termToSearch = null) : Response
     {
         // legacy redirect
