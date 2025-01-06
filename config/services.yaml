@@ -66,3 +66,9 @@ services:
          arguments:
             $arrConfig:
                 forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
+
+    App\Service\GoogleProgrammableSearchEngine:
+        arguments:
+            $arrConfig:
+                apiKey: '%env(GOOGLE_SEARCH_ENGINE_API_KEY)%'
+                engineId: '%env(GOOGLE_SEARCH_ENGINE_CX)%'

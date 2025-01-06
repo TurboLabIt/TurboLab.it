@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ORM\Index(columns: ['title'], name: 'title_fulltext_idx', flags: ['fulltext'])]
 class Article extends BaseCmsEntity
 {
     use

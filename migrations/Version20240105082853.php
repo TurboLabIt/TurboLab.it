@@ -32,15 +32,16 @@ final class Version20240105082853 extends AbstractMigration
         $this->addSql('DROP TABLE IF EXISTS article_tag');
         $this->addSql('DROP TABLE IF EXISTS article_file');
         $this->addSql('DROP TABLE IF EXISTS tag_badge');
-        
+
         $this->addSql('DROP TABLE IF EXISTS newsletter_opener');
         $this->addSql('DROP TABLE IF EXISTS newsletter_expiring_warn');
-        
+
         $this->addSql('SET foreign_key_checks = 1');
 
 
         // ARTICLES
         $this->addSql('CREATE TABLE article (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, format SMALLINT UNSIGNED NOT NULL, publishing_status SMALLINT UNSIGNED NOT NULL, comments_topic_id INT UNSIGNED DEFAULT NULL, spotlight_id INT UNSIGNED DEFAULT NULL, views INT UNSIGNED NOT NULL, show_ads TINYINT(1) NOT NULL, abstract VARCHAR(2000) DEFAULT NULL, body LONGTEXT DEFAULT NULL, published_at DATETIME DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_23A0E663049EF9 (spotlight_id), INDEX IDX_23A0E668D8A6755 (comments_topic_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE FULLTEXT INDEX title_fulltext_idx ON article (title)');
 
         // IMAGES
         $this->addSql('CREATE TABLE image (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, format VARCHAR(5) NOT NULL, watermark_position SMALLINT UNSIGNED NOT NULL, reusable TINYINT(1) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -55,7 +56,6 @@ final class Version20240105082853 extends AbstractMigration
         $this->addSql('CREATE TABLE badge (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, image_url VARCHAR(1024) DEFAULT NULL, user_selectable TINYINT(1) NOT NULL, abstract VARCHAR(2000) DEFAULT NULL, body LONGTEXT DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 
 
-
         // 🔗 ARTICLES <-> AUTHORS
         $this->addSql('CREATE TABLE article_author (id INT UNSIGNED AUTO_INCREMENT NOT NULL, article_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, ranking SMALLINT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_D7684F487294869C (article_id), INDEX IDX_D7684F48A76ED395 (user_id), UNIQUE INDEX same_article_same_author_unique_idx (article_id, user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 
@@ -67,7 +67,6 @@ final class Version20240105082853 extends AbstractMigration
 
         // 🔗 FILES <-> AUTHORS
         $this->addSql('CREATE TABLE file_author (id INT UNSIGNED AUTO_INCREMENT NOT NULL, file_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, ranking SMALLINT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_5B8FE7793CB796C (file_id), INDEX IDX_5B8FE77A76ED395 (user_id), UNIQUE INDEX same_file_same_author_unique_idx (file_id, user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-
 
 
         // 🔗 ARTICLES <-> IMAGES
@@ -84,11 +83,9 @@ final class Version20240105082853 extends AbstractMigration
         $this->addSql('CREATE TABLE tag_badge (id INT UNSIGNED AUTO_INCREMENT NOT NULL, tag_id INT UNSIGNED NOT NULL, badge_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_DC1C511BBAD26311 (tag_id), INDEX IDX_DC1C511BF7A2C2FC (badge_id), UNIQUE INDEX same_tag_same_badge_unique_idx (tag_id, badge_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 
 
-
         // NEWSLETTER
         $this->addSql('CREATE TABLE newsletter_opener (id INT UNSIGNED AUTO_INCREMENT NOT NULL, user_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, UNIQUE INDEX user_unique_idx (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE newsletter_expiring_warn (id INT UNSIGNED AUTO_INCREMENT NOT NULL, user_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, UNIQUE INDEX user_unique_idx (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        
 
 
         // FKs

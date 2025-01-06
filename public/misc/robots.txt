@@ -1,6 +1,8 @@
 User-agent: *
 Sitemap: https://turbolab.it/sitemap/sitemap.xml.gz
 Disallow: /scarica/*
+Disallow: /ajax/*
+Disallow: /editor/*
 Disallow: /forum/memberlist.php
 
 User-agent: PetalBot

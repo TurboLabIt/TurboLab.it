@@ -40,6 +40,7 @@ class Factory
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir, protected Security $security,
+        protected StopWords $stopWords,
         protected ArticleUrlGenerator $articleUrlGenerator,
         protected TagUrlGenerator $tagUrlGenerator,
         protected ImageUrlGenerator $imageUrlGenerator,
@@ -54,6 +55,8 @@ class Factory
     public function getEntityManager() : EntityManagerInterface { return $this->em; }
 
     public function getProjectDir() : ProjectDir { return $this->projectDir; }
+
+    public function getStopWords() : StopWords { return $this->stopWords; }
 
     public function getCurrentUser() : ?UserService
     {

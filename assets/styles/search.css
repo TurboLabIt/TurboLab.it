@@ -1,0 +1,7 @@
+.serp-result h4 {
+    margin-bottom: 0px;
+}
+
+.serp-result h4:hover {
+    color: rgba(13,110,253,1);
+}

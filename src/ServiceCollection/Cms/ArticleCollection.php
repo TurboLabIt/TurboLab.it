@@ -183,5 +183,13 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadSerp(string $termToSearch) : static
+    {
+        $termToSearchNoStopWords = $this->factory->getStopWords()->removeFromSting($termToSearch);
+        $arrArticles = $this->getRepository()->getSerp($termToSearchNoStopWords);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function createService(?ArticleEntity $entity = null) : Article { return $this->factory->createArticle($entity); }
 }

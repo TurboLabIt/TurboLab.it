@@ -497,4 +497,60 @@ class ArticleRepository extends BaseRepository
                 ->getQuery()
                 ->getResult();
     }
+
+
+    public function getSerp(string $termToSearch) : array
+    {
+        $termToSearch   = preg_replace('/[^a-z0-9_ ]/i', '', $termToSearch);
+        $arrTerms       = explode(' ', $termToSearch);
+
+        foreach($arrTerms as $k => $term) {
+
+            $term = trim($term);
+
+            if( empty($term) || mb_strlen($term) < 2 ) {
+
+                unset($arrTerms[$k]);
+                continue;
+            }
+
+            $arrTerms[$k] = "+$term";
+        }
+
+        $termToSearchPrepared = implode(' ', $arrTerms);
+
+        $sqlSelect = "
+            SELECT id, MATCH(title) AGAINST(:termToSearch IN BOOLEAN MODE) AS ranking FROM " . $this->getTableName() . "
+            WHERE
+                MATCH(title) AGAINST(:termToSearch IN BOOLEAN MODE) AND
+                publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . "
+            LIMIT 50
+        ";
+
+        $arrIds = $this->sqlQueryExecute($sqlSelect, ['termToSearch' => $termToSearchPrepared])->fetchFirstColumn();
+        if( empty($arrIds) ) {
+            return [];
+        }
+
+        $arrArticles =
+            $this->getQueryBuilderComplete()
+                ->andWhere('t.id IN (:ids)')
+                ->setParameter("ids", $arrIds)
+                ->getQuery()
+                ->getResult();
+
+        $arrReorder = array_flip($arrIds);
+        foreach($arrReorder as $articleId => $value) {
+
+            if( !array_key_exists($articleId, $arrArticles) ) {
+
+                unset($arrReorder[$articleId]);
+                continue;
+            }
+
+            $arrReorder[$articleId] = $arrArticles[$articleId];
+        }
+
+        return $arrReorder;
+    }
 }

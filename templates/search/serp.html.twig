@@ -48,38 +48,49 @@
 
                         <div class="post-text mt-30">
 
-                            <script>
+                            <p><small><i class="fa-solid fa-circle-info"></i> Risultati forniti da Google</small></p>
 
-                                var searchFromURL = function() {
-                                    var element = google.search.cse.element.getElement('searchfromurlgname');
-                                    element.execute("{{ termToSearch }}");
-                                };
+                            {% if GoogleResults.items is not empty %}
 
-                                var myCallback = function() {
-                                    if (document.readyState == 'complete') {
-                                        searchFromURL();
-                                    } else {
-                                        google.setOnLoadCallback(searchFromURL, true);
-                                    }
-                                    $('#serp-loader').css('display','none');
-                                };
-                                window.__gcse = {
-                                    callback: myCallback
-                                };
-                                (function() {
-                                    var cx = '012760061140666844116:2a4sjd06h8w';
+                                {% for Item in GoogleResults.items %}
 
-                                    var gcse = document.createElement('script'); gcse.type = 'text/javascript';
-                                    gcse.async = true;
-                                    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-                                        '//www.google.com/cse/cse.js?cx=' + cx;
-                                    var s = document.getElementsByTagName('script')[0];
-                                    s.parentNode.insertBefore(gcse, s);
-                                })();
+                                    <div class="serp-result google-result">
+                                        <h4><a href="{{ Item.link }}">{{ Item.htmlTitle|replace({'[TurboLab.it]': ''})|raw }}</a></h4>
+                                        <p><a href="{{ Item.link }}">{{ Item.htmlSnippet|raw }}</a></p>
+                                    </div>
 
-                            </script>
+                                {% endfor %}
 
-                            <gcse:searchresults-only gname="searchfromurlgname"></gcse:searchresults-only>
+                            {% else %}
+
+                                <p>{{ noResultsMessage }}</p>
+
+                            {% endif %}
+
+
+                            <hr>
+                            <p><small><i class="fa-solid fa-circle-info"></i> Articoli che contengono le parole cercate nel titolo</small></p>
+
+                            {% if LocalResults is not empty %}
+
+                                {% for Article in LocalResults %}
+                                    <div class="serp-result local-result">
+                                        <h4><a href="{{ Article.url }}">{{ Article.titleFormatted|raw }}</a></h4>
+                                        <p><a href="{{ Article.url }}">{{ Article.abstractOrDefault|raw }}</a></p>
+                                    </div>
+                                {% endfor %}
+
+                            {% else %}
+
+                                <p>{{ noResultsMessage }}</p>
+
+                            {% endif %}
+
+                            <p>
+                                <i class="fa-solid fa-lightbulb fa-fade" style="color: #FFD43B;"></i>
+                                Non hai trovato quello che cerchi? Prova a effettuare una nuova ricerca usando
+                                altre parole oppure <a href="/forum">chiedi sul forum</a>.
+                            </p>
 
                         </div>
 
