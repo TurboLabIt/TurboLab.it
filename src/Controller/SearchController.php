@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Service\GoogleProgrammableSearchEngine;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -49,16 +50,9 @@ class SearchController extends BaseController
 
                 $buildHtmlResult = $this->buildHtml($searchEngine, $trimmedTermToSearch);
 
-                if( is_string($buildHtmlResult) ) {
-
-                    $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cache->tag(["search"]);
-
-                } else {
-
-                    $cache->expiresAfter(-1);
-                }
+                $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
+                $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                $cache->tag(["search"]);
 
                 return $buildHtmlResult;
             });
@@ -70,7 +64,7 @@ class SearchController extends BaseController
     protected function buildHtml(GoogleProgrammableSearchEngine $searchEngine, string $termToSearch) : string|Response
     {
         return
-            $this->render('search/serp.html.twig', [
+            $this->twig->render('search/serp.html.twig', [
                 'metaRobots'        => 'noindex,nofollow',
                 'activeMenu'        => null,
                 'FrontendHelper'    => $this->frontendHelper,
