@@ -33,13 +33,13 @@
                     <div class="post-layout-top-content post-layout-top-content-3">
 
                         <div class="post-content">
-                            <h1 class="title">Risultati della ricerca per: {{ termToSearch }}</h1>
+                            <h1 class="title">{{ metaTitle|raw }}</h1>
                         </div>
 
                         <form action="{{ path('app_search') }}" class="submit-to-path" method="GET">
                             <div class="form-group">
                                 <input type="text" class="form-control submit-to-path" name="query" required
-                                       value="{{ termToSearch ?? null }}" style="margin-bottom: 7px;">
+                                       value="{{ (termToSearch ?? null)|raw }}" style="margin-bottom: 7px;">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa-solid fa-magnifying-glass"></i> Cerca su TurboLab.it
                                 </button>
@@ -50,7 +50,7 @@
 
                             <p><small><i class="fa-solid fa-circle-info"></i> Risultati forniti da Google</small></p>
 
-                            {% if GoogleResults.items is not empty %}
+                            {% if GoogleResults.items ?? null is not empty %}
 
                                 {% for Item in GoogleResults.items %}
 

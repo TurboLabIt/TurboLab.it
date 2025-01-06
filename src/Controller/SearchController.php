@@ -28,6 +28,10 @@ class SearchController extends BaseController
         }
 
         $trimmedTermToSearch = trim($termToSearch);
+        $trimmedTermToSearch = strip_tags($trimmedTermToSearch);
+        $trimmedTermToSearch = trim($trimmedTermToSearch);
+        $trimmedTermToSearch = htmlspecialchars($trimmedTermToSearch);
+
 
         if( empty($trimmedTermToSearch) ) {
             return $this->redirectToRoute('app_home', [],Response::HTTP_MOVED_PERMANENTLY);
@@ -65,6 +69,7 @@ class SearchController extends BaseController
     {
         return
             $this->twig->render('search/serp.html.twig', [
+                'metaTitle'         => "Risultati della ricerca per: $termToSearch",
                 'metaRobots'        => 'noindex,nofollow',
                 'activeMenu'        => null,
                 'FrontendHelper'    => $this->frontendHelper,
