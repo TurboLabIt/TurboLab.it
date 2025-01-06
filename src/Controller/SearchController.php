@@ -32,14 +32,13 @@ class SearchController extends BaseController
         $trimmedTermToSearch = trim($trimmedTermToSearch);
         $trimmedTermToSearch = htmlspecialchars($trimmedTermToSearch);
 
-
         if( empty($trimmedTermToSearch) ) {
             return $this->redirectToRoute('app_home', [],Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        if( $termToSearch != $trimmedTermToSearch ){
+        /*if( $termToSearch != $trimmedTermToSearch ){
             return $this->redirectToRoute('app_search', ['termToSearch' => $trimmedTermToSearch], Response::HTTP_MOVED_PERMANENTLY);
-        }
+        }*/
 
 
         if( !$this->isCachable() ) {
