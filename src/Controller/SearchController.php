@@ -32,7 +32,7 @@ class SearchController extends BaseController
         }
 
         return
-            $this->render('search/index.html.twig', [
+            $this->render('search/serp.html.twig', [
                 'metaRobots'            => 'noindex,nofollow',
                 'activeMenu'            => null,
                 'FrontendHelper'        => $this->frontendHelper,
