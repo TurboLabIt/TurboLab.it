@@ -5,6 +5,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
+/**
+ * 📚 https://support.google.com/programmable-search/answer/4513751
+ */
 class SearchController extends BaseController
 {
     const string SECTION_SLUG = "cerca";
