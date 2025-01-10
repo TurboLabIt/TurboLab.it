@@ -2,9 +2,14 @@
 namespace App\Tests\Smoke;
 
 use App\Controller\SearchController;
+use App\Service\Cms\Article;
+use App\Service\Cms\Tag;
 use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use SimpleXMLElement;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class SearchTest extends BaseT
@@ -59,5 +64,54 @@ class SearchTest extends BaseT
 
         $html = $crawler->html();
         $this->assertStringNotContainsString(SearchController::NO_RESULTS_MESSAGE, $html, "Failing URL: $urlToFetch");
+    }
+
+
+    public static function mainPagesProvider() : Generator
+    {
+        /** @var Article $article */
+        $article = static::getService("App\\Service\\Cms\\Article");
+        $article->load(Article::ID_QUALITY_TEST);
+        $articleUrl = $article->getUrl();
+
+        /** @var Tag $tag */
+        $tag = static::getService("App\\Service\\Cms\\Tag");
+        $tag->load(Tag::ID_WINDOWS);
+        $tagUrl = $tag->getUrl();
+
+        yield from [['/'], [$articleUrl], [$tagUrl]];
+    }
+
+
+    #[DataProvider('mainPagesProvider')]
+    public function testOpenSearchXmlAutodiscovery(string $url)
+    {
+        $html       = $this->fetchHtml($url);
+        $pattern    = '/<link\s+rel="search"\s+type="application\/opensearchdescription\+xml"[^>]+href="([^"]+)"/';
+        $arrMatches = [];
+        preg_match($pattern, $html, $arrMatches);
+        $this->assertNotEmpty($arrMatches, "Autodiscovery HTML tag not found! Failing URL: $url");
+        $openSearchXmlUrl = $arrMatches[1];
+        $this->assertStringContainsString('/open-search.xml', $openSearchXmlUrl);
+        $openSearchXmlUrl = $this->generateUrl() . ltrim($openSearchXmlUrl, '/');
+
+        $httpClient =
+            HttpClient::create([
+                'max_redirects' => 0,
+                'verify_peer'   => false,
+                'verify_host'   => false
+            ]);
+
+        $response = $httpClient->request('GET', $openSearchXmlUrl);
+        $httpStatusCode = $response->getStatusCode();
+        $this->assertSame(Response::HTTP_OK, $httpStatusCode);
+
+        $txtXml = $response->getContent();
+        $this->assertStringContainsString('/cerca/{searchTerms}', $txtXml);
+
+        $oXml = simplexml_load_string($txtXml);
+        $this->assertInstanceOf(SimpleXMLElement::class, $oXml);
+        $searchUrl = (string)$oXml->Url["template"];
+        $this->assertStringContainsString('/cerca/{searchTerms}', $searchUrl);
     }
 }
