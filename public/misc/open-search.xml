@@ -1,0 +1,9 @@
+<!-- https://developer.mozilla.org/en-US/docs/Web/OpenSearch -->
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>TurboLab.it</ShortName>
+    <Description>Cerca su TurboLab.it 2.0: Guide PC, Windows, Linux, Android e Bitcoin</Description>
+    <Url type="text/html" template="https://turbolab.it/cerca/{searchTerms}" />
+    <Url type="application/opensearchdescription+xml" rel="self" template="https://turbolab.it/open-search.xml" />
+    <Image width="16" height="16" type="image/x-icon">https://turbolab.it/favicon.ico</Image>
+    <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>
