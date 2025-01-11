@@ -82,21 +82,26 @@
                                                 </a>
                                             </div>
 
-                                            {% if Article.isVisible %}
-                                                <div class="tli-mosaic-post-meta">
+                                            <div class="tli-mosaic-post-meta">
+
+                                                {% if Article.isVisible %}
                                                     <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
                                                         {{ Article.TopTagOrDefault.title|upper|raw }}
                                                     </a>
+
                                                     <span class="tli-meta-slash"> · </span>
-                                                    <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
-                                                </div>
-                                            {% endif %}
+                                                {% endif %}
+
+                                                <span class="tli-meta-date">{{ (Article.publishedAt ?? Article.updatedAt)|friendlyDate }}</span>
+
+                                            </div>
 
                                             <div class="trending-news-content">
                                                 <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
                                             </div>
 
                                             <div class="tli-mosaic-post-meta">
+
                                                 {% if Article.AuthorsNotSystem is not empty %}
                                                     <span class="tli-meta-authors">
                                                         a cura di
@@ -105,12 +110,25 @@
                                                         {% endfor %}
                                                     </span>
                                                 {% endif %}
+
                                                 {% if Article.commentsUrl is not empty %}
                                                     <span class="tli-meta-slash">&nbsp;</span>
                                                     <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
                                                         <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
                                                         {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
                                                     </a>
+                                                {% endif %}
+
+                                                {% if not Article.isPublished %}
+                                                    <span class="tli-meta-slash">&nbsp;</span>
+                                                    <small>{% include('article/publishing-status.html.twig') %}</small>
+                                                {% endif %}
+
+                                                {% if app.user %}
+                                                    <span class="tli-meta-slash">&nbsp;</span>
+                                                    <span class="tli-meta-comments-num" title="ID dell'articolo">
+                                                        <i class="fa-solid fa-hashtag"></i> {{ Article.id }}
+                                                    </span>
                                                 {% endif %}
                                             </div>
 
