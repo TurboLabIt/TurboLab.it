@@ -4,7 +4,7 @@ namespace App\Entity\Cms;
 use App\Repository\Cms\ArticleRepository;
 use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;
-use App\Trait\ArticleFormatableEntityTrait;
+use App\Trait\ArticleFormatsTrait;
 use App\Trait\BodyableEntityTrait;
 use App\Trait\CommentTopicableEntityTrait;
 use App\Trait\PublishableEntityTrait;
@@ -12,6 +12,7 @@ use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -20,9 +21,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Article extends BaseCmsEntity
 {
     use
-        AbstractableEntityTrait, AdsableEntityTrait, ArticleFormatableEntityTrait,
+        AbstractableEntityTrait, AdsableEntityTrait, ArticleFormatsTrait,
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,
         ViewableEntityTrait, CommentTopicableEntityTrait;
+
+    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    protected ?int $format = null;
+
+    #[ORM\Column]
+    private bool $archived = false;
 
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
     protected ?Image $spotlight = null;
@@ -50,16 +57,34 @@ class Article extends BaseCmsEntity
         $this->files    = new ArrayCollection();
     }
 
-    public function getSpotlight(): ?Image
+
+    public function getFormat(): ?int { return $this->format; }
+
+    public function setFormat(int $format) : static
     {
-        return $this->spotlight;
+        static::validateFormat($format);
+        $this->format = $format;
+        return $this;
     }
+
+
+    public function isArchived(): bool { return $this->archived; }
+
+    public function setArchived(bool $archived) : static
+    {
+        $this->archived = $archived;
+        return $this;
+    }
+
+
+    public function getSpotlight(): ?Image { return $this->spotlight; }
 
     public function setSpotlight(?Image $spotlight): static
     {
         $this->spotlight = $spotlight;
         return $this;
     }
+
 
     /**
      * @return Collection<int, ArticleAuthor>
@@ -101,10 +126,7 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleImage>
      */
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
+    public function getImages(): Collection { return $this->images; }
 
     public function addImage(ArticleImage $image): static
     {
@@ -134,13 +156,11 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
+
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
+    public function getTags(): Collection { return $this->tags; }
 
     public function addTag(ArticleTag $tag): static
     {
@@ -170,13 +190,11 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
+
     /**
      * @return Collection<int, ArticleFile>
      */
-    public function getFiles(): Collection
-    {
-        return $this->files;
-    }
+    public function getFiles(): Collection { return $this->files; }
 
     public function addFile(ArticleFile $file): static
     {

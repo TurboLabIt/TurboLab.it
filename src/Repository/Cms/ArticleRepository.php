@@ -553,4 +553,39 @@ class ArticleRepository extends BaseRepository
 
         return $arrReorder;
     }
+
+
+    public function findPastYearsTitled(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false);
+
+        $orX = $query->expr()->orX();
+
+        foreach (['201', '202'] as $yearPrefix) {
+
+            $paramName = "year_prefix_$yearPrefix";
+            $query->setParameter($paramName, "%$yearPrefix%");
+            $orX->add($query->expr()->like('t.title', ':' . $paramName));
+        }
+
+        $currentYear = date('Y');
+
+        $query
+            ->andWhere($orX)
+            ->andWhere($query->expr()->notLike('t.title', $query->expr()->literal("%$currentYear%")))
+            ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
+            ->andWhere('t.archived = false')
+            ->orderBy('t.views', 'DESC');
+
+        $query
+            ->setFirstResult($startAt)
+            ->setMaxResults($this->itemsPerPage)
+            ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
 }

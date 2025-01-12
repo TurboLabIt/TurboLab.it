@@ -191,5 +191,12 @@ class ArticleCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadPastYearsTitled(?int $page = 1) : static
+    {
+        $arrArticles = $this->getRepository()->findPastYearsTitled($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function createService(?ArticleEntity $entity = null) : Article { return $this->factory->createArticle($entity); }
 }

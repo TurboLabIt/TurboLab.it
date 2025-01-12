@@ -37,7 +37,11 @@ class ViewsController extends BaseController
             "commentati"    => [
                 "title" => "Gli articoli più commentati",
                 "fx"    => 'loadTopTopComments'
-            ]
+            ],
+            "annuali"    => [
+                "title" => "Articoli che contengono l'anno nel titolo",
+                "fx"    => 'loadPastYearsTitled'
+            ],
         ];
 
         $arrViewRequested = $arrDefinedViews[$slug] ?? null;

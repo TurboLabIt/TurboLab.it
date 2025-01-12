@@ -62,6 +62,13 @@ class ArticleEditor extends Article
     }
 
 
+    public function setArchived(bool $archived) : static
+    {
+        $this->entity->setArchived($archived);
+        return $this;
+    }
+
+
     public function setBody(string $body) : static
     {
         $bodyForStorage = $this->htmlProcessorReverse->processArticleBodyForStorage($body);
@@ -122,6 +129,15 @@ class ArticleEditor extends Article
     {
         if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
             $this->entity->setCommentTopicNeedsUpdate(static::COMMENT_TOPIC_UPDATE_YES);
+        }
+
+
+        $title = $this->getTitle();
+        if(
+            stripos($title, 'Questa settimana su TLI') !== false ||
+            stripos($title, 'Auguri di buone feste da TLI') !== false
+        ) {
+            $this->setArchived(true);
         }
 
         if($persist) {
