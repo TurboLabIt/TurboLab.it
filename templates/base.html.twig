@@ -29,7 +29,6 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="search" type="application/opensearchdescription+xml" title="TurboLab.it" href="/open-search.xml" />
 
-
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://kit.fontawesome.com">
@@ -239,6 +238,13 @@
                                         <div class="list d-flex justify-content-between">
                                             <ul>
                                                 <li>
+                                                    <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">
+                                                        <i class="fa-solid fa-heart-circle-plus fa-beat" style="color: #ed333b;"></i> Donazioni
+                                                    </a>
+                                                </li>
+
+
+                                                <li>
                                                     <a href="{{ path('app_home') }}forum/ucp.php?mode=register">
                                                         <i class="fa-solid fa-users"></i> Registrazione (gratuita)
                                                     </a>
@@ -273,20 +279,22 @@
                                                         <i class="fa-brands fa-github"></i> Codice sorgente (GitHub)
                                                     </a>
                                                 </li>
-                                            </ul>
-
-                                            <ul>
-                                                <li>
-                                                    <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_DONATIONS')}) }}">
-                                                        <i class="fa-solid fa-heart-circle-plus fa-beat" style="color: #ed333b;"></i> Donazioni
-                                                    </a>
-                                                </li>
 
                                                 <li>
                                                     <a href="https://v1.turbolab.it">
                                                         <i class="fa-solid fa-folder-closed"></i> TLI 1.0 (vecchio sito)
                                                     </a>
                                                 </li>
+                                            </ul>
+
+                                            <ul>
+                                                {% for slug,Data in constant('App\\Controller\\ViewsController::VIEWS') %}
+                                                    <li>
+                                                        <a href="{{ path('app_views_multi', {slug: slug}) }}">
+                                                            {{ Data.title }}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
                                             </ul>
                                         </div>
                                     </div>

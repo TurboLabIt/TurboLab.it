@@ -11,6 +11,28 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 class ViewsController extends BaseController
 {
     const string SECTION_SLUG = "viste";
+    const array VIEWS = [
+        "bozze"         => [
+            "title" => "Articoli non ancora completati (bozze)",
+            "fx"    => 'loadDrafts'
+        ],
+        "finiti"        => [
+            "title" => "Articoli finiti, in attesa di pubblicazione",
+            "fx"    => 'loadLatestReadyForReview'
+        ],
+        "visitati"      => [
+            "title" => "Gli articoli più visitati",
+            "fx"    => 'loadTopViews'
+        ],
+        "commentati"    => [
+            "title" => "Gli articoli più commentati",
+            "fx"    => 'loadTopTopComments'
+        ],
+        "annuali"    => [
+            "title" => "Articoli annuali da aggiornare",
+            "fx"    => 'loadPastYearsTitled'
+        ],
+    ];
 
 
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', name: 'app_views_multi_0-1')]
@@ -21,30 +43,7 @@ class ViewsController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<[1-9]+[0-9]*>}', name: 'app_views_multi')]
     public function multi(string $slug, ?int $page = null) : Response
     {
-        $arrDefinedViews = [
-            "bozze"         => [
-                "title" => "Articoli non ancora completati (bozze)",
-                "fx"    => 'loadDrafts'
-            ],
-            "finiti"        => [
-                "title" => "Articoli finiti, in attesa di pubblicazione",
-                "fx"    => 'loadLatestReadyForReview'
-            ],
-            "visitati"      => [
-                "title" => "Gli articoli più visitati",
-                "fx"    => 'loadTopViews'
-            ],
-            "commentati"    => [
-                "title" => "Gli articoli più commentati",
-                "fx"    => 'loadTopTopComments'
-            ],
-            "annuali"    => [
-                "title" => "Articoli che contengono l'anno nel titolo",
-                "fx"    => 'loadPastYearsTitled'
-            ],
-        ];
-
-        $arrViewRequested = $arrDefinedViews[$slug] ?? null;
+        $arrViewRequested = static::VIEWS[$slug] ?? null;
         if( empty($arrViewRequested) ) {
             throw new NotFoundHttpException();
         }
