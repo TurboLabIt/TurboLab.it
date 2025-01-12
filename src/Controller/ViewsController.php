@@ -13,7 +13,7 @@ class ViewsController extends BaseController
     const string SECTION_SLUG = "viste";
     const array VIEWS = [
         "bozze"         => [
-            "title" => "Articoli non ancora completati (bozze)",
+            "title" => "Articoli in lavorazione (bozze)",
             "fx"    => 'loadDrafts'
         ],
         "finiti"        => [
