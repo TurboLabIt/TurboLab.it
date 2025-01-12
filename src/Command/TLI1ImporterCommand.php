@@ -405,7 +405,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $archived =
                 stripos($title, 'Auguri di buone feste') !== false ||
                 stripos($title, 'Auguri e statistiche') !== false ||
-                stripos($title, 'La storia di Windows, anno') !== false ||
+                stripos($title, 'La storia di Windows, ann') !== false ||
                 in_array($articleId, [
                     1926, 1436, // Office ISO
                     2295, 1866, 1632, 2827, 3177, 2288, 1407, 2860, 1613, 454, // review Win10
@@ -421,7 +421,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     520, // Auguri 2014
                     1383, 668, 782, 813, 626, 1442, 1438, 1211,  // old Win ISO
                     2319, // conversione da WSL1 a WSL2
-                    1441 // Win 9x in VirtualBox
+                    1441, // Win 9x in VirtualBox
+                    1703, 2892, // fake AVs
+                    1852 // crypto
                 ]);
         }
 
