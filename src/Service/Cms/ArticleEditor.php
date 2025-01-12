@@ -135,7 +135,8 @@ class ArticleEditor extends Article
         $title = $this->getTitle();
         if(
             stripos($title, 'Questa settimana su TLI') !== false ||
-            stripos($title, 'Auguri di buone feste da TLI') !== false
+            stripos($title, 'Auguri di buone feste da TLI') !== false ||
+            stripos($title, 'La storia di Windows, anno') !== false
         ) {
             $this->setArchived(true);
         }

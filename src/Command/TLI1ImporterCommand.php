@@ -395,17 +395,40 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             // Newsletters must be authored by "System" =>
             // getting it from 👀 https://turbolab.it/4181
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
+            $archived       = true;
 
         } else {
 
             $spotlightId    = $arrArticle["spotlight"];
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
+
+            $archived =
+                stripos($title, 'Auguri di buone feste') !== false ||
+                stripos($title, 'Auguri e statistiche') !== false ||
+                stripos($title, 'La storia di Windows, anno') !== false ||
+                in_array($articleId, [
+                    1926, 1436, // Office ISO
+                    2295, 1866, 1632, 2827, 3177, 2288, 1407, 2860, 1613, 454, // review Win10
+                    471, 1065, 1385, 1457, 2988, // review Avira
+                    2708, 3525, 4116, // review Ubuntu
+                    486, 112, 1186, // review Avast
+                    1378, // review Kaspersky
+                    743, 2213, 758, // review device
+                    106, // Emsisoft 2019
+                    122, // review 360 Internet Security 2013
+                    1158, 671, // review AVG
+                    751, // review Edge 2015
+                    520, // Auguri 2014
+                    1383, // Win2000 ISO
+                    2319, // conversione da WSL1 a WSL2
+                ]);
         }
 
 
         if( !empty($spotlightId) && $spotlightId != 1 ) {
             $this->arrSpotlightIds[$articleId] = $spotlightId;
         }
+
 
         /** @var ArticleEntity $entityTli2Article */
         $entityTli2Article =
@@ -415,6 +438,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setFormat($format)
                     ->setPublishingStatus($pubStatus)
                     ->setPublishedAt($publishedAt)
+                    ->setArchived($archived)
                     ->setShowAds($ads)
                     ->setCommentsTopic($commentsTopic)
                     //->setCommentTopicNeedsUpdate($commentTopicNeedsUpdate)

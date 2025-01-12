@@ -565,7 +565,7 @@ class ArticleRepository extends BaseRepository
 
         $orX = $query->expr()->orX();
 
-        foreach (['201', '202'] as $yearPrefix) {
+        foreach (['198', '199', '200', '201', '202', '203'] as $yearPrefix) {
 
             $paramName = "year_prefix_$yearPrefix";
             $query->setParameter($paramName, "%$yearPrefix%");
