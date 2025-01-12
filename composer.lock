@@ -7497,12 +7497,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "fd80142b935d21a5fa30c851d79f5ee0b88b5c5a"
+                "reference": "f3253341142a93065df6adc114e72a5909d207bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/fd80142b935d21a5fa30c851d79f5ee0b88b5c5a",
-                "reference": "fd80142b935d21a5fa30c851d79f5ee0b88b5c5a",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/f3253341142a93065df6adc114e72a5909d207bc",
+                "reference": "f3253341142a93065df6adc114e72a5909d207bc",
                 "shasum": ""
             },
             "require": {
@@ -7538,7 +7538,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
             },
-            "time": "2025-01-12T14:01:41+00:00"
+            "time": "2025-01-12T19:29:15+00:00"
         },
         {
             "name": "turbolabit/service-entity-plus-bundle",
