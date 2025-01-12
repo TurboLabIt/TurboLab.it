@@ -13,7 +13,7 @@ class ArticleController extends BaseController
     protected Article $mainArticle;
 
 
-    #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]+-[1-9]+[0-9]*>}', name: 'app_article')]
+    #[Route('/{tagSlugDashId<[^/]*-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]*-[1-9]+[0-9]*>}', name: 'app_article')]
     public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {
         if( !$this->isCachable() ) {

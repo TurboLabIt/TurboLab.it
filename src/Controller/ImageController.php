@@ -20,7 +20,7 @@ class ImageController extends BaseController
     public function __construct(protected Image $image, protected ImageCollection $imageCollection) {}
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{imageFolderMod}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
+    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{imageFolderMod}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
     public function index($size, $slugDashId) : Response
     {
         return $this->build($size, $slugDashId);
@@ -110,7 +110,7 @@ class ImageController extends BaseController
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{slugDashId<[^/]+-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
+    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
     public function legacyNoFolderMod($size, $slugDashId) : Response
     {
         return $this->build($size, $slugDashId);

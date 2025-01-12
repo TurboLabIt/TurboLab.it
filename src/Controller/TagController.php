@@ -16,14 +16,14 @@ class TagController extends BaseController
     protected Tag $mainTag;
 
 
-    #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{page<0|1>}', name: 'app_tag_page_0-1')]
+    #[Route('/{tagSlugDashId<[^/]*-[1-9]+[0-9]*>}/{page<0|1>}', name: 'app_tag_page_0-1')]
     public function appTagPage0Or1(string $tagSlugDashId) : Response
     {
         return $this->redirectToRoute('app_tag', ["tagSlugDashId" => $tagSlugDashId], Response::HTTP_MOVED_PERMANENTLY);
     }
 
 
-    #[Route('/{tagSlugDashId<[^/]+-[1-9]+[0-9]*>}/{page<[1-9]+[0-9]*>}', name: 'app_tag')]
+    #[Route('/{tagSlugDashId<[^/]*-[1-9]+[0-9]*>}/{page<[1-9]+[0-9]*>}', name: 'app_tag')]
     public function index(string $tagSlugDashId, ?int $page = null) : Response
     {
         $page = empty($page) ? 1 : $page;
