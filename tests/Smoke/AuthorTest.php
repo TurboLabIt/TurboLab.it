@@ -51,7 +51,7 @@ class AuthorTest extends BaseT
             [
                 "id"            => 2,
                 "authorName"    => "Zane (Gianluigi Zanettini)",
-                "totalPageNum"  => 44
+                "totalPageNum"  => static::USER_ZANE_TOTAL_PAGES
             ]
         ];
     }

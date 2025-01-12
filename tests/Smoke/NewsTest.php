@@ -10,9 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class NewsTest extends BaseT
 {
-    const int NEWS_TOTAL_PAGES = 43;
-
-
     public static function newsRedirectionProvider() : Generator
     {
         yield from [

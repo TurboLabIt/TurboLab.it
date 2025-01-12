@@ -71,13 +71,13 @@ class TagTest extends BaseT
             [
                 "id"            => 1,
                 "tagTitle"      => "TurboLab.it",
-                "totalPageNum"  => 2
+                "totalPageNum"  => static::TAG_TLI_TOTAL_PAGES
             ],
             // 👀 https://turbolab.it/windows-10
             [
                 "id"            => 10,
                 "tagTitle"      => "Windows",
-                "totalPageNum"  => 62
+                "totalPageNum"  => static::TAG_WINDOWS_TOTAL_PAGES
             ],
         ];
     }
