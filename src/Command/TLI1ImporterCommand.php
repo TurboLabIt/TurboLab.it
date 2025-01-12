@@ -414,13 +414,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     486, 112, 1186, // review Avast
                     1378, // review Kaspersky
                     743, 2213, 758, // review device
-                    106, // Emsisoft 2019
+                    106, 457, 514, 798, // review Emsisoft
                     122, // review 360 Internet Security 2013
                     1158, 671, // review AVG
                     751, // review Edge 2015
                     520, // Auguri 2014
-                    1383, // Win2000 ISO
+                    1383, 668, 782, 813, 626, 1442, 1438, 1211,  // old Win ISO
                     2319, // conversione da WSL1 a WSL2
+                    1441 // Win 9x in VirtualBox
                 ]);
         }
 
