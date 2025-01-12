@@ -229,7 +229,7 @@ abstract class BaseT extends WebTestCase
                 $this->browse($href);
                 $this->assertResponseIsSuccessful();
 
-                // article
+                // article or tag
             } elseif(
                 static::getService('App\\Service\\Cms\\ArticleUrlGenerator')->isUrl($href) ||
                 static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
