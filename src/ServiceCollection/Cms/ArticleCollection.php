@@ -144,6 +144,8 @@ class ArticleCollection extends BaseServiceEntityCollection
             Article::ID_ABOUT_US, Article::ID_ISSUE_REPORT, Article::ID_FORUM_IMAGES, Article::ID_HOW_TO_JOIN,
             Article::ID_HOW_TO_WRITE, Article::ID_PUBLISH_NEWS, Article::ID_PUBLISH_ARTICLE, Article::ID_SIGN_ARTICLE
         ]);
+
+        $this->filterIfNotEmptyResult( fn(Article $article) => $article->isPublished() );
         return $this;
     }
 
