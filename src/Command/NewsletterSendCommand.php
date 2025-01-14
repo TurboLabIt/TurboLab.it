@@ -60,7 +60,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $this->fxTitle("📬 Loading the recipients...");
         $realRecipients = $this->getCliOption(static::CLI_OPT_REAL_RECIPIENTS);
         if( $realRecipients && $this->isSendingMessageAllowed(true) && $this->isNotProd() ) {
-            return $this->endWithError("Cannot use real recipients with hot emails in non-prod environment!");
+            $this->endWithError("Cannot use real recipients with hot emails in non-prod environment!");
         }
 
         if($realRecipients) {

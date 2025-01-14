@@ -107,7 +107,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $this->articleCollection->load($cliArticleId);
 
             if( $this->articleCollection->count() == 0 ) {
-                return $this->endWithError("Article ##$cliArticleId## not found!");
+                $this->endWithError("Article ##$cliArticleId## not found!");
             }
         }
 
