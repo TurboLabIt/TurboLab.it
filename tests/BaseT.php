@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 167;  // 👀 https://turbolab.it/#contact
+    const int HOME_TOTAL_PAGES          = 166;  // 👀 https://turbolab.it/#contact
     const int NEWS_TOTAL_PAGES          = 43;   // 👀 https://turbolab.it/news#contact
     const int TAG_TLI_TOTAL_PAGES       = 2;    // 👀 https://turbolab.it/turbolab.it-1/#contact
     const int TAG_WINDOWS_TOTAL_PAGES   = 63;   // 👀 https://turbolab.it/windows-10/#contact
