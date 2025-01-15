@@ -20,42 +20,6 @@ class GoogleProgrammableSearchEngine
     ) {}
 
 
-    public function tliSearch(string $term)
-    {
-        $arrSearchResults = [
-            static::SITE_RESULTS    => [],
-            static::FORUM_RESULTS   => []
-        ];
-
-        $results = $this->query($term);
-
-        if( empty($results["items"]) ) {
-            return $arrSearchResults;
-        }
-
-        foreach($results["items"] as $item) {
-
-            $url = $item["link"];
-
-            if( mb_stripos($url, '/newsletter-turbolab.it-') !== false) {
-                continue;
-            }
-
-            if( mb_stripos($url, '/forum/') !== false) {
-
-                $arrSearchResults[static::FORUM_RESULTS][] = $item;
-
-            } else {
-
-                $arrSearchResults[static::SITE_RESULTS][] = $item;
-            }
-        }
-
-        dd($arrSearchResults);
-        return $arrSearchResults;
-    }
-
-
     public function query(string $term)
     {
         $url = static::ENDPOINT . '/customsearch/v1';
