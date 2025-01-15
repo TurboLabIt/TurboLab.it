@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Service\Cms\Article;
 use App\Service\ServerInfo;
 use DateTime;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,16 +38,23 @@ class InfoController extends BaseController
     #[Route('/calendario', name: 'app_calendar')]
     public function calendar(): Response
     {
-        $firstLastArticle = $this->factory->createArticleCollection()->loadFirstAndLastPublished();
-        $now = (new DateTime())->format('Y-m-d');
+        $now = (new DateTime());
+
+        $articles = $this->factory->createArticleCollection()->loadFirstAndLastPublished();
+
+        $firstArticle       = $articles->popFirst();
+        $minCalendarDate    = $firstArticle?->getPublishedAt() ?? $now;
+
+        $lastArticle        = $articles->popFirst();
+        $maxCalendarDate    = $lastArticle?->getPublishedAt() ?? $now;
 
         return
             $this->render('info/calendar.html.twig', [
                 'metaTitle'                 => 'Calendario pubblicazioni',
                 'activeMenu'                => null,
                 'FrontendHelper'            => $this->frontendHelper,
-                'minCalendarDate'           => $firstLastArticle->popFirst()?->getPublishedAt()->format('Y-m-d') ?? $now,
-                'maxCalendarDate'           => $firstLastArticle->popFirst()?->getPublishedAt()->format('Y-m-d') ?? $now,
+                'minCalendarDate'           => $minCalendarDate->modify('-1 day')->format('Y-m-d'),
+                'maxCalendarDate'           => $maxCalendarDate->modify('+1 day')->format('Y-m-d'),
                 'calendarEventsLoadingUrl'  => $this->generateUrl('app_calendar_events')
             ]);
     }
@@ -55,19 +63,21 @@ class InfoController extends BaseController
     #[Route('/calendario/eventi', name: 'app_calendar_events')]
     public function calendarEvents() : JsonResponse
     {
-        $txtStartDate = $this->request->get('start');
-        if( !empty($txtStartDate) ) {
-            $startDate = (new DateTime($txtStartDate))->setTime(0, 0);
-        }
-
-        $txtEndDate = $this->request->get('end');
-        if( !empty($txtEndDate) ) {
-            $endDate = (new DateTime($txtEndDate))->setTime(23, 59);
-        }
+        $txtStartDate   = $this->request->get('start');
+        $txtEndDate     = $this->request->get('end');
 
         try {
-            $articles = $this->factory->createArticleCollection()->loadByPublishedDateInterval($startDate, $endDate);
-        } catch (\Exception) {
+            if( empty($txtStartDate) || empty($txtEndDate) ) {
+                throw new BadRequestException();
+            }
+
+            $startDate  = (new DateTime($txtStartDate))->setTime(0, 0);
+            $endDate    = (new DateTime($txtEndDate))->setTime(23, 59);
+
+            $articles   = $this->factory->createArticleCollection()->loadByPublishedDateInterval($startDate, $endDate);
+
+        } catch (\Exception|\Error) {
+
             return $this->json([], Response::HTTP_BAD_REQUEST);
         }
 
