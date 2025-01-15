@@ -173,9 +173,7 @@ class ArticleCollection extends BaseServiceEntityCollection
 
     public function loadByPublishedDateInterval(DateTime $startDate, DateTime $endDate, ?int $maxDaysApart = 45) : static
     {
-        if(
-            empty($startDate) || empty($endDate) || $startDate > $endDate ||
-            ( !empty($maxDaysApart) && $startDate->diff($endDate)->days > $maxDaysApart )
+        if( $startDate > $endDate || ( !empty($maxDaysApart) && $startDate->diff($endDate)->days > $maxDaysApart )
         ) {
             throw new \DateInvalidOperationException();
         }

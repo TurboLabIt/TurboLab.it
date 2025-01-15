@@ -179,10 +179,6 @@ class UserRepository extends BasePhpBBRepository
 
         $arrUserIds = array_column($arrUserIds, 'user_id');
 
-        if( empty($arrUserIds) ) {
-            return $this;
-        }
-
         // unsubscribing from the newsletter
         $this->createQueryBuilder('u')
             ->update()

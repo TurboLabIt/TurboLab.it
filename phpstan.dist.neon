@@ -6,6 +6,21 @@ parameters:
         - public/
         - src/
         - tests/
+    ignoreErrors:
+        ## BaseServiceEntity
+        - message: '#Call to an undefined method App\\Service\\BaseServiceEntity::setEntity#'
+          path: src/Service/BaseServiceEntity.php
+        - message: '#Call to an undefined method App\\Service\\BaseServiceEntity::getRepository#'
+          path: src/Service/BaseServiceEntity.php
+        - message: '#Access to an undefined property App\\Service\\BaseServiceEntity::\$entity#'
+          path: src/Service/BaseServiceEntity.php
+        ## BaseCmsService
+        - message: '#Call to an undefined method App\\Service\\Cms\\BaseCmsService::getRepository#'
+          path: src/Service/Cms/BaseCmsService.php
+        - message: '#Call to an undefined method App\\Service\\Cms\\BaseCmsService::setEntity#'
+          path: src/Service/Cms/BaseCmsService.php
+        - message: '#Access to an undefined property App\\Service\\Cms\\BaseCmsService::\$entity#'
+          path: src/Service/Cms/BaseCmsService.php
     excludePaths:
         - public/forum
         - src/Forum/ext-turbolabit/

@@ -41,7 +41,7 @@ abstract class BaseServiceEntity
     }
 
     /*
-     🔥 Implement this method as if was uncommented! (contravariance in parameter make it undeclarable here)
+     🔥 Implement these methods as if they were uncommented! (contravariance in parameter make it undeclarable here)
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : SpecificTypeRepository
     {

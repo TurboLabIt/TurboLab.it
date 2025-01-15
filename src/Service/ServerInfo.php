@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Entity\PhpBB\Forum;
+use App\Repository\PhpBB\ForumRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -228,7 +229,8 @@ class ServerInfo
                     preg_match('/(?<=(^' . $meminfoNeedle  . ')).*/i', $line, $arrMatches)
                 ) {
                     preg_match('/[0-9]+/', $arrMatches[0], $arrNumberOnly);
-                    $this->arrRamInfo[$localValue] = round($arrNumberOnly[0] / 1024 / 1024, 2);
+                    $ramValue = (float)$arrNumberOnly[0];
+                    $this->arrRamInfo[$localValue] = round($ramValue / 1024 / 1024, 2);
                 }
             }
 
@@ -309,7 +311,10 @@ class ServerInfo
             return $this->arrPhpBBInfo;
         }
 
-        return $this->arrPhpBBInfo = $this->em->getRepository(Forum::class)->getConfig();
+        /** @var ForumRepository $forumRepository */
+        $forumRepository = $this->em->getRepository(Forum::class);
+
+        return $this->arrPhpBBInfo = $forumRepository->getConfig();
     }
     //</editor-fold>
 
