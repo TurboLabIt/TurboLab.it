@@ -6,7 +6,7 @@ use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,19 +47,19 @@ abstract class BaseController extends AbstractController
         $that       = $this;
 
         $buildHtmlResult =
-            $this->cache->get($cacheKey, function(CacheItem $cache) use($cacheKey, $that, $fxBuildHtml, $page, $arrCacheTags) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($cacheKey, $that, $fxBuildHtml, $page, $arrCacheTags) {
 
                 $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtmlNumPage($page) : $fxBuildHtml($page);
 
                 if( is_string($buildHtmlResult) ) {
 
                     $coldCacheStormBuster = 60 * rand(0, 10); // 0-5 minutes
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cache->tag( array_merge([$cacheKey], $arrCacheTags ) );
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->tag( array_merge([$cacheKey], $arrCacheTags ) );
 
                 } else {
 
-                    $cache->expiresAfter(-1);
+                    $cacheItem->expiresAfter(-1);
                 }
 
                 return $buildHtmlResult;

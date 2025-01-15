@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -58,18 +58,18 @@ class ViewsController extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get($cacheKey, function(CacheItem $cache) use($that, $slug, $arrViewRequested, $page, $cacheKey) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($that, $slug, $arrViewRequested, $page, $cacheKey) {
 
                 $buildHtmlResult = $that->buildHtml($slug, $arrViewRequested, $page);
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cache->tag([$cacheKey, 'views', "views_{$slug}"]);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $cacheItem->tag([$cacheKey, 'views', "views_{$slug}"]);
 
                 } else {
 
-                    $cache->expiresAfter(-1);
+                    $cacheItem->expiresAfter(-1);
                 }
 
                 return $buildHtmlResult;

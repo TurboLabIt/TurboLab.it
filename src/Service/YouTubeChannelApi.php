@@ -6,7 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -35,13 +35,13 @@ class YouTubeChannelApi
     {
         $cacheKey = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
         return
-            $this->cache->get($cacheKey, function (CacheItem $item) use($results, $cacheKey) {
+            $this->cache->get($cacheKey, function (ItemInterface $cacheItem) use($results, $cacheKey) {
 
                 $cacheLife = date('H:i') < '07:00' ? 3600 : (static::CACHE_MINUTES * 60);
 
                 try {
                     $response = $this->getLatestVideosUncached($results, $cacheKey);
-                    $item->expiresAfter($cacheLife);
+                    $cacheItem->expiresAfter($cacheLife);
 
                 } catch(YouTubeException $ex) {
 
@@ -51,7 +51,7 @@ class YouTubeChannelApi
                         throw $ex;
                     }
 
-                    $item->expiresAfter(static::CACHE_MINUTES * 60 * 10);
+                    $cacheItem->expiresAfter(static::CACHE_MINUTES * 60 * 10);
                 }
 
                 return $response;

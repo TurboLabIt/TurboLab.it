@@ -3,9 +3,9 @@ namespace App\Controller;
 
 use App\Service\Cms\Article;
 use App\Service\Cms\Image;
-use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\ItemInterface;
 
 
 class ArticleController extends BaseController
@@ -25,7 +25,7 @@ class ArticleController extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$tagSlugDashId}/{$articleSlugDashId}", function(CacheItem $cache)
+            $this->cache->get("{$tagSlugDashId}/{$articleSlugDashId}", function(ItemInterface $cacheItem)
                 use($tagSlugDashId, $articleSlugDashId, $that) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $articleSlugDashId);
@@ -33,12 +33,12 @@ class ArticleController extends BaseController
                 if( is_string($buildHtmlResult) ) {
 
                     $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cache->tag(["articles", $that->mainArticle->getCacheKey()]);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->tag(["articles", $that->mainArticle->getCacheKey()]);
 
                 } else {
 
-                    $cache->expiresAfter(-1);
+                    $cacheItem->expiresAfter(-1);
                 }
 
                 return $buildHtmlResult;

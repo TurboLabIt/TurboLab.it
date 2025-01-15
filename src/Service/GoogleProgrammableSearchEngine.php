@@ -2,7 +2,7 @@
 namespace App\Service;
 
 use Exception;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -25,11 +25,11 @@ class GoogleProgrammableSearchEngine
         $url = static::ENDPOINT . '/customsearch/v1';
 
         $cachedResponse =
-            $this->cache->get("{$url}_{$term}", function(CacheItem $cache)
+            $this->cache->get("{$url}_{$term}", function(ItemInterface $cacheItem)
             use($url, $term) {
 
-                $cache->expiresAfter(3600 * 48); // 2 days
-                $cache->tag(["search"]);
+                $cacheItem->expiresAfter(3600 * 48); // 2 days
+                $cacheItem->tag(["search"]);
 
                 $arrExcludeSlugs = [
                     '/utenti/*', '/ajax/*', '/editor/*', '/feed/*', '/scarica/*', '/home/*', '/immagini/*', '/calendario/*',

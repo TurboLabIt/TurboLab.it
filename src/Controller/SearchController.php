@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Service\GoogleProgrammableSearchEngine;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -48,14 +48,14 @@ class SearchController extends BaseController
         }
 
         $buildHtmlResult =
-            $this->cache->get("search_$trimmedTermToSearch", function(CacheItem $cache)
+            $this->cache->get("search_$trimmedTermToSearch", function(ItemInterface $cacheItem)
             use($searchEngine, $trimmedTermToSearch) {
 
                 $buildHtmlResult = $this->buildHtml($searchEngine, $trimmedTermToSearch);
 
                 $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
-                $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                $cache->tag(["search"]);
+                $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                $cacheItem->tag(["search"]);
 
                 return $buildHtmlResult;
             });

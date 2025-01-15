@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
@@ -36,7 +36,7 @@ class AuthorContoller extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$usernameClean}/{$page}", function(CacheItem $cache)
+            $this->cache->get("{$usernameClean}/{$page}", function(ItemInterface $cacheItem)
                 use($usernameClean, $page, $that) {
 
                 $buildHtmlResult = $this->buildHtml($usernameClean, $page);
@@ -44,12 +44,12 @@ class AuthorContoller extends BaseController
                 if( is_string($buildHtmlResult) ) {
 
                     $coldCacheStormBuster = 60 * rand(15, 30); // 30-90 minutes
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cache->tag(["authors", $that->mainAuthor->getCacheKey()]);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->tag(["authors", $that->mainAuthor->getCacheKey()]);
 
                 } else {
 
-                    $cache->expiresAfter(-1);
+                    $cacheItem->expiresAfter(-1);
                 }
 
                 return $buildHtmlResult;

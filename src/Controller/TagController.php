@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Service\Cms\Image;
 use App\Service\Cms\Tag;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
@@ -37,7 +37,7 @@ class TagController extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$tagSlugDashId}/{$page}", function(CacheItem $cache)
+            $this->cache->get("{$tagSlugDashId}/{$page}", function(ItemInterface $cacheItem)
             use($tagSlugDashId, $page, $that) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $page);
@@ -45,12 +45,12 @@ class TagController extends BaseController
                 if( is_string($buildHtmlResult) ) {
 
                     $coldCacheStormBuster = 60 * rand(30, 90); // 30-90 minutes
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cache->tag(["tags", $that->mainTag->getCacheKey()]);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->tag(["tags", $that->mainTag->getCacheKey()]);
 
                 } else {
 
-                    $cache->expiresAfter(-1);
+                    $cacheItem->expiresAfter(-1);
                 }
 
                 return $buildHtmlResult;

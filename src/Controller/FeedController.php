@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -69,7 +69,7 @@ class FeedController extends BaseController
             $cacheKey = "feed_{$routeName}_" . md5(serialize($arrData));
 
             $txtResponseBody =
-                $this->cache->get($cacheKey, function(CacheItem $cache) use($routeName, $arrData, $fxLoadArticle) {
+                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($routeName, $arrData, $fxLoadArticle) {
 
                     $txtResponseBody =
                         $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
@@ -77,8 +77,8 @@ class FeedController extends BaseController
                             "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
                         ]));
 
-                    $cache->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cache->tag([$routeName, "app_feed"]);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                    $cacheItem->tag([$routeName, "app_feed"]);
 
                     return $txtResponseBody;
                 });
