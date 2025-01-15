@@ -283,7 +283,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         /** @var Forum $forum */
         foreach($arrForums as $forum) {
 
-            $oDateTime = DateTime::createFromFormat('U', $forum->getLastPostTime());
+            $oDateTime = DateTime::createFromFormat('U', (string)$forum->getLastPostTime());
             $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
 
             $this->arrSections["forum"][0][] = [
