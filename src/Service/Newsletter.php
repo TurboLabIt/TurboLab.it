@@ -13,7 +13,6 @@ use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
 use DateTime;
 use Exception;
-use IntlDateFormatter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,22 +32,21 @@ class Newsletter extends Mailer
     protected array $arrVideos;
     protected Tag $tagNewsletterTli;
     protected User $userSystem;
-    protected array $arrRecipients      = [];
+    protected array $arrRecipients = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;
     protected bool $showingTestArticles = false;
-    protected bool $showingTestTopics   = false;
+    protected bool $showingTestTopics = false;
 
 
     public function __construct(
+        array $arrConfig,
         protected ArticleCollection $articleCollection, protected YouTubeChannelApi $YouTube,
         protected TopicCollection $topicCollection,
         protected UserCollection $userCollection, protected Factory $factory,
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
         protected Environment $twig, protected TelegramMessenger $alertMessenger,
-
-        //
-        MailerInterface                 $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters,
+        MailerInterface $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters,
     )
     {
         // init to homepage (failsafe)
@@ -68,7 +66,8 @@ class Newsletter extends Mailer
                 "address"   => "newsletter@turbolab.it"
             ],
             "subject" => [
-                "tag" => "[TLI]"
+                "tag" => "[TLI]",
+                "use-top-article-title" => $arrConfig["useTopArticleTitleAsEmailSubject"]
             ]
         ]);
     }
@@ -126,19 +125,19 @@ class Newsletter extends Mailer
 
     public function generateSubject() : static
     {
-        // this function generates and set the "most viewed article" as subject
-        // do we relly want this?
-        $firstArticleTitle = null; //$this->articleCollection->first()?->getTitle();
+        $this->subject = $this->newsletterName;
 
-        if( empty($firstArticleTitle) ) {
-
-            $this->subject = $this->newsletterName;
-
-        } else {
-
-            $this->subject = '"' . $firstArticleTitle . '" e altre novità | ' . $this->newsletterName;
+        if( !$this->arrConfig["subject"]["use-top-article-title"] ) {
+            return $this;
         }
 
+        $firstArticleTitle = $this->articleCollection->first()?->getTitle();
+
+        if( empty($firstArticleTitle) ) {
+            return $this;
+        }
+
+        $this->subject = '"' . $firstArticleTitle . '" e altre novità | ' . $this->newsletterName;
         return $this;
     }
 

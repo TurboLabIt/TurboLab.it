@@ -46,6 +46,11 @@ services:
         arguments:
             $forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
 
+    App\Service\Newsletter:
+        arguments:
+            $arrConfig:
+                useTopArticleTitleAsEmailSubject: '%env(bool:APP_NEWSLETTER_USE_TOP_ARTICLE_TITLE_AS_EMAIL_SUBJECT)%'
+
     App\Service\YouTubeChannelApi:
         arguments:
             $arrConfig:
