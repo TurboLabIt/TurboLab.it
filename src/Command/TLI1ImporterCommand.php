@@ -419,7 +419,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     1158, 671, // review AVG
                     751, // review Edge 2015
                     520, // Auguri 2014
-                    1383, 668, 782, 813, 626, 1442, 1438, 1211,  // old Win ISO
+                    1383, 668, 782, 813, 626, 1442, 1438, 1211, 680,  // old Win ISO
                     2319, // conversione da WSL1 a WSL2
                     1441, // Win 9x in VirtualBox
                     1703, 2892, // fake AVs
