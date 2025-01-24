@@ -38,9 +38,15 @@ class UrlGenerator
         $slug   = strip_tags($text);
         $slug   = html_entity_decode($slug, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $slug   = $this->stopWords->removeFromSting($slug);
-        $slug   = trim($slug);
         $slug   = $this->slugger->slug($slug);
         $slug   = mb_strtolower($slug);
+
+        do {
+            $previousSlug = $slug;
+            $slug = str_replace('--', '-', $slug);
+            $slug = trim($slug);
+
+        } while( $slug !== $previousSlug );
 
         $arrReplaceMap = [
             'turbolab-it'   => 'turbolab.it'

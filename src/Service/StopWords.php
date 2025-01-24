@@ -13,12 +13,21 @@ class StopWords
     protected static array $arrStopWords = [];
 
 
-    public function __construct(protected ProjectDir $projectDir)
-    { }
+    public function __construct(protected ProjectDir $projectDir) {}
 
 
     public function removeFromSting(string $text) : string
     {
+        // prepare quotes
+        $arrQuotesMap = [
+            '“' => '"',
+            '”' => '"',
+            '‘' => "'",
+            '’' => "'"
+        ];
+
+        $text = str_ireplace( array_keys($arrQuotesMap), array_values($arrQuotesMap), $text );
+
         $this->deleteStaleCacheFiles();
 
         //
@@ -35,6 +44,7 @@ class StopWords
 
         //
         $text = trim($text);
+
         foreach(static::$arrStopWords as $stopword) {
 
             $regex = '/\b' . $stopword . '\b/iu';
@@ -42,10 +52,15 @@ class StopWords
             $text = $textClean;
         }
 
+        $text = trim($text);
+
         // remove double spaces
-        $text = trim($text);
-        $text = preg_replace('/\s+/', ' ', $text);
-        $text = trim($text);
+        do {
+            $previousText = $text;
+            $text = preg_replace('/\s+/', ' ', $text);
+            $text = trim($text);
+
+        } while( $text !== $previousText );
 
         $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
         if( !file_exists($processedStringCacheFilePath) ) {
