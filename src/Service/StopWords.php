@@ -23,7 +23,9 @@ class StopWords
             '“' => '"',
             '”' => '"',
             '‘' => "'",
-            '’' => "'"
+            '’' => "'",
+            '`' => "'",
+            '´' => "'"
         ];
 
         $text = str_ireplace( array_keys($arrQuotesMap), array_values($arrQuotesMap), $text );
