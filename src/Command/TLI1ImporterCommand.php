@@ -409,6 +409,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 in_array($articleId, [
                     1926, 1436, // Office ISO
                     2295, 1866, 1632, 2827, 3177, 2288, 1407, 2860, 1613, 454, // review Win10
+                    1223, 1781, 981, // upgrade windows 10     
                     471, 1065, 1385, 1457, 2988, // review Avira
                     2708, 3525, 4116, // review Ubuntu
                     486, 112, 1186, // review Avast
@@ -419,7 +420,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     1158, 671, // review AVG
                     751, // review Edge 2015
                     520, // Auguri 2014
-                    1383, 668, 782, 813, 626, 1442, 1438, 1211,  // old Win ISO
+                    1383, 668, 782, 813, 626, 1442, 1438, 1211, 680,  // old Win ISO
                     2319, // conversione da WSL1 a WSL2
                     1441, // Win 9x in VirtualBox
                     1703, 2892, // fake AVs

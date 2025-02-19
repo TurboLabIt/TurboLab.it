@@ -57,6 +57,10 @@ trait phpBBCookiesAuthenticatorTrait
 
     public function removeNoRememberMeCookie() : static
     {
+        if( empty($_COOKIE[static::COOKIE_NO_REMEMBER_ME_WORKAROUND]) ) {
+           return $this;
+        }
+
         unset($_COOKIE[static::COOKIE_NO_REMEMBER_ME_WORKAROUND]);
         setcookie( static::COOKIE_NO_REMEMBER_ME_WORKAROUND, '', time()-3600 );
         return $this;
