@@ -12,7 +12,7 @@ fi
 
 fxTitle "Creating a symlink for public/immagini..."
 rm -rf "${WEBROOT_DIR}immagini"
-ln -s "${PROJECT_DIR}var/uploaded-assets/images/cache"
+ln -s "${PROJECT_DIR}var/uploaded-assets/images/cache" "${WEBROOT_DIR}immagini"
 
 fxTitle "Forum own extensions link..."
 rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
