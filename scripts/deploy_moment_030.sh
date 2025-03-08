@@ -17,3 +17,12 @@ ln -s "${PROJECT_DIR}var/uploaded-assets/images/cache" "${WEBROOT_DIR}immagini"
 fxTitle "Forum own extensions link..."
 rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
 fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
+
+
+wsuMysql -e "
+  REVOKE ALL PRIVILEGES ON *.* FROM 'turbolab_it'@'localhost';
+  GRANT ALL PRIVILEGES ON \`turbolab%\`.* TO 'turbolab_it'@'localhost';
+  GRANT ALL PRIVILEGES ON \`tli\`.* TO 'turbolab_it'@'localhost';
+  GRANT RELOAD, PROCESS ON *.* TO 'turbolab_it'@'localhost';
+  FLUSH PRIVILEGES;
+"
