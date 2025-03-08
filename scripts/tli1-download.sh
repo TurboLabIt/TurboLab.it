@@ -1,21 +1,14 @@
 #!/usr/bin/env bash
 ## 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/tli1-migration.md
 
-clear
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "TLI1 downloader"
 devOnlyCheck
 
-### DB DOWLOAD
-REMOTE_SERVER=turbolab.it
-REMOTE_SSH_USERNAME=root
 ## 👇 this is the TLI1 remote path
 REMOTE_PROJECT_DIR=/var/www/turbolab_it/website/www/
-REMOTE_APP_ENV=prod
-DISABLE_SSH_TEST=0
-
-wsuSourceFrameworkScript db-download
+REMOTE_SERVER=turbolab.it
 
 
 fxTitle "📁 Setting up local directories..."
@@ -38,6 +31,9 @@ if [ ! -d "${TLI_EXT_DIR}" ]; then
 fi
 
 
+bash "${PROJECT_DIR}scripts/db-download.sh"
+
+
 fxTitle "📂 Switching to images directory..."
 cd "${IMAGES_LOCAL_DIR}"
 ## let's double-check (this could have devastating effects)
@@ -49,7 +45,7 @@ fxOK "${IMAGES_LOCAL_DIR}"
 
 fxTitle "⏬ Mirroring images..."
 
-REMOTE_PATH=root@turbolab.it:${REMOTE_PROJECT_DIR}immagini/originali-contenuti/
+REMOTE_PATH=root@${REMOTE_SERVER}:${REMOTE_PROJECT_DIR}immagini/originali-contenuti/
 
 if [[ "${REMOTE_PATH}" != */ ]]; then
   REMOTE_PATH=${REMOTE_PATH}/
@@ -72,7 +68,7 @@ fi
 fxOK "${FILES_LOCAL_DIR}"
 
 fxTitle "⏬ Mirroring files"
-REMOTE_PATH=root@turbolab.it:${REMOTE_PROJECT_DIR}files/
+REMOTE_PATH=root@${REMOTE_SERVER}:${REMOTE_PROJECT_DIR}files/
 
 if [[ "${REMOTE_PATH}" != */ ]]; then
  REMOTE_PATH=${REMOTE_PATH}/
@@ -113,7 +109,7 @@ fi
 
 
 fxTitle "⏬ Mirroring!"
-REMOTE_PATH=root@turbolab.it:${REMOTE_PROJECT_DIR}public/forum/
+REMOTE_PATH=root@${REMOTE_SERVER}:${REMOTE_PROJECT_DIR}public/forum/
 
 if [[ "${REMOTE_PATH}" != */ ]]; then
    REMOTE_PATH=${REMOTE_PATH}/
@@ -143,9 +139,9 @@ rm -rf "ext/turbolabit"
 if [ -f "${PHPBB_CONFIG_BACKUP_PATH}" ]; then
 
   fxTitle "🦺 Restoring your local phpBB config.php..."
-  chmod +w config.php
+  chmod ugo=rwx config.php
   mv "${PHPBB_CONFIG_BACKUP_PATH}" config.php
-  chmod -w config.php
+  chmod ug=rw,o= config.php
   fxOK "Restored to #$(pwd)/config.php#"
 fi
 
@@ -159,7 +155,7 @@ fi
 
 fxOK "${TLI_EXT_DIR}"
 fxTitle "⏬ Mirroring!"
-REMOTE_PATH=root@turbolab.it:${REMOTE_PROJECT_DIR}public/forum-integration/forum-ext-turbolabit/
+REMOTE_PATH=root@${REMOTE_SERVER}:${REMOTE_PROJECT_DIR}public/forum-integration/forum-ext-turbolabit/
 
 if [[ "${REMOTE_PATH}" != */ ]]; then
    REMOTE_PATH=${REMOTE_PATH}/
