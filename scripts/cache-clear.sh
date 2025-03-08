@@ -30,8 +30,9 @@ if [ "$APP_ENV" = "dev" ]; then
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwx "${PROJECT_DIR}" -R
 
-  fxTitle "Removing built images cache..."
+  fxTitle "Clearing the built images cache..."
   rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
+  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
 
   source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
@@ -39,8 +40,6 @@ fi
 
 wsuSourceFrameworkScript cache-clear "$@"
 
-fxTitle "👾 symlinking forum/ext/turbolabit..."
-fxLink ${PROJECT_DIR}src/Forum/ext-turbolabit ${WEBROOT_DIR}forum/ext/turbolabit
 
 fxTitle "🧹 Deleting the forum cache folder..."
 rm -rf "${WEBROOT_DIR}forum/cache/production"
@@ -48,21 +47,16 @@ rm -rf "${WEBROOT_DIR}forum/cache/production"
 fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
 bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
 
-source "${WEBSTACKUP_SCRIPT_DIR}node.js/webpack_build.sh"
-
 
 if [ "$APP_ENV" = "dev" ]; then
 
-  fxHeader "Special DEV handling..."
-
-  fxTitle "Creating the built images cache..."
-  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
+  fxHeader "Special DEV handling (again)..."
 
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwx "${PROJECT_DIR}" -R
-
 fi
+
 
 source "${SCRIPT_DIR}script_end.sh"
