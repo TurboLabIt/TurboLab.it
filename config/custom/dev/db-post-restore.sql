@@ -10,3 +10,5 @@
 USE turbolab_it_forum;
 UPDATE phpbb_config SET config_value = 'dev0.turbolab.it' WHERE config_name = 'server_name';
 UPDATE phpbb_config SET config_value = 'https://dev0.turbolab.it' WHERE config_value = 'https://turbolab.it';
+TRUNCATE phpbb_sessions_keys;
+TRUNCATE phpbb_sessions;
