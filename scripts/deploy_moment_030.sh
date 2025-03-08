@@ -22,7 +22,7 @@ fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbola
 wsuMysql -e "
   REVOKE ALL PRIVILEGES ON *.* FROM 'turbolab_it'@'localhost';
   GRANT ALL PRIVILEGES ON \`turbolab%\`.* TO 'turbolab_it'@'localhost';
-  GRANT ALL PRIVILEGES ON \`tli\`.* TO 'turbolab_it'@'localhost';
+  GRANT ALL PRIVILEGES ON \`tli1\`.* TO 'turbolab_it'@'localhost';
   GRANT RELOAD, PROCESS ON *.* TO 'turbolab_it'@'localhost';
   FLUSH PRIVILEGES;
 "
