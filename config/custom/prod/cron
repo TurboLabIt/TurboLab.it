@@ -23,28 +23,6 @@ SCRIPT_DIR=/var/www/turbolab.it/scripts/
 LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 
-## every minute: symfony cron job
-* * * * * root bash ${SCRIPT_DIR}cron.sh >> ${LOG_PATH}symfony.sh.log 2>&1
-
-## every minute: phpBB cron job
-* * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
-
-## every xx minutes, during day-time: TLI Cache Warmer
-*/5 7-23 * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
-
-## every xx minutes, during day-time: share on Telegram, WhatsApp, ...
-# ⚠ Keep the interval synced with EXEC_INTERVAL from https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php
-*/15 8-23 * * * root bash ${SCRIPT_DIR}social-share.sh --cron >> ${LOG_PATH}social-share.sh.log 2>&1
-
-## every hour: dump server configuration for the info page
-0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
-
-## mid-night and mid-day: run the cleaner
-7 0,12 * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
-
-## every night: sitemap generator
-0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
-
 ## every morning: deploy and import TLI1
 0 5 * * * root bash ${SCRIPT_DIR}deploy.sh && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
 

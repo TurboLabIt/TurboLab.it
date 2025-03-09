@@ -3,13 +3,13 @@
 # This file is under version control!
 # DO NOT EDIT DIRECTLY - If you do, you'll loose your changes!
 #
-# The original file is in `/var/www/turbolab.it-next/config/custom/staging/`
+# The original file is in `/var/www/turbolab.it/config/custom/staging/`
 #
 # You MUST:
 #
 # 1. edit the original file on you PC
 # 2. Git-commit+push the changes
-# 3. run `sudo bash /var/www/turbolab.it-next/scripts/deploy.sh`
+# 3. run `sudo bash /var/www/turbolab.it/scripts/deploy.sh`
 #
 # ⚠️ This file is for the STAGING env only ⚠️
 #
@@ -18,9 +18,9 @@
 MAILTO=""
 SHELL=/usr/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-PROJECT_DIR=/var/www/turbolab.it-next/
-SCRIPT_DIR=/var/www/turbolab.it-next/scripts/
-LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
+PROJECT_DIR=/var/www/turbolab.it/
+SCRIPT_DIR=/var/www/turbolab.it/scripts/
+LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 
 ## Every minute: check for an autodeploy async request
@@ -29,28 +29,7 @@ LOG_PATH=/var/www/turbolab.it-next/var/log/cron_
 #* * * * * root bash /usr/local/turbolab.it/webstackup/script/filesystem/async-runner.sh "${AUTODEPLOY_FILENAME_TO_CHECK}" "${SCRIPT_DIR}deploy.sh" fast >> ${LOG_PATH}autodeploy-async.log 2>&1
 
 ## autodeploy temp. disabled (no support for GitHub) - falling back to scheduled deploys
-0 1 * * * root bash "${SCRIPT_DIR}deploy.sh" && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-async.log 2>&1
-
-
-######## THIS IS A COPY OF THE PROD CRON, TO HANDLE DIFFERENT PATHS ########
-## every minute: symfony cron job
-* * * * * root bash ${SCRIPT_DIR}cron.sh >> ${LOG_PATH}symfony.sh.log 2>&1
-
-## every minute: phpBB cron job
-* * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
-
-## every xx minutes, during day-time: TLI Cache Warmer
-*/5 7-23 * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
-
-## every hour: dump server configuration for the info page
-5 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
-
-## mid-night and mid-day: run the cleaner
-7 0,12 * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
-
-## every night: sitemap generator
-0 3 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
-####################################################################################
+0 5 * * * root bash ${SCRIPT_DIR}deploy.sh
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

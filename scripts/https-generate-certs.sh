@@ -9,8 +9,7 @@ if [ "$APP_ENV" = "prod" ]; then
 
 elif [ "$APP_ENV" = "staging" ]; then
 
-  sudo certbot --email info@turbolab.it --agree-tos certonly --cert-name turbolab.it-next --webroot -w ${WEBROOT_DIR} -d next.turbolab.it
-
+  sudo certbot --email info@turbolab.it --agree-tos certonly --webroot -w ${WEBROOT_DIR} -d next.turbolab.it
 fi
 
 source "${SCRIPT_DIR}script_end.sh"
