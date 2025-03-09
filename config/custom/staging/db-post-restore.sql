@@ -7,5 +7,8 @@
 #
 # 🪄 Based on https://github.com/TurboLabIt/webstackup/blob/master/my-app-template/config/custom/staging/db-post-restore.sql
 
-TRUNCATE turbolab_it_next-forum.phpbb_sessions_keys;
-TRUNCATE turbolab_it_next-forum.phpbb_sessions;
+USE turbolab_it_forum;
+UPDATE phpbb_config SET config_value = 'next.turbolab.it' WHERE config_name = 'server_name';
+UPDATE phpbb_config SET config_value = 'https://next.turbolab.it' WHERE config_value = 'https://turbolab.it';
+TRUNCATE phpbb_sessions_keys;
+TRUNCATE phpbb_sessions;
