@@ -29,8 +29,4 @@ echo "staging" > /var/www/turbolab.it/env && cat /var/www/turbolab.it/env
 clear && bash scripts/deploy.sh
 ````
 
-[] Eseguire l'importazione da TLI1 a TLI2:
-
-````shell
-clear && bash scripts/tli1-tli2-hybrid-import.sh
-````
+[] [Eseguire l'importazione da TLI1 a TLI2](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/tli1-migration.md)
