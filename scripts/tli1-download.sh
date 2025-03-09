@@ -4,7 +4,7 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "TLI1 downloader"
-devOnlyCheck
+fxEnvNotProd
 
 ## 👇 this is the TLI1 remote path
 REMOTE_PROJECT_DIR=/var/www/turbolab_it/website/www/
