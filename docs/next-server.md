@@ -9,7 +9,7 @@ Il server che eroga next.turbolab.it è fisicamente separato da quello che eroga
 
 Sul server di produzione è presente una [configurazione "gateway-1"](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/nginx-gateway.conf) (non-versionata):
 
-````shell
+````bash
 sudo mkdir -p /var/www/turbolab.it-next-gateway/public
 sudo chown www-data:www-data /var/www/turbolab.it-next-gateway -R
 sudo chmod ugo= /var/www/turbolab.it-next-gateway -R
