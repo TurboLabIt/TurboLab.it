@@ -11,22 +11,22 @@
 
 ## Primo deploy istanza di staging (next.turbolab.it)
 
-[] ⚠️ [Attivare il catch-all delle email verso catchall-<env>@TLI](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md)
+- [ ] ⚠️ [Attivare il catch-all delle email verso catchall-<env>@TLI](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md)
 
-[] Forzare l'ambiente su "staging":
+- [ ] Forzare l'ambiente su "staging":
 
 ````shell
 echo "staging" > /var/www/turbolab.it/env && cat /var/www/turbolab.it/env
 ````
 
-[] Caricare il file privato `.env.staging.local`
+- [ ] Caricare il file privato `.env.staging.local`
 
-[] Caricare il file privato `backup/next-phpbb-config.php` nel percorso `public/forum/config.php`
+- [ ] Caricare il file privato `backup/next-phpbb-config.php` nel percorso `public/forum/config.php`
 
-[] Eseguire il primo deploy:
+- [ ] Eseguire il primo deploy:
 
 ````shell
 clear && bash scripts/deploy.sh
 ````
 
-[] [Eseguire l'importazione da TLI1 a TLI2](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/tli1-migration.md)
+- [ ] [Eseguire l'importazione da TLI1 a TLI2](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/tli1-migration.md)
