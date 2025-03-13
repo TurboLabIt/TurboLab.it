@@ -10,11 +10,11 @@
 
             <h1 class="title">Iscrizione alla newsletter</h1>
 
-            {% if error ?? null == constant('App\\Controller\\NewsletterController::ERROR_BAD_ACCESS_KEY') %}
+            {% if (error ?? null) == constant('App\\Controller\\NewsletterController::ERROR_BAD_ACCESS_KEY') %}
 
                 <p>Errore durante la decodifica dell'iscrizione.</p>
 
-            {% elseif error ?? null == constant('App\\Controller\\NewsletterController::ERROR_USER_NOT_FOUND') %}
+            {% elseif (error ?? null) == constant('App\\Controller\\NewsletterController::ERROR_USER_NOT_FOUND') %}
 
                 <p>
                     L'utente numero <samp>{{ SubscriberData.userId }}</samp>,
@@ -22,7 +22,7 @@
                     non esiste.
                 </p>
 
-            {% elseif error ?? null == constant('App\\Controller\\NewsletterController::ERROR_USER_IS_SUBSCRIBED') %}
+            {% elseif (error ?? null) == constant('App\\Controller\\NewsletterController::ERROR_USER_IS_SUBSCRIBED') %}
 
                 <p>
                     L'indirizzo email <samp>{{ SubscriberData.email }}</samp>
