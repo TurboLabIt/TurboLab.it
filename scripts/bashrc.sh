@@ -1,4 +1,3 @@
-## this should be sourced from .bashrc (dev)
+## this should be sourced from .bashrc
 
-export XDEBUG_PORT=9003
-fxInfo "Xdebug enabled on port $XDEBUG_PORT 🐛"
+cd /var/www/turbolab.it
