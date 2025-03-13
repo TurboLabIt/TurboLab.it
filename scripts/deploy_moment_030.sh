@@ -41,3 +41,20 @@ wsuMysql -e "
   GRANT RELOAD, PROCESS ON *.* TO 'turbolab_it'@'localhost';
   FLUSH PRIVILEGES;
 "
+
+fxTitle "Patching $(logname) .bashrc..."
+if [ "$APP_ENV" = 'dev' ] && ! grep -q "scripts/bashrc-dev.sh" "/home/$(logname)/.bashrc"; then
+
+  echo "" >> "/home/$(logname)/.bashrc"
+  echo "## TurboLab.it dev" >> "/home/$(logname)/.bashrc"
+  echo "source ${SCRIPT_DIR}bashrc-dev.sh" >> "/home/$(logname)/.bashrc"
+  fxOK "/home/$(logname)/.bashrc has been patched (dev)"
+fi
+
+if ! grep -q "scripts/bashrc.sh" "/home/$(logname)/.bashrc"; then
+
+  echo "" >> "/home/$(logname)/.bashrc"
+  echo "## TurboLab.it" >> "/home/$(logname)/.bashrc"
+  echo "source ${SCRIPT_DIR}bashrc.sh" >> "/home/$(logname)/.bashrc"
+  fxOK "/home/$(logname)/.bashrc has been patched"
+fi
