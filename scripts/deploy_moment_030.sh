@@ -43,18 +43,25 @@ wsuMysql -e "
 "
 
 fxTitle "Patching $(logname) .bashrc..."
-if [ "$APP_ENV" = 'dev' ] && ! grep -q "scripts/bashrc-dev.sh" "/home/$(logname)/.bashrc"; then
+LOGGED_USER_BASHRC=$(fxGetUserHomePath $(logname)).bashrc
+fxInfo "###${LOGGED_USER_BASHRC}###"
 
-  echo "" >> "/home/$(logname)/.bashrc"
-  echo "## TurboLab.it dev" >> "/home/$(logname)/.bashrc"
-  echo "source ${SCRIPT_DIR}bashrc-dev.sh" >> "/home/$(logname)/.bashrc"
-  fxOK "/home/$(logname)/.bashrc has been patched (dev)"
+if [ ! -f "${LOGGED_USER_BASHRC}" ]; then
+  touch "${LOGGED_USER_BASHRC}"
 fi
 
-if ! grep -q "scripts/bashrc.sh" "/home/$(logname)/.bashrc"; then
+if [ "$APP_ENV" = 'dev' ] && ! grep -q "scripts/bashrc-dev.sh" "${LOGGED_USER_BASHRC}"; then
 
-  echo "" >> "/home/$(logname)/.bashrc"
-  echo "## TurboLab.it" >> "/home/$(logname)/.bashrc"
-  echo "source ${SCRIPT_DIR}bashrc.sh" >> "/home/$(logname)/.bashrc"
-  fxOK "/home/$(logname)/.bashrc has been patched"
+  echo "" >> "${LOGGED_USER_BASHRC}"
+  echo "## TurboLab.it dev" >> "${LOGGED_USER_BASHRC}"
+  echo "source ${SCRIPT_DIR}bashrc-dev.sh" >> "${LOGGED_USER_BASHRC}"
+  fxOK "${LOGGED_USER_BASHRC} has been patched (dev)"
+fi
+
+if ! grep -q "scripts/bashrc.sh" "${LOGGED_USER_BASHRC}"; then
+
+  echo "" >> "${LOGGED_USER_BASHRC}"
+  echo "## TurboLab.it" >> "${LOGGED_USER_BASHRC}"
+  echo "source ${SCRIPT_DIR}bashrc.sh" >> "${LOGGED_USER_BASHRC}"
+  fxOK "${LOGGED_USER_BASHRC} has been patched"
 fi
