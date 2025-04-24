@@ -6,7 +6,7 @@ if dpkg -l | grep -q "php${PHP_VER}-imap"; then
 else
 
   fxInfo "No, it isn't. Installing it now..."
-  sudo apt update && sudo apt install php${PHP_VER}-imap -y
+  apt update && apt install php${PHP_VER}-imap -y
 fi
 
 
@@ -64,4 +64,18 @@ if ! grep -q "scripts/bashrc.sh" "${LOGGED_USER_BASHRC}"; then
   echo "## TurboLab.it" >> "${LOGGED_USER_BASHRC}"
   echo "source ${SCRIPT_DIR}bashrc.sh" >> "${LOGGED_USER_BASHRC}"
   fxOK "${LOGGED_USER_BASHRC} has been patched"
+fi
+
+
+fxTitle "Deploying next.turbolab.it (gateway)..."
+if [ "$APP_ENV" = 'prod' ]; then
+
+  bash "${WEBSTACKUP_SCRIPT_DIR}filesystem/proxyall-webroot-maker.sh"
+
+  rm -f /etc/nginx/conf.d/turbolab.it-next-gateway.conf
+  ln -s ${PROJECT_DIR}config/custom/staging/nginx-gateway.conf /etc/nginx/conf.d/turbolab.it-next-gateway.conf
+
+else
+
+  fxInfo "##$APP_ENV## is not prod. Skipping 🦘"
 fi
