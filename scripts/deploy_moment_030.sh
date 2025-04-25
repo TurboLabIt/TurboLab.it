@@ -73,7 +73,7 @@ if [ "$APP_ENV" = 'prod' ]; then
   bash "${WEBSTACKUP_SCRIPT_DIR}filesystem/proxyall-webroot-maker.sh"
 
   rm -f /etc/nginx/conf.d/turbolab.it-next-gateway.conf
-  ln -s ${PROJECT_DIR}config/custom/staging/nginx-gateway.conf /etc/nginx/conf.d/turbolab.it-next-gateway.conf
+  ln -s ${PROJECT_DIR}config/custom/staging/nginx-gateway-1.conf /etc/nginx/conf.d/turbolab.it-next-gateway.conf
 
 else
 
