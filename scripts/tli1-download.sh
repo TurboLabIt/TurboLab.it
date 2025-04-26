@@ -9,6 +9,7 @@ fxEnvNotProd
 ## 👇 this is the TLI1 remote path
 REMOTE_PROJECT_DIR=/var/www/turbolab_it/website/www/
 REMOTE_SERVER=turbolab.it
+fxSshTestAccess root@${REMOTE_SERVER}
 
 
 fxTitle "📁 Setting up local directories..."
