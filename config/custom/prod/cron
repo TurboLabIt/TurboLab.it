@@ -23,9 +23,6 @@ SCRIPT_DIR=/var/www/turbolab.it/scripts/
 LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 
-## every morning: deploy and import TLI1
-0 5 * * * root bash ${SCRIPT_DIR}deploy.sh && bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh" > ${LOG_PATH}autodeploy-and-tli1-import.log 2>&1
-
 ## every morning: unsubscribe bouncing email addresses
 0 11 * * * root bash ${SCRIPT_DIR}email-bounce-manager.sh > ${LOG_PATH}email-bounce-manager.sh.log 2>&1
 
