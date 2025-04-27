@@ -19,5 +19,4 @@ elif [ "${APP_ENV}" = "staging" ]; then
 else
 
   fxCatastrophicError "Unhandled branch ##${APP_ENV}##"
-
 fi
