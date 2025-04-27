@@ -118,3 +118,10 @@ drivers/geckodriver
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+
+## TurboLab.it
+/public/images/logo/apple-touch-icon.png
+/public/images/logo/favicon.ico
+/public/images/logo/turbolab.it.png
+/public/immagini
