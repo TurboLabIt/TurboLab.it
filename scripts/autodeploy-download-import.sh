@@ -11,6 +11,7 @@ if [ "${APP_ENV}" = "prod" ]; then
 
 elif [ "${APP_ENV}" = "staging" ]; then
 
+  fxSshTestAccess root@turbolab.it
   bash "${SCRIPT_DIR}deploy.sh"
   bash "${SCRIPT_DIR}tli1-download.sh"
   bash "${SCRIPT_DIR}tli1-import.sh"
