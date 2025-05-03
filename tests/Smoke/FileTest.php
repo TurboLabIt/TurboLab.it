@@ -16,7 +16,7 @@ class FileTest extends BaseT
             // 👀 https://turbolab.it/scarica/1
             [
                 "id"            => 1,
-                "title"         => "Windows Bootable DVD Generator 2021",
+                "title"         => "Windows Bootable DVD Generator",
                 "contentType"   => "application/zip",
                 "format"        => "zip"
             ],

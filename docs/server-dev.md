@@ -1,6 +1,6 @@
 # [Server di sviluppo](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/server-dev.md)
 
-Il "server di sviluppo" è una macchina virtuale Hyper-V, fisicamente separata dal server di produzione. Ogni sviluppatore utilizza un proprio dominio dedicato:
+Il "server di sviluppo" è una macchina virtuale, fisicamente separata dal server di produzione. Ogni sviluppatore utilizza un proprio dominio dedicato:
 
 - https://ben:venuto@dev0.turbolab.it
 - https://ben:venuto@dev1.turbolab.it
@@ -35,6 +35,7 @@ A questo punto, sarà possibile collegarsi in SSH impartendo:
 2. modificare la porta SSH in `30986`
 3. [postfix: external-relay](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/external-relay-template.md) con account `turbolab.prove@xxx` e relativa "app password"
 4. [postfix: redirect-all](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md) verso `turbolab.prove@xxx`
+5. file hosts: `127.0.0.1 dev0.turbolab.it dev1.turbolab.it dev2.turbolab.it`
 5. `bash /var/www/turbolab.it/scripts/cache-clear.sh`
 
 
