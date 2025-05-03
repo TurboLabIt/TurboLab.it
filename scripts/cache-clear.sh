@@ -7,14 +7,14 @@ if [ "$APP_ENV" = "dev" ]; then
 
   fxHeader "Special DEV handling..."
 
+  fxLink ${PROJECT_DIR}config/custom/dev/nginx-dev0.conf /etc/nginx/conf.d/turbolab.it-dev0.conf
   fxLink ${PROJECT_DIR}config/custom/phpbb-upgrader.conf /etc/turbolab.it/phpbb-upgrader-turbolab.it.conf
   fxLink ${PROJECT_DIR}config/custom/zzmysqldump.conf /etc/turbolab.it/zzmysqldump.profile.turbolab.it.conf
+  sudo cp ${PROJECT_DIR}config/custom/mysql-custom.conf /etc/mysql/mysql.conf.d/95-turbolab.it.cnf
 
   fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
   fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/cli/conf.d/90-turbolab.it.ini
   fxLink ${PROJECT_DIR}config/custom/php-custom-cli.ini /etc/php/${PHP_VER}/cli/conf.d/95-turbolab.it-cli.ini
-
-  fxLink ${PROJECT_DIR}config/custom/dev/nginx-dev0.conf /etc/nginx/conf.d/turbolab.it-dev0.conf
 
   fxTitle "Removing composer stuff..."
   rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
