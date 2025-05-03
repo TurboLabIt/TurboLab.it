@@ -2,7 +2,6 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Auto-deploy, download, import"
-fxEnvNotDev
 
 if [ "${APP_ENV}" = "prod" ]; then
 
@@ -13,6 +12,12 @@ elif [ "${APP_ENV}" = "staging" ]; then
 
   fxSshTestAccess root@turbolab.it
   bash "${SCRIPT_DIR}deploy.sh"
+  bash "${SCRIPT_DIR}tli1-download.sh"
+  bash "${SCRIPT_DIR}tli1-import.sh"
+
+elif [ "${APP_ENV}" = "dev" ]; then
+
+  fxSshTestAccess root@turbolab.it
   bash "${SCRIPT_DIR}tli1-download.sh"
   bash "${SCRIPT_DIR}tli1-import.sh"
 
