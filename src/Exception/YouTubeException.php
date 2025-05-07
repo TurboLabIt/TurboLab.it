@@ -1,4 +1,6 @@
 <?php
 namespace App\Exception;
 
-class YouTubeException extends \Exception {}
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+class YouTubeException extends HttpException {}
