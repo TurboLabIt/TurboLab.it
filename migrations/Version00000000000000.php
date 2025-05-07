@@ -3,40 +3,37 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Doctrine\Migrations\Exception\IrreversibleMigration;
 
 
-final class Version20240105082853 extends AbstractMigration
+final class Version00000000000000 extends AbstractMigration
 {
-    public function getDescription(): string
-    {
-        return '';
-    }
-
-
     public function up(Schema $schema): void
     {
-        $this->addSql('SET foreign_key_checks = 0');
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 0');
 
-        $this->addSql('DROP TABLE IF EXISTS article');
-        $this->addSql('DROP TABLE IF EXISTS image');
-        $this->addSql('DROP TABLE IF EXISTS tag');
-        $this->addSql('DROP TABLE IF EXISTS file');
-        $this->addSql('DROP TABLE IF EXISTS badge');
+        // Get a list of all tables
+        $connection     = $this->connection;
+        $databaseName   = $connection->fetchOne('SELECT DATABASE()');
 
-        $this->addSql('DROP TABLE IF EXISTS article_author');
-        $this->addSql('DROP TABLE IF EXISTS image_author');
-        $this->addSql('DROP TABLE IF EXISTS tag_author');
-        $this->addSql('DROP TABLE IF EXISTS file_author');
+        $tables =
+            $connection->fetchFirstColumn("
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = ?
+            ", [$databaseName]
+            );
 
-        $this->addSql('DROP TABLE IF EXISTS article_image');
-        $this->addSql('DROP TABLE IF EXISTS article_tag');
-        $this->addSql('DROP TABLE IF EXISTS article_file');
-        $this->addSql('DROP TABLE IF EXISTS tag_badge');
+        foreach($tables as $table) {
 
-        $this->addSql('DROP TABLE IF EXISTS newsletter_opener');
-        $this->addSql('DROP TABLE IF EXISTS newsletter_expiring_warn');
+            if( $table == 'doctrine_migration_versions' ) {
+                continue;
+            }
 
-        $this->addSql('SET foreign_key_checks = 1');
+            $this->addSql("DROP TABLE IF EXISTS `$table`");
+        }
+
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 1');
 
 
         // ARTICLES
@@ -105,5 +102,6 @@ final class Version20240105082853 extends AbstractMigration
     }
 
 
-    public function down(Schema $schema): void { }
+    public function down(Schema $schema): void
+        { throw new IrreversibleMigration('TLI2 base migration cannot be reverted.'); }
 }
