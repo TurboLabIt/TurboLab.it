@@ -22,23 +22,18 @@ class TagAuthor extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getTag(): ?Tag
-    {
-        return $this->tag;
-    }
+    public function getTag() : ?Tag {  return $this->tag; }
 
-    public function setTag(?Tag $tag): static
+    public function setTag(?Tag $tag) : static
     {
         $this->tag = $tag;
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
     {
         $this->user = $user;
         return $this;

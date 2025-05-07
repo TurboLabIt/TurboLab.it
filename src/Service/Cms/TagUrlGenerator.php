@@ -18,10 +18,7 @@ class TagUrlGenerator extends UrlGenerator
     }
 
 
-    public function isUrl(string $urlCandidate) : bool
-    {
-        return !empty( $this->extractIdFromUrl($urlCandidate) );
-    }
+    public function isUrl(string $urlCandidate) : bool { return !empty( $this->extractIdFromUrl($urlCandidate) ); }
 
 
     public function extractIdFromUrl(string $url) : ?int

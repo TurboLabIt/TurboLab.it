@@ -21,8 +21,7 @@ class ServerInfo
     public function __construct(
         protected ProjectDir $projectDir, protected EntityManagerInterface $em,
         protected ParameterBagInterface $parameters
-    )
-    {}
+    ) {}
 
 
     public function getServerInfo() : array

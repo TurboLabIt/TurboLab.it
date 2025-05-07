@@ -7,8 +7,7 @@ use DOMDocument;
 
 abstract class HtmlProcessorBase
 {
-    public function __construct(protected Factory $factory)
-    {}
+    public function __construct(protected Factory $factory) {}
 
 
     public function convertEntitiesToUtf8Chars(?string $text) : ?string
@@ -37,7 +36,7 @@ abstract class HtmlProcessorBase
     }
 
 
-    protected function parseHTML(string $text): DOMDocument|bool
+    protected function parseHTML(string $text) : DOMDocument|bool
     {
         $domDoc = new DOMDocument();
 
@@ -80,7 +79,7 @@ abstract class HtmlProcessorBase
     }
 
 
-    protected function renderDomDocAsHTML(DOMDocument $domDoc): string
+    protected function renderDomDocAsHTML(DOMDocument $domDoc) : string
     {
         // pretty output https://www.php.net/manual/en/class.domdocument.php
         // doesn't work, likely due to "whitespace nodes being created by the load

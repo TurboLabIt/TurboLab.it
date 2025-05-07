@@ -32,19 +32,16 @@ class Tag extends BaseCmsEntity
     {
         $this->authors  = new ArrayCollection();
         $this->articles = new ArrayCollection();
-        $this->badges = new ArrayCollection();
+        $this->badges   = new ArrayCollection();
     }
 
 
     /**
      * @return Collection<int, TagAuthor>
      */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
+    public function getAuthors() : Collection { return $this->authors; }
 
-    public function addAuthor(TagAuthor $author): static
+    public function addAuthor(TagAuthor $author) : static
     {
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
@@ -60,7 +57,7 @@ class Tag extends BaseCmsEntity
         return $this;
     }
 
-    public function removeAuthor(TagAuthor $author): static
+    public function removeAuthor(TagAuthor $author) : static
     {
         if ($this->authors->removeElement($author)) {
             // set the owning side to null (unless already changed)
@@ -76,12 +73,9 @@ class Tag extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
+    public function getArticles() : Collection { return $this->articles; }
 
-    public function addArticle(ArticleTag $article): static
+    public function addArticle(ArticleTag $article) : static
     {
         $currentItems = $this->getArticles();
         foreach($currentItems as $item) {
@@ -97,7 +91,7 @@ class Tag extends BaseCmsEntity
         return $this;
     }
 
-    public function removeArticle(ArticleTag $article): static
+    public function removeArticle(ArticleTag $article) : static
     {
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
@@ -112,12 +106,9 @@ class Tag extends BaseCmsEntity
     /**
      * @return Collection<int, TagBadge>
      */
-    public function getBadges(): Collection
-    {
-        return $this->badges;
-    }
+    public function getBadges() : Collection { return $this->badges; }
 
-    public function addBadge(TagBadge $badge): static
+    public function addBadge(TagBadge $badge) : static
     {
         if (!$this->badges->contains($badge)) {
             $this->badges->add($badge);
@@ -127,7 +118,7 @@ class Tag extends BaseCmsEntity
         return $this;
     }
 
-    public function removeBadge(TagBadge $badge): static
+    public function removeBadge(TagBadge $badge) : static
     {
         if ($this->badges->removeElement($badge)) {
             // set the owning side to null (unless already changed)

@@ -10,8 +10,7 @@ trait ViewableServiceTrait
 
     public function getClientIpAddress() : string { return $this->clientIpAddress; }
 
-
-    public function setClientIpAddress(string $clientIpAddress): static
+    public function setClientIpAddress(string $clientIpAddress) : static
     {
         $this->clientIpAddress = $clientIpAddress;
         return $this;

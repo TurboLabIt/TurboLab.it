@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CacheHolePunchingController extends BaseController
 {
     #[Route('/ajax/userbar', name: 'app_cache-hole-punching_userbar', methods: ['POST'])]
-    public function userbar(ForumUrlGenerator $urlGenerator, User $user): Response
+    public function userbar(ForumUrlGenerator $urlGenerator, User $user) : Response
     {
         $this->ajaxOnly();
 

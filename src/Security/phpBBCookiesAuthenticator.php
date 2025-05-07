@@ -33,7 +33,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
      * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
      */
-    public function supports(Request $request): ?bool
+    public function supports(Request $request) : ?bool
     {
         $route = $request->attributes->get('_route');
         return
@@ -46,7 +46,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     }
 
 
-    protected function getUserFromPhpBBCookies(Request $request): ?User
+    protected function getUserFromPhpBBCookies(Request $request) : ?User
     {
         $arrLoginData = [];
         foreach(["sid", "u", 'k'] as $oneCookieName) {
@@ -90,7 +90,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     }
 
 
-    public function authenticate(Request $request): Passport
+    public function authenticate(Request $request) : Passport
     {
         /**
          * re-using symfony current user doesn't work bc
@@ -112,14 +112,14 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     }
 
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName) : ?Response
     {
         // on success, let the request continue
         return null;
     }
 
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception) : ?Response
     {
         $currentUser = $this->security->getUser();
         if( !empty($currentUser) ) {

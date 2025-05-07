@@ -26,7 +26,7 @@ class HomeController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{page<[1-9]+[0-9]*>}', name: 'app_home_paginated')]
-    public function indexPaginated(?int $page, YouTubeChannelApi $YouTubeChannel): Response
+    public function indexPaginated(?int $page, YouTubeChannelApi $YouTubeChannel) : Response
     {
         $this->YouTubeChannel = $YouTubeChannel;
         return $this->tliStandardControllerResponse(["app_home"], $page);

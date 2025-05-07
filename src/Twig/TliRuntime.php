@@ -8,13 +8,13 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class TliRuntime implements RuntimeExtensionInterface
 {
-    public function friendlyNum(string|float|int $input): string
+    public function friendlyNum(string|float|int $input) : string
     {
         return (new NumberFormatter('it_IT', NumberFormatter::DECIMAL))->format($input);
     }
 
 
-    public function friendlyDate(?DateTime $date = null): ?string
+    public function friendlyDate(?DateTime $date = null) : ?string
     {
         if( empty($date) ) {
             return null;

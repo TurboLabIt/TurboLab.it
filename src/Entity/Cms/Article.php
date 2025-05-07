@@ -28,8 +28,8 @@ class Article extends BaseCmsEntity
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $format = null;
 
-    #[ORM\Column]
-    private bool $archived = false;
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    protected bool $archived = false;
 
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
     protected ?Image $spotlight = null;
@@ -58,7 +58,7 @@ class Article extends BaseCmsEntity
     }
 
 
-    public function getFormat(): ?int { return $this->format; }
+    public function getFormat() : ?int { return $this->format; }
 
     public function setFormat(int $format) : static
     {
@@ -68,7 +68,7 @@ class Article extends BaseCmsEntity
     }
 
 
-    public function isArchived(): bool { return $this->archived; }
+    public function isArchived() : bool { return $this->archived; }
 
     public function setArchived(bool $archived) : static
     {
@@ -77,9 +77,9 @@ class Article extends BaseCmsEntity
     }
 
 
-    public function getSpotlight(): ?Image { return $this->spotlight; }
+    public function getSpotlight() : ?Image { return $this->spotlight; }
 
-    public function setSpotlight(?Image $spotlight): static
+    public function setSpotlight(?Image $spotlight) : static
     {
         $this->spotlight = $spotlight;
         return $this;
@@ -89,12 +89,9 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleAuthor>
      */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
+    public function getAuthors() : Collection { return $this->authors; }
 
-    public function addAuthor(ArticleAuthor $author): static
+    public function addAuthor(ArticleAuthor $author) : static
     {
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
@@ -110,7 +107,7 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
-    public function removeAuthor(ArticleAuthor $author): static
+    public function removeAuthor(ArticleAuthor $author) : static
     {
         if ($this->authors->removeElement($author)) {
             // set the owning side to null (unless already changed)
@@ -126,9 +123,9 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleImage>
      */
-    public function getImages(): Collection { return $this->images; }
+    public function getImages() : Collection { return $this->images; }
 
-    public function addImage(ArticleImage $image): static
+    public function addImage(ArticleImage $image) : static
     {
         $currentItems = $this->getImages();
         foreach($currentItems as $item) {
@@ -144,7 +141,7 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
-    public function removeImage(ArticleImage $image): static
+    public function removeImage(ArticleImage $image) : static
     {
         if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
@@ -160,9 +157,9 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getTags(): Collection { return $this->tags; }
+    public function getTags() : Collection { return $this->tags; }
 
-    public function addTag(ArticleTag $tag): static
+    public function addTag(ArticleTag $tag) : static
     {
         $currentItems = $this->getTags();
         foreach($currentItems as $item) {
@@ -178,7 +175,7 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
-    public function removeTag(ArticleTag $tag): static
+    public function removeTag(ArticleTag $tag) : static
     {
         if ($this->tags->removeElement($tag)) {
             // set the owning side to null (unless already changed)
@@ -194,9 +191,9 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleFile>
      */
-    public function getFiles(): Collection { return $this->files; }
+    public function getFiles() : Collection { return $this->files; }
 
-    public function addFile(ArticleFile $file): static
+    public function addFile(ArticleFile $file) : static
     {
         $currentItems = $this->getFiles();
         foreach($currentItems as $item) {
@@ -212,7 +209,7 @@ class Article extends BaseCmsEntity
         return $this;
     }
 
-    public function removeFile(ArticleFile $file): static
+    public function removeFile(ArticleFile $file) : static
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)

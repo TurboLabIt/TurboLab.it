@@ -26,34 +26,27 @@ class ArticleFile extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getArticle(): ?Article
-    {
-        return $this->article;
-    }
+    public function getArticle() : ?Article { return $this->article; }
 
-    public function setArticle(?Article $article): static
+    public function setArticle(?Article $article) : static
     {
         $this->article = $article;
         return $this;
     }
 
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
 
-    public function setFile(?File $file): static
+    public function getFile() : ?File { return $this->file; }
+
+    public function setFile(?File $file) : static
     {
         $this->file = $file;
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
     {
         $this->user = $user;
         return $this;

@@ -14,10 +14,10 @@ class UrlGenerator
     protected AsciiSlugger $slugger;
 
 
-    public function __construct(protected StopWords $stopWords, protected UrlGeneratorInterface $symfonyUrlGenerator)
-    {
-        $this->slugger = new AsciiSlugger();
-    }
+    public function __construct(
+        protected StopWords $stopWords, protected UrlGeneratorInterface $symfonyUrlGenerator
+    )
+        { $this->slugger = new AsciiSlugger(); }
 
 
     public function buildSlug(BaseCmsService $service) : string
@@ -28,9 +28,7 @@ class UrlGenerator
 
 
     protected function buildSlugDashIdString(BaseCmsService $service) : string
-    {
-        return $this->buildSlug($service) . "-" . $service->getId();
-    }
+        { return $this->buildSlug($service) . "-" . $service->getId(); }
 
 
     public function slugify(?string $text) : string

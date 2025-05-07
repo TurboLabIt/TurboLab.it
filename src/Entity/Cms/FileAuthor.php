@@ -22,23 +22,18 @@ class FileAuthor extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
+    public function getFile() : ?File { return $this->file; }
 
-    public function setFile(?File $file): static
+    public function setFile(?File $file) : static
     {
         $this->file = $file;
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
     {
         $this->user = $user;
         return $this;

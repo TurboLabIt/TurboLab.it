@@ -87,7 +87,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         parent::execute($input, $output);
 
@@ -409,7 +409,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 in_array($articleId, [
                     1926, 1436, // Office ISO
                     2295, 1866, 1632, 2827, 3177, 2288, 1407, 2860, 1613, 454, // review Win10
-                    1223, 1781, 981, // upgrade windows 10     
+                    1223, 1781, 981, // upgrade windows 10
                     471, 1065, 1385, 1457, 2988, // review Avira
                     2708, 3525, 4116, // review Ubuntu
                     486, 112, 1186, // review Avast

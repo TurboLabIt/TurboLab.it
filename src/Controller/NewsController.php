@@ -20,7 +20,7 @@ class NewsController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{page<[1-9]+[0-9]*>}', name: 'app_news')]
-    public function index(?int $page = null): Response
+    public function index(?int $page = null) : Response
         { return $this->tliStandardControllerResponse(["app_news"], $page); }
 
 

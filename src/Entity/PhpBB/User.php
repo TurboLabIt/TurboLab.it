@@ -95,7 +95,7 @@ class User extends BaseEntity implements UserInterface
         $this->articlesAttachedToFiles  = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId() : ?int
     {
         return $this->user_id;
     }
@@ -110,23 +110,23 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUsername() : ?string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username): static
+    public function setUsername(string $username) : static
     {
         $this->username = $username;
         return $this;
     }
 
-    public function getUsernameClean(): ?string
+    public function getUsernameClean() : ?string
     {
         return $this->username_clean;
     }
 
-    public function setUsernameClean(string $usernameClean): static
+    public function setUsernameClean(string $usernameClean) : static
     {
         $this->username = $usernameClean;
         return $this;
@@ -219,7 +219,7 @@ class User extends BaseEntity implements UserInterface
      *
      * @see UserInterface
      */
-    public function getUserIdentifier(): string
+    public function getUserIdentifier() : string
     {
         return (string)$this->username;
     }
@@ -241,7 +241,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles() : array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
@@ -267,7 +267,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials(): void
+    public function eraseCredentials() : void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -277,12 +277,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ArticleAuthor>
      */
-    public function getArticles(): Collection
+    public function getArticles() : Collection
     {
         return $this->articles;
     }
 
-    public function addArticle(ArticleAuthor $article): static
+    public function addArticle(ArticleAuthor $article) : static
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);
@@ -292,7 +292,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeArticle(ArticleAuthor $article): static
+    public function removeArticle(ArticleAuthor $article) : static
     {
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
@@ -308,12 +308,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ImageAuthor>
      */
-    public function getImages(): Collection
+    public function getImages() : Collection
     {
         return $this->images;
     }
 
-    public function addImage(ImageAuthor $image): static
+    public function addImage(ImageAuthor $image) : static
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
@@ -323,7 +323,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeImage(ImageAuthor $image): static
+    public function removeImage(ImageAuthor $image) : static
     {
         if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
@@ -338,12 +338,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, TagAuthor>
      */
-    public function getTags(): Collection
+    public function getTags() : Collection
     {
         return $this->tags;
     }
 
-    public function addTag(TagAuthor $tag): static
+    public function addTag(TagAuthor $tag) : static
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
@@ -353,7 +353,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeTag(TagAuthor $tag): static
+    public function removeTag(TagAuthor $tag) : static
     {
         if ($this->tags->removeElement($tag)) {
             // set the owning side to null (unless already changed)
@@ -368,12 +368,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getArticlesTagged(): Collection
+    public function getArticlesTagged() : Collection
     {
         return $this->articlesTagged;
     }
 
-    public function addArticleTag(ArticleTag $articleTag): static
+    public function addArticleTag(ArticleTag $articleTag) : static
     {
         if (!$this->articlesTagged->contains($articleTag)) {
             $this->articlesTagged->add($articleTag);
@@ -383,7 +383,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeArticleTag(ArticleTag $articleTag): static
+    public function removeArticleTag(ArticleTag $articleTag) : static
     {
         if ($this->articlesTagged->removeElement($articleTag)) {
             // set the owning side to null (unless already changed)
@@ -398,12 +398,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, FileAuthor>
      */
-    public function getFiles(): Collection
+    public function getFiles() : Collection
     {
         return $this->files;
     }
 
-    public function addFile(FileAuthor $file): static
+    public function addFile(FileAuthor $file) : static
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
@@ -413,7 +413,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeFile(FileAuthor $file): static
+    public function removeFile(FileAuthor $file) : static
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)
@@ -429,12 +429,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ArticleFile>
      */
-    public function getArticlesAttachedToFiles(): Collection
+    public function getArticlesAttachedToFiles() : Collection
     {
         return $this->articlesAttachedToFiles;
     }
 
-    public function addArticleFile(ArticleFile $articleFile): static
+    public function addArticleFile(ArticleFile $articleFile) : static
     {
         if (!$this->articlesAttachedToFiles->contains($articleFile)) {
             $this->articlesAttachedToFiles->add($articleFile);
@@ -444,7 +444,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeArticleFile(ArticleFile $articleFile): static
+    public function removeArticleFile(ArticleFile $articleFile) : static
     {
         if ($this->articlesAttachedToFiles->removeElement($articleFile)) {
             // set the owning side to null (unless already changed)

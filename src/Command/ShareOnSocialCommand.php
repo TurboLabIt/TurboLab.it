@@ -57,7 +57,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function configure(): void
+    protected function configure() : void
     {
         parent::configure();
         $this
@@ -73,7 +73,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         parent::execute($input, $output);
 
@@ -162,7 +162,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
-    protected function isQuietHours(): bool
+    protected function isQuietHours() : bool
     {
         $this->fxTitle("Checking QuietHours...");
         $this->io->text("🛏 Quiet hours: from 00:00 to 0" . static::QUIET_HOURS_END . ":00");

@@ -22,23 +22,18 @@ class ImageAuthor extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getImage(): ?Image
-    {
-        return $this->image;
-    }
+    public function getImage() : ?Image { return $this->image; }
 
-    public function setImage(?Image $image): static
+    public function setImage(?Image $image) : static
     {
         $this->image = $image;
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
     {
         $this->user = $user;
         return $this;

@@ -26,34 +26,27 @@ class ArticleTag extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getArticle(): ?Article
-    {
-        return $this->article;
-    }
+    public function getArticle() : ?Article { return $this->article; }
 
-    public function setArticle(?Article $article): static
+    public function setArticle(?Article $article) : static
     {
         $this->article = $article;
         return $this;
     }
 
-    public function getTag(): ?Tag
-    {
-        return $this->tag;
-    }
 
-    public function setTag(?Tag $tag): static
+    public function getTag() : ?Tag { return $this->tag; }
+
+    public function setTag(?Tag $tag) : static
     {
         $this->tag = $tag;
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
     {
         $this->user = $user;
         return $this;

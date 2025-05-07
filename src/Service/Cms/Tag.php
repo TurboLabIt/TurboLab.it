@@ -20,7 +20,7 @@ class Tag extends BaseCmsService
     const int ID_WINDOWS            = 10;       // 👀 https://turbolab.it/windows-10
     const int ID_LINUX              = 27;       // 👀 https://turbolab.it/linux-27
     const int ID_ANDROID            = 28;       // 👀 https://turbolab.it/android-28
-    const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-litecoin-4904
+    const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-4904
 
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/filesharing-p2p-peer-to-peer-2914
     const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/sicurezza-13
@@ -120,8 +120,6 @@ class Tag extends BaseCmsService
 
     public function getSlug() : ?string { return $this->factory->getTagUrlGenerator()->buildSlug($this); }
     //</editor-fold>
-
-
 
 
     public function loadByTitle(string $title) : static

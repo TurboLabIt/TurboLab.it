@@ -6,8 +6,4 @@ use App\Trait\IdableEntityTrait;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 
-abstract class BaseCmsEntity extends BaseEntity
-{
-    use IdableEntityTrait;
-    use TimestampableEntity;
-}
+abstract class BaseCmsEntity extends BaseEntity { use IdableEntityTrait, TimestampableEntity; }

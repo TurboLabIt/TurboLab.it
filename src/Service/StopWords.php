@@ -97,20 +97,20 @@ class StopWords
 
 
     protected function getSourceFilePath() : string
-    {
-        return $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt";
-    }
+        { return $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt"; }
 
 
     protected function getWordsCacheFilePath() : string
     {
-        return $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
+        return
+            $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
     }
 
 
     protected function getProcessedStringCacheFilePath() : string
     {
-        return$this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
+        return
+            $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
     }
 
 

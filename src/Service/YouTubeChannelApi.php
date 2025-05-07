@@ -31,7 +31,7 @@ class YouTubeChannelApi
     ) {}
 
 
-    public function getLatestVideos(int $results = 8): array
+    public function getLatestVideos(int $results = 8) : array
     {
         $cacheKey = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
         return
@@ -59,11 +59,11 @@ class YouTubeChannelApi
     }
 
 
-    protected function getLatestVideosUncached(int $results, string $storeFileName): array
+    protected function getLatestVideosUncached(int $results, string $storeFileName) : array
     {
         $apiEndpoint = static::API_ENDPOINT . "search";
 
-        $arrParams   = [
+        $arrParams = [
             "part"          => "snippet",
             "channelId"     => $this->arrConfig["channelId"],
             "key"           => $this->arrConfig["apiKey"],

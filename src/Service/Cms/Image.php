@@ -112,9 +112,7 @@ class Image extends BaseCmsService
     //</editor-fold>
 
 
-    public function getSizes() : array
-        { return array_keys(static::SIZE_DIMENSIONS); }
-
+    public function getSizes() : array { return array_keys(static::SIZE_DIMENSIONS); }
 
     public function checkSize(string $size) : static
     {
@@ -339,10 +337,7 @@ class Image extends BaseCmsService
     }
 
 
-    public function getBuiltImageMimeType() : ?string
-    {
-        return $this->lastBuiltImageMimeType;
-    }
+    public function getBuiltImageMimeType() : ?string { return $this->lastBuiltImageMimeType; }
 
 
     public function getXSendPath(string $size) : string
@@ -393,7 +388,11 @@ class Image extends BaseCmsService
     }
 
 
-    public static function getNewsletterSpotlightId() : int { return array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT)); }
+    public static function getNewsletterSpotlightId() : int
+    {
+        return
+            array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT));
+    }
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 

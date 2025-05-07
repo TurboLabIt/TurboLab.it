@@ -12,8 +12,7 @@ class UserUrlGenerator extends UrlGenerator
     public function __construct(
         protected ForumUrlGenerator $forumUrlGenerator, protected UrlGeneratorInterface $symfonyUrlGenerator,
         protected Encryptor $encryptor
-    )
-    {}
+    ) {}
 
 
     public function generateUrl(User $user, ?int $page = null, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string

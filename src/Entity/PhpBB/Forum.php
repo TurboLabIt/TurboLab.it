@@ -41,61 +41,61 @@ class Forum extends BaseEntity
     protected ?int $last_post_time = null;
 
 
-    public function getId(): ?int
+    public function getId() : ?int
     {
         return $this->id;
     }
 
-    public function getParentId(): ?int
+    public function getParentId() : ?int
     {
         return $this->parentId;
     }
 
-    public function setParentId(int $parentId): static
+    public function setParentId(int $parentId) : static
     {
         $this->parentId = $parentId;
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName() : ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name) : static
     {
         $this->name = $name;
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType() : ?int
     {
         return $this->type;
     }
 
-    public function setType(int $type): static
+    public function setType(int $type) : static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getStatus() : ?int
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): static
+    public function setStatus(int $status) : static
     {
         $this->status = $status;
         return $this;
     }
 
-    public function getLastPostTime(): ?int
+    public function getLastPostTime() : ?int
     {
         return $this->last_post_time;
     }
 
-    public function setLastPostTime(int $last_post_time): static
+    public function setLastPostTime(int $last_post_time) : static
     {
         $this->last_post_time = $last_post_time;
         return $this;

@@ -21,23 +21,18 @@ class ArticleImage extends BaseCmsEntity
     use RankableEntityTrait;
 
 
-    public function getArticle(): ?Article
-    {
-        return $this->article;
-    }
+    public function getArticle() : ?Article { return $this->article; }
 
-    public function setArticle(?Article $article): static
+    public function setArticle(?Article $article) : static
     {
         $this->article = $article;
         return $this;
     }
 
-    public function getImage(): ?Image
-    {
-        return $this->image;
-    }
 
-    public function setImage(?Image $image): static
+    public function getImage() : ?Image { return $this->image; }
+
+    public function setImage(?Image $image) : static
     {
         $this->image = $image;
         return $this;

@@ -41,5 +41,6 @@ class TopicCollection extends BaseServiceEntityCollection
     }
 
 
-    public function createService(?TopicEntity $entity = null) : TopicService { return $this->factory->createTopic($entity); }
+    public function createService(?TopicEntity $entity = null) : TopicService
+        { return $this->factory->createTopic($entity); }
 }

@@ -70,45 +70,45 @@ class Topic extends BaseEntity
         $this->articles = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId() : ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle() : ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(string $title) : static
     {
         $this->title = $title;
         return $this;
     }
 
-    public function getPostNum(): ?int
+    public function getPostNum() : ?int
     {
         return $this->postNum;
     }
 
-    public function setPostNum(int $postNum): static
+    public function setPostNum(int $postNum) : static
     {
         $this->postNum = $postNum;
         return $this;
     }
 
-    public function getForumId(): ?int
+    public function getForumId() : ?int
     {
         return $this->forumId;
     }
 
-    public function setForumId(int $forumId): static
+    public function setForumId(int $forumId) : static
     {
         $this->forumId = $forumId;
         return $this;
     }
 
-    public function getFirstPostId(): ?int
+    public function getFirstPostId() : ?int
     {
         return $this->firstPostId;
     }

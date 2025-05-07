@@ -29,7 +29,7 @@ class HtmlProcessor extends HtmlProcessorBase
     }
 
 
-    protected function imagesFromPlaceholderToUrl(DOMDocument $domDoc, Article $article): static
+    protected function imagesFromPlaceholderToUrl(DOMDocument $domDoc, Article $article) : static
     {
         $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);

@@ -18,23 +18,18 @@ class TagBadge extends BaseCmsEntity
     protected ?Badge $badge = null;
 
 
-    public function getTag(): ?Tag
-    {
-        return $this->tag;
-    }
+    public function getTag() : ?Tag { return $this->tag; }
 
-    public function setTag(?Tag $tag): static
+    public function setTag(?Tag $tag) : static
     {
         $this->tag = $tag;
         return $this;
     }
 
-    public function getBadge(): ?Badge
-    {
-        return $this->badge;
-    }
 
-    public function setBadge(?Badge $badge): static
+    public function getBadge() : ?Badge { return $this->badge; }
+
+    public function setBadge(?Badge $badge) : static
     {
         $this->badge = $badge;
         return $this;

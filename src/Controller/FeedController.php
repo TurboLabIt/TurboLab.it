@@ -23,7 +23,7 @@ class FeedController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/fullfeed', name: 'app_feed_fullfeed')]
-    public function fullFeed(): Response
+    public function fullFeed() : Response
     {
         return
             $this->sendRssResponse("app_feed_fullfeed", [
@@ -35,7 +35,7 @@ class FeedController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/nuovi-finiti', name: 'app_feed_new_unpublished')]
-    public function newUnpublished(): Response
+    public function newUnpublished() : Response
     {
         $this->cacheIsDisabled = true;
         return

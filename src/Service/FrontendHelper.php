@@ -110,9 +110,8 @@ class FrontendHelper
 
 
     protected function buildLink(
-        string $name, string $url, bool $blank = true,
-        ?string $iconFileName = null, null|string|array $faIcon = null,
-        ?string $activeMenu = null
+        string $name, string $url, bool $blank = true, ?string $iconFileName = null,
+        null|string|array $faIcon = null, ?string $activeMenu = null
     ) : array
     {
         if( empty($faIcon) ) {

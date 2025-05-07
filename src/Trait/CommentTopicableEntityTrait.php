@@ -18,6 +18,7 @@ trait CommentTopicableEntityTrait
     //#[ORM\Column(type: Types::SMALLINT, options: ["unsigned" => true])]
     protected ?int $commentTopicNeedsUpdate = 0;
 
+
     public function getCommentsTopic() : ?Topic { return $this->commentsTopic; }
 
     public function setCommentsTopic(?Topic $commentsTopic) : static

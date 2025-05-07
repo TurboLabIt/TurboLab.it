@@ -10,6 +10,6 @@ class FileCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = FileService::ENTITY_CLASS;
 
-
-    public function createService(?FileEntity $entity = null) : FileService { return $this->factory->createFile($entity); }
+    public function createService(?FileEntity $entity = null) : FileService
+        { return $this->factory->createFile($entity); }
 }

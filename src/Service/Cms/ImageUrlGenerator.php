@@ -6,7 +6,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ImageUrlGenerator extends UrlGenerator
 {
-    public function generateUrl(Image $image, Article $article, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateUrl(
+        Image $image, Article $article, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL
+    ) : string
     {
         return
             $this->symfonyUrlGenerator->generate('app_image', [
@@ -18,7 +20,9 @@ class ImageUrlGenerator extends UrlGenerator
     }
 
 
-    public function generateShortUrl(Image $image, string $size = Image::SIZE_MAX, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateShortUrl(
+        Image $image, string $size = Image::SIZE_MAX, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL
+    ) : string
     {
         return
             $this->symfonyUrlGenerator->generate('app_image_shorturl', [

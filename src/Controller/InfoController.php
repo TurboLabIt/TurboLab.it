@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class InfoController extends BaseController
 {
     #[Route('/info', name: 'app_info')]
-    public function info(ServerInfo $serverInfo): Response
+    public function info(ServerInfo $serverInfo) : Response
     {
         return
             $this->render('info/info.html.twig', [
@@ -29,14 +29,14 @@ class InfoController extends BaseController
 
 
     #[Route('/statistiche', name: 'app_stats')]
-    public function stats(): Response
+    public function stats() : Response
     {
         return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
 
     #[Route('/calendario', name: 'app_calendar')]
-    public function calendar(): Response
+    public function calendar() : Response
     {
         $now = (new DateTime());
 

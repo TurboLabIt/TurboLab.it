@@ -20,21 +20,21 @@ class Image extends BaseCmsEntity
     const int WATERMARK_BOTTOM_RIGHT    = 3;
     const int WATERMARK_BOTTOM_LEFT     = 4;
 
-    const string FORMAT_JPG    = 'jpg';
-    const string FORMAT_PNG    = 'png';
-    const string FORMAT_WEBP   = 'webp';
-    const string FORMAT_AVIF   = 'avif';
+    const string FORMAT_JPG     = 'jpg';
+    const string FORMAT_PNG     = 'png';
+    const string FORMAT_WEBP    = 'webp';
+    const string FORMAT_AVIF    = 'avif';
 
     use IdableEntityTrait, TitleableEntityTrait;
 
     #[ORM\Column(length: 5)]
     protected ?string $format = null;
 
-    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true, 'default' => Image::WATERMARK_BOTTOM_LEFT])]
     protected int $watermarkPosition = self::WATERMARK_BOTTOM_LEFT;
 
-    #[ORM\Column]
-    protected ?bool $reusable = false;
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    protected bool $reusable = false;
 
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
@@ -63,12 +63,9 @@ class Image extends BaseCmsEntity
         return [static::FORMAT_AVIF, static::FORMAT_WEBP, static::FORMAT_PNG, static::FORMAT_JPG];
     }
 
-    public function getFormat(): ?string
-    {
-        return $this->format;
-    }
+    public function getFormat() : ?string { return $this->format; }
 
-    public function setFormat(string $format): static
+    public function setFormat(string $format) : static
     {
         if( !in_array($format, static::getFormats() ) ) {
             throw new InvalidEnumException("Invalid image format");
@@ -88,12 +85,9 @@ class Image extends BaseCmsEntity
         ];
     }
 
-    public function getWatermarkPosition(): ?int
-    {
-        return $this->watermarkPosition;
-    }
+    public function getWatermarkPosition() : int { return $this->watermarkPosition; }
 
-    public function setWatermarkPosition(int $watermarkPosition): static
+    public function setWatermarkPosition(int $watermarkPosition) : static
     {
         if( !in_array($watermarkPosition, $this->getWatermarkPositions() ) ) {
             throw new InvalidEnumException("Invalid watermark position");
@@ -103,12 +97,9 @@ class Image extends BaseCmsEntity
         return $this;
     }
 
-    public function isReusable(): ?bool
-    {
-        return $this->reusable;
-    }
+    public function isReusable() : bool { return $this->reusable; }
 
-    public function setReusable(bool $reusable): static
+    public function setReusable(bool $reusable) : static
     {
         $this->reusable = $reusable;
         return $this;
@@ -117,12 +108,9 @@ class Image extends BaseCmsEntity
     /**
      * @return Collection<int, ImageAuthor>
      */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
+    public function getAuthors() : Collection { return $this->authors;  }
 
-    public function addAuthor(ImageAuthor $author): static
+    public function addAuthor(ImageAuthor $author) : static
     {
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
@@ -138,7 +126,7 @@ class Image extends BaseCmsEntity
         return $this;
     }
 
-    public function removeAuthor(ImageAuthor $author): static
+    public function removeAuthor(ImageAuthor $author) : static
     {
         if ($this->authors->removeElement($author)) {
             // set the owning side to null (unless already changed)
@@ -154,12 +142,9 @@ class Image extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleImage>
      */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
+    public function getArticles() : Collection { return $this->articles; }
 
-    public function addArticle(ArticleImage $article): static
+    public function addArticle(ArticleImage $article) : static
     {
         $currentItems = $this->getArticles();
         foreach($currentItems as $item) {
@@ -175,7 +160,7 @@ class Image extends BaseCmsEntity
         return $this;
     }
 
-    public function removeArticle(ArticleImage $article): static
+    public function removeArticle(ArticleImage $article) : static
     {
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
@@ -190,12 +175,9 @@ class Image extends BaseCmsEntity
     /**
      * @return Collection<int, Article>
      */
-    public function getSpotlightForArticles(): Collection
-    {
-        return $this->spotlightForArticles;
-    }
+    public function getSpotlightForArticles() : Collection { return $this->spotlightForArticles; }
 
-    public function addCoverForArticle(Article $coverForArticle): static
+    public function addCoverForArticle(Article $coverForArticle) : static
     {
         if (!$this->spotlightForArticles->contains($coverForArticle)) {
             $this->spotlightForArticles->add($coverForArticle);
@@ -205,7 +187,7 @@ class Image extends BaseCmsEntity
         return $this;
     }
 
-    public function removeCoverForArticle(Article $coverForArticle): static
+    public function removeCoverForArticle(Article $coverForArticle) : static
     {
         if ($this->spotlightForArticles->removeElement($coverForArticle)) {
             // set the owning side to null (unless already changed)

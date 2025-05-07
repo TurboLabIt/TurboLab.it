@@ -110,7 +110,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildItemTitle($key, $item): string
+    protected function buildItemTitle($key, $item) : string
     {
         $date       = $item->getDate()->format("Y-m-d H:i:s");
         $subject    = mb_substr($item->getSubject(), 0, 50);

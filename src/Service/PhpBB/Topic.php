@@ -57,7 +57,7 @@ class Topic extends BaseServiceEntity
         return $oDateTime;
     }
 
-    public function getFirstPostId(): ?int { return $this->entity->getFirstPostId(); }
+    public function getFirstPostId() : ?int { return $this->entity->getFirstPostId(); }
 
     public function getPostNum() : ?int { return $this->entity->getPostNum(); }
 }

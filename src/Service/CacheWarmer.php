@@ -23,12 +23,10 @@ class CacheWarmer implements CacheWarmerInterface
 
 
     public function __construct(
-        protected ParameterBagInterface $parameterBag,
-        protected TagAwareCacheInterface $cachePool,
+        protected ParameterBagInterface $parameterBag, protected TagAwareCacheInterface $cachePool,
         protected UrlGeneratorInterface $urlGenerator, protected HttpClientInterface $httpClient,
         protected TagCollection $tagCollection, protected ArticleCollection $articleCollection,
-    )
-    {}
+    ) {}
 
 
     public function warmUp(string $cacheDir, ?string $buildDir = null) : array
@@ -58,6 +56,7 @@ class CacheWarmer implements CacheWarmerInterface
 
         return [];
     }
+
 
     public function isOptional() : bool { return true; }
 

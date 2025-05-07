@@ -17,13 +17,19 @@ class ForumUrlGenerator
         { return $this->generateHomeUrl($urlType) . "viewforum.php?f=$forumId"; }
 
     public function generateTopicViewUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->generateHomeUrl($urlType) . 'viewtopic.php?t=' . $topic->getId() . "#p" . $topic->getFirstPostId(); }
+    {
+        return
+            $this->generateHomeUrl($urlType) . 'viewtopic.php?t=' . $topic->getId() . "#p" . $topic->getFirstPostId();
+    }
 
     public function generateTopicReplyUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
         { return $this->generateHomeUrl($urlType) . "posting.php?mode=reply&t=" . $topic->getId(); }
 
     public function generateCommentsAjaxLoadingUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . static::AJAX_LOADING_PATH . $topic->getId(); }
+    {
+        return
+            $this->symfonyUrlGenerator->generate('app_home', [], $urlType) . static::AJAX_LOADING_PATH . $topic->getId();
+    }
 
 
     public function generateLoginUrl(?string $redirectToUrl = '', int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
