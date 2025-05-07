@@ -15,6 +15,7 @@ if [ "$APP_ENV" = "dev" ]; then
   fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
   fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/cli/conf.d/90-turbolab.it.ini
   fxLink ${PROJECT_DIR}config/custom/php-custom-cli.ini /etc/php/${PHP_VER}/cli/conf.d/95-turbolab.it-cli.ini
+  sudo rm -f /etc/php/${PHP_VER}/fpm/conf.d/30-webstackup-opcache.ini
 
   fxTitle "Removing composer stuff..."
   rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
