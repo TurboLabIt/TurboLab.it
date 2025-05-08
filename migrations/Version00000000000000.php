@@ -105,4 +105,8 @@ final class Version00000000000000 extends AbstractMigration
 
     public function down(Schema $schema): void
         { throw new IrreversibleMigration('TLI2 base migration cannot be reverted.'); }
+
+
+    // prevent User Deprecated: Context: trying to commit a transaction Problem: the transaction is already committed, relying on silencing is deprecated
+    public function isTransactional(): bool { return false; }
 }
