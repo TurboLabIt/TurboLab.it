@@ -158,7 +158,7 @@ class UserRepository extends BasePhpBBRepository
     }
 
 
-    public function handleBounceEmailAddress(array $arrAddresses) : static
+    public function updateSubscriptions(array $arrAddresses, bool $allowMessages, bool $stopTopicNotifications) : static
     {
         if( empty($arrAddresses) ) {
             return $this;
@@ -179,14 +179,21 @@ class UserRepository extends BasePhpBBRepository
 
         $arrUserIds = array_column($arrUserIds, 'user_id');
 
-        // unsubscribing from the newsletter
         $this->createQueryBuilder('u')
             ->update()
-            ->set('u.user_allow_massemail', 0)
-            ->set('u.user_notify_pm', 0)
+            // newsletter ON|OFF
+            ->set('u.user_allow_massemail', $allowMessages)
+            // PM email notification ON|OFF
+            ->set('u.user_notify_pm', $allowMessages)
+            // allow other users to send Email to the user
+            ->set('u.user_allow_viewemail', $allowMessages)
             ->where('u.user_id IN (:ids)')
-            ->setParameter('ids', $arrUserIds)
-        ->getQuery()->execute();
+                ->setParameter('ids', $arrUserIds)
+            ->getQuery()->execute();
+
+        if(!$stopTopicNotifications) {
+            return $this;
+        }
 
         // mark all the watches as "notified, not viewed"
         $csvIds = implode(",", $arrUserIds);

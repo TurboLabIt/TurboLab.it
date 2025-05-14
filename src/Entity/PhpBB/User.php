@@ -58,6 +58,9 @@ class User extends BaseEntity implements UserInterface
     protected ?int $user_allow_massemail = 1;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    protected ?int $user_allow_viewemail = 1;
+
+    #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     protected ?int $user_notify_pm = 1;
 
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
@@ -95,10 +98,8 @@ class User extends BaseEntity implements UserInterface
         $this->articlesAttachedToFiles  = new ArrayCollection();
     }
 
-    public function getId() : ?int
-    {
-        return $this->user_id;
-    }
+
+    public function getId() : ?int { return $this->user_id; }
 
     public function setId(int $id) : static
     {
@@ -110,10 +111,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getUsername() : ?string
-    {
-        return $this->username;
-    }
+
+    public function getUsername() : ?string { return $this->username; }
 
     public function setUsername(string $username) : static
     {
@@ -121,10 +120,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getUsernameClean() : ?string
-    {
-        return $this->username_clean;
-    }
+
+    public function getUsernameClean() : ?string { return $this->username_clean; }
 
     public function setUsernameClean(string $usernameClean) : static
     {
@@ -132,10 +129,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getEmail() : ?string
-    {
-        return $this->user_email;
-    }
+
+    public function getEmail() : ?string { return $this->user_email; }
 
     public function setEmail(string $email) : static
     {
@@ -143,10 +138,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getAvatarType() : ?string
-    {
-        return $this->user_avatar_type;
-    }
+
+    public function getAvatarType() : ?string { return $this->user_avatar_type; }
 
     public function setAvatarType(string $avatarType) : static
     {
@@ -154,10 +147,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getAvatarFile() : ?string
-    {
-        return $this->user_avatar;
-    }
+
+    public function getAvatarFile() : ?string { return $this->user_avatar; }
 
     public function setAvatarFile(string $avatarFile) : static
     {
@@ -165,10 +156,8 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getPostNum() : ?int
-    {
-        return $this->user_posts;
-    }
+
+    public function getPostNum() : ?int { return $this->user_posts; }
 
     public function setPostNum(int $postNum) : static
     {
@@ -176,16 +165,24 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function getColor() : ?string
-    {
-        return $this->user_colour;
-    }
+
+    public function getColor() : ?string { return $this->user_colour; }
 
     public function setColor(string $color) : static
     {
         $this->user_colour = $color;
         return $this;
     }
+
+
+    public function getAllowViewEmail() : bool { return (bool)$this->user_allow_viewemail; }
+
+    public function setAllowViewEmail(int|bool $allow) : static
+    {
+        $this->user_allow_viewemail = (int)$allow;
+        return $this;
+    }
+
 
     public function getAllowMassEmail() : bool { return (bool)$this->user_allow_massemail; }
 
@@ -219,10 +216,7 @@ class User extends BaseEntity implements UserInterface
      *
      * @see UserInterface
      */
-    public function getUserIdentifier() : string
-    {
-        return (string)$this->username;
-    }
+    public function getUserIdentifier() : string { return (string)$this->username; }
 
 
     public function setGroups(?array $arrGroups) : static
@@ -308,10 +302,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ImageAuthor>
      */
-    public function getImages() : Collection
-    {
-        return $this->images;
-    }
+    public function getImages() : Collection { return $this->images; }
 
     public function addImage(ImageAuthor $image) : static
     {
@@ -335,13 +326,11 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
+
     /**
      * @return Collection<int, TagAuthor>
      */
-    public function getTags() : Collection
-    {
-        return $this->tags;
-    }
+    public function getTags() : Collection { return $this->tags; }
 
     public function addTag(TagAuthor $tag) : static
     {
@@ -365,13 +354,11 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
+
     /**
      * @return Collection<int, ArticleTag>
      */
-    public function getArticlesTagged() : Collection
-    {
-        return $this->articlesTagged;
-    }
+    public function getArticlesTagged() : Collection { return $this->articlesTagged; }
 
     public function addArticleTag(ArticleTag $articleTag) : static
     {
@@ -395,13 +382,11 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
+
     /**
      * @return Collection<int, FileAuthor>
      */
-    public function getFiles() : Collection
-    {
-        return $this->files;
-    }
+    public function getFiles() : Collection { return $this->files; }
 
     public function addFile(FileAuthor $file) : static
     {
@@ -429,10 +414,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, ArticleFile>
      */
-    public function getArticlesAttachedToFiles() : Collection
-    {
-        return $this->articlesAttachedToFiles;
-    }
+    public function getArticlesAttachedToFiles() : Collection { return $this->articlesAttachedToFiles; }
 
     public function addArticleFile(ArticleFile $articleFile) : static
     {

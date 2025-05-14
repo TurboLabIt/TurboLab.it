@@ -24,10 +24,16 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     ];
     const string EMAIL_ADDRESS_REGEX = '/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/';
 
+    const array BODY_TO_IGNORE = [
+        // Unacceptable Mail Content "example.com"
+        'Unacceptable Mail Content'
+    ];
+
     protected bool $allowDryRunOpt  = true;
 
-    protected array $arrMessagesToDelete    = [];
-    protected array $arrExtractedAddresses  = [];
+    protected array $arrMessagesToDelete        = [];
+    protected array $arrAddressesToUnsubscribe  = [];
+    protected array $arrAddressesFromBogus      = [];
 
 
     public function __construct(
@@ -73,29 +79,25 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
             $this->processItems($messages, [$this, 'processOneMessage'], null, [$this, 'buildItemTitle']);
         }
 
-        $this->fxTitle("Post-extraction status");
-        $addressesNum = count($this->arrExtractedAddresses);
-        $this->fxOK("$addressesNum address(es) extracted");
-
-        if( $addressesNum == 0 ) {
-
-            $this->fxInfo("No address extracted. There is nothing to do");
-            return $this->endWithSuccess();
-        }
-
-        (new Table($output))
-            ->setRows( array_map(fn($str) => [$str], $this->arrExtractedAddresses) )
-            ->render();
-
-        $this->fxTitle("Unsubscribing from newsletter, stop all notifications...");
+        //
+        $this->displayRecapSection('Address(es) to unsubscribe', $this->arrAddressesToUnsubscribe);
         if( $this->isNotDryRun() ) {
-            $this->userRepository->handleBounceEmailAddress($this->arrExtractedAddresses);
+            $this->userRepository
+                ->updateSubscriptions($this->arrAddressesToUnsubscribe, false, true);
         }
 
+        //
+        $this->displayRecapSection('Bogus (ignored) addresses', $this->arrAddressesFromBogus);
+        if( $this->isNotDryRun() ) {
+            $this->userRepository
+                ->updateSubscriptions($this->arrAddressesFromBogus, true, false);
+        }
+
+        //
         $this->fxTitle("Deleting emails...");
         if( $this->isNotProd() ) {
 
-            $this->fxInfo("🦘 Skipped in non-prod");
+            $this->fxInfo("🦘 Always skipped in non-prod");
 
         } elseif( $this->isNotDryRun() ) {
 
@@ -146,15 +148,33 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
             return $this;
         }
 
+        $isBogusMessage = $this->isBogusBody($message);
+
         $this->arrMessagesToDelete[] = $message;
 
         foreach($arrAddresses as $address) {
 
-            if( in_array($address, $this->arrExtractedAddresses) ) {
+            if( in_array($address, $this->arrAddressesToUnsubscribe) ) {
                 continue;
             }
 
-            $this->arrExtractedAddresses[] = $address;
+            if($isBogusMessage) {
+
+                if( in_array($address, $this->arrAddressesFromBogus) ) {
+                    continue;
+                }
+
+                $this->arrAddressesFromBogus[] = $address;
+
+            } else {
+
+                $keyInBogus = array_search($address, $this->arrAddressesFromBogus);
+                if($keyInBogus !== false) {
+                    unset($this->arrAddressesFromBogus[$keyInBogus]);
+                }
+
+                $this->arrAddressesToUnsubscribe[] = $address;
+            }
         }
 
         return $this;
@@ -222,5 +242,50 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
         }
 
         return array_unique($arrCleanAddresses);
+    }
+
+
+    protected function isBogusBody(Message $message) : bool
+    {
+        // Content of text/html part, if present
+        $body = $message->getCompleteBodyHtml();
+
+        if( empty($body) ) {
+            // Content of text/plain part, if present
+            $body = $message->getCompleteBodyText();
+        }
+
+        if( empty($body) ) {
+            return false;
+        }
+
+        $body = mb_strtolower($body);
+
+        foreach(static::BODY_TO_IGNORE as $check) {
+
+            $check = mb_strtolower($check);
+
+            if( str_contains($body, $check) ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public function displayRecapSection(string $title, array $arrAddresses) : static
+    {
+        $this->fxTitle($title);
+        $addressesNum = count($arrAddresses);
+        $this->fxOK("$addressesNum address(es) extracted");
+
+        if( $addressesNum > 0 ) {
+            (new Table($this->output))
+                ->setRows( array_map(fn($str) => [$str], $arrAddresses) )
+                ->render();
+        }
+
+        return $this;
     }
 }
