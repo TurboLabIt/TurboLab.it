@@ -182,11 +182,11 @@ class UserRepository extends BasePhpBBRepository
         $this->createQueryBuilder('u')
             ->update()
             // newsletter ON|OFF
-            ->set('u.user_allow_massemail', $allowMessages)
+            ->set('u.user_allow_massemail', (int)$allowMessages)
             // PM email notification ON|OFF
-            ->set('u.user_notify_pm', $allowMessages)
+            ->set('u.user_notify_pm', (int)$allowMessages)
             // allow other users to send Email to the user
-            ->set('u.user_allow_viewemail', $allowMessages)
+            ->set('u.user_allow_viewemail', (int)$allowMessages)
             ->where('u.user_id IN (:ids)')
                 ->setParameter('ids', $arrUserIds)
             ->getQuery()->execute();
