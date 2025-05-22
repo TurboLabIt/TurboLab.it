@@ -23,6 +23,10 @@ SCRIPT_DIR=/var/www/turbolab.it/scripts/
 LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 
+## every xx minutes, during day-time: share on Telegram, WhatsApp, ...
+# ⚠ Keep the interval synced with EXEC_INTERVAL from https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php
+*/15 8-23 * * * root bash ${SCRIPT_DIR}social-share.sh --cron >> ${LOG_PATH}social-share.sh.log 2>&1
+
 ## every morning: unsubscribe bouncing email addresses
 0 11 * * * root bash ${SCRIPT_DIR}email-bounce-manager.sh > ${LOG_PATH}email-bounce-manager.sh.log 2>&1
 
