@@ -125,7 +125,7 @@ class User extends BaseEntity implements UserInterface
 
     public function setUsernameClean(string $usernameClean) : static
     {
-        $this->username = $usernameClean;
+        $this->username_clean = $usernameClean;
         return $this;
     }
 
