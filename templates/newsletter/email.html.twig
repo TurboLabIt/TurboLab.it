@@ -65,7 +65,7 @@
                             <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
                                 <h4 class="tli-article-title">{{ Article.title|raw }}</h4>
                                 <img class="float-center" src="{{ Article.spotlightOrDefaultUrl('med') }}" alt="Copertina">
-                                <p class="tli-article-abstract">{{ Article.abstractOrDefault|raw }}</p>
+                                <p class="tli-article-abstract">{{ Article.abstract|raw }}</p>
                             </a>
                         </columns>
                     </row>

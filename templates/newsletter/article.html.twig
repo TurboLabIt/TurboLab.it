@@ -8,7 +8,7 @@
         {% if Article.Spotlight is not empty  %}
             <p><img src="{{ Article.spotlightUrl('med') }}"></p>
         {% endif %}
-        <p>{{ Article.abstractOrDefault|raw }}</p>
+        <p>{{ Article.abstract|raw }}</p>
         <p><strong>» Leggi:</strong> <a href="{{ Article.url }}">{{ Article.title|raw }}</a></p>
     {% endfor %}
 
