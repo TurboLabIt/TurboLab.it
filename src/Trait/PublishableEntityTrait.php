@@ -27,22 +27,12 @@ trait PublishableEntityTrait
     }
 
 
-    public function getStatuses() : array
-    {
-        return [
-            static::PUBLISHING_STATUS_DRAFT, static::PUBLISHING_STATUS_READY_FOR_REVIEW,
-            static::PUBLISHING_STATUS_PUBLISHED, static::PUBLISHING_STATUS_REJECTED,
-            static::PUBLISHING_STATUS_REMOVED
-        ];
-    }
-
-
     public function getPublishingStatus() : int { return $this->publishingStatus; }
 
     public function setPublishingStatus(int $status) : static
     {
-        if( !in_array($status, $this->getStatuses() ) ) {
-            throw new InvalidEnumException("Invalid publishing status for the article");
+        if( !in_array($status, static::PUBLISHING_STATUSES ) ) {
+            throw new InvalidEnumException("Invalid publishing status");
         }
 
         $this->publishingStatus = $status;

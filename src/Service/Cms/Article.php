@@ -49,19 +49,35 @@ class Article extends BaseCmsService
     protected ?array $arrTags               = null;
     protected ?array $arrAuthors            = null;
     protected ?array $arrFiles              = null;
-    protected ?ImageService $spotlight;
+    protected ?ImageService $spotlight      = null;
     protected HtmlProcessor $htmlProcessor;
     protected ?TagService $topTag           = null;
-    protected ?Topic $commentsTopic;
+    protected ?Topic $commentsTopic         = null;
     protected ?string $articleBodyForDisplay = null;
     protected array $arrPrevNextArticles    = [];
     //</editor-fold>
 
-    public function __construct(protected Factory $factory)
+    public function __construct(protected Factory $factory) { $this->clear(); }
+
+
+    public function clear() : static
     {
-        $this->clear();
-        $this->htmlProcessor = new HtmlProcessor($factory);
+        parent::clear();
+
+        $this->htmlProcessor = new HtmlProcessor($this->factory);
+
+        foreach([
+                'arrTags', 'arrAuthors', 'arrFiles', 'arrAuthors',
+                'spotlight', 'topTag', 'commentsTopic', 'articleBodyForDisplay'
+            ] as $property) {
+            $this->$property = null;
+        }
+
+        $this->arrPrevNextArticles = [];
+
+        return $this;
     }
+
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : ArticleRepository
@@ -82,27 +98,24 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
-    public function isVisible() : bool
+    public function isListable() : bool
     {
-        $status     = $this->entity->getPublishingStatus();
-        $isVisible  = in_array($status, [ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW, ArticleEntity::PUBLISHING_STATUS_PUBLISHED]);
-
-        if($isVisible) {
-            return true;
-        }
-
-        $currentUser = $this->getCurrentUser();
-
-        if( empty($currentUser) ) {
-            return false;
-        }
-
-        $isVisible = $this->isAuthor($currentUser) || $currentUser->isEditor();
-        return $isVisible;
+        return
+            in_array($this->entity->getPublishingStatus(), static::PUBLISHING_STATUSES_OK) ||
+            $this->currentUserCanEdit();
     }
 
+    public function isReadable() : bool
+    {
+        $arrOkStatuses = [ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW, ArticleEntity::PUBLISHING_STATUS_PUBLISHED];
+        return
+            in_array($this->entity->getPublishingStatus(), $arrOkStatuses) ||
+            $this->currentUserCanEdit();
+    }
 
     public function isDraft() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_DRAFT; }
+
+    public function isInReview() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW; }
 
     public function isPublished() : bool
     {
@@ -110,6 +123,8 @@ class Article extends BaseCmsService
             $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
             !empty( $this->getPublishedAt() );
     }
+
+    public function isKo() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_KO; }
 
     public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
 
@@ -184,42 +199,6 @@ class Article extends BaseCmsService
     public function isNewsletter() :bool { return array_key_exists(Tag::ID_NEWSLETTER_TLI, $this->getTags()); }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** 👔 Authors ***">
-    public function isAuthor(?User $user = null) : bool {
-
-        if( empty($user) ) {
-            return false;
-        }
-
-        $arrAuthors = $this->getAuthors();
-        return array_key_exists($user->getId(), $arrAuthors);
-    }
-
-
-    public function getAuthors() : array
-    {
-        if( is_array($this->arrAuthors) ) {
-            return $this->arrAuthors;
-        }
-
-        $this->arrAuthors = [];
-
-        $authorJunctionEntities = $this->entity->getAuthors();
-        foreach($authorJunctionEntities as $junctionEntity) {
-
-            $userEntity                     = $junctionEntity->getUser();
-            $authorId                       = $userEntity->getId();
-            $this->arrAuthors[$authorId]    = $this->factory->createUser($userEntity);
-        }
-
-        return $this->arrAuthors;
-    }
-
-
-    public function getAuthorsNotSystem() : array
-        { return array_filter($this->getAuthors(), fn(User $user) => !$user->isSystem()); }
-    //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="*** 📂 Files ***">
     public function getFiles() : array
     {
@@ -249,6 +228,10 @@ class Article extends BaseCmsService
 
     public function getSpotlight() : ?ImageService
     {
+        if( !$this->isListable() ) {
+            return null;
+        }
+
         if( !empty($this->spotlight) ) {
             return $this->spotlight;
         }
@@ -265,10 +248,6 @@ class Article extends BaseCmsService
 
     public function getSpotlightOrDefault() : ImageService
     {
-        if( !$this->isVisible() ) {
-            return $this->spotlight = $this->factory->createDefaultSpotlight();
-        }
-
         $spotlight = $this->getSpotlight();
         if( !empty($spotlight) ) {
             return $spotlight;
@@ -356,8 +335,22 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🛋️ Text ***">
+    public function getTitle() : ?string
+    {
+        if( $this->isListable() ) {
+            return parent::getTitle();
+        }
+
+        return 'Articolo non disponibile';
+    }
+
+
     public function getTitleWithFreshUpdatedAt() : ?string
     {
+        if( !$this->isListable() ) {
+            return $this->getTitle();
+        }
+
         $title      = $this->getTitleFormatted();
         $updatedAt  = $this->getUpdatedAt();
         $dateLimit  = (new DateTime())->modify('-2 months');
@@ -381,15 +374,25 @@ class Article extends BaseCmsService
     }
 
 
-    public function getAbstract() : ?string { return $this->entity->getAbstract(); }
-
-    public function getAbstractOrDefault() : ?string
+    public function getAbstract() : ?string
     {
-        return $this->isVisible() ? $this->getAbstract() : "";
+        if( $this->isListable() ) {
+            return $this->entity->getAbstract();
+        }
+
+        return null;
     }
 
 
-    public function getBody() : ?string { return $this->entity->getBody(); }
+    public function getBody() : ?string
+    {
+        if( $this->isListable() ) {
+            return $this->entity->getBody();
+        }
+
+        return null;
+    }
+
 
     public function getBodyForDisplay() : string
     {
@@ -455,6 +458,10 @@ class Article extends BaseCmsService
 
     public function getActiveMenu() : ?string
     {
+        if( $this->isKo() ) {
+            return null;
+        }
+
         $topTagActiveMenu = $this->getTopTag()?->getActiveMenu();
         if( $topTagActiveMenu != 'guide' ) {
             return $topTagActiveMenu;

@@ -26,12 +26,14 @@
                                         </a>
                                     </li>
                                 {% endif %}
-                                <li class="breadcrumb-item">
-                                    <a href="{{ Article.topTagOrDefault.url }}">
-                                        <i class="{{ Article.topTagOrDefault.fontAwesomeIcon|first }}"></i>&nbsp;
-                                        {{ Article.topTagOrDefault.titleFormatted }}
-                                    </a>
-                                </li>
+                                {% if Article.isListable %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ Article.topTagOrDefault.url }}">
+                                            <i class="{{ Article.topTagOrDefault.fontAwesomeIcon|first }}"></i>&nbsp;
+                                            {{ Article.topTagOrDefault.titleFormatted }}
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ol>
                         </nav>
                     </div>
@@ -80,7 +82,7 @@
                             <div class="sharethis-inline-share-buttons mt-30"></div>
                         {% endif %}
 
-                        {% if Article.Files is not empty %}
+                        {% if Article.isReadable and Article.Files is not empty %}
 
                             <div class="container mt-20">
                                 {% for File in Article.Files %}
@@ -120,17 +122,58 @@
                             </div>
                         {% endif %}
 
-                        {% if isVisible %}
+
+                        {% if Article.isDraft %}
+
+                            <div class="alert alert-warning post-text tli-article-body" role="alert">
+                                <div>
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    Articolo in lavorazione (bozza)
+                                </div>
+                                <div>
+                                    Questo articolo non è ancora stato marcato dall'autore come &quot;finito&quot;.
+                                    È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
+                                </div>
+                                {% if Article.isReadable %}
+                                    <div>
+                                        Tu, <i class="fa-solid fa-user" style="color: #000000;"></i> {{ CurrentUser.username }},
+                                        hai pieno accesso all'articolo. Ma ricorda che il pubblico, ancora, non può leggere il testo.
+                                    </div>
+                                    {% endif %}
+                            </div>
+
+                        {% elseif Article.isKo %}
+
+                            <div class="alert alert-warning post-text tli-article-body" role="alert">
+                                <div>
+                                    <i class="fa-solid fa-toilet-paper"></i>
+                                    Articolo non disponibile
+                                </div>
+                                <div>
+                                    Questo articolo, nella forma attuale, non rispecchia il livello qualitativo che desideriamo garantire.
+                                    È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
+                                </div>
+                                {% if Article.isReadable %}
+                                    <div>
+                                        Tu, <i class="fa-solid fa-user" style="color: #000000;"></i> {{ CurrentUser.username }},
+                                        hai pieno accesso all'articolo. Ma ricorda che il pubblico non può leggere il testo.
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if Article.isReadable %}
 
                             <div class="post-text mt-30 tli-article-body">{{ Article.bodyForDisplay|raw }}</div>
 
-                            {% if Article.isPublished %}
-                                <h4>
-                                    <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
-                                    Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
-                                </h4>
-                                <div class="sharethis-inline-share-buttons"></div>
-                            {% endif %}
+                            <h4>
+                                <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
+                                Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
+                            </h4>
+
+                            <div class="sharethis-inline-share-buttons"></div>
 
                             <div class="post-tags mt-30">
                                 <ul>
@@ -147,21 +190,11 @@
                                 </ul>
                             </div>
 
-                        {% else %}
-
-                            <div class="post-text mt-30 tli-article-body">
-                                <p>
-                                    Questo articolo non è ancora stato marcato dall'autore come "finito".
-                                    Fino a quando questo non avverrà, il pezzo rimane visibile solo agli autori e
-                                    agli utenti con <a href="https://turbolab.it/40">autorevolezza elevata</a>.
-                                </p>
-                            </div>
-
                         {% endif %}
 
                     </div>
 
-                    {% if Article.AuthorsNotSystem is not empty %}
+                    {% if Article.AuthorsNotSystem is not empty and not Article.isKo %}
                         <div class="tli-article-box mt-30 container">
                             <h4>Gli autori</h4>
                             {% for Author in Article.AuthorsNotSystem %}
@@ -245,7 +278,7 @@
     <!-- ARTICLE bodyMainContent END -->
 
     <!-- ARTICLE comments START -->
-    {% if Article.commentsTopic is not empty %}
+    {% if Article.commentsTopic is not empty and Article.isListable %}
         <section class="post-comments-area pt-20 pb-20">
             <div class="container">
                 <div class="row">

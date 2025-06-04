@@ -74,15 +74,15 @@ class ArticleController extends BaseController
 
         $html =
             $this->twig->render('article/index.html.twig', [
-                'isVisible'             => $article->isVisible(),
                 'metaTitle'             => $article->getTitle(),
-                'metaDescription'       => $article->getAbstractOrDefault(),
+                'metaDescription'       => $article->getAbstract(),
                 'metaCanonicalUrl'      => $article->getUrl(),
                 'metaOgType'            => 'article',
                 'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
                 'metaRobots'            => $article->getMetaRobots(),
                 'activeMenu'            => $article->getActiveMenu(),
                 'FrontendHelper'        => $this->frontendHelper,
+                'CurrentUser'           => $this->factory->getCurrentUser(),
                 'Article'               => $article,
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
@@ -90,9 +90,13 @@ class ArticleController extends BaseController
             ]);
 
         if( $article->isDraft() ) {
-
             // return "503, maintenance" + prevent caching
             return new Response($html, Response::HTTP_SERVICE_UNAVAILABLE, ['Retry-After' => 3600 * 24]);
+        }
+
+        if( $article->isKo() ) {
+            // return "410, gone" + prevent caching
+            return new Response($html, Response::HTTP_GONE);
         }
 
         return $html;

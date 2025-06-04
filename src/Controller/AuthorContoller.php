@@ -64,7 +64,7 @@ class AuthorContoller extends BaseController
         $this->mainAuthor = $user =
             $this->factory->createUser()->loadByusernameClean($usernameClean);
 
-        $authorArticles = $user->getArticles($page);
+        $authorArticles = $user->getArticlesPublished($page);
 
         try {
             $oPages =

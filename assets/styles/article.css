@@ -11,6 +11,19 @@
     width: 100%;
 }
 
+.tli-article-main-content .alert.alert-warning {
+    margin-top: 10px;
+}
+
+.tli-article-main-content .alert.alert-warning div:first-child {
+    text-align: center;
+    font-weight: bold;
+}
+
+.tli-article-main-content .alert.alert-warning div:not(:first-child) {
+    margin-top: 10px;
+}
+
 .tli-file-download {
     font-size: medium;
     font-weight: 600;

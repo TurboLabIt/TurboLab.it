@@ -8,13 +8,24 @@ class ArticleUrlGenerator extends UrlGenerator
 {
     public function generateUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
-        $topTag         = $article->getTopTag();
-        $tagSlugDashId  = empty($topTag) ? static::DEFAULT_TAG_SLUG_DASH_ID : $this->buildSlugDashIdString($topTag);
+        // KO article must use the DEFAULT tag
+        if( $article->isKo() ) {
+
+            $topTag = null;
+            $articleSlugDashId = 'articolo-non-disponibile-' . $article->getId();
+
+        } else {
+
+            $topTag = $article->getTopTag();
+            $articleSlugDashId = $this->buildSlugDashIdString($article);
+        }
+
+        $tagSlugDashId = empty($topTag) ? static::DEFAULT_TAG_SLUG_DASH_ID : $this->buildSlugDashIdString($topTag);
 
         return
             $this->symfonyUrlGenerator->generate('app_article', [
                 "tagSlugDashId"     => $tagSlugDashId,
-                "articleSlugDashId" => $this->buildSlugDashIdString($article)
+                "articleSlugDashId" => $articleSlugDashId
             ], $urlType);
     }
 

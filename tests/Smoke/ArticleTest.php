@@ -3,15 +3,19 @@ namespace App\Tests\Smoke;
 
 use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
+use App\ServiceCollection\Cms\ArticleCollection;
 use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class ArticleTest extends BaseT
 {
     protected static array $arrTestArticles;
+    protected static array $arrKoArticles;
 
 
     public function testingPlayground()
@@ -210,5 +214,66 @@ class ArticleTest extends BaseT
         if( $expectedH1 !== null ) {
             $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
         }
+    }
+
+
+    public static function koArticlesProvider() : Generator
+    {
+        if( empty(static::$arrKoArticles) ) {
+
+            /** @var ArticleCollection $arrKoArticles */
+            $arrKoArticles = static::getService("App\\ServiceCollection\\Cms\\ArticleCollection");
+            $arrKoArticles->load([2380, 353]);
+
+            static::$arrKoArticles = [
+                [
+                    'Article'   => $arrKoArticles->get(2380),
+                    'keyword'   => 'celsius'
+                ],
+                [
+                    'Article'   => $arrKoArticles->get(353),
+                    'keyword'   => 'hosting'
+                ]
+            ];
+        }
+
+        yield static::$arrKoArticles;
+    }
+
+
+    #[DataProvider('koArticlesProvider')]
+    #[Group('KOArticles')]
+    public function testkoArticles(array $arrData)
+    {
+        /** @var Article $article */
+        $article = $arrData['Article'];
+
+        $url = $article->getUrl();
+        // this should be necessary
+        $url = mb_strtolower($url);
+        $this->assertStringNotContainsString($url, $arrData['keyword'], 'Bad URL for a KO article: ##' . $url . '##');
+
+        $this->browse($url);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_GONE,
+            'A PUBLISHING_STATUS_KO article doesn\'t return ' . Response::HTTP_GONE . ' URL: ##' . $url . '##'
+        );
+
+        $html = static::$client->getResponse()->getContent();
+        $this->assertNotEmpty($html, "Failing URL: " . $url);
+        $html = mb_strtolower($html);
+
+        $this->assertStringNotContainsString($arrData['keyword'], $html, 'A KO article is visible! URL: ##' . $url . '##');
+        $this->assertStringContainsString('articolo non disponibile', $html);
+
+
+        $shortUrl = $article->getShortUrl();
+        $this->assertStringNotContainsString($shortUrl, $arrData['keyword'], 'Bad short URL for a KO article: ##' . $shortUrl . '##');
+
+        $this->browse($shortUrl);
+        $this->assertResponseRedirects();
+        $location = static::$client->getResponse()->headers->get('Location');
+        $this->assertStringNotContainsString($arrData['keyword'], $location);
+        $this->assertStringEndsWith('pc-642/articolo-non-disponibile-' . $article->getId(), $location);
     }
 }

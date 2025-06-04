@@ -47,6 +47,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected bool $allowDryRunOpt = true;
 
+    const array KO_ARTICLES = [353, 1533, 1537, 1744, 1769, 1779, 1780, 1804, 1789, 1802, 2380];
+
     protected PDO $dbTli1;
 
     protected array $arrAuthorsByContributionType = [];
@@ -362,9 +364,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $createdAt  = DateTime::createFromFormat('YmdHis', $createdAt);
         $updatedAt  = DateTime::createFromFormat('YmdHis', $updatedAt);
 
-        if( $rating == -1 ) {
+        if( $rating == -1 || in_array($articleId, static::KO_ARTICLES) ) {
 
-            $pubStatus = ArticleEntity::PUBLISHING_STATUS_REMOVED;
+            $pubStatus = ArticleEntity::PUBLISHING_STATUS_KO;
 
         } else if( $pubStatus == ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW && !empty($publishedAt) ) {
 

@@ -13,7 +13,12 @@ class HtmlProcessor extends HtmlProcessorBase
 
     public function processArticleBodyForDisplay(Article $article) : string
     {
-        $text   = $article->getBody();
+        $text = $article->getBody();
+
+        if( empty($text) ) {
+            return '';
+        }
+
         $domDoc = $this->parseHTML($text);
         if( $domDoc === false ) {
             return $text;

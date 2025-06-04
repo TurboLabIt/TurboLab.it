@@ -1,16 +1,26 @@
 {% if Article.isDraft %}
 
-    <i class="fa-solid fa-book" style="color: red;"></i>
-    <span style="color: red;">Articolo in lavorazione (bozza)</span>
+    <i class="fa-solid fa-pen-ruler" style="color: #f5c211;"></i>
+    <span style="color: #f5c211;">Articolo in lavorazione (bozza)</span>
+
+{% elseif Article.isInReview %}
+
+    <i class="fa-solid fa-book" style="color: #f5c211;"></i>
+    <span style="color: #f5c211;">Articolo non ancora pubblicato</span>
 
 {% elseif Article.isPublished %}
 
     <i class="fa-solid fa-book" style="color: #33d17a;"></i>
     <span style="color: #33d17a;">Pubblicato</span>: {{ Article.publishedAt|friendlyDate }}
 
+{% elseif Article.isKo %}
+
+    <i class="fa-solid fa-circle-exclamation" style="color: purple;"></i>
+    <span style="color: purple;">Articolo non disponibile</span>
+
 {% else %}
 
-    <i class="fa-solid fa-book" style="color: #f5c211;"></i>
-    <span style="color: #f5c211;">Articolo non ancora pubblicato</span>
+    <i class="fa-solid fa-bug" style="color: red;"></i>
+    <span style="color: red;">Stato dell'articolo imprevisto</span>
 
 {% endif %}
