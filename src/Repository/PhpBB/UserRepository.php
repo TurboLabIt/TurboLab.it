@@ -12,7 +12,7 @@ class UserRepository extends BasePhpBBRepository
     const string DEFAULT_INDEXED_BY = 't.user_id';
 
     const string AUTHENTICATED_USER_FIELDS  = '
-        users.user_id, user_type, username, user_email,
+        users.user_id, user_type, username, username_clean,user_email,
         user_avatar_type, user_avatar,
         user_posts, user_colour, user_allow_massemail
     ';
@@ -108,6 +108,7 @@ class UserRepository extends BasePhpBBRepository
             (new User())
                 ->setId( $arrUser["user_id"] )
                 ->setUsername( $arrUser["username"] )
+                ->setUsernameClean( $arrUser["username_clean"] )
                 ->setUserType( $arrUser["user_type"] )
                 ->setEmail( $arrUser["user_email"] )
                 ->setAvatarType( $arrUser["user_avatar_type"] )
