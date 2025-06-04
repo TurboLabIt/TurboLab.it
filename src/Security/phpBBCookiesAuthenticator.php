@@ -41,7 +41,8 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
                 'app_home', 'app_home_paginated',
                 'app_article', 'app_file',
                 'app_newsletter', 'app_newsletter_preview',
-                'app_tag', 'app_search', 'app_views_multi'
+                'app_tag', 'app_search', 'app_views_multi',
+                'app_editor_new'
             ]);
     }
 

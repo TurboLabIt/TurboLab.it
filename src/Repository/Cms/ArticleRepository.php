@@ -156,7 +156,7 @@ class ArticleRepository extends BaseRepository
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
-            $this->addWherePublishingStatus($qb)
+            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -175,6 +175,103 @@ class ArticleRepository extends BaseRepository
                 ->orderBy('t.updatedAt', 'DESC')
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findDraftsByAuthor(User $author) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this author" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
+        // excluding other authors.
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                [ "authorId" => $author->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $query =
+            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_DRAFT, false)
+                ->orderBy('t.views', 'DESC')
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findInReviewByAuthor(User $author) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this author" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
+        // excluding other authors.
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                [ "authorId" => $author->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $query =
+            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
+                ->orderBy('t.views', 'DESC')
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findUpcomingByAuthor(User $author) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this author" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
+        // excluding other authors.
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                [ "authorId" => $author->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $query =
+            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.publishedAt IS NOT NULL AND t.publishedAt > CURRENT_TIMESTAMP()')
+                ->orderBy('t.publishedAt', 'ASC')
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findKoByAuthor(User $author) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        // we need to extract "having at least this author" first
+        // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
+        // excluding other authors.
+        $qb =
+            $this->getQueryBuilderCompleteFromSqlQuery(
+                "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                [ "authorId" => $author->getId() ]
+            );
+
+        if( empty($qb) ) {
+            return null;
+        }
+
+        $query =
+            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_KO, false)
+                ->orderBy('t.updatedAt', 'DESC')
                 ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);

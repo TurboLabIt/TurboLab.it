@@ -1,10 +1,11 @@
 <?php
 namespace App\Service;
 
+use App\Entity\Cms\Article;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\UserNotFoundException;
 use App\Repository\PhpBB\UserRepository;
-use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\Cms\BaseArticleCollection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -19,10 +20,10 @@ class User extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
     const int TESTER_USER_ID    = 4015;
 
-    protected ?UserEntity $entity                   = null;
-    protected ?array $arrAdditionalFields           = null;
-    protected ?ArticleCollection $articlesAuthored  = null;
-    protected ?int $articlesNum                     = null;
+    protected ?UserEntity $entity           = null;
+    protected ?array $arrAdditionalFields   = null;
+    protected ?int $articlesNum             = null;
+    protected array $arrArticlesCollections  = [];
 
 
     public function __construct(protected Factory $factory) { $this->clear(); }
@@ -124,25 +125,75 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">
-    public function getArticles(?int $page = 1) : ArticleCollection
+    public function getArticlesDraft() : BaseArticleCollection
     {
-        if( $this->articlesAuthored !== null ) {
-            return $this->articlesAuthored;
+        if( array_key_exists(Article::PUBLISHING_STATUS_DRAFT, $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections[Article::PUBLISHING_STATUS_DRAFT];
         }
 
-        return $this->articlesAuthored = $this->factory->createArticleCollection()->loadByAuthor($this, $page);
+        return
+            $this->arrArticlesCollections[Article::PUBLISHING_STATUS_DRAFT] =
+                $this->factory->createArticleAuthorCollection($this)->loadDrafts();
+    }
+
+
+    public function getArticlesInReview() : BaseArticleCollection
+    {
+        if( array_key_exists(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections[Article::PUBLISHING_STATUS_READY_FOR_REVIEW];
+        }
+
+        return
+            $this->arrArticlesCollections[Article::PUBLISHING_STATUS_READY_FOR_REVIEW] =
+                $this->factory->createArticleAuthorCollection($this)->loadInReview();
+    }
+
+
+    public function getArticlesPublished(?int $page = 1) : BaseArticleCollection
+    {
+        if( array_key_exists(Article::PUBLISHING_STATUS_PUBLISHED, $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections[Article::PUBLISHING_STATUS_PUBLISHED];
+        }
+
+        return
+            $this->arrArticlesCollections[Article::PUBLISHING_STATUS_PUBLISHED] =
+                $this->factory->createArticleAuthorCollection($this)->loadPublished($page);
     }
 
 
     public function getArticlesNum(bool $formatted = true) : int|string
     {
-        $num = $this->articlesNum = $this->articlesNum ??  $this->getArticles()->countTotalBeforePagination();
+        $num = $this->articlesNum = $this->articlesNum ?? $this->getArticlesPublished()->countTotalBeforePagination();
 
         if( !$formatted ) {
             return $num;
         }
 
         return number_format($num, 0, null, ".");
+    }
+
+
+    public function getArticlesUpcoming() : BaseArticleCollection
+    {
+        if( array_key_exists('upcoming', $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections['upcoming'];
+        }
+
+        return
+            $this->arrArticlesCollections['upcoming'] =
+                $this->factory->createArticleAuthorCollection($this)->loadUpcoming();
+    }
+
+
+    public function getArticlesKo() : BaseArticleCollection
+    {
+        if( array_key_exists('ko', $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections['ko'];
+        }
+
+        return
+            $this->arrArticlesCollections['ko'] =
+                $this->factory->createArticleAuthorCollection($this)->loadKo();
     }
     //</editor-fold>
 

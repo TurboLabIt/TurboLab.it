@@ -1,30 +1,14 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
-use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Article;
-use App\Entity\Cms\Article as ArticleEntity;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
-use App\Service\User as UserService;
-use App\Entity\PhpBB\User as UserEntity;
-use App\ServiceCollection\BaseServiceEntityCollection;
 use DateTime;
 
 
-class ArticleCollection extends BaseServiceEntityCollection
+class ArticleCollection extends BaseArticleCollection
 {
-    const string ENTITY_CLASS = Article::ENTITY_CLASS;
-
-
-    public function getRepository() : ArticleRepository
-    {
-        /** @var ArticleRepository $repository */
-        $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);
-        return $repository;
-    }
-
-
     public function loadAllPublished() : static
     {
         $arrArticles = $this->getRepository()->findAllPublished();
@@ -84,14 +68,6 @@ class ArticleCollection extends BaseServiceEntityCollection
     {
         $tag = $tag instanceof TagService ? $tag->getEntity() : $tag;
         $paginator = $this->getRepository()->findByTag($tag, $page) ?? [];
-        return $this->setEntities($paginator);
-    }
-
-
-    public function loadByAuthor(UserEntity|UserService $user, ?int $page = 1) : static
-    {
-        $user = $user instanceof UserService ? $user->getEntity() : $user;
-        $paginator = $this->getRepository()->findByAuthor($user, $page) ?? [];
         return $this->setEntities($paginator);
     }
 
@@ -196,7 +172,4 @@ class ArticleCollection extends BaseServiceEntityCollection
         $arrArticles = $this->getRepository()->findPastYearsTitled($page);
         return $this->setEntities($arrArticles);
     }
-
-
-    public function createService(?ArticleEntity $entity = null) : Article { return $this->factory->createArticle($entity); }
 }

@@ -15,6 +15,7 @@ use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\ImageUrlGenerator;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Cms\TagUrlGenerator;
+use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\PhpBB\Topic as TopicService;
@@ -99,6 +100,16 @@ class Factory
     public function getArticleUrlGenerator() : ArticleUrlGenerator { return $this->articleUrlGenerator; }
 
     public function createArticleCollection() : ArticleCollection { return new ArticleCollection($this); }
+
+    public function createArticleAuthorCollection(null|UserEntity|UserService $author) : ArticleAuthorCollection
+    {
+        $collection = new ArticleAuthorCollection($this);
+        if( !empty($author) ) {
+            $collection->setAuthor($author);
+        }
+
+        return $collection;
+    }
     //</editor-fold>
 
 

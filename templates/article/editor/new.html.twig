@@ -1,0 +1,257 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+    {{ parent() }}
+    <link rel="preload" href="{{ asset('build/article.css') }}"
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+{% endblock %}
+
+
+{% block bodyMainContent %}
+    <!-- ARTICLE bodyMainContent START -->
+    <section class="post-layout-1-area post-layout-3-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="about-author-content">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                                <li class="breadcrumb-item">
+                                    <i class="fa-solid fa-pen"></i>&nbsp;Nuovo articolo
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- ARTICLE main content START -->
+                <article class="col-lg-8">
+
+                    <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
+
+                        <div class="post-content"><h1 class="title">{{ metaTitle }}</h1></div>
+
+                        <div class="post-text mt-30 tli-article-body">
+                            <p>
+                                TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti
+                                della nostra community. Se anche tu vuoi pubblicare un nuovo articolo, questa è la pagina
+                                giusta.
+                            </p>
+
+                            <div class="alert alert-warning" role="alert" style="text-align: center">
+                                <a href="/forum">
+                                    <strong>ATTENZIONE! Questa NON è la pagina per "fare domande"</strong><br>
+                                    Se vuoi fare una domanda o interagire con la community,
+                                    <i class="fa-solid fa-hand-point-right fa-shake" style="color: #ff1100;"></i>
+                                    visita il forum
+                                </a>
+                            </div>
+
+
+                            <h2 {% if CurrentUserDraftArticles is not empty %}style="color: red;"{% endif %}>
+                                I tuoi articoli in lavorazione (bozze)
+                            </h2>
+
+                            {% if CurrentUserDraftArticles is not empty %}
+
+                                <p>
+                                    Questi sono gli articoli ai quali stai già lavorando.
+                                    <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
+                                    Valuta di completare uno di questi prima di iniziarne uno nuovo.
+                                </p>
+
+                                <ul>
+                                    {% for Article in CurrentUserDraftArticles %}
+                                        <li>
+                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                            {% if Article.views(false) > 1 %} - {{ Article.views }} visualizzazioni{% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                                <p>
+                                    <strong><i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i> Ricorda!</strong>
+                                    Fino a quando non finirai questi articoli e ne modificherai lo stato in
+                                    <code>Pronto e finito</code>, non verranno MAI letti da nessuno!
+                                </p>
+
+                            {% else %}
+
+                                <p>
+                                    <i class="fa-solid fa-circle-check" style="color: #63E6BE;"></i>
+                                    Al momento non hai articoli in lavorazione. Mano a mano che inizierai nuovi articoli,
+                                    verranno mostrati qui.
+                                </p>
+
+                            {% endif %}
+
+
+                            <h2>I tuoi articoli non ancora pubblicati</h2>
+
+                            {% if CurrentUserInReviewArticles is not empty %}
+
+                                <p>
+                                    Questi sono gli articoli che hai già indicato come <code>Pronto e finito</code>.
+                                    <strong>Non devi fare nulla</strong>: gli amministratori provvederanno a pubblicarli entro una settimana.
+                                </p>
+
+                                <ul>
+                                    {% for Article in CurrentUserInReviewArticles %}
+                                        <li>
+                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                            {% if Article.views(false) > 1 %} - {{ Article.views }} visualizzazioni{% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            {% else %}
+
+                                <p>
+                                    <i class="fa-solid fa-circle-check" style="color: #63E6BE;"></i>
+                                    Al momento non hai articoli in attesa di pubblicazione.
+                                </p>
+
+                            {% endif %}
+
+
+                            <h2>I tuoi articoli pubblicati di recente</h2>
+
+                            {% if CurrentUserUpcomingArticles is not empty %}
+
+                                <p>
+                                    Ottimo lavoro! Questi articoli usciranno in home page nei prossimi giorni.
+                                    Se lo desideri, puoi migliorarli ancora: usciranno comunque quando previsto.
+                                </p>
+
+                                <ul>
+                                    {% for Article in CurrentUserUpcomingArticles %}
+                                        <li>
+                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                            - {{ Article.publishedAt|friendlyDate }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            {% else %}
+
+                                <p>
+                                    Al momento non ci sono tuoi articoli in uscita nei prossimi giorni.
+                                    Completa un articolo e indicalo come <code>Pronto e finito</code> per pubblicarlo.
+                                </p>
+
+                            {% endif %}
+
+                            {% if currentUserArticleNum > 0 %}
+                                <p>
+                                    <i class="fa-solid fa-list" style="color: #74C0FC;"></i>
+                                    Puoi trovare la lista completa dei tuoi articoli già pubblicati
+                                    ({{ currentUserArticleNum }}) alla
+                                    <a href="{{ currentUserUrl }}">tua pagina personale</a>.
+                                </p>
+                            {% endif %}
+
+
+                            <h2>Articoli non-pubblicabili</h2>
+
+                            {% if CurrentUserKoArticles is not empty %}
+
+                                <p>
+                                    Questi articoli non possono essere pubblicati. Se desideri chiarimenti, puoi
+                                    <a href="/forum/posting.php?mode=post&f=6">scrivere sul forum (pubblico)</a>.
+                                </p>
+
+                                <ul>
+                                    {% for Article in CurrentUserKoArticles %}
+                                        <li>
+                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                            {% include 'article/publishing-status.html.twig' %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            {% else %}
+
+                                <p>Bene, al momento non ci sono tuoi articoli non-pubblicabili.</p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                </article>
+                <!-- ARTICLE main END -->
+
+                <!-- ARTICLE side column START -->
+                <div class="col-lg-4 mt-20">
+                    <div class="about-tab-btn">
+                        <div class="about-post-items">
+                            <div class="row">
+                                {% for Article in SideArticles %}
+
+                                    <div class="trending-news-item mb-30">
+
+                                        <div class="trending-news-content">
+                                            <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
+                                        </div>
+
+                                        <div class="trending-news-thumb">
+                                            <a href="{{ Article.url|raw }}">
+                                                <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
+                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}"
+                                                     {% if loop.index > 2 %}loading="lazy"{% endif %}>
+                                            </a>
+                                        </div>
+
+                                        <div class="tli-mosaic-post-meta">
+                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            </a>
+                                            <span class="tli-meta-slash"> · </span>
+                                            <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                        </div>
+
+                                        <div class="tli-mosaic-post-meta">
+                                            {% if Article.AuthorsNotSystem is not empty %}
+                                                <span class="tli-meta-authors">
+                                                        a cura di
+                                                        {% for Author in Article.AuthorsNotSystem %}
+                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                            {% endif %}
+                                            {% if Article.commentsUrl is not empty %}
+                                                <span class="tli-meta-slash">&nbsp;</span>
+                                                <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
+                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ARTICLE side column END -->
+
+            </div>
+        </div>
+    </section>
+    <!-- ARTICLE bodyMainContent END -->
+
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    {{ encore_entry_script_tags('article') }}
+
+{% endblock %}
