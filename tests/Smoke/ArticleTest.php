@@ -233,6 +233,10 @@ class ArticleTest extends BaseT
                 [
                     'Article'   => $arrKoArticles->get(353),
                     'keyword'   => 'hosting'
+                ],
+                [
+                    'Article'   => $arrKoArticles->get(1779),
+                    'keyword'   => 'crypto'
                 ]
             ];
         }
