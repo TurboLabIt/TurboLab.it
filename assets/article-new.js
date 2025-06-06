@@ -7,7 +7,7 @@ jQuery(document).on('submit', '.show-new-article', function(event) {
         .removeClass('input-group-lg')
         .addClass('input-group-sm');
 
-    searchForm.find('fa-shake')
+    searchForm.find('.fa-shake')
         .removeClass('fa-shake');
 
     let inputNewTitle = jQuery('#new-article-title');
@@ -22,5 +22,8 @@ jQuery(document).on('submit', '.show-new-article', function(event) {
 
     let btnSubmit = newTitleForm.find('button[type=submit]')
     btnSubmit
-        .prop('disabled', false)
+        .prop('disabled', false);
+
+    btnSubmit.find('i')
+        .addClass('fa-shake');
 });
