@@ -168,12 +168,16 @@
 
                             <div class="post-text mt-30 tli-article-body">{{ Article.bodyForDisplay|raw }}</div>
 
-                            <h4>
-                                <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
-                                Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
-                            </h4>
+                            {% if Article.isInReview or Article.isPublished %}
 
-                            <div class="sharethis-inline-share-buttons"></div>
+                                <h4>
+                                    <i class="fa-solid fa-heart fa-beat" style="color: #e01b24;"></i>&nbsp;
+                                    Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
+                                </h4>
+
+                                <div class="sharethis-inline-share-buttons"></div>
+
+                            {% endif %}
 
                             <div class="post-tags mt-30">
                                 <ul>
