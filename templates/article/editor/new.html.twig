@@ -36,14 +36,17 @@
 
                         <div class="post-text mt-30 tli-article-body">
                             <p>
-                                TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti
-                                della nostra community. Se anche tu vuoi pubblicare un nuovo articolo, questa è la pagina
-                                giusta.
+                                TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti appassionati
+                                della nostra community (come te!).
+                                Se anche tu vuoi pubblicare un nuovo articolo, questa è la pagina giusta.
                             </p>
 
                             <div class="alert alert-warning" role="alert" style="text-align: center">
                                 <a href="/forum">
-                                    <strong>ATTENZIONE! Questa NON è la pagina per "fare domande"</strong><br>
+                                    <strong>
+                                        <i class="fa-solid fa-hand" style="color: #ff0000;"></i>
+                                        ATTENZIONE! Questa NON è la pagina per "fare domande"
+                                    </strong><br>
                                     Se vuoi fare una domanda o interagire con la community,
                                     <i class="fa-solid fa-hand-point-right fa-shake" style="color: #ff1100;"></i>
                                     visita il forum
@@ -58,66 +61,99 @@
                             {% if CurrentUserDraftArticles is not empty %}
 
                                 <p>
-                                    Questi sono gli articoli ai quali stai già lavorando.
+                                    Questi sono gli articoli ai quali stai lavorando, ma che non sono ancora finiti.
                                     <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
                                     Valuta di completare uno di questi prima di iniziarne uno nuovo.
                                 </p>
 
-                                <ul>
-                                    {% for Article in CurrentUserDraftArticles %}
-                                        <li>
-                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
-                                            {% if Article.views(false) > 1 %} - {{ Article.views }} visualizzazioni{% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                                {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserDraftArticles}) }}
 
                                 <p>
                                     <strong><i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i> Ricorda!</strong>
                                     Fino a quando non finirai questi articoli e ne modificherai lo stato in
-                                    <code>Pronto e finito</code>, non verranno MAI letti da nessuno!
+                                    <code>Pronto e finito</code>, non saranno disponibili ai visitatori!
                                 </p>
 
                             {% else %}
 
                                 <p>
-                                    <i class="fa-solid fa-circle-check" style="color: #63E6BE;"></i>
-                                    Al momento non hai articoli in lavorazione. Mano a mano che inizierai nuovi articoli,
-                                    verranno mostrati qui.
+                                    Al momento non hai articoli in lavorazione. Puoi iniziare a scrivere un nuovo articolo
+                                    tramite il form seguente. In seguito, li ritroverai qui.
                                 </p>
 
                             {% endif %}
 
 
-                            <h2>I tuoi articoli non ancora pubblicati</h2>
+                            <h2>Inserisci un nuovo articolo</h2>
+                            <p>
+                                Per favore: prima di inserire un articolo, <strong>cerca!</strong>
+                                Devi assicurati che l'argomento non sia già stato trattato.
+                                Se pubblicherai un articolo duplicato, verrà eliminato immediatamente.
+                            </p>
+
+                            <form action="{{ path('app_search') }}" method="GET" target="_blank" class="show-new-article">
+
+                                <div class="input-group input-group-lg">
+                                    <input type="text" class="form-control" name="query" required
+                                           maxlength="255" placeholder="L&quot;articolo che vorrei creare tratta di..."
+                                           style="margin-right: 7px;">
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-magnifying-glass fa-shake"></i> Cerca su TurboLab.it
+                                    </button>
+                                </div>
+
+                            </form>
+
+
+                            <p class="mt-30" style="margin-bottom: 10px">
+                                <i class="fa-solid fa-circle-info"></i>
+                                Dopo aver cercato, potrai iniziare a scrivere il tuo articolo da qui 👇
+                            </p>
+
+
+                            <form action="{{ path('app_editor_new') }}" method="POST">
+
+                                <label for="new-article-title" class="form-label">Titolo del tuo nuovo articolo</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" name="new-article-title" id="new-article-title"
+                                           minlength="19" maxlength="255"
+                                           placeholder="Prima di inserire un nuovo articolo devi cercare"
+                                           data-placeholder-after-search="Titolo del tuo nuovo articolo"
+                                           style="margin-right: 7px;" required disabled>
+
+                                    <button type="submit" class="btn btn-primary" disabled>
+                                        <i class="fa-solid fa-floppy-disk"></i> Salva
+                                    </button>
+                                </div>
+
+                            </form>
+
+
+                            {% if CurrentUserInReviewArticles is not empty or currentUserArticleNum > 0 %}
+                                <h2>I tuoi articoli in attesa di pubblicazione</h2>
+                            {% endif %}
 
                             {% if CurrentUserInReviewArticles is not empty %}
 
                                 <p>
-                                    Questi sono gli articoli che hai già indicato come <code>Pronto e finito</code>.
-                                    <strong>Non devi fare nulla</strong>: gli amministratori provvederanno a pubblicarli entro una settimana.
+                                    Perfetto! Questi sono gli articoli che hai già indicato come <code>Pronto e finito</code>.
+                                    Non devi fare altro: il team editoriale provvederà a valutarli e, in caso positivo,
+                                    a pubblicarli entro una settimana.
                                 </p>
 
-                                <ul>
-                                    {% for Article in CurrentUserInReviewArticles %}
-                                        <li>
-                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
-                                            {% if Article.views(false) > 1 %} - {{ Article.views }} visualizzazioni{% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                                {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserInReviewArticles}) }}
 
-                            {% else %}
+                            {% elseif currentUserArticleNum > 0 %}
 
-                                <p>
-                                    <i class="fa-solid fa-circle-check" style="color: #63E6BE;"></i>
-                                    Al momento non hai articoli in attesa di pubblicazione.
-                                </p>
+                                <p>Al momento non hai articoli in attesa di pubblicazione.</p>
 
                             {% endif %}
 
 
-                            <h2>I tuoi articoli pubblicati di recente</h2>
+                            {% if CurrentUserUpcomingArticles is not empty or currentUserArticleNum > 0 %}
+                                <h2>I tuoi articoli pubblicati</h2>
+                            {% endif %}
 
                             {% if CurrentUserUpcomingArticles is not empty %}
 
@@ -126,55 +162,51 @@
                                     Se lo desideri, puoi migliorarli ancora: usciranno comunque quando previsto.
                                 </p>
 
-                                <ul>
-                                    {% for Article in CurrentUserUpcomingArticles %}
-                                        <li>
-                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
-                                            - {{ Article.publishedAt|friendlyDate }}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-
-                            {% else %}
-
-                                <p>
-                                    Al momento non ci sono tuoi articoli in uscita nei prossimi giorni.
-                                    Completa un articolo e indicalo come <code>Pronto e finito</code> per pubblicarlo.
-                                </p>
+                                <table class="table table-hover table-sm">
+                                    <thead class="table-primary">
+                                    <tr>
+                                        <th scope="col">Titolo</th>
+                                        <th scope="col">Visualiz.</th>
+                                        <th scope="col">Pubblicato</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for Article in CurrentUserUpcomingArticles %}
+                                            <tr>
+                                                <td><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></td>
+                                                <td>{{ Article.views }}</td>
+                                                <td><a href="{{ path('app_calendar') }}">{{ Article.PublishedAt|date('d/m/Y') }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
 
                             {% endif %}
 
                             {% if currentUserArticleNum > 0 %}
+
                                 <p>
                                     <i class="fa-solid fa-list" style="color: #74C0FC;"></i>
-                                    Puoi trovare la lista completa dei tuoi articoli già pubblicati
+                                    Puoi trovare la lista completa dei tuoi articoli pubblicati
                                     ({{ currentUserArticleNum }}) alla
                                     <a href="{{ currentUserUrl }}">tua pagina personale</a>.
                                 </p>
+
                             {% endif %}
 
 
-                            <h2>Articoli non-pubblicabili</h2>
-
                             {% if CurrentUserKoArticles is not empty %}
 
+                                <h2>Articoli non-pubblicabili</h2>
                                 <p>
-                                    Questi articoli non possono essere pubblicati. Se desideri chiarimenti, puoi
+                                    Il team editoriale ha revisionato i seguenti articoli.
+                                    Ti ringraziamo per il tuo contributo, ma, nella forma attuale, non possono essere pubblicati
+                                    poiché non rispecchiano il livello qualitativo che desideriamo garantire.
+                                    Se desideri chiarimenti, puoi
                                     <a href="/forum/posting.php?mode=post&f=6">scrivere sul forum (pubblico)</a>.
                                 </p>
 
-                                <ul>
-                                    {% for Article in CurrentUserKoArticles %}
-                                        <li>
-                                            <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
-                                            {% include 'article/publishing-status.html.twig' %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-
-                            {% else %}
-
-                                <p>Bene, al momento non ci sono tuoi articoli non-pubblicabili.</p>
+                                {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserKoArticles}) }}
 
                             {% endif %}
 
@@ -252,6 +284,6 @@
 {% block javascripts %}
 
     {{ parent() }}
-    {{ encore_entry_script_tags('article') }}
+    {{ encore_entry_script_tags('article-new') }}
 
 {% endblock %}

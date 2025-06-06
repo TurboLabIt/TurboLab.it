@@ -24,6 +24,7 @@ Encore
     .addEntry('home', './assets/home.js')
     .addEntry('archive', './assets/archive.js')
     .addEntry('article', './assets/article.js')
+    .addEntry('article-new', './assets/article-new.js')
     .addEntry('calendar', './assets/calendar.js')
     .addEntry('search', './assets/search.js')
 
