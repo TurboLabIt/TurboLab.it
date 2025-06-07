@@ -17,15 +17,29 @@ class FrontendHelper
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔗 Newsletter, Feed, Social links ***">
+    public function getRegisterUrl() : string
+    {
+        return $this->factory->getForumUrlGenerator()->generateRegisterUrl();
+    }
+
+
+    public function getForgotPasswordUrl() : string
+    {
+        return $this->factory->getForumUrlGenerator()->generateForgotPasswordUrl();
+    }
+
+
     public function getFollowUsLinks() : array
-        { return array_merge( $this->getOwnFollowUsPages(), $this->getSocialMediaPages() ); }
+    {
+        return array_merge( $this->getOwnFollowUsPages(), $this->getSocialMediaPages() );
+    }
 
 
     public function getOwnFollowUsPages() : array
     {
         return [
             $this->buildLink(
-                "Forum e newsletter", '/forum/ucp.php?mode=register', false,
+                "Forum e newsletter", $this->getRegisterUrl(), false,
                 '/images/social-icons/email.svg', 'fa-solid fa-user-group'
             ),
             $this->buildLink(

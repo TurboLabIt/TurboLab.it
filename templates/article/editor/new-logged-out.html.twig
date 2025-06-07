@@ -1,0 +1,17 @@
+{% extends 'article/editor/new.html.twig' %}
+
+{% block loggedInOnlyMainContent %}
+
+    <hr>
+
+    <p>
+        Per inserire un articolo devi eseguire login.
+        Non sei registrato?
+        <a href="{{ FrontendHelper.registerUrl|raw }}"><i class="fa-solid fa-users"></i> Iscriviti ora (è gratis)</a>.
+    </p>
+
+    {% include 'user/login-form.html.twig' %}
+
+{% endblock %}
+
+{% block sideBarContent %}{% endblock %}

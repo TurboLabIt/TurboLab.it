@@ -13,7 +13,7 @@ jQuery('#tli-userbar-load-target').load(
 });
 
 
-jQuery(document).on('submit', '#tli-userbar form', function(event) {
+jQuery(document).on('submit', 'form.tli-user-login', function(event) {
 
     event.preventDefault();
 

@@ -27,21 +27,30 @@ class ArticleEditorController extends BaseController
     public function new() : Response
     {
         $currentUser = $this->factory->getCurrentUser();
-        $currentUserPublishedArticles = $currentUser?->getArticlesLatestPublished();
 
-        $sideArticles = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
-        //$numArticlesPerSlide = $currentUserPublishedArticles?->count() < 5 ? 7 : 10;
-        $numArticlesPerSlide = 7;
-        $numSlides = ceil( $sideArticles->count() / $numArticlesPerSlide );
+        if( empty($currentUser) ) {
 
-        $arrSideArticlesSlices  = [];
-        for($i = 0; $i < $numSlides; $i++) {
+            $templateFilename = 'new-logged-out';
+            $arrSideArticlesSlices = null;
 
-            $arrSideArticlesSlices[$i] =
-                $sideArticles->getItems($numArticlesPerSlide, $numArticlesPerSlide*$i, false, false);
+        } else {
+
+            $templateFilename = 'new';
+
+            $sideArticles = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
+
+            $numArticlesPerSlide = 7;
+            $numSlides = ceil( $sideArticles->count() / $numArticlesPerSlide );
+
+            $arrSideArticlesSlices  = [];
+            for($i = 0; $i < $numSlides; $i++) {
+
+                $arrSideArticlesSlices[$i] =
+                    $sideArticles->getItems($numArticlesPerSlide, $numArticlesPerSlide*$i, false, false);
+            }
         }
 
-        return $this->render('article/editor/new.html.twig', [
+        return $this->render("article/editor/$templateFilename.html.twig", [
             'metaTitle'                     => 'Scrivi nuovo articolo',
             'metaCanonicalUrl'              => $this->generateUrl('app_editor_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
             'activeMenu'                    => '',
@@ -50,7 +59,7 @@ class ArticleEditorController extends BaseController
             'currentUserUrl'                => $currentUser?->getUrl(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
-            'CurrentUserPublishedArticles'  => $currentUserPublishedArticles,
+            'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
             'SideArticlesSlices'            => $arrSideArticlesSlices,
             'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti'])
