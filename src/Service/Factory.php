@@ -25,6 +25,7 @@ use App\ServiceCollection\Cms\ImageCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User as UserService;
@@ -41,15 +42,16 @@ class Factory
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir, protected Security $security,
+
         protected StopWords $stopWords,
+        protected UrlGeneratorInterface $urlGenerator,
         protected ArticleUrlGenerator $articleUrlGenerator,
         protected TagUrlGenerator $tagUrlGenerator,
         protected ImageUrlGenerator $imageUrlGenerator,
         protected FileUrlGenerator $fileUrlGenerator,
         protected ForumUrlGenerator $forumUrlGenerator,
         protected UserUrlGenerator $userUrlGenerator,
-    )
-    { }
+    ) {}
     //</editor-fold>
 
 
@@ -72,6 +74,8 @@ class Factory
 
         return $this->currentUser = $this->createUser($entity);
     }
+
+    public function getViews() : Views { return (new Views($this, $this->urlGenerator)); }
 
 
     //<editor-fold defaultstate="collapsed" desc="*** Article ***">
@@ -112,7 +116,6 @@ class Factory
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** Tag ***">
     public function createDefaultTag() : TagService
     {
@@ -144,7 +147,6 @@ class Factory
 
     public function createTagCollection() : TagCollection { return new TagCollection($this); }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** Image ***">
     public function createDefaultSpotlight() : ImageService
@@ -182,7 +184,6 @@ class Factory
     public function createImageCollection() : ImageCollection { return new ImageCollection($this); }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** File ***">
     public function createFile(?FileEntity $entity = null) : FileService
     {
@@ -200,7 +201,6 @@ class Factory
     public function getFileUrlGenerator() : FileUrlGenerator { return $this->fileUrlGenerator; }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** Topic ***">
     public function createTopic(?TopicEntity $entity = null) : TopicService
     {
@@ -217,7 +217,6 @@ class Factory
 
     public function getForumUrlGenerator() : ForumUrlGenerator { return $this->forumUrlGenerator; }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** User ***">
     public function createUser(?UserEntity $entity = null) : UserService

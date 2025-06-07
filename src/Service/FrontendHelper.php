@@ -109,6 +109,18 @@ class FrontendHelper
     //</editor-fold>
 
 
+    //<editor-fold defaultstate="collapsed" desc="*** Articles ***">
+    public function getGuidesForAuthors() : ArticleCollection
+    {
+        if( empty($this->guidesForAuthors) ) {
+            $this->guidesForAuthors = $this->factory->createArticleCollection()->loadGuidesForAuthors();
+        }
+
+        return $this->guidesForAuthors;
+    }
+    //</editor-fold>
+
+
     protected function buildLink(
         string $name, string $url, bool $blank = true, ?string $iconFileName = null,
         null|string|array $faIcon = null, ?string $activeMenu = null
@@ -131,17 +143,7 @@ class FrontendHelper
             "activeMenu"    => $activeMenu,
         ];
     }
-    //</editor-fold>
 
 
-    //<editor-fold defaultstate="collapsed" desc="*** Articles ***">
-    public function getGuidesForAuthors() : ArticleCollection
-    {
-        if( empty($this->guidesForAuthors) ) {
-            $this->guidesForAuthors = $this->factory->createArticleCollection()->loadGuidesForAuthors();
-        }
-
-        return $this->guidesForAuthors;
-    }
-    //</editor-fold>
+    public function getViews() : Views { return $this->factory->getViews(); }
 }

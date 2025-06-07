@@ -288,11 +288,9 @@
                                             </ul>
 
                                             <ul>
-                                                {% for slug,Data in constant('App\\Controller\\ViewsController::VIEWS') %}
+                                                {% for View in FrontendHelper.Views.All %}
                                                     <li>
-                                                        <a href="{{ path('app_views_multi', {slug: slug}) }}">
-                                                            {{ Data.title }}
-                                                        </a>
+                                                        <a href="{{ View.url }}">{{ View.title }}</a>
                                                     </li>
                                                 {% endfor %}
                                             </ul>
