@@ -1,7 +1,8 @@
 <?php
 namespace App\Controller;
 
-use App\Service\PhpBB\ForumUrlGenerator;
+use App\Service\Cms\Article;
+use App\Service\FrontendHelper;
 use App\Service\User;
 use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CacheHolePunchingController extends BaseController
 {
     #[Route('/ajax/userbar', name: 'app_cache-hole-punching_userbar', methods: ['POST'])]
-    public function userbar(ForumUrlGenerator $urlGenerator, User $user) : Response
+    public function userbar(FrontendHelper $frontendHelper, User $user) : Response
     {
         $this->ajaxOnly();
 
@@ -30,11 +31,14 @@ class CacheHolePunchingController extends BaseController
         $userEntity = $this->getUser();
 
         if( empty($userEntity) ) {
+
             return $this->render('user/userbar-anonymous.html.twig', [
+                'FrontendHelper'=> $frontendHelper,
                 // the redirection works
-                'loginUrl'      => $urlGenerator->generateLoginUrl($originUrl),
+                'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
                 // the redirection DOESN'T WORK :-(
-                'registerUrl'   => $urlGenerator->generateRegisterUrl($originUrl)
+                'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
+                'newsletterUrl' => $this->factory->createArticle()->load(Article::ID_NEWSLETTER)->getShortUrl()
             ]);
         }
 

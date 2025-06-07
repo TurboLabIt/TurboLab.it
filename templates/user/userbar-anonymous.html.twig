@@ -1,8 +1,9 @@
 {% extends 'user/userbar-base.html.twig' %}
 
 {% block userbarContent %}
+
     <strong>
-        <a href="{{ loginUrl }}">
+        <a href="{{ loginUrl|raw }}" data-bs-toggle="modal" data-bs-target="#login-modal">
             <i class="fa-solid fa-user fa-shake" style="color: #000000;"></i> Esegui login
         </a>
     </strong> |
@@ -10,27 +11,8 @@
         Non sei registrato? <i class="fa-solid fa-users" style="color: #000000;"></i>
         <strong>Iscriviti ora (gratis!)</strong>
     </a>
-    per <a href="{{ path('app_home') }}forum">partecipare al forum</a>, pubblicare sul sito e
-    <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_NEWSLETTER')}) }}">ricevere la newsletter</a>!
-
-    <form method="post" action="/ajax/login/">
-
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" autocomplete="username" required>
-
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password"  autocomplete="current-password" required>
-
-        <label for="remember-me">Ricordami</label>
-        <input type="checkbox" name="remember-me" id="remember-me" checked>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        <button class="btn btn-primary" type="submit">Invia</button>
-
-        <div class="tli-login-response alert alert-danger collapse" role="alert"></div>
-
-        <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse collapse" style="color: #f8e45c;"></i>
-    </form>
+    per <a href="{{ path('app_home') }}forum">partecipare al forum</a>,
+    <a href="{{ path('app_editor_new') }}">pubblicare articoli sul sito</a> e
+    <a href="{{ newsletterUrl|raw }}">ricevere la newsletter</a>!
 
 {% endblock %}

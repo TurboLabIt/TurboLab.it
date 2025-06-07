@@ -1,38 +1,38 @@
-<form method="post" action="/ajax/login/" class="tli-user-login">
+<form method="post" action="/ajax/login/" class="tli-user-login w-75 mx-auto">
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                <input type="text" class="form-control" minlength="3" maxlength="20"
-                       name="username" placeholder="Username" autocomplete="username" required>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
-                <input type="password" class="form-control" minlength="6"
-                       name="password" placeholder="Password" autocomplete="current-password" required>
-            </div>
-        </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+        <input type="text" class="form-control" minlength="3" maxlength="20"
+               name="username" placeholder="Username" autocomplete="username" required>
     </div>
 
-    <div class="form-check form-switch mb-3">
-        <input class="form-check-input" type="checkbox" name="remember-me" checked>
-        <label class="form-check-label">Ricordami</label>
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+        <input type="password" class="form-control" minlength="6"
+               name="password" placeholder="Password" autocomplete="current-password" required>
+    </div>
+
+    <div class="text-center mb-3">
+        <div class="form-check form-switch d-inline-block">
+            <input class="form-check-input" type="checkbox" name="remember-me" checked>
+            <label class="form-check-label">Ricordami</label>
+        </div>
     </div>
 
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-    <button class="btn btn-primary" type="submit">Login</button>
+    <button class="btn btn-primary btn-lg px-5 mx-auto d-block" type="submit">
+        <i class="fa-solid fa-right-to-bracket"></i> Login
+    </button>
 
     <div class="tli-login-response alert alert-danger collapse mt-3" role="alert"></div>
 
     <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse collapse" style="color: #f8e45c;"></i>
 
-    <div class="mt-3">
-        <a href="{{ FrontendHelper.forgotPasswordUrl|raw }}"><small>⁉️ Password dimenticata?</small></a>
+    <div class="text-center mt-3">
+        <div class="d-inline-block">
+            <a href="{{ FrontendHelper.forgotPasswordUrl|raw }}"><small>⁉️ Password dimenticata?</small></a>
+        </div>
     </div>
 
 </form>
