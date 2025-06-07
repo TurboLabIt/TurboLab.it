@@ -28,17 +28,30 @@ class ArticleEditorController extends BaseController
     {
         $currentUser = $this->factory->getCurrentUser();
 
+        $sideArticles = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
+        $numArticlesPerSlide = 7;
+        $numSlides = ceil( $sideArticles->count() / $numArticlesPerSlide );
+
+        $arrSideArticlesSlices  = [];
+        for($i = 0; $i < $numSlides; $i++) {
+
+            $arrSideArticlesSlices[$i] =
+                $sideArticles->getItems($numArticlesPerSlide, $numArticlesPerSlide*$i, false, false);
+        }
+
         return $this->render('article/editor/new.html.twig', [
             'metaTitle'                     => 'Scrivi nuovo articolo',
             'metaCanonicalUrl'              => $this->generateUrl('app_editor_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
             'activeMenu'                    => '',
             'FrontendHelper'                => $this->frontendHelper,
+            'ArticleHowTo'                  => $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE),
             'currentUserUrl'                => $currentUser?->getUrl(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
             'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
-            'SideArticles'                  => []
+            'SideArticlesSlices'            => $arrSideArticlesSlices,
+            'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti'])
         ]);
     }
 

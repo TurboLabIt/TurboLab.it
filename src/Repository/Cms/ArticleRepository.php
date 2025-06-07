@@ -97,6 +97,31 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function findLatestUpdated(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        // articles by `system`
+        $arrArticleIdBySystem =
+            $this->sqlQueryExecute(
+            "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId", [
+                'authorId' => \App\Service\User::SYSTEM_USER_ID
+            ])->fetchFirstColumn();
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUSES_OK, false)
+                ->andWhere('t.id NOT IN(:articleIdBySystem)')
+                    ->setParameter('articleIdBySystem', $arrArticleIdBySystem)
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage)
+                ->orderBy('t.updatedAt', 'DESC')
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
     public function findAllPublished() : array
     {
         return

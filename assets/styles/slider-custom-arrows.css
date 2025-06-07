@@ -1,0 +1,21 @@
+.tli-slick-slider .slick-arrow {
+    position: absolute;
+    top: -55px;
+    z-index: 9;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    line-height: 27px;
+    border: 2px solid #C1C4C6;
+    font-size: 20px;
+    color: #C1C4C6;
+}
+
+.tli-slick-slider .slick-arrow.prev {
+    right: 45px;
+}
+
+.tli-slick-slider .slick-arrow.next {
+    right: 0;
+}

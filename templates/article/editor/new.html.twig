@@ -6,11 +6,18 @@
     <link rel="preload" href="{{ asset('build/article.css') }}"
           as="style" onload="this.onload=null;this.rel='stylesheet'">
 
+    <link rel="preload" href="{{ asset('build/article-new.css') }}"
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
 {% endblock %}
 
 
 {% block bodyMainContent %}
-    <!-- ARTICLE bodyMainContent START -->
+    <!-- NEW ARTICLE bodyMainContent START -->
     <section class="post-layout-1-area post-layout-3-area">
         <div class="container">
             <div class="row">
@@ -27,7 +34,7 @@
                     </div>
                 </div>
 
-                <!-- ARTICLE main content START -->
+                <!-- NEW ARTICLE main content START -->
                 <article class="col-lg-8">
 
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
@@ -53,10 +60,24 @@
                                 </a>
                             </div>
 
+                            <div class="alert alert-primary" role="alert" style="text-align: center">
+                                <a href="{{ ArticleHowTo.url|raw }}">
+                                    <strong>
+                                        <i class="fa-solid fa-person-chalkboard"></i>
+                                        Prima di cominciare a scrivere...
+                                    </strong><br>
+                                    Per favore, leggi sempre la guida &quot;{{ ArticleHowTo.title|raw }}&quot;
+                                </a>
+                            </div>
 
-                            <h2 {% if CurrentUserDraftArticles.count %}style="color: #f5c211;"{% endif %}>
-                                <i class="fa-solid fa-pen-ruler"></i> I tuoi articoli in lavorazione (bozze)
-                            </h2>
+
+                            {% if CurrentUserDraftArticles.count or CurrentUserPublishedArticles.count %}
+
+                                <h2 {% if CurrentUserDraftArticles.count %}style="color: #f5c211;"{% endif %}>
+                                    <i class="fa-solid fa-pen-ruler"></i> I tuoi articoli in lavorazione (bozze)
+                                </h2>
+
+                            {% endif %}
 
                             {% if CurrentUserDraftArticles.count %}
 
@@ -74,7 +95,7 @@
                                     <code>Pronto e finito</code>, non saranno disponibili ai visitatori!
                                 </p>
 
-                            {% else %}
+                            {% elseif CurrentUserPublishedArticles.count %}
 
                                 <p>
                                     Al momento, non hai articoli in lavorazione. Puoi iniziare a scrivere un nuovo articolo
@@ -84,7 +105,7 @@
                             {% endif %}
 
 
-                            <h2 class="show-new-article-form">Inizia un nuovo articolo</h2>
+                            <h2 class="show-new-article-form">👉 Inizia un nuovo articolo</h2>
                             <p>
                                 Per favore: prima di inserire un articolo, <strong>cerca!</strong>
                                 Devi assicurati che l'argomento non sia già stato trattato.
@@ -133,9 +154,11 @@
 
 
                             {% if CurrentUserInReviewArticles.count or CurrentUserPublishedArticles.count %}
+
                                 <h2 style="color: #f5c211;">
                                     <i class="fa-solid fa-book"></i> I tuoi articoli in stato &quot;Pronto e finito&quot;
                                 </h2>
+
                             {% endif %}
 
                             {% if CurrentUserInReviewArticles.count %}
@@ -245,74 +268,73 @@
 
                     </div>
 
-
                 </article>
-                <!-- ARTICLE main END -->
+                <!-- NEW ARTICLE main END -->
 
-                <!-- ARTICLE side column START -->
+
+                <!-- NEW ARTICLE side column START -->
                 <div class="col-lg-4 mt-20">
-                    <div class="about-tab-btn">
-                        <div class="about-post-items">
-                            <div class="row">
-                                {% for Article in SideArticles %}
+                    <div class="trending-right-sidebar">
 
-                                    <div class="trending-news-item mb-30">
+                        <h3 class="title">Aggiornati di recente</h3>
 
-                                        <div class="trending-news-content">
-                                            <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
+                        <div class="tli-slick-slider" data-slick='{"autoplaySpeed": 10000, "infinite": false, "dots": true}'>
+
+                            {% for Articles in SideArticlesSlices %}
+
+                                <div class="tli-slick-slider-page">
+
+                                    {% for Article in Articles %}
+
+                                        <div>
+                                            {% include 'article/publishing-status.html.twig' %}
+
+                                            <div style="margin-bottom: 5px; font-weight: bold">
+                                                <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                            </div>
+
+                                            <div>
+                                                di
+                                                {% for Author in Article.Authors %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                                <i class="fa-regular fa-clock"></i> {{ Article.updatedAt|friendlyDate }}
+                                            </div>
+
+                                            {% if not loop.last %}<hr>{% endif %}
                                         </div>
 
-                                        <div class="trending-news-thumb">
-                                            <a href="{{ Article.url|raw }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}"
-                                                     {% if loop.index > 2 %}loading="lazy"{% endif %}>
-                                            </a>
-                                        </div>
+                                    {% endfor %}
 
-                                        <div class="tli-mosaic-post-meta">
-                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
-                                                {{ Article.TopTagOrDefault.title|upper|raw }}
-                                            </a>
-                                            <span class="tli-meta-slash"> · </span>
-                                            <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
-                                        </div>
+                                    {% if loop.last %}
+                                        <p class="mt-30">
+                                            <i class="fa-solid fa-circle-info"></i>
+                                            Consulta anche le liste complete:
+                                            {% for View in Views %}
+                                                <a href="{{ View.url }}">{{ View.title }}</a>{% if not loop.last %},{% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    {% endif %}
 
-                                        <div class="tli-mosaic-post-meta">
-                                            {% if Article.AuthorsNotSystem is not empty %}
-                                                <span class="tli-meta-authors">
-                                                        a cura di
-                                                        {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
-                                                        {% endfor %}
-                                                    </span>
-                                            {% endif %}
-                                            {% if Article.commentsUrl is not empty %}
-                                                <span class="tli-meta-slash">&nbsp;</span>
-                                                <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
-                                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                                </a>
-                                            {% endif %}
-                                        </div>
+                                </div>
 
-                                    </div>
-
-                                {% endfor %}
-                            </div>
+                            {% endfor %}
                         </div>
+
                     </div>
                 </div>
-                <!-- ARTICLE side column END -->
+                <!-- NEW ARTICLE side column END -->
 
             </div>
         </div>
     </section>
-    <!-- ARTICLE bodyMainContent END -->
+    <!-- NEW ARTICLE bodyMainContent END -->
 
 {% endblock %}
 
 {% block javascripts %}
+
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
     {{ parent() }}
     {{ encore_entry_script_tags('article-new') }}

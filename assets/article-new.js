@@ -1,4 +1,6 @@
 //import $ from 'jquery';
+import './js/slider';
+import './styles/slider-custom-arrows.css';
 
 
 function showNewArticleForm()
