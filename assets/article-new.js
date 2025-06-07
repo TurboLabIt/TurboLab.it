@@ -1,8 +1,9 @@
 //import $ from 'jquery';
 
-jQuery(document).on('submit', '.show-new-article', function(event) {
 
-    let searchForm = jQuery(this);
+function showNewArticleForm()
+{
+    let searchForm = jQuery('#search-article-form');
     searchForm.find('.input-group-lg')
         .removeClass('input-group-lg')
         .addClass('input-group-sm');
@@ -13,7 +14,8 @@ jQuery(document).on('submit', '.show-new-article', function(event) {
     let inputNewTitle = jQuery('#new-article-title');
     inputNewTitle
         .prop('disabled', false)
-        .attr('placeholder', inputNewTitle.data('placeholder-after-search'));
+        .attr('placeholder', inputNewTitle.data('placeholder-after-search'))
+        .focus();
 
     let newTitleForm = inputNewTitle.closest('form');
     newTitleForm.find('.input-group-sm')
@@ -26,4 +28,14 @@ jQuery(document).on('submit', '.show-new-article', function(event) {
 
     btnSubmit.find('i')
         .addClass('fa-shake');
+}
+
+
+jQuery(document).on('submit', '#search-article-form', function(event) {
+    showNewArticleForm();
+});
+
+
+jQuery(document).on('dblclick', '.show-new-article-form', function(event) {
+    showNewArticleForm();
 });

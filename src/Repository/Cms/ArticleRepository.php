@@ -229,8 +229,10 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findUpcomingByAuthor(User $author) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findLatestPublishedByAuthor(User $author) : ?array
     {
+        $arrLatestArticles = [];
+
         // we need to extract "having at least this author" first
         // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
         // excluding other authors.
@@ -244,13 +246,45 @@ class ArticleRepository extends BaseRepository
             return null;
         }
 
-        $query =
-            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
+        // upcoming (all)
+        $upcomingArticles =
+            $this->addWherePublishingStatus(clone $qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('t.publishedAt IS NOT NULL AND t.publishedAt > CURRENT_TIMESTAMP()')
-                ->orderBy('t.publishedAt', 'ASC')
-                ->getQuery();
+                ->orderBy('t.publishedAt', 'DESC')
+                ->getQuery()->getResult();
 
-        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        foreach($upcomingArticles as $article) {
+
+            $articleId = (string)$article->getId();
+            $arrLatestArticles[$articleId] = $article;
+        }
+
+
+        // published in the past (latest)
+        $pastPublishedArticles =
+            $this->addWherePublishingStatus($qb)
+                ->orderBy('t.publishedAt', 'DESC')
+                ->getQuery()->getResult();
+
+        $maxPublishedToAdd = 10;
+        foreach($pastPublishedArticles as $article) {
+
+            $articleId = (string)$article->getId();
+
+            if( array_key_exists($articleId, $arrLatestArticles) ) {
+                continue;
+            }
+
+            $arrLatestArticles[$articleId] = $article;
+
+            $maxPublishedToAdd--;
+
+            if( $maxPublishedToAdd == 0 ) {
+                break;
+            }
+        }
+
+        return $arrLatestArticles;
     }
 
 

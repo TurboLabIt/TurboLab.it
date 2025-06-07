@@ -128,6 +128,43 @@ class Article extends BaseCmsService
 
     public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
 
+
+    public function getPublishedAtRecencyLabel() : ?string
+    {
+        if( !$this->isPublished() ) {
+            return null;
+        }
+
+        $diff = $this->getPublishedAt()->getTimestamp() - (new DateTime())->getTimestamp();
+
+        // upcoming, less than 24 ours)
+        if( $diff > 0 && $diff <= 24 * 60 * 60 ) {
+            return 'Uscirà FRA POCO!';
+        }
+
+        // upcoming, 3 days
+        if( $diff > 0 && $diff <= 72 * 60 * 60 ) {
+            return 'Uscirà fra pochi giorni';
+        }
+
+        // upcoming
+        if( $diff > 0 ) {
+            return 'Uscirà prossimamente';
+        }
+
+        // past, earlier today
+        if( $diff > -24 * 60 * 60 ) {
+            return 'Uscito OGGI!';
+        }
+
+        // past, recent
+        if( abs($diff) <= 72 * 60 * 60 ) {
+            return 'Uscito di recente';
+        }
+
+        return null;
+    }
+
     public function isNews() : bool { return $this->entity->getFormat() == ArticleEntity::FORMAT_NEWS; }
     //</editor-fold>
 

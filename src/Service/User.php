@@ -161,6 +161,19 @@ class User extends BaseServiceEntity
     }
 
 
+
+    public function getArticlesLatestPublished() : BaseArticleCollection
+    {
+        if( array_key_exists('latest-published', $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections['latest-published'];
+        }
+
+        return
+            $this->arrArticlesCollections['latest-published'] =
+                $this->factory->createArticleAuthorCollection($this)->loadLatestPublished();
+    }
+
+
     public function getArticlesNum(bool $formatted = true) : int|string
     {
         $num = $this->articlesNum = $this->articlesNum ?? $this->getArticlesPublished()->countTotalBeforePagination();

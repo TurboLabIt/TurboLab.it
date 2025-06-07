@@ -41,10 +41,10 @@ class ArticleAuthorCollection extends BaseArticleCollection
     }
 
 
-    public function loadUpcoming() : static
+    public function loadLatestPublished() : static
     {
         $userEntity = $this->author->getEntity();
-        $paginator = $this->getRepository()->findUpcomingByAuthor($userEntity) ?? [];
+        $paginator = $this->getRepository()->findLatestPublishedByAuthor($userEntity) ?? [];
         return $this->setEntities($paginator);
     }
 

@@ -7,6 +7,5 @@ use TurboLabIt\ServiceEntityPlusBundle\SEPCollection;
 
 abstract class BaseServiceEntityCollection extends SEPCollection
 {
-    public function __construct(protected Factory $factory)
-        { parent::__construct( $factory->getEntityManager() ); }
+    public function __construct(protected Factory $factory) { parent::__construct( $factory->getEntityManager() ); }
 }

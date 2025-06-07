@@ -34,10 +34,9 @@ class ArticleEditorController extends BaseController
             'activeMenu'                    => '',
             'FrontendHelper'                => $this->frontendHelper,
             'currentUserUrl'                => $currentUser?->getUrl(),
-            'currentUserArticleNum'         => $currentUser?->getArticlesNum(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
-            'CurrentUserUpcomingArticles'   => $currentUser?->getArticlesUpcoming(),
+            'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
             'SideArticles'                  => []
         ]);
