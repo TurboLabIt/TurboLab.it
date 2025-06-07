@@ -27,8 +27,10 @@ class ArticleEditorController extends BaseController
     public function new() : Response
     {
         $currentUser = $this->factory->getCurrentUser();
+        $currentUserPublishedArticles = $currentUser?->getArticlesLatestPublished();
 
         $sideArticles = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
+        //$numArticlesPerSlide = $currentUserPublishedArticles?->count() < 5 ? 7 : 10;
         $numArticlesPerSlide = 7;
         $numSlides = ceil( $sideArticles->count() / $numArticlesPerSlide );
 
@@ -48,7 +50,7 @@ class ArticleEditorController extends BaseController
             'currentUserUrl'                => $currentUser?->getUrl(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
-            'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
+            'CurrentUserPublishedArticles'  => $currentUserPublishedArticles,
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
             'SideArticlesSlices'            => $arrSideArticlesSlices,
             'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti'])
