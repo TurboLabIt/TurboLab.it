@@ -11,6 +11,11 @@ trait phpBBCookiesAuthenticatorTrait
     const string COOKIE_NO_REMEMBER_ME_WORKAROUND               = 'tli-login-no-remember-me-workaround';
     const string NO_REMEMBER_ME_WORKAROUND_ENCRYPTOR_KEY_PATH   = 'var/no-remember-me-cookie-secret.key';
 
+    // these routes don't need the User object
+    const array AUTH_IGNORED_ROUTES = [
+        'app_file', 'app_newsletter', 'app_tag_legacy'
+    ];
+
     protected Encryptor $encryptor;
 
 

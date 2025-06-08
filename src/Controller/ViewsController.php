@@ -12,9 +12,11 @@ class ViewsController extends BaseController
     const string SECTION_SLUG = "viste";
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', name: 'app_views_multi_0-1')]
+    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', name: 'app_views_multi_page_0-1')]
     public function appViewsMulti0Or1($slug) : Response
-        { return $this->redirectToRoute('app_views_multi', ["slug" => $slug], Response::HTTP_MOVED_PERMANENTLY); }
+    {
+        return $this->redirectToRoute('app_views_multi', ["slug" => $slug], Response::HTTP_MOVED_PERMANENTLY);
+    }
 
 
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<[1-9]+[0-9]*>}', name: 'app_views_multi')]
