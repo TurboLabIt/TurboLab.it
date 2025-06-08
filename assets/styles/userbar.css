@@ -6,14 +6,11 @@
     z-index: 998;
 }
 
-#tli-userbar {
-    padding: 10px;
-}
-
 #tli-userbar.user-logged {
     background: linear-gradient(to right, lightgrey, white);
 }
 
 #tli-userbar.user-anonymous {
     background: linear-gradient(to right, orangered, orange);
+    padding: 20px;
 }
