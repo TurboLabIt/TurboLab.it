@@ -16,7 +16,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ArticleEditorController extends BaseController
 {
-    const string CSRF_TOKEN_ID = 'new-article';
+    const string TITLE_FIELD_NAME       = 'new-article-title';
+    const string FORMAT_FIELD_NAME      = 'new-article-format';
+    const string CSRF_TOKEN_ID          = self::TITLE_FIELD_NAME;
 
 
     public function __construct(
@@ -54,6 +56,7 @@ class ArticleEditorController extends BaseController
             }
         }
 
+
         return $this->render("article/editor/$templateFilename.html.twig", [
             'metaTitle'                     => 'Scrivi nuovo articolo',
             'metaCanonicalUrl'              => $this->generateUrl('app_editor_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -66,7 +69,14 @@ class ArticleEditorController extends BaseController
             'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
             'SideArticlesSlices'            => $arrSideArticlesSlices,
-            'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti'])
+            'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti']),
+            //
+            'titleFieldName'                => static::TITLE_FIELD_NAME,
+            'formatFieldName'               => static::FORMAT_FIELD_NAME,
+            'formatArticle'                 => Article::FORMAT_ARTICLE,
+            'formatNews'                    => Article::FORMAT_NEWS,
+            'csrfTokenFieldName'            => static::CSRF_TOKEN_PARAM_NAME,
+            'csrfToken'                     => $this->csrfTokenManager->getToken(static::CSRF_TOKEN_ID)->getValue()
         ]);
     }
 
@@ -84,6 +94,26 @@ class ArticleEditorController extends BaseController
         }
 
         $this->validateCsrfToken();
+
+        // TODO zaneee! Rate limiting on new article
+
+        $newArticleTitle    = $this->request->get(static::TITLE_FIELD_NAME);
+        $newArticleFormat   = $this->request->get(static::FORMAT_FIELD_NAME);
+
+        /*
+         * $currentUser is unknown to Doctrine: if we try to set it as Author directly:
+         * A new entity was found through the relationship 'App\Entity\Cms\ArticleAuthor#user' that was not configured to cascade persist operations for entity: App\Entity\PhpBB\User@--
+         */
+        $currentUserId = $currentUser->getId();
+        $author = $this->factory->createUser()->load($currentUserId);
+
+        $this->articleEditor
+            ->setTitle($newArticleTitle)
+            ->setFormat($newArticleFormat)
+            ->addAuthor($author)
+            ->save();
+
+        dd($this->articleEditor->getUrl());
     }
 
 

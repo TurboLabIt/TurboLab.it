@@ -134,27 +134,52 @@
                                     Dopo aver cercato, potrai iniziare a scrivere il tuo articolo da qui 👇
                                 </p>
 
+                                <form action="{{ path('app_editor_new_submit') }}" method="POST">
 
-                                <form action="{{ path('app_editor_new_submit') }}" method="POST" style="margin-bottom: 27px;">
-
-                                    <label for="new-article-title" class="form-label show-new-article-form">
-                                        Titolo del tuo nuovo articolo:
-                                    </label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control" name="new-article-title" id="new-article-title"
-                                               minlength="19" maxlength="255"
-                                               placeholder="Prima di inserire un nuovo articolo devi cercare"
-                                               data-placeholder-after-search="Digita il titolo del tuo articolo"
-                                               style="margin-right: 7px;" required disabled>
-
-                                        <button type="submit" class="btn btn-primary" disabled>
-                                            <i class="fa-solid fa-floppy-disk"></i> Salva
-                                        </button>
+                                    <!-- Label + Input centered together -->
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        <div style="max-width: 600px; width: 100%;">
+                                            <label for="{{ titleFieldName }}" class="form-label show-new-article-form">
+                                                Titolo del tuo nuovo articolo:
+                                            </label>
+                                            <input type="text" class="form-control"
+                                                   name="{{ titleFieldName }}" id="{{ titleFieldName }}"
+                                                   minlength="19" maxlength="255"
+                                                   placeholder="Prima di inserire un articolo devi cercare"
+                                                   data-placeholder-after-search="Digita il titolo del tuo nuovo articolo"
+                                                   required disabled>
+                                        </div>
                                     </div>
 
-                                    <input type="hidden"
-                                      name="{{ constant('App\\Controller\\Editor\\ArticleEditorController::CSRF_TOKEN_PARAM_NAME') }}"
-                                      value="{{ csrf_token(constant('App\\Controller\\Editor\\ArticleEditorController::CSRF_TOKEN_ID')) }}">
+                                    <!-- Radio buttons centered and aligned with input -->
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        <div class="d-flex justify-content-center gap-3 flex-wrap" style="max-width: 600px; width: 100%;">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="{{ formatFieldName }}"
+                                                       id="{{ formatFieldName }}-{{ formatArticle }}" value="{{ formatArticle }}"
+                                                       required>
+                                                <label class="form-check-label" for="{{ formatFieldName }}-{{ formatArticle }}">
+                                                    <i class="fa-solid fa-book"></i> Articolo, guida
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="{{ formatFieldName }}"
+                                                       id="{{ formatFieldName }}-{{ formatNews }}" value="{{ formatNews }}"
+                                                       required>
+                                                <label class="form-check-label" for="{{ formatFieldName }}-{{ formatNews }}">
+                                                    <i class="fa-solid fa-newspaper"></i> Notizia, segnalazione
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" name="{{ csrfTokenFieldName }}" value="{{ csrfToken }}">
+
+                                    <button class="btn btn-primary btn-lg px-5 mx-auto d-block" type="submit" disabled>
+                                        <i class="fa-solid fa-floppy-disk"></i> Salva
+                                    </button>
+
                                 </form>
 
 

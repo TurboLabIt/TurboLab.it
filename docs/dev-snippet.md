@@ -18,10 +18,15 @@ $currentUser = $this->factory->getCurrentUser();
 
 ## 🥷 CSRF
 
+````php
+const string CSRF_TOKEN_ID  = 'something';
+...
+'csrfTokenFieldName'    => static::CSRF_TOKEN_PARAM_NAME,
+'csrfToken'             => $this->csrfTokenManager->getToken(static::CSRF_TOKEN_ID)->getValue()
+````
+
 ````html
-<input type="hidden"
-  name="{{ constant('App\\Controller\\MyController::CSRF_TOKEN_PARAM_NAME') }}"
-  value="{{ csrf_token(constant('App\\Controller\\Editor\\MyController::CSRF_TOKEN_ID')) }}">
+<input type="hidden" name="{{ csrfTokenFieldName }}" value="{{ csrfToken }}">
 ````
 
 ````php

@@ -7,7 +7,6 @@ use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\User;
 use DateTimeInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 
@@ -50,7 +49,17 @@ class ArticleEditor extends Article
 
     public function setTitle(string $newTitle) : static
     {
-        $this->entity->setTitle($newTitle);
+        $cleanTitle = trim($newTitle);
+
+        $arrQuoteEncodeMap = [
+            '"' => '&quot;',
+            "'" => '&apos;'
+        ];
+
+        $cleanTitle = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $cleanTitle);
+        $cleanTitle = $this->htmlProcessorReverse->convertEntitiesToUtf8Chars($cleanTitle);
+
+        $this->entity->setTitle($cleanTitle);
         return $this;
     }
 
