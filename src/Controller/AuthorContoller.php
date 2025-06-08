@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\Article;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -64,6 +65,15 @@ class AuthorContoller extends BaseController
         $this->mainAuthor = $user =
             $this->factory->createUser()->loadByusernameClean($usernameClean);
 
+        //
+        $currentUser            = $this->factory->getCurrentUser();
+        $authorIsCurrentUser    = $user->getId() == $currentUser?->getId();
+
+        if($authorIsCurrentUser) {
+           $changeBioUrl = $this->factory->createArticle()->load(Article::ID_SIGN_ARTICLE)->getUrl();
+        }
+
+
         $authorArticles = $user->getArticlesPublished($page);
 
         try {
@@ -78,18 +88,21 @@ class AuthorContoller extends BaseController
             return $this->redirect($lastPageUrl);
         }
 
+        $metaTitle = "Articoli, guide e news a cura di " . $user->getFullName() . ( $page < 2 ? '' : " - Pagina $page");
+
         return
             $this->twig->render('user/author.html.twig', [
-                'metaTitle'         => "Articoli, guide e news a cura di " .
-                                            $user->getFullName() . ( $page < 2 ? '' : " - Pagina $page"),
-                'metaCanonicalUrl'  => $user->getUrl($page),
-                'metaPageImageUrl'  => $user->getAvatarUrl(),
-                'activeMenu'        => null,
-                'FrontendHelper'    => $this->frontendHelper,
-                'Author'            => $user,
-                'Articles'          => $authorArticles,
-                'Pages'             => $authorArticles->count() > 0 ? $oPages : null,
-                'currentPage'       => $page
+                'metaTitle'             => $metaTitle,
+                'metaCanonicalUrl'      => $user->getUrl($page),
+                'metaPageImageUrl'      => $user->getAvatarUrl(),
+                'activeMenu'            => null,
+                'FrontendHelper'        => $this->frontendHelper,
+                'Author'                => $user,
+                'authorIsCurrentUser'   => $authorIsCurrentUser,
+                'changeBioUrl'          => $changeBioUrl ?? null,
+                'Articles'              => $authorArticles,
+                'Pages'                 => $authorArticles->count() > 0 ? $oPages : null,
+                'currentPage'           => $page
             ]);
         }
 }

@@ -20,6 +20,19 @@
 {% block beforeArticleList %}
     {% if Author.articlesNum > 0 %}
         <div class="container">
+
+            {% if authorIsCurrentUser %}
+
+                <div class="alert alert-primary text-center" role="alert">
+                    <strong>
+                        <i class="fa-solid fa-person-chalkboard"></i>
+                        Stai guardando la TUA pagina personale
+                    </strong>
+                </div>
+
+            {% endif%}
+
+
             <div class="tli-article-box">
                 <div class="row mt-10">
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
@@ -33,11 +46,11 @@
                         <p class="tli-author-bio-name">
                             <span>{{ Author.fullName }}</span><br>
                             <span class="tli-author-articles-counter">
-                                <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }} 
+                                <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }}
                                 {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} &nbsp;
                                 <a href="{{ Author.forumUrl }}">
                                     <i class="fa-solid fa-id-badge"></i> ID: {{ Author.id }}
-                                </a>    
+                                </a>
                             </span>
                         </p>
                         <p class="mt-10">
@@ -49,7 +62,42 @@
                         </p>
                     </div>
                 </div>
+
+                {% if authorIsCurrentUser %}
+
+                    <div class="text-center">
+                        <div class="alert alert-primary d-inline-block text-center" role="alert">
+                            <strong>
+                                <i class="fa-solid fa-person-chalkboard"></i>
+                                Personalizza questa sezione!
+                            </strong><br>
+                            <a href="/forum/ucp.php?i=ucp_profile&amp;mode=avatar">
+                                <i class="fa-solid fa-image-portrait"></i> Modifica avatar (immagine di profilo)
+                            </a> |
+                            <a href="">
+                                <i class="fa-solid fa-id-card"></i> Modifica nome, cognome o biografia
+                            </a>
+                        </div>
+                    </div>
+
+                {% endif %}
             </div>
+
+            {% if authorIsCurrentUser %}
+
+                <div class="alert alert-primary text-center mt-3" role="alert">
+                    <strong>
+                        <i class="fa-solid fa-person-chalkboard"></i>
+                        Non trovi un tuo articolo?
+                    </strong><br>
+                    Qui sono mostrati solo i tuoi articoli con stato
+                    <span style="color: #1e7e34"><i class="fa-solid fa-book"></i> Pubblicato</span>.
+                    Puoi trovare gli altri articoli alla pagina
+                    <a href="{{ path('app_editor_new') }}"><i class="fa-solid fa-pen"></i> Nuovo articolo</a>.
+                </div>
+
+            {% endif%}
+
         </div>
-    {% endif %}    
+    {% endif %}
 {% endblock %}
