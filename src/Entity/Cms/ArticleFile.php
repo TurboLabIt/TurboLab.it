@@ -12,11 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 class ArticleFile extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'files')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'file_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?File $file = null;
 
     #[ORM\ManyToOne(inversedBy: 'articlesAttachedToFiles')]

@@ -11,11 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 class ArticleImage extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'images')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'image_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?Image $image = null;
 
     use RankableEntityTrait;

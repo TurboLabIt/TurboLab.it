@@ -88,23 +88,25 @@ final class Version00000000000000 extends AbstractMigration
 
         // FKs
         $this->addSql('ALTER TABLE article ADD CONSTRAINT FK_23A0E663049EF9 FOREIGN KEY (spotlight_id) REFERENCES image (id)');
-        $this->addSql('ALTER TABLE article_author ADD CONSTRAINT FK_D7684F487294869C FOREIGN KEY (article_id) REFERENCES article (id)');
-        $this->addSql('ALTER TABLE article_file ADD CONSTRAINT FK_3CDDB1117294869C FOREIGN KEY (article_id) REFERENCES article (id)');
-        $this->addSql('ALTER TABLE article_file ADD CONSTRAINT FK_3CDDB11193CB796C FOREIGN KEY (file_id) REFERENCES file (id)');
-        $this->addSql('ALTER TABLE article_image ADD CONSTRAINT FK_B28A764E7294869C FOREIGN KEY (article_id) REFERENCES article (id)');
-        $this->addSql('ALTER TABLE article_image ADD CONSTRAINT FK_B28A764E3DA5256D FOREIGN KEY (image_id) REFERENCES image (id)');
-        $this->addSql('ALTER TABLE article_tag ADD CONSTRAINT FK_919694F97294869C FOREIGN KEY (article_id) REFERENCES article (id)');
-        $this->addSql('ALTER TABLE article_tag ADD CONSTRAINT FK_919694F9BAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id)');
-        $this->addSql('ALTER TABLE file_author ADD CONSTRAINT FK_5B8FE7793CB796C FOREIGN KEY (file_id) REFERENCES file (id)');
-        $this->addSql('ALTER TABLE image_author ADD CONSTRAINT FK_12B286003DA5256D FOREIGN KEY (image_id) REFERENCES image (id)');
-        $this->addSql('ALTER TABLE tag_author ADD CONSTRAINT FK_54EE91E4BAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id)');
-        $this->addSql('ALTER TABLE tag_badge ADD CONSTRAINT FK_DC1C511BBAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id)');
-        $this->addSql('ALTER TABLE tag_badge ADD CONSTRAINT FK_DC1C511BF7A2C2FC FOREIGN KEY (badge_id) REFERENCES badge (id)');
+        $this->addSql('ALTER TABLE article_author ADD CONSTRAINT FK_D7684F487294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_file ADD CONSTRAINT FK_3CDDB1117294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_file ADD CONSTRAINT FK_3CDDB11193CB796C FOREIGN KEY (file_id) REFERENCES file (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_image ADD CONSTRAINT FK_B28A764E7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_image ADD CONSTRAINT FK_B28A764E3DA5256D FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_tag ADD CONSTRAINT FK_919694F97294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE article_tag ADD CONSTRAINT FK_919694F9BAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE file_author ADD CONSTRAINT FK_5B8FE7793CB796C FOREIGN KEY (file_id) REFERENCES file (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE image_author ADD CONSTRAINT FK_12B286003DA5256D FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE tag_author ADD CONSTRAINT FK_54EE91E4BAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE tag_badge ADD CONSTRAINT FK_DC1C511BBAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE tag_badge ADD CONSTRAINT FK_DC1C511BF7A2C2FC FOREIGN KEY (badge_id) REFERENCES badge (id) ON DELETE CASCADE');
     }
 
 
     public function down(Schema $schema): void
-        { throw new IrreversibleMigration('TLI2 base migration cannot be reverted.'); }
+    {
+        throw new IrreversibleMigration('The TLI2 base/startup migration cannot be reverted.');
+    }
 
 
     // prevent User Deprecated: Context: trying to commit a transaction Problem: the transaction is already committed, relying on silencing is deprecated
