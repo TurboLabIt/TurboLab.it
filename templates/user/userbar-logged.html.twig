@@ -1,13 +1,46 @@
 {% extends 'user/userbar-base.html.twig' %}
 
 {% block userbarContent %}
-    <span class="d-flex justify-content-between">
-        <span><i class="fa-solid fa-user" style="color: #000000;"></i> Ciao <strong>{{ User.username }}!</strong></span>
-        <a href="{{ path('app_article_shorturl', {id: constant('App\\Service\\Cms\\Article::ID_NEWSLETTER')}) }}">
-            <i class="fa-solid fa-envelope-open-text"></i> Iscrizione newsletter
-        </a> &nbsp;
-        <a href="{{ User.url }}"><i class="fa-solid fa-list"></i> I tuoi articoli</a> &nbsp;
-        <a href="{{ path('app_editor_new') }}"><i class="fa-solid fa-pen"></i> Nuovo articolo</a> &nbsp;
-        <a href="{{ path('app_logout') }}"> <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Logout</a>
-    </span>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-0">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target=".tli-userbar-links" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse tli-userbar-links">
+                <ul class="navbar-nav w-100 d-flex justify-content-between">
+                    <li class="nav-item">
+                        <i class="fa-solid fa-user"></i> Ciao <strong>{{ User.username }}!</strong>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ newsletterUrl|raw }}">
+                            <i class="fa-solid fa-envelope-open-text"></i> Iscrizione newsletter
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ ucpUrl|raw }}">
+                            <i class="fa-solid fa-sliders"></i> Pannello di controllo utente
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('app_editor_new') }}"><i class="fa-solid fa-pen"></i> Scrivi nuovo articolo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ User.url }}"><i class="fa-solid fa-list"></i> La tua pagina di Autore</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('app_logout') }}">
+                            <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Esci (logout)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
 {% endblock %}

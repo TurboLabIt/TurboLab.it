@@ -28,6 +28,8 @@ class CacheHolePunchingController extends BaseController
             $originUrl = '/';
         }
 
+        $newsletterUrl = $frontendHelper->getNewsletterHowToUrl();
+
         $userEntity = $this->getUser();
 
         if( empty($userEntity) ) {
@@ -38,12 +40,14 @@ class CacheHolePunchingController extends BaseController
                 'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
                 // the redirection DOESN'T WORK :-(
                 'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
-                'newsletterUrl' => $this->factory->createArticle()->load(Article::ID_NEWSLETTER)->getShortUrl()
+                'newsletterUrl' => $newsletterUrl
             ]);
         }
 
         return $this->render('user/userbar-logged.html.twig', [
-            'User' => $user->setEntity($userEntity),
+            'User'          => $user->setEntity($userEntity),
+            'ucpUrl'        => $frontendHelper->getUcpUrl(),
+            'newsletterUrl' => $newsletterUrl
         ]);
     }
 }

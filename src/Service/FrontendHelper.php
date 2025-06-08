@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 
+use App\Service\Cms\Article;
 use App\Service\Cms\Tag;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\TagCollection;
@@ -32,6 +33,18 @@ class FrontendHelper
     public function getForgotPasswordUrl() : string
     {
         return $this->factory->getForumUrlGenerator()->generateForgotPasswordUrl();
+    }
+
+
+    public function getUcpUrl() : string
+    {
+        return $this->factory->getForumUrlGenerator()->generateUcpUrl();
+    }
+
+
+    public function getNewsletterHowToUrl() : string
+    {
+        return $this->factory->createArticle()->load(Article::ID_NEWSLETTER)->getUrl();
     }
 
 
@@ -84,7 +97,9 @@ class FrontendHelper
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗂️ Nav menu ***">
     public function getNavCategories() : array
-        { return array_merge( $this->getNavTopCategories(), $this->getNavOtherCategories() ); }
+    {
+        return array_merge( $this->getNavTopCategories(), $this->getNavOtherCategories() );
+    }
 
 
     public function getNavTopCategories() : array
@@ -102,7 +117,9 @@ class FrontendHelper
 
 
     public function getNavOtherCategories() : array
-        { return $this->buildNavCategories(TagCollection::NAV_OTHER_CATEGORIES); }
+    {
+        return $this->buildNavCategories(TagCollection::NAV_OTHER_CATEGORIES);
+    }
 
 
     protected function buildNavCategories(array $arrCategoryIds) : array

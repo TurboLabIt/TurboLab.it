@@ -40,9 +40,9 @@ class NewsletterController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG, name: 'app_newsletter')]
-    public function index(Article $article) : Response
+    public function index() : Response
     {
-        $url = $article->load(Article::ID_NEWSLETTER)->getUrl();
+        $url = $this->frontendHelper->getNewsletterHowToUrl();
         return $this->redirect($url);
     }
 

@@ -70,7 +70,7 @@ class ForumUrlGenerator
     }
 
 
-    protected function generateUcpUrl(array $parameters = [], int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateUcpUrl(array $parameters = [], int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         $url = $this->generateHomeUrl($urlType). 'ucp.php';
 
