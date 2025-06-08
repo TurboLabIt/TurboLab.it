@@ -4,7 +4,6 @@ namespace App\Tests\Smoke;
 use App\Service\User;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
-use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -44,16 +43,17 @@ class AuthorTest extends BaseT
     }
 
 
-    public static function authorsToTestThoroughlyProvider() : Generator
+    public static function authorsToTestThoroughlyProvider() : array
     {
-        yield from [
-            // 👀 https://turbolab.it/utenti/zane
+        return
             [
-                "id"            => 2,
-                "authorName"    => "Zane (Gianluigi Zanettini)",
-                "totalPageNum"  => static::USER_ZANE_TOTAL_PAGES
-            ]
-        ];
+                // 👀 https://turbolab.it/utenti/zane
+                [
+                    "id"            => 2,
+                    "authorName"    => "Zane (Gianluigi Zanettini)",
+                    "totalPageNum"  => static::USER_ZANE_TOTAL_PAGES
+                ]
+            ];
     }
 
 
@@ -126,7 +126,7 @@ class AuthorTest extends BaseT
     }
 
 
-    public static function latestArticlesAuthorsProvider() : Generator
+    public static function latestArticlesAuthorsProvider() : array
     {
         if( empty(static::$arrTestAuthors) ) {
 
@@ -134,18 +134,21 @@ class AuthorTest extends BaseT
                 static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
                     ->loadLatestPublished();
 
+            $arrAuthors = [];
             foreach($latestArticles as $article) {
 
                 $authors = $article->getAuthors();
                 foreach($authors as $author) {
 
                     $authorId = $author->getId();
-                    static::$arrTestAuthors[$authorId] = $author;
+                    $arrAuthors[$authorId] = $author;
                 }
             }
+
+            static::$arrTestAuthors = self::repackDataProviderArray($arrAuthors);
         }
 
-        yield static::$arrTestAuthors;
+        return static::$arrTestAuthors;
     }
 
 

@@ -5,7 +5,6 @@ use App\Service\Cms\Article;
 use App\Service\Cms\HtmlProcessor;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\Tests\BaseT;
-use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DomCrawler\Crawler;
@@ -158,17 +157,19 @@ class ArticleTest extends BaseT
     }
 
 
-    public static function articleToTestProvider() : Generator
+    public static function articleToTestProvider() : array
     {
         if( empty(static::$arrTestArticles) ) {
 
-            static::$arrTestArticles =
+            $arrData =
                 static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
                     ->loadLatestPublished()
                     ->getAll();
+
+            static::$arrTestArticles = static::repackDataProviderArray($arrData);
         }
 
-        yield static::$arrTestArticles;
+        return static::$arrTestArticles;
     }
 
 
@@ -217,15 +218,15 @@ class ArticleTest extends BaseT
     }
 
 
-    public static function koArticlesProvider() : Generator
+    public static function koArticlesProvider() : array
     {
         if( empty(static::$arrKoArticles) ) {
 
             /** @var ArticleCollection $arrKoArticles */
             $arrKoArticles = static::getService("App\\ServiceCollection\\Cms\\ArticleCollection");
-            $arrKoArticles->load([2380, 353]);
+            $arrKoArticles->load([2380, 353, 1779]);
 
-            static::$arrKoArticles = [
+            $arrData = [
                 [
                     'Article'   => $arrKoArticles->get(2380),
                     'keyword'   => 'celsius'
@@ -239,9 +240,11 @@ class ArticleTest extends BaseT
                     'keyword'   => 'crypto'
                 ]
             ];
+
+            static::$arrKoArticles = static::repackDataProviderArray($arrData);
         }
 
-        yield static::$arrKoArticles;
+        return static::$arrKoArticles;
     }
 
 

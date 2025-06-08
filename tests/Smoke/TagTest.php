@@ -4,7 +4,6 @@ namespace App\Tests\Smoke;
 use App\Service\Cms\Tag;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
-use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -64,22 +63,23 @@ class TagTest extends BaseT
     }
 
 
-    public static function tagsToTestThoroughlyProvider() : Generator
+    public static function tagsToTestThoroughlyProvider() : array
     {
-        yield from [
-            // 👀 https://turbolab.it/turbolab.it-1
+        return
             [
-                "id"            => 1,
-                "tagTitle"      => "TurboLab.it",
-                "totalPageNum"  => static::TAG_TLI_TOTAL_PAGES
-            ],
-            // 👀 https://turbolab.it/windows-10
-            [
-                "id"            => 10,
-                "tagTitle"      => "Windows",
-                "totalPageNum"  => static::TAG_WINDOWS_TOTAL_PAGES
-            ],
-        ];
+                // 👀 https://turbolab.it/turbolab.it-1
+                [
+                    "id"            => 1,
+                    "tagTitle"      => "TurboLab.it",
+                    "totalPageNum"  => static::TAG_TLI_TOTAL_PAGES
+                ],
+                // 👀 https://turbolab.it/windows-10
+                [
+                    "id"            => 10,
+                    "tagTitle"      => "Windows",
+                    "totalPageNum"  => static::TAG_WINDOWS_TOTAL_PAGES
+                ],
+            ];
     }
 
 
@@ -140,7 +140,7 @@ class TagTest extends BaseT
     }
 
 
-    public static function latestArticlesTagsProvider() : Generator
+    public static function latestArticlesTagsProvider() : array
     {
         if( empty(static::$arrTestTags) ) {
 
@@ -148,18 +148,21 @@ class TagTest extends BaseT
                 static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
                     ->loadLatestPublished();
 
+            $arrTags = [];
             foreach($latestArticles as $article) {
 
                 $tags = $article->getTags();
                 foreach($tags as $tag) {
 
                     $tagId = $tag->getId();
-                    static::$arrTestTags[$tagId] = $tag;
+                    $arrTags[$tagId] = $tag;
                 }
             }
+
+            static::$arrTestTags = self::repackDataProviderArray($arrTags);
         }
 
-        yield static::$arrTestTags;
+        return static::$arrTestTags;
     }
 
 
@@ -178,17 +181,19 @@ class TagTest extends BaseT
     }
 
 
-    public static function categoryProvider() : Generator
+    public static function categoryProvider() : array
     {
         if( empty(static::$arrCategories) ) {
 
-            static::$arrCategories =
+            $arrData =
                 static::getService("App\\ServiceCollection\\Cms\\TagCollection")
                     ->loadCategories()
                     ->getAll();
+
+            static::$arrCategories = self::repackDataProviderArray($arrData);
         }
 
-        yield static::$arrCategories;
+        return static::$arrCategories;
     }
 
 
