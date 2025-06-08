@@ -19,27 +19,11 @@ $currentUser = $this->factory->getCurrentUser();
 ## 🥷 CSRF
 
 ````html
-<input type="hidden" name="_csrf_token"
-       value="{{ csrf_token(constant('App\\Controller\\MyController::CSRF_TOKEN_ID')) }}">
+<input type="hidden"
+  name="{{ constant('App\\Controller\\MyController::CSRF_TOKEN_PARAM_NAME') }}"
+  value="{{ csrf_token(constant('App\\Controller\\Editor\\MyController::CSRF_TOKEN_ID')) }}">
 ````
 
 ````php
-#[Route(... methods: ['POST'])]
-public function submit(Request $request, CsrfTokenManagerInterface $csrfTokenManager) : Response
-{
-    $currentUser = $this->factory->getCurrentUser();
-    if( empty($currentUser) ) {
-        throw $this->createAccessDeniedException('Non sei loggato!');
-    }
-
-    $csrfToken  = $request->request->get('_csrf_token');
-    $oToken     = new CsrfToken(static::CSRF_TOKEN_ID, $csrfToken);
-    $tokenCheck = $csrfTokenManager->isTokenValid($oToken);
-
-    if( !$tokenCheck ) {
-        throw $this->createAccessDeniedException('Verifica di sicurezza CSRF fallita. Prova di nuovo');
-    }
-
-    ...
-}
+$this->validateCsrfToken();
 ````

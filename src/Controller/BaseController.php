@@ -6,6 +6,8 @@ use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -20,6 +22,8 @@ abstract class BaseController extends AbstractController
 {
     const int CACHE_DEFAULT_EXPIRY      = 60 * 10; // 10 minutes
     const string CACHE_WARMER_HEADER    = "x-tli-cache-warmer";
+    const ?string CSRF_TOKEN_ID         = null;
+    const string CSRF_TOKEN_PARAM_NAME  = '_csrf_token';
 
     protected bool $cacheIsDisabled = false;
     protected Request $request;
@@ -28,7 +32,7 @@ abstract class BaseController extends AbstractController
     public function __construct(
         protected Factory $factory, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected FrontendHelper $frontendHelper, protected Environment $twig
+        protected FrontendHelper $frontendHelper, protected Environment $twig, protected CsrfTokenManagerInterface $csrfTokenManager
     )
         { $this->request = $requestStack->getCurrentRequest(); }
 
@@ -117,6 +121,25 @@ abstract class BaseController extends AbstractController
     {
         if( !$this->request->isXmlHttpRequest() ) {
             throw new BadRequestException('This page can only be requested via AJAX');
+        }
+    }
+
+
+    protected function validateCsrfToken(
+        ?string $errorMessage = null,
+        null|int|string $tokenId = null, ?string $tokenParamName = null
+    )
+    {
+        $tokenParamName ??= static::CSRF_TOKEN_PARAM_NAME;
+        $csrfToken = $this->request->get($tokenParamName);
+
+        $tokenId ??= static::CSRF_TOKEN_ID;
+        $oToken = new CsrfToken($tokenId, $csrfToken);
+
+        if( !$this->csrfTokenManager->isTokenValid($oToken) ) {
+
+            $errorMessage ??= 'Verifica di sicurezza CSRF fallita. Prova di nuovo';
+            throw $this->createAccessDeniedException($errorMessage);
         }
     }
 }
