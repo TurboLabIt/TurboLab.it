@@ -12,11 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 class ArticleTag extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'tags')]
-    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(name: 'tag_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected ?Tag $tag = null;
 
     #[ORM\ManyToOne(inversedBy: 'articlesTagged')]

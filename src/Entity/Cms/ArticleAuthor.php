@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ArticleAuthor extends BaseCmsEntity
 {
     #[ORM\ManyToOne(inversedBy: 'authors')]
-    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected ?Article $article = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
