@@ -58,12 +58,13 @@ if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
 
 $forumLoginUrl              = $siteUrl . "/forum/ucp.php?mode=login";
 $forumRegisterUrl           = $siteUrl . "/forum/ucp.php?mode=register";
+$forumForgotPasswordUrl     = $siteUrl . "/forum/user/forgot_password";
 $forumResendActivationUrl   = $siteUrl . "/forum/ucp.php?mode=resend_act";
 
 match( $result["status"] ?? null ) {
 
     LOGIN_ERROR_USERNAME    => tliResponse('Username non trovato 😓 Sei sicuro di esserti già <a href="' . $forumRegisterUrl . '">iscritto</a>?', 401),
-    LOGIN_ERROR_PASSWORD    => tliResponse("Password errata 🦖 Assicurati di averla scritta correttamente, poi riprova!", 403),
+    LOGIN_ERROR_PASSWORD    => tliResponse('Password errata 🦖 Assicurati di averla scritta correttamente, poi riprova! Oppure: <a href="' . $forumForgotPasswordUrl . '">hai dimenticato la password?</a>', 403),
     LOGIN_ERROR_ACTIVE      => tliResponse('Questo account non è attivo 📧 Puoi <a href="' . $forumResendActivationUrl . '">richiedere l\'attivazione qui</a>', 401),
     LOGIN_ERROR_ATTEMPTS    => tliResponse('Hai eseguito troppi tentativi 🛑 <a href="' . $forumLoginUrl . '">Ora puoi solo eseguire login tramite il forum</a>', 429),
     LOGIN_SUCCESS           => tliResponse("Bentornato " . strip_tags($username) . " 😊!", 200),
