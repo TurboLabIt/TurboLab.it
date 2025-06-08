@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -26,6 +27,7 @@ class Article extends BaseCmsEntity
         ViewableEntityTrait, CommentTopicableEntityTrait;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
+    #[Assert\Choice(choices: [self::FORMAT_ARTICLE, self::FORMAT_NEWS], message: 'Invalid Article format')]
     protected ?int $format = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]

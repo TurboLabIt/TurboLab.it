@@ -6,6 +6,7 @@ use App\Service\Cms\Article;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 trait PublishableEntityTrait
@@ -13,6 +14,7 @@ trait PublishableEntityTrait
     use PublishingStatusesTrait;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true, 'default' => self::PUBLISHING_STATUS_DRAFT])]
+    #[Assert\Choice(choices: self::PUBLISHING_STATUSES, message: 'Invalid publishing status')]
     protected int $publishingStatus = Article::PUBLISHING_STATUS_DRAFT;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
