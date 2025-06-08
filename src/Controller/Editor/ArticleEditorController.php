@@ -113,7 +113,7 @@ class ArticleEditorController extends BaseController
             ->addAuthor($author)
             ->save();
 
-        dd($this->articleEditor->getUrl());
+        return $this->redirect( $this->articleEditor->getUrl() );
     }
 
 

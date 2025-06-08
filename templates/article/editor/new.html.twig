@@ -134,9 +134,8 @@
                                     Dopo aver cercato, potrai iniziare a scrivere il tuo articolo da qui 👇
                                 </p>
 
-                                <form action="{{ path('app_editor_new_submit') }}" method="POST">
+                                <form action="{{ path('app_editor_new_submit') }}" method="POST" class="mb-3">
 
-                                    <!-- Label + Input centered together -->
                                     <div class="mb-3 d-flex justify-content-center">
                                         <div style="max-width: 600px; width: 100%;">
                                             <label for="{{ titleFieldName }}" class="form-label show-new-article-form">
@@ -151,7 +150,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Radio buttons centered and aligned with input -->
                                     <div class="mb-3 d-flex justify-content-center">
                                         <div class="d-flex justify-content-center gap-3 flex-wrap" style="max-width: 600px; width: 100%;">
                                             <div class="form-check form-check-inline">
