@@ -135,7 +135,7 @@
                                 </p>
 
 
-                                <form action="{{ path('app_editor_new') }}" method="POST" style="margin-bottom: 27px;">
+                                <form action="{{ path('app_editor_new_submit') }}" method="POST" style="margin-bottom: 27px;">
 
                                     <label for="new-article-title" class="form-label show-new-article-form">
                                         Titolo del tuo nuovo articolo:
@@ -152,6 +152,9 @@
                                         </button>
                                     </div>
 
+                                    <input type="hidden"
+                                      name="{{ constant('App\\Controller\\Editor\\ArticleEditorController::CSRF_TOKEN_PARAM_NAME') }}"
+                                      value="{{ csrf_token(constant('App\\Controller\\Editor\\ArticleEditorController::CSRF_TOKEN_ID')) }}">
                                 </form>
 
 

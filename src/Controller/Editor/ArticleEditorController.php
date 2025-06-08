@@ -11,19 +11,23 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 
 class ArticleEditorController extends BaseController
 {
+    const string CSRF_TOKEN_ID = 'new-article';
+
+
     public function __construct(
         protected Factory $factory,
         protected ArticleEditor $articleEditor, protected Article $article, RequestStack $requestStack,
-        protected FrontendHelper $frontendHelper
+        protected FrontendHelper $frontendHelper, protected CsrfTokenManagerInterface $csrfTokenManager
     )
         { $this->request = $requestStack->getCurrentRequest(); }
 
 
-    #[Route('/scrivi', name: 'app_editor_new')]
+    #[Route('/scrivi', name: 'app_editor_new', methods: ['GET'])]
     public function new() : Response
     {
         $currentUser = $this->factory->getCurrentUser();
@@ -64,6 +68,22 @@ class ArticleEditorController extends BaseController
             'SideArticlesSlices'            => $arrSideArticlesSlices,
             'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti'])
         ]);
+    }
+
+
+    #[Route('/scrivi/salva',  name: 'app_editor_new_submit', methods: ['POST'])]
+    public function submit() : Response
+    {
+        $currentUser = $this->factory->getCurrentUser();
+
+        if( empty($currentUser) ) {
+
+            throw $this->createAccessDeniedException(
+                'Non sei loggato! Solo gli utenti registrati possono creare nuovi articoli.'
+            );
+        }
+
+        $this->validateCsrfToken();
     }
 
 
