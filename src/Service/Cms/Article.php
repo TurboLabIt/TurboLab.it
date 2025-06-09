@@ -388,7 +388,7 @@ class Article extends BaseCmsService
             return $this->getTitle();
         }
 
-        $title      = $this->getTitleFormatted();
+        $title      = $this->getTitle();
         $updatedAt  = $this->getUpdatedAt();
         $dateLimit  = (new DateTime())->modify('-2 months');
 

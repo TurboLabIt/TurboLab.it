@@ -224,7 +224,7 @@ class TagTest extends BaseT
     {
         $assertFailureMessage = "Failing URL: " . $tag->getUrl();
 
-        $tagTitle = $tag->getTitleFormatted();
+        $tagTitle = $tag->getNavTitle();
         $this->assertNotEmpty($tagTitle, $assertFailureMessage);
 
         foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {

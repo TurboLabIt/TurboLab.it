@@ -64,7 +64,7 @@ class Tag extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🛋️ Text ***">
-    public function getTitleFormatted() : ?string
+    public function getNavTitle() : ?string
     {
         // TODO DB-driven titleFormatted for tags
         $titleFormatted =

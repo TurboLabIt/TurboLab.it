@@ -136,7 +136,7 @@ class FrontendHelper
             $id = (string)$tag->getId();
             $arrNavItems[$id] =
                 $this->buildLink(
-                    $tag->getTitleFormatted(), $tag->getUrl(), false, null,
+                    $tag->getNavTitle(), $tag->getUrl(), false, null,
                     $tag->getFontAwesomeIcon(), $tag->getSlug()
                 );
         }

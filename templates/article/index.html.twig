@@ -30,7 +30,7 @@
                                     <li class="breadcrumb-item">
                                         <a href="{{ Article.topTagOrDefault.url }}">
                                             <i class="{{ Article.topTagOrDefault.fontAwesomeIcon|first }}"></i>&nbsp;
-                                            {{ Article.topTagOrDefault.titleFormatted }}
+                                            {{ Article.topTagOrDefault.navTitle }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -186,7 +186,7 @@
                                         <li>
                                             {% for Tag in Article.Tags %}
                                                 <a href="{{ Tag.url }}">
-                                                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.titleFormatted|raw }}
+                                                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
                                                 </a>
                                             {% endfor %}
                                         </li>
@@ -323,7 +323,7 @@
 
 {% endblock %}
 
-{% block licenseWorkName %}{{ Article.titleFormatted|raw }}<br>{% endblock %}
+{% block licenseWorkName %}{{ Article.title|raw }}<br>{% endblock %}
 
 {% block licenseWorkAuthor %}
 

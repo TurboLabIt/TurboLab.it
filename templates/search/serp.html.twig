@@ -75,7 +75,7 @@
 
                                 {% for Article in LocalResults %}
                                     <div class="serp-result local-result">
-                                        <h4><a href="{{ Article.url }}">{{ Article.titleFormatted|raw }}</a></h4>
+                                        <h4><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
                                         <p><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
                                     </div>
                                 {% endfor %}
