@@ -13,7 +13,7 @@ class HtmlProcessorReverse extends HtmlProcessorBase
     protected ?string $abstract = null;
 
 
-    protected function processTextForStorage(string $text) : string
+    protected function cleanTextBeforeStorage(string $text) : string
     {
         // replace U+00A0 : NO-BREAK SPACE [NBSP] with an actual goddamn space
         $normalized = preg_replace('/\xc2\xa0/', ' ', $text);
@@ -21,24 +21,20 @@ class HtmlProcessorReverse extends HtmlProcessorBase
         // replace "fine typography" with their base chars
         $normalized = str_ireplace( array_keys(static::FINE_TYPOGRAPHY_CHARS), static::FINE_TYPOGRAPHY_CHARS, $normalized);
 
-        $normalized = trim($normalized);
-
         // replace two or more consecutive spaces with one
         $normalized = preg_replace('/ {2,}/', ' ', $normalized);
 
-        return $normalized;
+        return trim($normalized);
     }
 
 
     /**
-     * Transform an HTML title for storage. Input title example:
-     * `SCRIPT: <script>alert("bòòm");</script>`
+     * Input: `Come mostrare un messaggio con JS: <script>alert("bòòm");</script>`
+     * Store: `Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;`
      */
-    public function processTitleForStorage(string $title) : string
+    public function processRawInputTitleForStorage(string $title) : string
     {
-        $normalized = $this->processTextForStorage($title);
-
-        $arrEntities =
+        $normalized = $this->cleanTextBeforeStorage($title);
 
         // create the equivalent HTML-encoded &entities; array
         $arrEntities =

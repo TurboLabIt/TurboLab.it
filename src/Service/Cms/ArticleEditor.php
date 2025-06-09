@@ -47,9 +47,13 @@ class ArticleEditor extends Article
     }
 
 
-    public function setTitle(string $newTitle) : static
+    public function setTitleFromRawInput(string $newTitle) : static
     {
-        $cleanTitle = $this->htmlProcessorReverse->processTitleForStorage($newTitle);
+        /**
+         * Input: `Come mostrare un messaggio con JS: <script>alert("bòòm");</script>`
+         * Store: `Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;`
+         */
+        $cleanTitle = $this->htmlProcessorReverse->processRawInputTitleForStorage($newTitle);
         $this->entity->setTitle($cleanTitle);
         return $this;
     }
