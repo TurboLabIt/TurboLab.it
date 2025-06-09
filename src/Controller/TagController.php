@@ -89,7 +89,7 @@ class TagController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        $title = $tag->getTitle() . ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page");
+        $title = $tag->getNavTitle() . ": articoli, guide e news" . ( $page < 2 ? '' : " - Pagina $page");
 
         return
             $this->twig->render('tag/index.html.twig', [

@@ -1087,7 +1087,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-
     protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : ?string
     {
         if( !is_string($value) ) {
