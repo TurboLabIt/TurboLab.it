@@ -80,7 +80,7 @@ Il sistema deve:
 
 **Il corpo** degli articoli importati da TLI1 utilizza *single-quote* e *double-quote* letterali sia per indicare gli attributi (`<img src="..">`) sia per il testo (`il sistema dell'anno 2001 fu chiamato "Windows XP"`).
 
-Per essere conformi alle specifiche indicate sopra, dovrebbe invece essere `<img src=".."> il sistema dell&apos;anno 2001 fu chiamato &quot;Windows XP&quot;`.
+Per essere conformi alle specifiche indicate sopra, dovrebbe invece essere `<img src=".."> il sistema dell&#039;anno 2001 fu chiamato &quot;Windows XP&quot;`.
 
 Questa ambiguità impedisce di correggere il problema in fase di importazione, ma non crea problemi: l'HTML rimane infatti valido **fino a quando non lo si utilizza in un attributo**, situazione che al momento non si presenta.
 
@@ -111,6 +111,6 @@ Stringa inserita da autore e visualizzata tale e quale dall'utente:
 
 HTML utilizzato dal browser:
 
-`<p>@ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine</p>`
+`<p>@ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &#039;single quoted&#039; \ / | » fine</p>`
 
 Lo stesso HTML è salvato a database.
