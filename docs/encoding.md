@@ -42,7 +42,7 @@ La conversione in entity deve obbligatoriamente essere svolta **sul frontend**, 
 
 Il meglio che possiamo fare sul backend è ripristinare tutte le entity *non-markup* (come `&egrave;` oppure `&eacute;`) riportandole ai caratteri originali. Allo scopo, usiamo [HtmlProcessor::convertEntitiesToUtf8Chars](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/HtmlProcessor.php). Questo avviene:
 
-- durante l'importazione - alcuni vecchi articoli usano `&egrave;` o le "virgolette di Word" `&rsquo;`/`&lsquo;`
+- durante l'importazione (alcuni vecchi articoli usano `&egrave;` o le "virgolette di Word" `&rsquo;`/`&lsquo;`)
 - prima del salvataggio da editor - per sicurezza e consistenza
 
 Il backend deve poi **salvare il dato esattamente come ricevuto**.

@@ -49,16 +49,7 @@ class ArticleEditor extends Article
 
     public function setTitle(string $newTitle) : static
     {
-        $cleanTitle = trim($newTitle);
-
-        $arrQuoteEncodeMap = [
-            '"' => '&quot;',
-            "'" => '&apos;'
-        ];
-
-        $cleanTitle = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $cleanTitle);
-        $cleanTitle = $this->htmlProcessorReverse->convertEntitiesToUtf8Chars($cleanTitle);
-
+        $cleanTitle = $this->htmlProcessorReverse->processTitleForStorage($newTitle);
         $this->entity->setTitle($cleanTitle);
         return $this;
     }

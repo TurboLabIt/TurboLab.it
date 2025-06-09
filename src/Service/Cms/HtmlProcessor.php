@@ -5,12 +5,9 @@ use App\Entity\Cms\Image as ImageEntity;
 use DOMDocument;
 
 
+// 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 class HtmlProcessor extends HtmlProcessorBase
 {
-    // this is not needed here, but it can be used elsewhere
-    const array ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
-
-
     public function processArticleBodyForDisplay(Article $article) : string
     {
         $text = $article->getBody();

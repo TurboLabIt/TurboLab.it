@@ -5,11 +5,58 @@ use DOMDocument;
 use DOMElement;
 
 
+// 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 class HtmlProcessorReverse extends HtmlProcessorBase
 {
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
+
+
+    protected function processTextForStorage(string $text) : string
+    {
+        // replace U+00A0 : NO-BREAK SPACE [NBSP] with an actual goddamn space
+        $normalized = preg_replace('/\xc2\xa0/', ' ', $text);
+
+        // replace "fine typography" with their base chars
+        $normalized = str_ireplace( array_keys(static::FINE_TYPOGRAPHY_CHARS), static::FINE_TYPOGRAPHY_CHARS, $normalized);
+
+        $normalized = trim($normalized);
+
+        // replace two or more consecutive spaces with one
+        $normalized = preg_replace('/ {2,}/', ' ', $normalized);
+
+        return $normalized;
+    }
+
+
+    /**
+     * Transform an HTML title for storage. Input title example:
+     * `SCRIPT: <script>alert("bòòm");</script>`
+     */
+    public function processTitleForStorage(string $title) : string
+    {
+        $normalized = $this->processTextForStorage($title);
+
+        $arrEntities =
+
+        // create the equivalent HTML-encoded &entities; array
+        $arrEntities =
+            array_map(function($char) {
+                return htmlentities($char, ENT_QUOTES, 'UTF-8');
+                }, static::ENTITIES);
+
+        array_walk($arrEntities, function(&$entity) {
+            // replace ' (encoded as &#039;) with &apos; (HTML5)
+            $entity = str_ireplace('&#039;', '&apos;', $entity);
+            //
+        });
+
+        // replace the only entities that really need to be replaced, as per encoding.md
+        $normalized = str_ireplace(static::ENTITIES, $arrEntities, $normalized);
+
+        return $normalized;
+    }
 
 
     public function processArticleBodyForStorage(string $body) : string
