@@ -10,6 +10,7 @@ use App\Entity\Cms\Badge as BadgeEntity;
 use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\HtmlProcessorReverse;
 use App\Service\Cms\Image;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
@@ -70,7 +71,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         protected UserRepository $userRepository,
 
         protected EntityManagerInterface $em, protected ProjectDir $projectDir,
-        protected Factory $Factory, protected HtmlProcessor $htmlProcessor
+        protected Factory $Factory, protected HtmlProcessorReverse $htmlProcessor
     )
     {
         parent::__construct($arrConfig);
@@ -333,7 +334,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Article(int $articleId, array $arrArticle)
     {
-        $title          = $this->convertValueFromTli1ToTli2($arrArticle["titolo"], true);
+        $title          = $this->convertTitleFromTli1ToTli2($arrArticle["titolo"]);
         $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
 
         $pubStatus = match( $arrArticle["finito"] ) {
@@ -505,7 +506,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Image(int $imageId, array $arrImage)
     {
-        $title      = $this->convertValueFromTli1ToTli2($arrImage["titolo"], true);
+        $title      = $this->convertTitleFromTli1ToTli2($arrImage["titolo"], true);
         $format     = mb_strtolower($arrImage["formato"]);
         $createdAt  = DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark  = match ($arrImage["watermarked"]) {
@@ -664,7 +665,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         } else {
 
             $title = str_ireplace('&', '&amp;', $arrTag["tag"]);
-            $title = $this->convertValueFromTli1ToTli2($title, true);
+            $title = $this->convertTitleFromTli1ToTli2($title);
         }
 
         $ranking    = (int)$arrTag["peso"];
@@ -821,7 +822,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1File(int $fileId, array $arrFile)
     {
-        $title      = $this->convertValueFromTli1ToTli2($arrFile["titolo"], true);
+        $title      = $this->convertTitleFromTli1ToTli2($arrFile["titolo"], true);
         $views      = (int)$arrFile["visite"];
         $url        = $arrFile["url"] ?: null;
         $format     = $arrFile["formato"] ?: null;
@@ -994,7 +995,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $entityTli2Badge =
             $this->badgeRepository
                 ->selectOrNew($badgeId)
-                ->setTitle( $this->convertValueFromTli1ToTli2($arrBadge["titolo"], true) )
+                ->setTitle( $this->convertTitleFromTli1ToTli2($arrBadge["titolo"]) )
                 ->setAbstract( $this->convertValueFromTli1ToTli2($arrBadge["testo_breve"]) )
                 ->setBody( $this->convertValueFromTli1ToTli2($arrBadge["testo_esteso"]) )
                 ->setImageUrl( $arrBadge["spotlight"] )
@@ -1065,6 +1066,26 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         return $this;
     }
+
+
+
+    protected function convertTitleFromTli1ToTli2($title) : ?string
+    {
+        if( !is_string($title) ) {
+            return $title;
+        }
+
+        /**
+         * titolo LIKE '%&%'
+         *
+         * Example:
+         * Come svolgere test automatici su TurboLab.it (verifica dell'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine
+         */
+
+        $titleDecoded = html_entity_decode($title);
+        return $this->htmlProcessor->processRawInputTitleForStorage($titleDecoded);
+    }
+
 
 
     protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : ?string
