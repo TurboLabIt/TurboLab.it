@@ -13,7 +13,7 @@ Gli unici caratteri da trasformare in entity, **quando figurano nel testo e devo
 - `>` ➡ `&gt;`
 - `&` ➡ `&amp;`
 - `"` ➡ `&quot;`
-- `'` ➡ `&apos;`
+- `'` ➡ `&#039;` (nota: `&apos;` crea problemi nei JSON)
 
 Questo è il set minimo: se non vengono trasformati in entity, il parser non è poi in grado di capire se costituiscano istruzioni di markup oppure testo. Ad esempio:
 
@@ -76,7 +76,7 @@ Il sistema deve:
 
 
 
-## 💣 Caso speciale
+## 💣 Caso speciale: importazione da TLI1
 
 **Il corpo** degli articoli importati da TLI1 utilizza *single-quote* e *double-quote* letterali sia per indicare gli attributi (`<img src="..">`) sia per il testo (`il sistema dell'anno 2001 fu chiamato "Windows XP"`).
 

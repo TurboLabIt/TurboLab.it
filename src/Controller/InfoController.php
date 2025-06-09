@@ -87,10 +87,11 @@ class InfoController extends BaseController
         foreach($articles as $article) {
 
             $arrResponseData[] = [
-                'title'         => $article->getTitle(),
-                'url'           => $article->getUrl(),
-                'start'         => $article->getPublishedAt()->format('Y-m-d H:i'),
-                'color'         => $article->isNews() ? 'green' : 'blue'
+                // html_entity_decode is DANGEROUS! But here it's safe+needed, bc $this->json() re-encodes
+                'title' => html_entity_decode($article->getTitle()),
+                'url'   => $article->getUrl(),
+                'start' => $article->getPublishedAt()->format('Y-m-d H:i'),
+                'color' => $article->isNews() ? 'green' : 'blue'
             ];
         }
 

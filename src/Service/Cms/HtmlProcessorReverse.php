@@ -42,12 +42,6 @@ class HtmlProcessorReverse extends HtmlProcessorBase
                 return htmlentities($char, ENT_QUOTES, 'UTF-8');
                 }, static::ENTITIES);
 
-        array_walk($arrEntities, function(&$entity) {
-            // replace ' (encoded as &#039;) with &apos; (HTML5)
-            $entity = str_ireplace('&#039;', '&apos;', $entity);
-            //
-        });
-
         // replace the only entities that really need to be replaced, as per encoding.md
         $normalized = str_ireplace(static::ENTITIES, $arrEntities, $normalized);
 
