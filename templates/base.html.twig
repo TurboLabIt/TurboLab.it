@@ -69,11 +69,13 @@
 
     {% endblock %}
 
+    {% block preloaderStyle %}{% include 'parts/preloader.html.twig' %}{% endblock %}
+
 </head>
 
 <body class="home-1-bg">
 
-    {% include 'parts/preloader.html.twig' %}
+    {% block preloaderHtml %}<div class="preloader"><div><div class="nb-spinner"></div></div></div>{% endblock %}
 
     <div id="tli-userbar-load-target" data-loading-url="{{ path('app_cache-hole-punching_userbar') }}">
         <div class="container" style="padding: 10px">
