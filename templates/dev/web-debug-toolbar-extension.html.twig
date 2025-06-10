@@ -2,6 +2,7 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
+
     {% set icon %}
         {# this is the content displayed as a panel in the toolbar #}
         <img src="/favicon.ico">
@@ -16,7 +17,29 @@
             </strong>
         </div>
 
+
         <hr>
+
+
+        <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
+            <strong>
+                <i class="fa-brands fa-html5" style="color: #ffa200;"></i>
+                <a href="https://validator.w3.org/#validate_by_input"
+                   target="_blank">W3C HTML Validator</a>
+            </strong>
+        </div>
+
+        <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
+            <strong>
+                <i class="fa-solid fa-square-rss" style="color: #ffa200;"></i>
+                <a href="https://validator.w3.org/feed/#validate_by_input"
+                   target="_blank">W3C RSS Validator</a>
+            </strong>
+        </div>
+
+
+        <hr>
+
 
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
@@ -25,6 +48,7 @@
                    target="_blank">GitHub</a>
             </strong>
         </div>
+
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
                 <i class="fa-solid fa-bug" style="color: #008000"></i>
@@ -32,6 +56,7 @@
                    target="_blank">New issue</a>
             </strong>
         </div>
+
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
                 <i class="fa-solid fa-book" style="color: #D3D1B3"></i>
@@ -40,7 +65,9 @@
             </strong>
         </div>
 
+
         <hr>
+
 
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
@@ -49,13 +76,15 @@
                    target="_blank">Bootstrap</a>
             </strong>
         </div>
+
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
                 <i class="fa-solid fa-flag" style="color: #74C0FC;"></i>
-                <a href="https://fontawesome.com/search?o=r&m=free"
+                <a href="https://fontawesome.com/search?ic=free"
                    target="_blank">Font Awesome</a>
             </strong>
         </div>
+
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
                 <i class="fa-solid fa-envelope-open-text"></i>
@@ -64,7 +93,9 @@
             </strong>
         </div>
 
+
         <hr>
+
 
         <div class="sf-toolbar-info-piece tli-web-debug-toolbar-extension-item"><br>
             <strong>
@@ -83,4 +114,5 @@
     {% endset %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: false }) }}
+
 {% endblock %}
