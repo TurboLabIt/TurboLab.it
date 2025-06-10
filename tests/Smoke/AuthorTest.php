@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Service\Dictionary;
 use App\Service\User;
 use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
@@ -175,7 +176,7 @@ class AuthorTest extends BaseT
         $authorName = $author->getFullName();
         $this->assertNotEmpty($authorName, $assertFailureMessage);
 
-        foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
+        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
 
             $accentedLetterEntity = htmlentities($accentedLetter);
             $this->assertStringNotContainsString($accentedLetterEntity, $authorName);

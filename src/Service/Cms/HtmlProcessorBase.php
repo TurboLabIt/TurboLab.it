@@ -8,20 +8,6 @@ use DOMDocument;
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 abstract class HtmlProcessorBase
 {
-    // https://www.w3.org/wiki/Common_HTML_entities_used_for_typography
-    const array FINE_TYPOGRAPHY_CHARS = [
-        // dash
-        '–' => '-', '—' => '-',
-        // Single quotes
-        '‘' => "'", '’' => "'",
-        // Double quotes
-        '“' => '"', '”' => '"',
-    ];
-
-    const array ENTITIES = ['&', '<', '>', '"', "'"];
-    const array ACCENTED_LETTERS = ['à', 'á', 'è', 'é', 'ì', 'í', 'ò', 'ó', 'ù', 'ú'];
-
-
     public function __construct(protected Factory $factory) {}
 
 

@@ -108,7 +108,7 @@ class ArticleEditorController extends BaseController
         $author = $this->factory->createUser()->load($currentUserId);
 
         $this->articleEditor
-            ->setTitleFromRawInput($newArticleTitle)
+            ->setTitle($newArticleTitle)
             ->setFormat($newArticleFormat)
             ->addAuthor($author)
             ->save();

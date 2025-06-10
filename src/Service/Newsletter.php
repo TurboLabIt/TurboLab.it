@@ -262,7 +262,7 @@ class Newsletter extends Mailer
 
         $article =
             $this->factory->createArticleEditor()
-                ->setTitleFromRawInput($this->newsletterName)
+                ->setTitle($this->newsletterName)
                 ->addAuthor($this->userSystem)
                 ->addTag($this->tagNewsletterTli, $this->userSystem)
                 ->setFormat(Article::FORMAT_ARTICLE)

@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Service\Dictionary;
 use DOMDocument;
 use DOMElement;
 
@@ -13,39 +14,16 @@ class HtmlProcessorReverse extends HtmlProcessorBase
     protected ?string $abstract = null;
 
 
-    protected function cleanTextBeforeStorage(string $text) : string
+    public function convertCharsToHtmlEntities(string $title) : string
     {
-        // replace U+00A0 : NO-BREAK SPACE [NBSP] with an actual goddamn space
-        $normalized = preg_replace('/\xc2\xa0/', ' ', $text);
-
-        // replace "fine typography" with their base chars
-        $normalized = str_ireplace( array_keys(static::FINE_TYPOGRAPHY_CHARS), static::FINE_TYPOGRAPHY_CHARS, $normalized);
-
-        // replace two or more consecutive spaces with one
-        $normalized = preg_replace('/ {2,}/', ' ', $normalized);
-
-        return trim($normalized);
-    }
-
-
-    /**
-     * Input: `Come mostrare un messaggio con JS: <script>alert("bòòm");</script>`
-     * Store: `Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;`
-     */
-    public function processRawInputTitleForStorage(string $title) : string
-    {
-        $normalized = $this->cleanTextBeforeStorage($title);
-
         // create the equivalent HTML-encoded &entities; array
         $arrEntities =
             array_map(function($char) {
                 return htmlentities($char, ENT_QUOTES, 'UTF-8');
-                }, static::ENTITIES);
+                }, Dictionary::ENTITIES);
 
         // replace the only entities that really need to be replaced, as per encoding.md
-        $normalized = str_ireplace(static::ENTITIES, $arrEntities, $normalized);
-
-        return $normalized;
+        return str_ireplace(Dictionary::ENTITIES, $arrEntities, $title);
     }
 
 

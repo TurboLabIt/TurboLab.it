@@ -2,7 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Service\Cms\Tag;
-use App\Service\Cms\HtmlProcessor;
+use App\Service\Dictionary;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
@@ -227,7 +227,7 @@ class TagTest extends BaseT
         $tagTitle = $tag->getNavTitle();
         $this->assertNotEmpty($tagTitle, $assertFailureMessage);
 
-        foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
+        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
 
             $accentedLetterEntity = htmlentities($accentedLetter);
             $this->assertStringNotContainsString($accentedLetterEntity, $tagTitle);

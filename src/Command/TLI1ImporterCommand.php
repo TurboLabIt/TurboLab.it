@@ -23,8 +23,8 @@ use App\Repository\Cms\ImageRepository;
 use App\Repository\Cms\TagRepository;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
-use App\Service\Cms\HtmlProcessor;
 use App\Service\Factory;
+use App\Service\TextProcessor;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -63,15 +63,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
 
     public function __construct(
-        array $arrConfig,
+        array $arrConfig, protected ProjectDir $projectDir, protected Factory $Factory,
+        protected TextProcessor $textProcessor, protected HtmlProcessorReverse $htmlProcessor,
 
+        protected EntityManagerInterface $em,
         protected ArticleRepository $articleRepository, protected ImageRepository $imageRepository,
         protected TagRepository $tagRepository, protected FileRepository $fileRepository,
         protected TopicRepository $topicRepository, protected BadgeRepository $badgeRepository,
-        protected UserRepository $userRepository,
-
-        protected EntityManagerInterface $em, protected ProjectDir $projectDir,
-        protected Factory $Factory, protected HtmlProcessorReverse $htmlProcessor
+        protected UserRepository $userRepository
     )
     {
         parent::__construct($arrConfig);
@@ -1082,8 +1081,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
          * Come svolgere test automatici su TurboLab.it (verifica dell'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine
          */
 
-        $titleDecoded = html_entity_decode($title);
-        return $this->htmlProcessor->processRawInputTitleForStorage($titleDecoded);
+        return $this->textProcessor->processRawInputTitleForStorage($title);
     }
 
 

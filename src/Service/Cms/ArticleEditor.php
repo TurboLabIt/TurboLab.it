@@ -5,6 +5,7 @@ use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleTag;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
+use App\Service\TextProcessor;
 use App\Service\User;
 use DateTimeInterface;
 use Exception;
@@ -13,12 +14,14 @@ use Exception;
 class ArticleEditor extends Article
 {
     protected HtmlProcessorReverse $htmlProcessorReverse;
+    protected TextProcessor $textProcessor;
 
 
     public function __construct(Factory $factory)
     {
         parent::__construct($factory);
         $this->htmlProcessorReverse = new HtmlProcessorReverse($factory);
+        $this->textProcessor        = new TextProcessor($this->htmlProcessorReverse);
     }
 
 
@@ -47,13 +50,9 @@ class ArticleEditor extends Article
     }
 
 
-    public function setTitleFromRawInput(string $newTitle) : static
+    public function setTitle(string $newTitle) : static
     {
-        /**
-         * Input: `Come mostrare un messaggio con JS: <script>alert("bòòm");</script>`
-         * Store: `Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;`
-         */
-        $cleanTitle = $this->htmlProcessorReverse->processRawInputTitleForStorage($newTitle);
+        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
         $this->entity->setTitle($cleanTitle);
         return $this;
     }

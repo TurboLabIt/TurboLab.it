@@ -1,7 +1,7 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Service\Cms\HtmlProcessor;
+use App\Service\Dictionary;
 use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -30,7 +30,7 @@ class HomeTest extends BaseT
         $crawler = $this->fetchDomNode("/");
         $H1FromCrawler = $crawler->filter('body h1')->html();
 
-        foreach(HtmlProcessor::ACCENTED_LETTERS as $accentedLetter) {
+        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
 
             $accentedLetterEntity = htmlentities($accentedLetter);
             $this->assertStringNotContainsString($accentedLetterEntity, $H1FromCrawler);
