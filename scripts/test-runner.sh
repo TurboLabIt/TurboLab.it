@@ -5,8 +5,8 @@ source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "🧪 ${APP_NAME} Test Runner"
 
-fxTitle "Pages to check"
-fxAskConfirmation "Update the values in tests/BaseT.php before proceeding"
+#fxTitle "Pages to check"
+#fxAskConfirmation "Update the values in tests/BaseT.php before proceeding"
 
 # https://github.com/TurboLabIt/webstackup/tree/master/script/php/test-runner-package.sh
 source "${WEBSTACKUP_SCRIPT_DIR}php/test-runner-package.sh"
