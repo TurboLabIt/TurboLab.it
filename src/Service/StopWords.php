@@ -18,18 +18,6 @@ class StopWords
 
     public function removeFromSting(string $text) : string
     {
-        // prepare quotes
-        $arrQuotesMap = [
-            '“' => '"',
-            '”' => '"',
-            '‘' => "'",
-            '’' => "'",
-            '`' => "'",
-            '´' => "'"
-        ];
-
-        $text = str_ireplace( array_keys($arrQuotesMap), array_values($arrQuotesMap), $text );
-
         $this->deleteStaleCacheFiles();
 
         //
