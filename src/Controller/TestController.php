@@ -16,6 +16,12 @@ class TestController extends BaseController
 {
     const string SECTION_SLUG = "test";
 
+    #[Route('/' . self::SECTION_SLUG, name: 'app_test', condition: "'%kernel.environment%' == 'dev'")]
+    public function index() : Response
+    {
+        return $this->render('test/index.html.twig', []);
+    }
+
 
     #[Route('/' . self::SECTION_SLUG . '/prevent-unused-service/', name: 'app_test_prevent-unused-service', condition: "'%kernel.environment%' == 'dev'")]
     public function preventUnusedService(
