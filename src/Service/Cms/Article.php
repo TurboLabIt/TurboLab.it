@@ -457,10 +457,14 @@ class Article extends BaseCmsService
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
     public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->factory->getArticleUrlGenerator()->generateUrl($this, $urlType); }
+    {
+        return $this->factory->getArticleUrlGenerator()->generateUrl($this, $urlType);
+    }
 
     public function getShortUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->factory->getArticleUrlGenerator()->generateShortUrl($this, $urlType); }
+    {
+        return $this->factory->getArticleUrlGenerator()->generateShortUrl($this, $urlType);
+    }
 
     public function checkRealUrl(string $tagSlugDashId, string $articleSlugDashId) : ?string
     {

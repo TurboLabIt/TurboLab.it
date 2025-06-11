@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ArticleTest extends BaseT
 {
     protected static array $arrTestArticles;
+    protected static array $arrLatestArticles;
     protected static array $arrKoArticles;
 
 
@@ -157,23 +158,23 @@ class ArticleTest extends BaseT
     }
 
 
-    public static function articleToTestProvider() : array
+    public static function latestArticlesProvider() : array
     {
-        if( empty(static::$arrTestArticles) ) {
+        if( empty(static::$arrLatestArticles) ) {
 
             $arrData =
                 static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
                     ->loadLatestPublished()
                     ->getAll();
 
-            static::$arrTestArticles = static::repackDataProviderArray($arrData);
+            static::$arrLatestArticles = static::repackDataProviderArray($arrData);
         }
 
-        return static::$arrTestArticles;
+        return static::$arrLatestArticles;
     }
 
 
-    #[DataProvider('articleToTestProvider')]
+    #[DataProvider('latestArticlesProvider')]
     public function testOpenAllArticles(Article $article)
     {
         static::$client = null;
@@ -282,5 +283,46 @@ class ArticleTest extends BaseT
         $location = static::$client->getResponse()->headers->get('Location');
         $this->assertStringNotContainsString($arrData['keyword'], $location);
         $this->assertStringEndsWith('pc-642/articolo-non-disponibile-' . $article->getId(), $location);
+    }
+
+
+    public static function otherArticlesToTestProvider() : array
+    {
+        if( empty(static::$arrTestArticles) ) {
+
+            $arrData = [
+                1905 => [
+                    'title' => 'O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11',
+                    'url'   => 'oo-appbuster-rimuove-reinstalla-app-windows-10-11-1905'
+                ]
+            ];
+
+            /** @var ArticleCollection $oArticles */
+            $oArticles = static::getService("App\\ServiceCollection\\Cms\\ArticleCollection");
+            $oArticles->load( array_keys($arrData) );
+
+            foreach($arrData as $articleId => &$item) {
+                $item["Article"] = $oArticles->get($articleId);
+            }
+
+            static::$arrTestArticles = static::repackDataProviderArray($arrData);
+        }
+
+        return static::$arrTestArticles;
+    }
+
+
+    #[DataProvider('otherArticlesToTestProvider')]
+    public function testOtherArticles(array $arrArticleData)
+    {
+        static::$client = null;
+
+        /** @var Article $article */
+        $article = $arrArticleData['Article'];
+        $url = $article->getUrl();
+        $this->assertStringEndsWith($arrArticleData['url'], $url);
+
+        $crawler = $this->fetchDomNode($url);
+        $this->articleTitleAsH1Checker($article, $crawler, $arrArticleData["title"]);
     }
 }

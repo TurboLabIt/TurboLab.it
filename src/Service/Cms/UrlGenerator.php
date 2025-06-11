@@ -14,10 +14,10 @@ class UrlGenerator
     protected AsciiSlugger $slugger;
 
 
-    public function __construct(
-        protected StopWords $stopWords, protected UrlGeneratorInterface $symfonyUrlGenerator
-    )
-        { $this->slugger = new AsciiSlugger(); }
+    public function __construct(protected StopWords $stopWords, protected UrlGeneratorInterface $symfonyUrlGenerator)
+    {
+        $this->slugger = new AsciiSlugger();
+    }
 
 
     public function buildSlug(BaseCmsService $service) : string
@@ -28,26 +28,33 @@ class UrlGenerator
 
 
     protected function buildSlugDashIdString(BaseCmsService $service) : string
-        { return $this->buildSlug($service) . "-" . $service->getId(); }
+    {
+        return $this->buildSlug($service) . "-" . $service->getId();
+    }
 
 
     public function slugify(?string $text) : string
     {
         $slug   = strip_tags($text);
         $slug   = html_entity_decode($slug, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // special handling
+        $arrSpecials = [
+          'o&o' => 'oo'
+        ];
+
+        $slug   = str_ireplace( array_keys($arrSpecials), $arrSpecials, $slug );
+
         $slug   = $this->stopWords->removeFromSting($slug);
         $slug   = $this->slugger->slug($slug);
         $slug   = mb_strtolower($slug);
 
-        do {
-            $previousSlug = $slug;
-            $slug = str_replace('--', '-', $slug);
-            $slug = trim($slug);
+        // replace two or more consecutive dashes with one
+        $slug   = preg_replace('/-{2,}/', '-', $slug);
 
-        } while( $slug !== $previousSlug );
-
+        //
         $arrReplaceMap = [
-            'turbolab-it'   => 'turbolab.it'
+            'turbolab-it' => 'turbolab.it'
         ];
 
         return str_ireplace(array_keys($arrReplaceMap), $arrReplaceMap, $slug);
