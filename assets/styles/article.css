@@ -41,3 +41,9 @@
     line-clamp: 3;
     line-height: 1.4 !important;
 }
+
+.post-layout-top-content .post-content h1.title {
+    font-size: 2.5rem;
+    line-height: normal;
+    font-weight: 500;
+}
