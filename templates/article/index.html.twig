@@ -45,7 +45,34 @@
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
                         <div class="post-content">
-                            <h1 class="title">{{ Article.titleWithFreshUpdatedAt|raw }}</h1>
+
+                            {% if Article.currentUserCanEdit %}
+
+                                <div class="alert alert-primary mt-3" role="alert">
+                                    <div class="text-center mb-1">
+                                        <strong>
+                                            <i class="fa-solid fa-person-chalkboard"></i>
+                                            Tu, <i class="fa-solid fa-user"></i> {{ CurrentUser.username }},
+                                            puoi modificare questo articolo!
+                                        </strong>
+                                    </div>
+                                    <div class="mb-1">
+                                        Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.
+                                    </div>
+                                    <div class="mb-1">
+                                        Prima di cominciare a scrivere, leggi sempre la guida
+                                        &quot;<a href="{{ ArticleHowTo.url|raw }}">{{ ArticleHowTo.title|raw }}</a>&quot;.
+                                    </div>
+                                </div>
+
+                                <h1 class="title" contenteditable="true" data-tli-editable-id="title">{{ Article.title|raw }}</h1>
+
+                            {% else %}
+
+                                <h1 class="title">{{ Article.titleWithFreshUpdatedAt|raw }}</h1>
+
+                            {% endif %}
+
                             <div class="post-categories d-flex justify-content-between align-content-center">
                                 <div class="categories-share">
                                     <ul>
@@ -196,6 +223,19 @@
 
                         {% endif %}
 
+                        {% if Article.currentUserCanEdit %}
+
+                            <div id="tli-unsaved-warning" class="sticky-bottom collapse">
+                                <div class="alert alert-danger text-center mb-0" role="alert">
+                                    <a href="#" class="text-decoration-none text-dark">
+                                        <i class="fa-solid fa-floppy-disk fa-beat" style="color: #ff7300;"></i>
+                                        Hai modificato l'articolo, ma non hai ancora salvato la modifica! Clicca qui per salvare ora.
+                                    </a>
+                                </div>
+                            </div>
+
+                        {% endif %}
+
                     </div>
 
                     {% if Article.AuthorsNotSystem is not empty and not Article.isKo %}
@@ -341,5 +381,9 @@
 
     {{ parent() }}
     {{ encore_entry_script_tags('article') }}
+
+    {% if Article.currentUserCanEdit %}
+        {{ encore_entry_script_tags('article-edit') }}
+    {% endif %}
 
 {% endblock %}

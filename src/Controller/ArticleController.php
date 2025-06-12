@@ -72,6 +72,9 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
+        $articleHowTo =
+            $article->currentUserCanEdit() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
+
         $html =
             $this->twig->render('article/index.html.twig', [
                 'metaTitle'             => $article->getTitle(),
@@ -84,6 +87,7 @@ class ArticleController extends BaseController
                 'FrontendHelper'        => $this->frontendHelper,
                 'CurrentUser'           => $this->factory->getCurrentUser(),
                 'Article'               => $article,
+                'ArticleHowTo'          => $articleHowTo,
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
                 'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article)
