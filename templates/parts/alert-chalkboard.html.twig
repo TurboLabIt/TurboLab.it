@@ -1,6 +1,6 @@
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-primary {% block chalkboardStyle %}{% endblock %}" role="alert">
 
-    <div class="text-center mb-2 fw-bold">
+    <div class="text-center fw-bold {% block chalkboardTitleStyle %}fs-5 mb-2{% endblock %}">
         <i class="fa-solid fa-person-chalkboard fa-lg"></i> &nbsp;
         {% block chalkboardTitle %}{% endblock %}
     </div>
