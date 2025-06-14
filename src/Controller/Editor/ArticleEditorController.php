@@ -145,8 +145,8 @@ class ArticleEditorController extends BaseController
             $this->articleEditor->save();
 
             $savedAt = $this->articleEditor->getUpdatedAt()->format('Y-m-d H:i:s');
-            return new Response("OK! Articolo salvato - $savedAt");
+            return new Response("✅ OK! Articolo salvato - $savedAt");
 
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
     }
 }

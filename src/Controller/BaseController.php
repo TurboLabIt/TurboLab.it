@@ -150,13 +150,15 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function textErrorResponse(Exception|Error $ex) : Response
+    protected function textErrorResponse(Exception|Error $ex, ?string $emoji = null) : Response
     {
         $statusCode =
             $ex instanceof HttpExceptionInterface
                 ? $ex->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
 
         $message = $ex->getMessage() ?: 'Internal Server Error';
+        $message = trim($message);
+        $message = trim($emoji . " " . $message);
 
         $response = new Response($message, $statusCode);
         $response->headers->set('Content-Type', 'text/plain');

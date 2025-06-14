@@ -124,7 +124,7 @@ function saveArticle()
             .fail(function(jqXHR, responseText) {
 
                 if(responseText != 'abort') {
-                    setArticleSavingStatusBar('alert-danger', 0, 0, 1, responseText);
+                    setArticleSavingStatusBar('alert-danger', 0, 0, 1, jqXHR.responseText);
                 }
             })
 

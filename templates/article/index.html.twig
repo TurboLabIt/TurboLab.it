@@ -51,9 +51,8 @@
                                 <div class="alert alert-primary" role="alert">
                                     <div class="text-center mb-1">
                                         <strong>
-                                            <i class="fa-solid fa-person-chalkboard"></i>
-                                            Tu, <i class="fa-solid fa-user"></i> {{ CurrentUser.username }},
-                                            puoi modificare questo articolo!
+                                            <i class="fa-solid fa-person-chalkboard fa-lg"></i>
+                                            Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
                                         </strong>
                                     </div>
                                     <div class="mb-1">
@@ -163,8 +162,8 @@
                                 </div>
                                 {% if Article.isReadable %}
                                     <div>
-                                        Tu, <i class="fa-solid fa-user" style="color: #000000;"></i> {{ CurrentUser.username }},
-                                        hai pieno accesso all'articolo. Ma ricorda che il pubblico, ancora, non può leggere il testo.
+                                        Tu, {{ CurrentUser.username }}, hai pieno accesso all'articolo.
+                                        Ma ricorda che il pubblico, ancora, non può leggere il testo.
                                     </div>
                                     {% endif %}
                             </div>
@@ -182,8 +181,8 @@
                                 </div>
                                 {% if Article.isReadable %}
                                     <div>
-                                        Tu, <i class="fa-solid fa-user" style="color: #000000;"></i> {{ CurrentUser.username }},
-                                        hai pieno accesso all'articolo. Ma ricorda che il pubblico non può leggere il testo.
+                                        Tu, {{ CurrentUser.username }}, hai pieno accesso all'articolo.
+                                        Ma ricorda che il pubblico non può leggere il testo.
                                     </div>
                                 {% endif %}
                             </div>
