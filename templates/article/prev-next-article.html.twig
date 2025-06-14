@@ -1,0 +1,22 @@
+<div class="col-md-6">
+
+    {% if Article is not empty %}
+
+        <div class="post-reader-prev tli-prev-next-article">
+            <a href="{{ Article.url }}">
+                <span>
+                    <i class="fa {% block prevNextArticleIcon %}{% endblock %}"></i>
+                    {% block prevNextArticleTitle %}{% endblock %}
+                </span>
+            </a>
+            <h4 class="title">
+                <div class="mb-3 text-center">
+                    <img src="{{ Article.spotlightOrDefaultUrl('min') }}">
+                </div>
+                <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
+            </h4>
+        </div>
+
+    {% endif %}
+
+</div>

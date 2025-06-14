@@ -290,36 +290,17 @@
 
                     <div class="post-reader-text post-reader-text-2 post-reader-text-3 pt-50">
                         <div class="row">
-                            <div class="col-md-6">
-                                {% if Article.previousArticle is not empty %}
-                                    <div class="post-reader-prev">
-                                        <a href="{{ Article.previousArticle.url }}">
-                                            <span><i class="fa fa-angle-left"></i> PRECEDENTE</span>
-                                        </a>
-                                        <h4 class="title">
-                                            <a href="{{ Article.previousArticle.url }}">
-                                                {{ Article.previousArticle.title|raw }}
-                                            </a>
-                                        </h4>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                {% if Article.nextArticle is not empty %}
-                                    <div class="post-reader-prev">
-                                        <div style="text-align: right;">
-                                            <a href="{{ Article.nextArticle.url }}">
-                                                <span>SUCCESSIVO <i class="fa fa-angle-right"></i></span>
-                                            </a>
-                                        </div>
-                                        <h4 class="title">
-                                            <a href="{{ Article.nextArticle.url }}">
-                                                {{ Article.nextArticle.title|raw }}
-                                            </a>
-                                        </h4>
-                                    </div>
-                                {% endif %}
-                            </div>
+
+                            {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.previousArticle ?? null } %}
+                                {% block prevNextArticleIcon %}fa-angle-left{% endblock %}
+                                {% block prevNextArticleTitle %}PRECEDENTE{% endblock %}
+                            {% endembed %}
+
+                            {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.nextArticle ?? null } %}
+                                {% block prevNextArticleIcon %}fa-angle-right{% endblock %}
+                                {% block prevNextArticleTitle %}SUCCESSIVO{% endblock %}
+                            {% endembed %}
+
                         </div>
                     </div>
                 </article>

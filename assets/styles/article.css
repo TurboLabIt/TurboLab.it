@@ -24,11 +24,15 @@
     font-weight: 600;
 }
 
-.post-reader-prev {
-    height: 170px;
+.tli-prev-next-article {
+    min-height: 370px;
 }
 
-.post-reader-prev h4 {
+.tli-prev-next-article img {
+    height: 200px;
+}
+
+.tli-prev-next-article h4 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
