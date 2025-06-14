@@ -62,15 +62,14 @@
 
                             {% block loggedInOnlyMainContent %}
 
-                                <div class="alert alert-primary text-center" role="alert">
-                                    <a href="{{ ArticleHowTo.url|raw }}">
-                                        <strong>
-                                            <i class="fa-solid fa-person-chalkboard fa-lg"></i>
-                                            Prima di cominciare a scrivere...
-                                        </strong><br>
-                                        Per favore, leggi sempre la guida &quot;{{ ArticleHowTo.title|raw }}&quot;
-                                    </a>
-                                </div>
+                                {% embed 'parts/alert-chalkboard.html.twig' %}
+                                    {% block chalkboardTitle %}Prima di cominciare a scrivere...{% endblock %}
+                                    {% block chalkboardBody %}
+                                        <a href="{{ ArticleHowTo.url|raw }}">
+                                            Per favore, leggi sempre la guida &quot;{{ ArticleHowTo.title|raw }}&quot;
+                                        </a>
+                                    {% endblock %}
+                                {% endembed %}
 
 
                                 {% if CurrentUserDraftArticles.count or CurrentUserPublishedArticles.count %}

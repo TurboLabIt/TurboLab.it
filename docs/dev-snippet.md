@@ -32,3 +32,15 @@ const string CSRF_TOKEN_ID  = 'something';
 ````php
 $this->validateCsrfToken();
 ````
+
+
+## 🪧 Chalkboard message
+
+````html
+<div class="text-center">
+    {% embed 'parts/alert-chalkboard.html.twig' %}
+        {% block chalkboardTitle %}TITLE{% endblock %}
+        {% block chalkboardBody %}CONTENT{% endblock %}
+    {% endembed %}
+</div>
+````

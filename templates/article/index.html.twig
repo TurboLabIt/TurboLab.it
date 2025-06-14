@@ -54,6 +54,7 @@
                                         Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
                                     {% endblock %}
 
+                                    {% block chalkboardBodyStyle %}{% endblock %}
                                     {% block chalkboardBody %}
                                         <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
                                         <div>Prima di cominciare a scrivere, leggi sempre la guida &quot;<a href="{{ ArticleHowTo.url|raw }}">{{ ArticleHowTo.title|raw }}</a>&quot;.</div>
