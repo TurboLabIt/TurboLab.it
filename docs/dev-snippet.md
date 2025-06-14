@@ -37,10 +37,8 @@ $this->validateCsrfToken();
 ## 🪧 Chalkboard message
 
 ````html
-<div class="text-center">
-    {% embed 'parts/alert-chalkboard.html.twig' %}
-        {% block chalkboardTitle %}TITLE{% endblock %}
-        {% block chalkboardBody %}CONTENT{% endblock %}
-    {% endembed %}
-</div>
+{% embed 'parts/alert-chalkboard.html.twig' %}
+    {% block alertTitle %}TITLE{% endblock %}
+    {% block alertBody %}CONTENT{% endblock %}
+{% endembed %}
 ````

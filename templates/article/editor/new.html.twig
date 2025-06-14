@@ -45,26 +45,27 @@
                             <p>
                                 TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti appassionati
                                 della nostra community (come te!).
-                                Se anche tu vuoi pubblicare un nuovo articolo, questa è la pagina giusta.
+                                Se anche tu vuoi partecipare e pubblicare un nuovo articolo, questa è la pagina giusta.
                             </p>
 
-                            <div class="alert alert-warning text-center" role="alert">
-                                <a href="/forum">
-                                    <strong>
-                                        <i class="fa-solid fa-hand" style="color: #ff0000;"></i>
-                                        ATTENZIONE! Questa NON è la pagina per "fare domande"
-                                    </strong><br>
-                                    Se vuoi fare una domanda o interagire con la community,
-                                    <i class="fa-solid fa-hand-point-right fa-shake" style="color: #ff1100;"></i>
-                                    visita il forum
-                                </a>
-                            </div>
+
+                            {% embed 'parts/alert-scream.html.twig' %}
+                                {% block alertTitle %}ATTENZIONE! Questa NON è la pagina per "fare domande"{% endblock %}
+                                {% block alertBody %}
+                                    <a href="/forum">
+                                        Se vuoi fare una domanda o interagire con la community,
+                                        <i class="fa-solid fa-hand-point-right fa-shake" style="color: #ff1100;"></i>
+                                        visita il forum
+                                    </a>
+                                {% endblock %}
+                            {% endembed %}
+
 
                             {% block loggedInOnlyMainContent %}
 
                                 {% embed 'parts/alert-chalkboard.html.twig' %}
-                                    {% block chalkboardTitle %}Prima di cominciare a scrivere...{% endblock %}
-                                    {% block chalkboardBody %}
+                                    {% block alertTitle %}Prima di cominciare a scrivere...{% endblock %}
+                                    {% block alertBody%}
                                         <a href="{{ ArticleHowTo.url|raw }}">
                                             Per favore, leggi sempre la guida &quot;{{ ArticleHowTo.title|raw }}&quot;
                                         </a>
@@ -88,13 +89,16 @@
                                         Valuta di completare uno di questi prima di iniziarne uno nuovo.
                                     </p>
 
-                                    {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserDraftArticles}) }}
+                                    {% embed 'parts/alert-warning.html.twig' %}
+                                        {% block alertTitle %}Ricorda!{% endblock %}
+                                        {% block alertBodyStyle %}text-start{% endblock %}
+                                        {% block alertBody %}
+                                            Fino a quando non finirai questi articoli, e ne modificherai lo stato in
+                                            <code>Pronto e finito</code>, non saranno disponibili ai visitatori!
+                                        {% endblock %}
+                                    {% endembed %}
 
-                                    <p>
-                                        <strong><i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i> Ricorda!</strong>
-                                        Fino a quando non finirai questi articoli, e ne modificherai lo stato in
-                                        <code>Pronto e finito</code>, non saranno disponibili ai visitatori!
-                                    </p>
+                                    {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserDraftArticles}) }}
 
                                 {% elseif CurrentUserPublishedArticles.count %}
 

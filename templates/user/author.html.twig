@@ -55,11 +55,11 @@
 
                     <div class="text-center">
                         {% embed 'parts/alert-chalkboard.html.twig' %}
-                            {% block chalkboardStyle %}d-inline-block mb-0{% endblock %}
-                            {% block chalkboardTitleStyle %}mb-2{% endblock %}
-                            {% block chalkboardTitle %}Stai guardando la TUA pagina personale{% endblock %}
-                            {% block chalkboardBodyStyle %}text-start{% endblock %}
-                            {% block chalkboardBody %}
+                            {% block alertStyle %}d-inline-block mb-0{% endblock %}
+                            {% block alertTitleStyle %}mb-2{% endblock %}
+                            {% block alertTitle %}Stai guardando la TUA pagina personale{% endblock %}
+                            {% block alertBodyStyle %}text-start{% endblock %}
+                            {% block alertBody%}
                                 <ul class="list-unstyled mb-0">
                                     <li>
                                         <a href="/forum/ucp.php?i=ucp_profile&amp;mode=avatar">
@@ -83,10 +83,10 @@
             {% if authorIsCurrentUser %}
 
                 {% embed 'parts/alert-chalkboard.html.twig' %}
-                    {% block chalkboardStyle %}mt-3 mb-0{% endblock %}
-                    {% block chalkboardTitleStyle %}mb-2{% endblock %}
-                    {% block chalkboardTitle %}Cerchi i tuoi ultimi articoli?{% endblock %}
-                    {% block chalkboardBody %}
+                    {% block alertStyle %}mt-3 mb-0{% endblock %}
+                    {% block alertTitleStyle %}mb-2{% endblock %}
+                    {% block alertTitle %}Cerchi i tuoi ultimi articoli?{% endblock %}
+                    {% block alertBody%}
                         <div class="text-center">
                             Di seguito sono mostrati solo gli articoli con stato
                             <span style="color: #1e7e34"><i class="fa-solid fa-book"></i> Pubblicato</span>.

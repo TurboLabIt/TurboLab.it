@@ -1,12 +1,4 @@
-<div class="alert alert-primary {% block chalkboardStyle %}{% endblock %}" role="alert">
+{% extends 'parts/alert-base.html.twig' %}
 
-    <div class="text-center fw-bold {% block chalkboardTitleStyle %}fs-5 mb-2{% endblock %}">
-        <i class="fa-solid fa-person-chalkboard fa-lg"></i> &nbsp;
-        {% block chalkboardTitle %}{% endblock %}
-    </div>
-
-    <div class="{% block chalkboardBodyStyle %}text-center{% endblock %}">
-        {% block chalkboardBody %}{% endblock %}
-    </div>
-
-</div>
+{% block alertBootstrapStyle %}alert-primary{% endblock %}
+{% block alertTitleIcon %}<i class="fa-solid fa-person-chalkboard fa-lg"></i>{% endblock %}
