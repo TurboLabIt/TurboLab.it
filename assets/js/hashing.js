@@ -6,3 +6,15 @@ export function fastHash16(str)
     }
     return ('00000000' + (hash >>> 0).toString(16)).slice(-8).repeat(2);
 }
+
+
+export function fastHash16ElementHtml(element)
+{
+    let value = jQuery(element).html().replace(/&nbsp;/g, ' ').trim();
+
+    if( value == '' ) {
+        return '';
+    }
+
+    return fastHash16(value);
+}

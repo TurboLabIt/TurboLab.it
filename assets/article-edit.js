@@ -1,5 +1,5 @@
 //import $ from 'jquery';
-import { fastHash16 } from './js/hashing';
+import { fastHash16ElementHtml } from './js/hashing';
 import debounce from './js/debouncer';
 
 
@@ -8,11 +8,11 @@ function cacheTextHashForComparison()
     jQuery('[contenteditable=true]').each(function() {
 
         let editableId = jQuery(this).data('tli-editable-id');
-        let text = jQuery(this).html();
-        window[editableId] = fastHash16(text);
+        window[editableId] = fastHash16ElementHtml(this);
     });
 }
 
+// pageload init
 cacheTextHashForComparison();
 
 
@@ -56,11 +56,10 @@ jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
     let differenceFound = false;
     jQuery('[contenteditable=true]').each(function() {
 
+        let fastHashedHtml = fastHash16ElementHtml(this);
         let editableId = jQuery(this).data('tli-editable-id');
-        let text = jQuery(this).html();
-        let fastHashedText = fastHash16(text);
 
-        if( fastHashedText != window[editableId] ) {
+        if( fastHashedHtml != window[editableId] ) {
 
             setArticleSavingStatusBar('alert-danger', 1, 0, 0, 0);
             articleSavingStatusBar.show();
@@ -76,11 +75,22 @@ jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
 }, 300));
 
 
+function clearCacheTextHashForComparison()
+{
+    jQuery('[contenteditable=true]').each(function() {
+
+        let editableId = jQuery(this).data('tli-editable-id');
+        window[editableId] = null;
+    });
+}
+
+
 var articleSaveRequest = null;
 
-jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again', function(event) {
-
-    event.preventDefault();
+function saveArticle()
+{
+    // set to "unknown" until actually saved
+    clearCacheTextHashForComparison();
 
     setArticleSavingStatusBar('alert-primary', 0, 1, 0, 0);
 
@@ -102,19 +112,40 @@ jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again', funct
 
         $.post(endpoint, payload, function(response) {})
 
-            .done(function(response) {
+            .done(function(responseText) {
 
                 if( !unsavedWarning.is(':visible') ) {
-                    setArticleSavingStatusBar('alert-success', 0, 0, 0, response);
+                    setArticleSavingStatusBar('alert-success', 0, 0, 0, responseText);
                 }
 
                 cacheTextHashForComparison();
             })
 
-            .fail(function(response) {
+            .fail(function(jqXHR, responseText) {
 
-                setArticleSavingStatusBar('alert-danger', 0, 0, 1, response.responseText);
+                if(responseText != 'abort') {
+                    setArticleSavingStatusBar('alert-danger', 0, 0, 1, responseText);
+                }
             })
 
             .always(function(response) {});
+}
+
+
+jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  function(event) {
+
+    event.preventDefault();
+    saveArticle();
+
+});
+
+
+jQuery(document).on('keydown', function(event) {
+
+    // CTRL+S or Command+S (Mac)
+    if( (event.ctrlKey || event.metaKey) && event.key === 's') {
+
+        event.preventDefault();
+        saveArticle();
+    }
 });
