@@ -15,11 +15,6 @@
     margin-top: 10px;
 }
 
-.tli-article-main-content .alert.alert-warning div:first-child {
-    text-align: center;
-    font-weight: bold;
-}
-
 .tli-article-main-content .alert.alert-warning div:not(:first-child) {
     margin-top: 10px;
 }
