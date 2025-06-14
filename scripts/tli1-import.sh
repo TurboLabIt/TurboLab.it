@@ -13,10 +13,5 @@ rm -rf ${PROJECT_DIR}backup/db-dumps/*.sql
 bash "${SCRIPT_DIR}db-restore.sh"
 
 cd ${PROJECT_DIR}
-if [ "$EXPECTED_USER" = "$(whoami)" ]; then
-  symfony console tli1
-else
-  sudo -u "$EXPECTED_USER" -H symfony console tli1
-fi
-
-bash "${SCRIPT_DIR}cache-clear.sh"
+wsuSymfony console tli1
+wsuSymfony console cache:clear

@@ -505,7 +505,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Image(int $imageId, array $arrImage)
     {
-        $title      = $this->convertTitleFromTli1ToTli2($arrImage["titolo"], true);
+        $title      = $this->convertTitleFromTli1ToTli2($arrImage["titolo"]);
+        $title      = empty($title) ? "img-$imageId" : $title;
         $format     = mb_strtolower($arrImage["formato"]);
         $createdAt  = DateTime::createFromFormat('YmdHis', $arrImage["data_creazione"]);
         $watermark  = match ($arrImage["watermarked"]) {
@@ -821,7 +822,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1File(int $fileId, array $arrFile)
     {
-        $title      = $this->convertTitleFromTli1ToTli2($arrFile["titolo"], true);
+        $title      = $this->convertTitleFromTli1ToTli2($arrFile["titolo"]);
         $views      = (int)$arrFile["visite"];
         $url        = $arrFile["url"] ?: null;
         $format     = $arrFile["formato"] ?: null;
@@ -1067,26 +1068,17 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-
     protected function convertTitleFromTli1ToTli2($title) : ?string
     {
-        if( !is_string($title) ) {
-            return $title;
-        }
-
-        /**
-         * titolo LIKE '%&%'
-         *
-         * Example:
-         * Come svolgere test automatici su TurboLab.it (verifica dell'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine
-         */
-
+        // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
         return $this->textProcessor->processRawInputTitleForStorage($title);
     }
 
 
     protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : ?string
     {
+        // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
+
         if( !is_string($value) ) {
             return $value;
         }
