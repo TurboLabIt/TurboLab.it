@@ -48,21 +48,18 @@
 
                             {% if Article.currentUserCanEdit %}
 
-                                <div class="alert alert-primary" role="alert">
-                                    <div class="text-center mb-1">
-                                        <strong>
-                                            <i class="fa-solid fa-person-chalkboard fa-lg"></i>
-                                            Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
-                                        </strong>
-                                    </div>
-                                    <div class="mb-1">
-                                        Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.
-                                    </div>
-                                    <div class="mb-1">
-                                        Prima di cominciare a scrivere, leggi sempre la guida
-                                        &quot;<a href="{{ ArticleHowTo.url|raw }}">{{ ArticleHowTo.title|raw }}</a>&quot;.
-                                    </div>
-                                </div>
+                                {% embed 'parts/alert-chalkboard.html.twig' %}
+
+                                    {% block chalkboardTitle %}
+                                        Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
+                                    {% endblock %}
+
+                                    {% block chalkboardBody %}
+                                        <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
+                                        <div>Prima di cominciare a scrivere, leggi sempre la guida &quot;<a href="{{ ArticleHowTo.url|raw }}">{{ ArticleHowTo.title|raw }}</a>&quot;.</div>
+                                    {% endblock %}
+
+                                {% endembed %}
 
                                 <h1 class="title" contenteditable="true" data-tli-editable-id="title">{{ Article.title|raw }}</h1>
 
@@ -73,6 +70,7 @@
                             {% endif %}
 
                             <div class="post-categories d-flex justify-content-between align-content-center">
+
                                 <div class="categories-share">
                                     <ul>
                                         {% if Article.commentsTopic is not empty %}
@@ -101,7 +99,9 @@
                                         {% endif %}
                                     </ul>
                                 </div>
+
                             </div>
+
                         </div>
 
                         {% if Article.isPublished %}

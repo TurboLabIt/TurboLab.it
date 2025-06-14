@@ -1,8 +1,8 @@
 <?php
 namespace App\Trait;
 
-use App\Exception\EmptyParameterException;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 
@@ -19,7 +19,7 @@ trait TitleableEntityTrait
         $title = trim($title);
 
         if( empty($title) ) {
-            throw new EmptyParameterException('The article title cannot be empty');
+            throw new BadRequestException('The article title cannot be empty');
         }
 
         $this->title = $title;
