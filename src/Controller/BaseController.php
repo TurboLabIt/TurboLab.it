@@ -5,7 +5,10 @@ use App\Exception\NotImplementedException;
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
+use Error;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -31,10 +34,13 @@ abstract class BaseController extends AbstractController
 
     public function __construct(
         protected Factory $factory, protected Paginator $paginator,
-        RequestStack $requestStack, protected TagAwareCacheInterface $cache, protected ParameterBagInterface $parameterBag,
-        protected FrontendHelper $frontendHelper, protected Environment $twig, protected CsrfTokenManagerInterface $csrfTokenManager
+        RequestStack $requestStack, protected TagAwareCacheInterface $cache,
+        protected ParameterBagInterface $parameterBag, protected FrontendHelper $frontendHelper,
+        protected Environment $twig, protected CsrfTokenManagerInterface $csrfTokenManager
     )
-        { $this->request = $requestStack->getCurrentRequest(); }
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
     protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
@@ -141,5 +147,20 @@ abstract class BaseController extends AbstractController
             $errorMessage ??= 'Verifica di sicurezza CSRF fallita. Prova di nuovo';
             throw $this->createAccessDeniedException($errorMessage);
         }
+    }
+
+
+    protected function textErrorResponse(Exception|Error $ex) : Response
+    {
+        $statusCode =
+            $ex instanceof HttpExceptionInterface
+                ? $ex->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        $message = $ex->getMessage() ?: 'Internal Server Error';
+
+        $response = new Response($message, $statusCode);
+        $response->headers->set('Content-Type', 'text/plain');
+
+        return $response;
     }
 }

@@ -1,30 +1,120 @@
 //import $ from 'jquery';
+import { fastHash16 } from './js/hashing';
+import debounce from './js/debouncer';
 
-jQuery(document).on('input', '[contenteditable="true"]', function(event) {
 
-    let unsavedMessage = jQuery('#tli-unsaved-warning');
+function cacheTextHashForComparison()
+{
+    jQuery('[contenteditable=true]').each(function() {
 
-    if( !unsavedMessage.hasClass('collapse') ) {
-        return false;
+        let editableId = jQuery(this).data('tli-editable-id');
+        let text = jQuery(this).html();
+        window[editableId] = fastHash16(text);
+    });
+}
+
+cacheTextHashForComparison();
+
+
+function setArticleSavingStatusBar(alertClass, showUnsavedTextMessage, showLoaderino, showTryAgain, responseText)
+{
+    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
+
+    let alertContainer = articleSavingStatusBar.find('.alert');
+    alertContainer
+        .removeClass('alert-primary alert-success alert-danger alert-warning')
+        .addClass(alertClass);
+
+    let textContainer = articleSavingStatusBar.find('.tli-warning-unsaved');
+    showUnsavedTextMessage ? textContainer.removeClass('collapse') : textContainer.addClass('collapse');
+
+    let loaderino = articleSavingStatusBar.find('.tli-loaderino');
+    showLoaderino ? loaderino.removeClass('collapse') : loaderino.addClass('collapse');
+
+    let responseTarget = articleSavingStatusBar.find('.tli-response-target');
+
+    if( responseText === 0 ) {
+
+        responseTarget.addClass('collapse');
+
+    } else {
+
+        responseTarget
+            .removeClass('collapse')
+            .html(responseText);
     }
 
-    let currentText = jQuery(this).html();
-    let editableId  = jQuery(this).data('tli-editable-id');
+    let tryAgain = articleSavingStatusBar.find('.tli-action-try-again');
+    showTryAgain ? tryAgain.removeClass('collapse') : tryAgain.addClass('collapse');
+}
 
-    if (typeof window[editableId] === 'undefined') {
-        window[editableId] = '';
+
+jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
+
+    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
+
+    let differenceFound = false;
+    jQuery('[contenteditable=true]').each(function() {
+
+        let editableId = jQuery(this).data('tli-editable-id');
+        let text = jQuery(this).html();
+        let fastHashedText = fastHash16(text);
+
+        if( fastHashedText != window[editableId] ) {
+
+            setArticleSavingStatusBar('alert-danger', 1, 0, 0, 0);
+            articleSavingStatusBar.show();
+            differenceFound = true;
+            return false; // break
+        }
+    });
+
+    if (!differenceFound) {
+        articleSavingStatusBar.hide();
     }
 
-    if( currentText != window[editableId] ) {
-        unsavedMessage.fadeIn('slow');
-    }
-});
+}, 300));
 
 
-jQuery(document).on('click', '#tli-unsaved-warning', function(event) {
+var articleSaveRequest = null;
+
+jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again', function(event) {
 
     event.preventDefault();
-    jQuery(this).fadeOut('slow', function() {
-        jQuery(this).addClass('collapse');
-    });
+
+    setArticleSavingStatusBar('alert-primary', 0, 1, 0, 0);
+
+    if( articleSaveRequest != null ) {
+        articleSaveRequest.abort();
+    }
+
+    let article = jQuery('article');
+    let endpoint= article.attr('data-save-url');
+    let payload = {
+        "title" : jQuery('[data-tli-editable-id=title]').html(),
+        "body"  : null,
+        "token" : null
+    };
+
+    let unsavedWarning = jQuery('#tli-article-saving-status-bar').find('.tli-warning-unsaved');
+
+    articleSaveRequest =
+
+        $.post(endpoint, payload, function(response) {})
+
+            .done(function(response) {
+
+                if( !unsavedWarning.is(':visible') ) {
+                    setArticleSavingStatusBar('alert-success', 0, 0, 0, response);
+                }
+
+                cacheTextHashForComparison();
+            })
+
+            .fail(function(response) {
+
+                setArticleSavingStatusBar('alert-danger', 0, 0, 1, response.responseText);
+            })
+
+            .always(function(response) {});
 });

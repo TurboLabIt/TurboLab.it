@@ -30,6 +30,15 @@ class ArticleUrlGenerator extends UrlGenerator
     }
 
 
+    public function generateUpdateUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return
+            $this->symfonyUrlGenerator->generate('app_editor_article_update', [
+                "articleId" => $article->getId(),
+            ], $urlType);
+    }
+
+
     public function generateShortUrl(Article $article, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         return

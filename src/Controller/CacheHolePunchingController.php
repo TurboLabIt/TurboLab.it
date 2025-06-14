@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Service\Cms\Article;
 use App\Service\FrontendHelper;
 use App\Service\User;
 use http\Exception\InvalidArgumentException;

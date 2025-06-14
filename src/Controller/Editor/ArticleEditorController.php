@@ -6,7 +6,8 @@ use App\Service\Cms\Article;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Error;
+use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -117,22 +118,35 @@ class ArticleEditorController extends BaseController
     }
 
 
-    #[Route('/editor/article/body/{articleId<[1-9]+[0-9]*>}', name: 'app_editor_article_body')]
-    public function body(int $articleId) : JsonResponse
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}', name: 'app_editor_article_update', methods: ['POST'])]
+    public function update(int $articleId) : Response
     {
-        $this->articleEditor->load($articleId);
+        try {
+            $this->ajaxOnly();
 
-        $html = $this->articleEditor->getBodyForDisplay();
+            if( empty($this->getUser()) ) {
+                throw $this->createAccessDeniedException('Non sei loggato!');
+            }
 
-        $this->articleEditor->load($articleId)
-            ->setBody($html)
-            ->save();
+            $this->articleEditor->load($articleId);
 
-        $this->article->load($articleId);
+            if( !$this->articleEditor->currentUserCanEdit() ) {
+                throw $this->createAccessDeniedException('Non sei autorizzato a modificare questo articolo');
+            }
 
-        return $this->json([
-            "result"    => "OK",
-            "body"      => $this->article->getBodyForDisplay()
-        ]);
+            //
+            foreach(['title', 'body'] as $param) {
+
+                $value  = $this->request->get($param);
+                $method = "set" . ucfirst($param);
+                $this->articleEditor->$method($value);
+            }
+
+            $this->articleEditor->save();
+
+            $savedAt = $this->articleEditor->getUpdatedAt()->format('Y-m-d H:i:s');
+            return new Response("OK! Articolo $articleId salvato - $savedAt");
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
 }
