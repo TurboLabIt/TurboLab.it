@@ -12,19 +12,19 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
-    protected HTMLPurifier $htmlPurifier;
+    protected \HTMLPurifier $htmlPurifier;
 
 
     public function purify(?string $text) : string
     {
-        if( empty($normalized) ) {
+        if( empty($text) ) {
             return $text;
         }
 
         if( empty($this->htmlPurifier) ) {
 
             $tliPurifierConfig = \HTMLPurifier_Config::createDefault();
-            $tliPurifierConfig->set('Core', 'Encoding', 'UTF-8');
+            $tliPurifierConfig->set('Core.Encoding', 'UTF-8');
             $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
 
             // When enabled, HTML Purifier will treat any elements that contain only non-breaking spaces as well as
@@ -40,7 +40,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('HTML.SafeIframe', true);
             $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
 
-            $this->htmlPurifier = new HTMLPurifier($tliPurifierConfig);
+            $this->htmlPurifier = new \HTMLPurifier($tliPurifierConfig);
         }
 
         return $this->htmlPurifier->purify($text);
@@ -51,30 +51,33 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     {
         // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
 
-        if( empty($normalized) ) {
+        if( empty($text) ) {
             return $text;
         }
 
         $text = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
 
         $arrImgSrcCompleti = [];
-        if( preg_match_all('/<img [^>]*>/i', $text,$arrImgSrcCompleti) !== false ) {
+        preg_match_all('/<img [^>]*>/i', $text,$arrImgSrcCompleti);
 
-            foreach($arrImgSrcCompleti[0] as $imgSrcCompleto) {
+        if( empty($arrImgSrcCompleti) ) {
+            return $text;
+        }
 
-                $imgSrcCompletoElaborato =
-                    str_ireplace([
-                        'src="https://turbolab.it', 'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
-                    ], 'src="', $imgSrcCompleto);
+        foreach($arrImgSrcCompleti[0] as $imgSrcCompleto) {
 
-                if( str_starts_with($imgSrcCompletoElaborato, 'src=/immagini/med') ) {
+            $imgSrcCompletoElaborato =
+                str_ireplace([
+                    'src="https://turbolab.it', 'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
+                ], 'src="', $imgSrcCompleto);
 
-                    $text = str_ireplace($imgSrcCompleto, $imgSrcCompletoElaborato, $text);
+            if( str_contains($imgSrcCompletoElaborato, 'src="/immagini/') ) {
 
-                } else {
+                $text = str_ireplace($imgSrcCompleto, $imgSrcCompletoElaborato, $text);
 
-                    $text = str_ireplace($imgSrcCompleto, '**** IMMAGINE ESTERNA AL SITO RIMOSSA AUTOMATICAMENTE ****', $text);
-                }
+            } else {
+
+                $text = str_ireplace($imgSrcCompleto, '**** IMMAGINE ESTERNA AL SITO RIMOSSA AUTOMATICAMENTE ****', $text);
             }
         }
 

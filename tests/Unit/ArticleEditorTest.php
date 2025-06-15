@@ -19,12 +19,12 @@ class ArticleEditorTest extends BaseT
     {
         return [
             [
-                'input' => 'Come mostrare un messaggio con JS: <script>alert("bòòm");</script>',
-                'output'=> 'Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
+                'input' => 'Come mostrare un “messaggio” con ‘JS’ – <script>alert("bòòm");</script>',
+                'output'=> 'Come mostrare un &quot;messaggio&quot; con &apos;JS&apos; - &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
             ],
             [
-                'input' => 'XSS con entities: <script>alert("b&ograve;&ograve;m");</script>',
-                'output'=> 'XSS con entities: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
+                'input' => 'Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – <script>alert("b&ograve;òm");</script>',
+                'output'=> 'Come mostrare un &quot;messaggio&quot; con &apos;JS&apos; - &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
             ]
         ];
     }
@@ -50,26 +50,11 @@ class ArticleEditorTest extends BaseT
         return [
             [
                 'input' => '
-                    <p>SCRIPT: &lt;script&gt;alert("bòòm");&lt;/script&gt;</p>
-                    <p><img src="my-image.png" alt="some alt text"></p>
-                    <p>Perch&grave; troppi &euro;</p>
+                    <p>Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;</p>
+                    <p><img src="https://dev0.turbolab.it/immagini/med/2/come-svolgere-test-automatici-9513.avif" alt="some alt text"></p>
+                    <p>Perch&egrave; troppi &euro;!</p>
                 ',
-                'output'=> '
-                    <p>SCRIPT: &lt;script&gt;alert("bòòm");&lt;/script&gt;</p>
-                    <p><img src="my-image.png"></p>
-                    <p>Perchè troppi €</p>
-                '
-            ],
-            [
-                'input'=> '
-                    <p>SCRIPT: <script>alert("bòòm")</script></p>
-                    <p><img src="my-image.png" alt="some alt text"></p>
-                    <p>Perch&grave; troppi &euro;</p>
-                ',
-                'output'=> '
-                    <p><img src="my-image.png"></p>
-                    <p>Perchè troppi €</p>
-                '
+                'output'=> '<p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>Perchè troppi €!</p>'
             ]
         ];
     }

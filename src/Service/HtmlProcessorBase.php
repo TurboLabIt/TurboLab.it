@@ -36,7 +36,29 @@ abstract class HtmlProcessorBase
 
         $arrLegacyEntities = $this->getLegacyEntities();
 
-        return str_ireplace($arrLegacyEntities, array_keys($arrLegacyEntities), $text);
+        return str_replace($arrLegacyEntities, array_keys($arrLegacyEntities), $text);
+    }
+
+
+    public function convertFineTypographyEntitiesToStandardHtmlEntities(?string $text) : ?string
+    {
+        if( empty($text) ) {
+            return $text;
+        }
+
+        $arrEntities = [];
+        foreach(Dictionary::FINE_TYPOGRAPHY_CHARS as $fineChar => $standardChar) {
+
+            $fineEntityHtml5    = htmlentities($fineChar, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $fineEntityHtml4    = htmlentities($fineChar, ENT_QUOTES | ENT_HTML401, 'UTF-8');
+            $standardChar       = htmlentities($standardChar, ENT_QUOTES | ENT_HTML5 , 'UTF-8');
+
+            $arrEntities[$fineEntityHtml5]  = $standardChar;
+            $arrEntities[$fineEntityHtml4]  = $standardChar;
+            $arrEntities[$fineChar]         = $standardChar;
+        }
+
+        return str_replace( array_keys($arrEntities), $arrEntities, $text);
     }
 
 

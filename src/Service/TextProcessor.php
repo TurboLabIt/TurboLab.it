@@ -15,10 +15,11 @@ class TextProcessor
      */
     public function processRawInputTitleForStorage(string $title) : string
     {
-        // convert back as many &entities; as possible into their corresponding chars
-        $normalized = html_entity_decode($title, ENT_QUOTES  | ENT_HTML5, 'UTF-8');
+        $normalized = $this->cleanTextBeforeStorage($title);
 
-        $normalized = $this->cleanTextBeforeStorage($normalized);
+        // convert back as many &entities; as possible into their corresponding chars
+        $normalized = html_entity_decode($normalized, ENT_QUOTES  | ENT_HTML5, 'UTF-8');
+
         $normalized = $this->removeDoubleChars($normalized);
 
         return htmlspecialchars($normalized, ENT_QUOTES  | ENT_HTML5, 'UTF-8');
@@ -34,12 +35,16 @@ class TextProcessor
     public function processRawInputBodyForStorage(string $body) : string
     {
         $normalized = $this->cleanTextBeforeStorage($body);
+
         $normalized = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($normalized);
         $normalized = $this->htmlProcessor->removeExternalImages($normalized);
         $normalized = $this->htmlProcessor->purify($normalized);
         $normalized = $this->htmlProcessor->removeAltAttribute($normalized);
         $normalized = $this->removeDoubleChars($normalized);
-        return $normalized;
+
+        $finalHtml  = $this->htmlProcessor->processArticleBody($normalized);
+
+        return trim($finalHtml);
     }
 
 
@@ -49,10 +54,7 @@ class TextProcessor
         $normalized = preg_replace('/\xc2\xa0/', ' ', $text);
 
         // replace "fine typography" with their corresponding base equivalents
-        $normalized =
-            str_ireplace(
-                array_keys(Dictionary::FINE_TYPOGRAPHY_CHARS), Dictionary::FINE_TYPOGRAPHY_CHARS, $normalized
-            );
+        $normalized = $this->htmlProcessor->convertFineTypographyEntitiesToStandardHtmlEntities($normalized);
 
         return trim($normalized);
     }
