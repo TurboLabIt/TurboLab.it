@@ -195,7 +195,13 @@
 
                         {% if Article.isReadable %}
 
-                            <div class="post-text mt-30 tli-article-body">{{ Article.bodyForDisplay|raw }}</div>
+                            <div class="post-text mt-30 tli-article-body"
+                                 {% if Article.currentUserCanEdit %}
+                                    contenteditable="true" data-tli-editable-id="body"
+                                {% endif %}>
+                                {{ Article.bodyForDisplay|raw }}
+                            </div>
+
 
                             {% if Article.isInReview or Article.isPublished %}
 
@@ -237,7 +243,7 @@
                                     <div class="tli-response-target"></div>
                                     <div class="mt-3 collapse tli-action-try-again">
                                         <a href="#" class="text-dark">
-                                            <i class="fa-solid fa-repeat fa-beat" style="color: #ff7300;" aria-hidden="true"></i>
+                                            <i class="fa-solid fa-repeat fa-beat" style="color: #ff7300;"></i>
                                             Prova di nuovo
                                         </a>
                                     </div>

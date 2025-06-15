@@ -89,9 +89,12 @@ var articleSaveRequest = null;
 
 function saveArticle()
 {
+    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
+
     // set to "unknown" until actually saved
     clearCacheTextHashForComparison();
 
+    articleSavingStatusBar.show();
     setArticleSavingStatusBar('alert-primary', 0, 1, 0, 0);
 
     if( articleSaveRequest != null ) {
@@ -102,11 +105,11 @@ function saveArticle()
     let endpoint= article.attr('data-save-url');
     let payload = {
         "title" : jQuery('[data-tli-editable-id=title]').html(),
-        "body"  : null,
+        "body"  : jQuery('[data-tli-editable-id=body]').html(),
         "token" : null
     };
 
-    let unsavedWarning = jQuery('#tli-article-saving-status-bar').find('.tli-warning-unsaved');
+    let unsavedWarning = articleSavingStatusBar.find('.tli-warning-unsaved');
 
     articleSaveRequest =
 
@@ -136,7 +139,6 @@ jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  func
 
     event.preventDefault();
     saveArticle();
-
 });
 
 
