@@ -10,8 +10,6 @@ use App\Entity\Cms\Badge as BadgeEntity;
 use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Cms\HtmlProcessorReverse;
-use App\Service\Cms\Image;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\TagAuthor;
@@ -23,7 +21,9 @@ use App\Repository\Cms\ImageRepository;
 use App\Repository\Cms\TagRepository;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
+use App\Service\Cms\Image;
 use App\Service\Factory;
+use App\Service\HtmlProcessorForStorage;
 use App\Service\TextProcessor;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -64,7 +64,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     public function __construct(
         array $arrConfig, protected ProjectDir $projectDir, protected Factory $Factory,
-        protected TextProcessor $textProcessor, protected HtmlProcessorReverse $htmlProcessor,
+        protected TextProcessor $textProcessor, protected HtmlProcessorForStorage $htmlProcessor,
 
         protected EntityManagerInterface $em,
         protected ArticleRepository $articleRepository, protected ImageRepository $imageRepository,
@@ -1095,6 +1095,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $valueConverted = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $valueConverted);
         }
 
-        return $this->htmlProcessor->convertEntitiesToUtf8Chars($valueConverted);
+        return $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($valueConverted);
     }
 }
