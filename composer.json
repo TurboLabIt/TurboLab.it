@@ -90,6 +90,7 @@
         }
     },
     "require-dev": {
+        "brianium/paratest": "@stable",
         "phpstan/phpstan": "@stable",
         "phpunit/phpunit": "@stable",
         "rector/rector": "@stable",
