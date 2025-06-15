@@ -4,7 +4,7 @@ namespace App\Service;
 
 class TextProcessor
 {
-    public function __construct(protected HtmlProcessorForStorage $htmlProcessorForStorage) {}
+    public function __construct(protected HtmlProcessorForStorage $htmlProcessor) {}
 
 
     /**
@@ -34,10 +34,10 @@ class TextProcessor
     public function processRawInputBodyForStorage(string $body) : string
     {
         $normalized = $this->cleanTextBeforeStorage($body);
-        $normalized = $this->htmlProcessorForStorage->convertLegacyEntitiesToUtf8Chars($normalized);
-        $normalized = $this->htmlProcessorForStorage->removeExternalImages($normalized);
-        $normalized = $this->htmlProcessorForStorage->purify($normalized);
-        $normalized = $this->htmlProcessorForStorage->removeAltAttribute($normalized);
+        $normalized = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($normalized);
+        $normalized = $this->htmlProcessor->removeExternalImages($normalized);
+        $normalized = $this->htmlProcessor->purify($normalized);
+        $normalized = $this->htmlProcessor->removeAltAttribute($normalized);
         $normalized = $this->removeDoubleChars($normalized);
         return $normalized;
     }
