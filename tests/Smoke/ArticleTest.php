@@ -2,7 +2,6 @@
 namespace App\Tests\Smoke;
 
 use App\Service\Cms\Article;
-use App\Service\Dictionary;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -200,14 +199,7 @@ class ArticleTest extends BaseT
 
         $title = $article->getTitleWithFreshUpdatedAt();
         $this->assertNotEmpty($title, $assertFailureMessage);
-
-        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
-
-            $accentedLetterEntity = htmlentities($accentedLetter);
-            $this->assertStringNotContainsString($accentedLetterEntity, $title);
-        }
-
-        $this->assertStringNotContainsString('&nbsp;', $title);
+        $this->assertNoLegacyEntities($title);
 
         $H1FromCrawler = $crawler->filter('article h1')->html();
         $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);

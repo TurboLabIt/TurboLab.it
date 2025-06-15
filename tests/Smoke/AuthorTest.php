@@ -1,9 +1,7 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Service\Dictionary;
 use App\Service\User;
-use App\Service\Cms\HtmlProcessor;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
@@ -175,14 +173,7 @@ class AuthorTest extends BaseT
 
         $authorName = $author->getFullName();
         $this->assertNotEmpty($authorName, $assertFailureMessage);
-
-        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
-
-            $accentedLetterEntity = htmlentities($accentedLetter);
-            $this->assertStringNotContainsString($accentedLetterEntity, $authorName);
-        }
-
-        $this->assertStringNotContainsString('&nbsp;', $authorName);
+        $this->assertNoLegacyEntities($authorName);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
         $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);

@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Service\Dictionary;
 use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -29,13 +28,7 @@ class HomeTest extends BaseT
     {
         $crawler = $this->fetchDomNode("/");
         $H1FromCrawler = $crawler->filter('body h1')->html();
-
-        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
-
-            $accentedLetterEntity = htmlentities($accentedLetter);
-            $this->assertStringNotContainsString($accentedLetterEntity, $H1FromCrawler);
-        }
-
+        $this->assertNoLegacyEntities($H1FromCrawler);
         $this->assertEquals("Guide PC, Windows, Linux, Android e Bitcoin", $H1FromCrawler, "Homepage H1 test failed");
     }
 

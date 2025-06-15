@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Service\Dictionary;
 use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -51,13 +50,7 @@ class NewsTest extends BaseT
     protected function tagTitleAsH1Checker(Crawler $crawler, ?string $expectedH1) : void
     {
         $H1FromCrawler = $crawler->filter('body h1')->html();
-
-        foreach(Dictionary::ACCENTED_LETTERS as $accentedLetter) {
-
-            $accentedLetterEntity = htmlentities($accentedLetter);
-            $this->assertStringNotContainsString($accentedLetterEntity, $H1FromCrawler);
-        }
-
+        $this->assertNoLegacyEntities($H1FromCrawler);
         $this->assertEquals($expectedH1, $H1FromCrawler, "Explicit H1 check failure!");
     }
 }

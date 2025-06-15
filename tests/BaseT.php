@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests;
 
+use App\Service\Dictionary;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -442,5 +443,16 @@ abstract class BaseT extends WebTestCase
         }
 
         return $arrRepacked;
+    }
+
+
+    protected function assertNoLegacyEntities(string $text)
+    {
+        /** @var Dictionary $dictionary */
+        $dictionary = $this->getService('App\\Service\\Dictionary');
+        $arrEntities= $dictionary->getLegacyEntities();
+        foreach($arrEntities as $entity) {
+            $this->assertStringNotContainsString($entity, $text);
+        }
     }
 }
