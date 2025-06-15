@@ -28,6 +28,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
                 ->imagesFromPlaceholderToUrl($domDoc, $article)
                 ->articleLinksFromPlaceholderToUrl($domDoc)
                 ->tagLinksFromPlaceholderToUrl($domDoc)
+                ->fileLinksFromPlaceholderToUrl($domDoc)
                 ->YouTubeIframesFromPlaceholderToUrl($domDoc)
                 ->renderDomDocAsHTML($domDoc);
     }
@@ -133,6 +134,39 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
                 $oneLinkNode->setAttribute('href', $tagUrl);
                 $oneLinkNode->setAttribute('title', $tagAltText);
+            }
+        }
+
+        return $this;
+    }
+
+
+    protected function fileLinksFromPlaceholderToUrl(DOMDocument $domDoc)
+    {
+        $fileRegEx      = '/(?<=(==###file::id::))[1-9]+[0-9]*(?=(###==))/';
+        $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $fileRegEx);
+
+        $fileCollection = $this->factory->createFileCollection();
+        $fileCollection->load( array_keys($arrLinkNodes) );
+
+        foreach($arrLinkNodes as $fileId => $arrLinksToThisId) {
+
+            foreach($arrLinksToThisId as $oneLinkNode) {
+
+                $srvFile = $fileCollection->get($fileId);
+                if( empty($srvFile) ) {
+
+                    $fileUrl        = '#';
+                    $fileAltText    = '';
+
+                }  else {
+
+                    $fileUrl        = $srvFile->getUrl();
+                    $fileAltText    = "Scarica " . $srvFile->getTitle();
+                }
+
+                $oneLinkNode->setAttribute('href', $fileUrl);
+                $oneLinkNode->setAttribute('title', $fileAltText);
             }
         }
 

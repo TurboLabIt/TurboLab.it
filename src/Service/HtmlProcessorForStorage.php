@@ -207,6 +207,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     {
         $articleUrl = $this->factory->getArticleUrlGenerator();
         $tagUrl     = $this->factory->getTagUrlGenerator();
+        $fileUrl    = $this->factory->getFileUrlGenerator();
 
         $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('a');
@@ -219,6 +220,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
             $href = $a->getAttribute("href");
 
+            //
             $articleId  = $articleUrl->extractIdFromUrl($href);
             if( !empty($articleId) ) {
 
@@ -232,10 +234,25 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
                 continue;
             }
 
+            //
             $tagId = $tagUrl->extractIdFromUrl($href);
             if( !empty($tagId) ) {
 
                 $code = '==###tag::id::' . $tagId . '###==';
+                $safeLinkNode->setAttribute("href", $code);
+                $arrNodesToReplace[] = [
+                    "replace"   => $a,
+                    "with"      => $safeLinkNode
+                ];
+
+                continue;
+            }
+
+            //
+            $fileId = $fileUrl->extractIdFromUrl($href);
+            if( !empty($fileId) ) {
+
+                $code = '==###file::id::' . $fileId . '###==';
                 $safeLinkNode->setAttribute("href", $code);
                 $arrNodesToReplace[] = [
                     "replace"   => $a,

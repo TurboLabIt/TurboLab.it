@@ -29,4 +29,24 @@ class FileUrlGenerator extends UrlGenerator
         $match = preg_match('/^\/scarica\/[1-9]+[0-9]*$/', $urlPath);
         return (bool)$match;
     }
+
+
+    public function extractIdFromUrl(string $url) : ?int
+    {
+        if( !$this->isInternalUrl($url) ) {
+            return null;
+        }
+
+        $url = $this->removeDomainFromUrl($url);
+
+        $arrMatches = [];
+        $match = preg_match('/^\/scarica\/([1-9]+[0-9])*$/', $url, $arrMatches);
+        if( $match === 1 ) {
+
+            $id = end($arrMatches);
+            return (int)$id;
+        }
+
+        return null;
+    }
 }
