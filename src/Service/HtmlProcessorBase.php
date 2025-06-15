@@ -23,8 +23,8 @@ abstract class HtmlProcessorBase
 
     public function getLegacyEntities() : array
     {
-        $arrAllEntities = get_html_translation_table();
-        return array_diff_key($arrAllEntities, Dictionary::HTML_SPECIAL_CHARS);
+        $arrAllEntities = get_html_translation_table(HTML_ENTITIES);
+        return array_diff_key($arrAllEntities, array_flip(Dictionary::HTML_SPECIAL_CHARS) );
     }
 
 

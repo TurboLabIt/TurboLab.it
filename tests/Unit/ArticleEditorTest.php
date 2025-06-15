@@ -38,7 +38,10 @@ class ArticleEditorTest extends BaseT
             static::buildEditor()
                 ->setTitle($input);
 
-        $this->assertEquals($output, $editor->getTitle());
+        $actualTitle = $editor->getTitle();
+
+        $this->assertNoLegacyEntities($actualTitle);
+        $this->assertEquals($output, $actualTitle);
     }
 
 
@@ -80,6 +83,9 @@ class ArticleEditorTest extends BaseT
             static::buildEditor()
                 ->setBody($input);
 
-        $this->assertEquals( trim($output), $editor->getBody());
+        $actualBody = $editor->getBody();
+
+        $this->assertNoLegacyEntities($actualBody);
+        $this->assertEquals( trim($output), $actualBody);
     }
 }
