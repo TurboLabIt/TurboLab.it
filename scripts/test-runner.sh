@@ -9,6 +9,7 @@ fxHeader "🧪 ${APP_NAME} Test Runner"
 #fxAskConfirmation "Update the values in tests/BaseT.php before proceeding"
 
 # https://github.com/TurboLabIt/webstackup/tree/master/script/php/test-runner-package.sh
+export XDEBUG_PORT=
 source "${WEBSTACKUP_SCRIPT_DIR}php/test-runner-package.sh"
 
 fxTitle "🧹 Cleaning up..."
