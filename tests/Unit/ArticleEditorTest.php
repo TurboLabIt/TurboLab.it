@@ -55,6 +55,15 @@ class ArticleEditorTest extends BaseT
                     <p>Perch&egrave; troppi &euro;!</p>
                 ',
                 'output'=> '<p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>Perchè troppi €!</p>'
+            ],
+            [
+                'input' => '
+                    <p>... PRE-xss-text ...</p>
+                    <p>XSS: <script>alert("bòòm")</script></p>
+                    <p><script>alert("bòòm")</script></p>
+                    <p>... POST-xss-text...</p>
+                ',
+                'output'=> '<p>... PRE-xss-text ...</p><p>XSS: </p><p>... POST-xss-text...</p>'
             ]
         ];
     }
