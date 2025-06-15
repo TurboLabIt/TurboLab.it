@@ -1089,7 +1089,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $arrQuoteEncodeMap = [
                 '"' => '&quot;',
-                "'" => '&#039;'
+                "'" => '&apos;'
             ];
 
             $valueConverted = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $valueConverted);

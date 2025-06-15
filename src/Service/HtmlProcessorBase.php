@@ -40,13 +40,17 @@ abstract class HtmlProcessorBase
     }
 
 
-    public function convertFineTypographyEntitiesToStandardHtmlEntities(?string $text) : ?string
+    public function replaceUndesiredHtmlEntities(?string $text) : ?string
     {
         if( empty($text) ) {
             return $text;
         }
 
-        $arrEntities = [];
+        $arrEntities = [
+            // convert single-quote entity from HTML4 to HTML5;
+            '&#039;' => '&apos;'
+        ];
+
         foreach(Dictionary::FINE_TYPOGRAPHY_CHARS as $fineChar => $standardChar) {
 
             $fineEntityHtml5    = htmlentities($fineChar, ENT_QUOTES | ENT_HTML5, 'UTF-8');

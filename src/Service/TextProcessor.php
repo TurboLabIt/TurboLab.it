@@ -54,7 +54,7 @@ class TextProcessor
         $normalized = preg_replace('/\xc2\xa0/', ' ', $text);
 
         // replace "fine typography" with their corresponding base equivalents
-        $normalized = $this->htmlProcessor->convertFineTypographyEntitiesToStandardHtmlEntities($normalized);
+        $normalized = $this->htmlProcessor->replaceUndesiredHtmlEntities($normalized);
 
         return trim($normalized);
     }

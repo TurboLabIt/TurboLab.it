@@ -183,7 +183,7 @@ abstract class BaseT extends WebTestCase
         // workaround for: the quotes are decoded automatically by the crawler - this is unacceptable in a test!
         $arrQuoteEncodeMap = [
             '"' => '&quot;',
-            "'" => '&#039;'
+            "'" => '&apos;'
         ];
 
         $H1FromCrawler = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $H1FromCrawler);
