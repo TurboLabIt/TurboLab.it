@@ -652,21 +652,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
-        // this is a special tag, needed for testing. It's already encoded correctly
-        if( $tagId == 12600 ) {
-
-            $title = $arrTag["tag"];
-
         // change the tag title from "criptovalute (bitcoin/ethereum/litecoin)"
-        } elseif( $tagId == 4904 ) {
-
-            $title = 'bitcoin ethereum criptovalute';
-
-        } else {
-
-            $title = str_ireplace('&', '&amp;', $arrTag["tag"]);
-            $title = $this->convertTitleFromTli1ToTli2($title);
+        if( $tagId == 4904 ) {
+            $arrTag["tag"] = 'bitcoin ethereum criptovalute';
         }
+
+        $title = $this->convertTitleFromTli1ToTli2($arrTag["tag"]);
 
         $ranking    = (int)$arrTag["peso"];
         $createdAt = DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
