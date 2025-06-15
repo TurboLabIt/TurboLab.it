@@ -32,12 +32,54 @@ class ArticleEditorTest extends BaseT
 
     #[DataProvider('titlesProvider')]
     #[Group('editor')]
-    public function testSetTitleFromScrivi(string $input, string $output)
+    public function testSetTitle(string $input, string $output)
     {
         $editor =
             static::buildEditor()
                 ->setTitle($input);
 
         $this->assertEquals($output, $editor->getTitle());
+    }
+
+
+    public static function bodiesProvider() : array
+    {
+        return [
+            [
+                'input' => '
+                    <p>SCRIPT: &lt;script&gt;alert("bòòm");&lt;/script&gt;</p>
+                    <p><img src="my-image.png" alt="some alt text"></p>
+                    <p>Perch&grave; troppi &euro;</p>
+                ',
+                'output'=> '
+                    <p>SCRIPT: &lt;script&gt;alert("bòòm");&lt;/script&gt;</p>
+                    <p><img src="my-image.png"></p>
+                    <p>Perchè troppi €</p>
+                '
+            ],
+            [
+                'input'=> '
+                    <p>SCRIPT: <script>alert("bòòm")</script></p>
+                    <p><img src="my-image.png" alt="some alt text"></p>
+                    <p>Perch&grave; troppi &euro;</p>
+                ',
+                'output'=> '
+                    <p><img src="my-image.png"></p>
+                    <p>Perchè troppi €</p>
+                '
+            ]
+        ];
+    }
+
+
+    #[DataProvider('bodiesProvider')]
+    #[Group('editor')]
+    public function testSetBody(string $input, string $output)
+    {
+        $editor =
+            static::buildEditor()
+                ->setBody($input);
+
+        $this->assertEquals( trim($output), $editor->getBody());
     }
 }
