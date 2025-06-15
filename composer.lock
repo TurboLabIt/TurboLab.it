@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b04d6aedf6ce985737f086943997fe1",
+    "content-hash": "51ce679394fa9057f75dde4e0fc753aa",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -10386,6 +10386,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "brianium/paratest": 0,
         "ddeboer/imap": 0,
         "doctrine/doctrine-bundle": 0,
         "doctrine/doctrine-migrations-bundle": 0,
