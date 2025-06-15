@@ -1,21 +1,17 @@
 <?php
 namespace App\Service;
 
-use App\Service\Cms\HtmlProcessorReverse;
-
 
 class TextProcessor
 {
-    public function __construct(protected HtmlProcessorReverse $htmlProcessorReverse) {}
+    public function __construct(protected HtmlProcessorForStorage $htmlProcessorForStorage) {}
 
 
     /**
      * Don't invoke this method directly! Use `$articleEditor->setTitle($title)` if possible
      *
-     * Input: `Come mostrare un messaggio con JS: <script>alert("bòòm");</script>` 💡 ENTITY-ENCODED OR NOT doesn't matter
-     * Store: `Come mostrare un messaggio con JS: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;`
-     *
      * @see ArticleEditor
+     * @see ArticleEditorTest
      */
     public function processRawInputTitleForStorage(string $title) : string
     {
@@ -23,11 +19,27 @@ class TextProcessor
         $normalized = html_entity_decode($title, ENT_QUOTES  | ENT_HTML5, 'UTF-8');
 
         $normalized = $this->cleanTextBeforeStorage($normalized);
+        $normalized = $this->removeDoubleChars($normalized);
 
-        // replace two or more consecutive spaces with one
-        $normalized = preg_replace('/ {2,}/', ' ', $normalized);
+        return htmlspecialchars($normalized, ENT_QUOTES  | ENT_HTML5, 'UTF-8');
+    }
 
-        return $this->htmlProcessorReverse->convertCharsToHtmlEntities($normalized);
+
+    /**
+     * Don't invoke this method directly! Use `$articleEditor->setBody($body)` if possible
+     *
+     * @see ArticleEditor
+     * @see ArticleEditorTest
+     */
+    public function processRawInputBodyForStorage(string $body) : string
+    {
+        $normalized = $this->cleanTextBeforeStorage($body);
+        $normalized = $this->htmlProcessorForStorage->convertLegacyEntitiesToUtf8Chars($normalized);
+        $normalized = $this->htmlProcessorForStorage->removeExternalImages($normalized);
+        $normalized = $this->htmlProcessorForStorage->purify($normalized);
+        $normalized = $this->htmlProcessorForStorage->removeAltAttribute($normalized);
+        $normalized = $this->removeDoubleChars($normalized);
+        return $normalized;
     }
 
 
@@ -38,8 +50,16 @@ class TextProcessor
 
         // replace "fine typography" with their corresponding base equivalents
         $normalized =
-            str_ireplace( array_keys(Dictionary::FINE_TYPOGRAPHY_CHARS), Dictionary::FINE_TYPOGRAPHY_CHARS, $normalized);
+            str_ireplace(
+                array_keys(Dictionary::FINE_TYPOGRAPHY_CHARS), Dictionary::FINE_TYPOGRAPHY_CHARS, $normalized
+            );
 
         return trim($normalized);
+    }
+
+
+    protected function removeDoubleChars(string $text, string $char = ' ') : string
+    {
+        return preg_replace("/$char{2,}/", ' ', $text);
     }
 }

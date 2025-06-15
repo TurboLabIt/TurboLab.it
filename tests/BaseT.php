@@ -448,9 +448,7 @@ abstract class BaseT extends WebTestCase
 
     protected function assertNoLegacyEntities(string $text)
     {
-        /** @var Dictionary $dictionary */
-        $dictionary = $this->getService('App\\Service\\Dictionary');
-        $arrEntities= $dictionary->getLegacyEntities();
+        $arrEntities = $this->getService('App\\Service\\HtmlProcessorForDisplay')->getLegacyEntities();
         foreach($arrEntities as $entity) {
             $this->assertStringNotContainsString($entity, $text);
         }

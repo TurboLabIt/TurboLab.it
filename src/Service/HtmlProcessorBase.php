@@ -1,7 +1,6 @@
 <?php
-namespace App\Service\Cms;
+namespace App\Service;
 
-use App\Service\Factory;
 use DOMDocument;
 
 
@@ -11,27 +10,33 @@ abstract class HtmlProcessorBase
     public function __construct(protected Factory $factory) {}
 
 
-    public function convertEntitiesToUtf8Chars(?string $text) : ?string
+    public function getHtmlSpecialChars() : array
+    {
+        $arrChars = [];
+        foreach(Dictionary::HTML_SPECIAL_CHARS as $char) {
+            $arrChars[$char] = htmlspecialchars($char, ENT_QUOTES, 'UTF-8');
+        }
+
+        return $arrChars;
+    }
+
+
+    public function getLegacyEntities() : array
+    {
+        $arrAllEntities = get_html_translation_table();
+        return array_diff_key($arrAllEntities, Dictionary::HTML_SPECIAL_CHARS);
+    }
+
+
+    public function convertLegacyEntitiesToUtf8Chars(?string $text) : ?string
     {
         if( empty($text) ) {
             return $text;
         }
 
-        // replace U+00A0 : NO-BREAK SPACE [NBSP] with an actual goddamn space
-        $text = preg_replace('/\xc2\xa0/', ' ', $text);
+        $arrLegacyEntities = $this->getLegacyEntities();
 
-        //
-        $entityToKeep = [
-            htmlentities('<')     => '==##LT###==',
-            htmlentities('>')     => '==##GT###==',
-            htmlentities('&')     => '==##AND###==',
-            htmlentities('"')     => '==##DQUOTE###==',
-            htmlentities("'")     => '==##SQUOTE###=='
-        ];
-
-        $processedText = str_ireplace( array_keys($entityToKeep), $entityToKeep, $text);
-        $processedText = html_entity_decode($processedText, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
-        return str_ireplace( $entityToKeep, array_keys($entityToKeep), $processedText);
+        return str_ireplace($arrLegacyEntities, array_keys($arrLegacyEntities), $text);
     }
 
 
@@ -86,6 +91,6 @@ abstract class HtmlProcessorBase
         //$domDoc->formatOutput = true;
 
         $text = $domDoc->saveHTML();
-        return $this->convertEntitiesToUtf8Chars($text);
+        return $this->convertLegacyEntitiesToUtf8Chars($text);
     }
 }

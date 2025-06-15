@@ -1,14 +1,16 @@
 <?php
-namespace App\Service\Cms;
+namespace App\Service;
 
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\Article;
+use App\Service\Cms\Image;
 use DOMDocument;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
-class HtmlProcessor extends HtmlProcessorBase
+class HtmlProcessorForDisplay extends HtmlProcessorBase
 {
-    public function processArticleBodyForDisplay(Article $article) : string
+    public function processArticleBody(Article $article) : string
     {
         $text = $article->getBody();
 

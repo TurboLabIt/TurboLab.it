@@ -1,33 +1,98 @@
 <?php
-namespace App\Service\Cms;
+namespace App\Service;
 
-use App\Service\Dictionary;
+use App\Service\Cms\UrlGenerator;
 use DOMDocument;
 use DOMElement;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
-class HtmlProcessorReverse extends HtmlProcessorBase
+class HtmlProcessorForStorage extends HtmlProcessorBase
 {
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
+    protected HTMLPurifier $htmlPurifier;
 
 
-    public function convertCharsToHtmlEntities(string $title) : string
+    public function purify(?string $text) : string
     {
-        // create the equivalent HTML-encoded &entities; array
-        $arrEntities =
-            array_map(function($char) {
-                return htmlentities($char, ENT_QUOTES, 'UTF-8');
-                }, Dictionary::ENTITIES);
+        if( empty($normalized) ) {
+            return $text;
+        }
 
-        // replace the only entities that really need to be replaced, as per encoding.md
-        return str_ireplace(Dictionary::ENTITIES, $arrEntities, $title);
+        if( empty($this->htmlPurifier) ) {
+
+            $tliPurifierConfig = \HTMLPurifier_Config::createDefault();
+            $tliPurifierConfig->set('Core', 'Encoding', 'UTF-8');
+            $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
+
+            // When enabled, HTML Purifier will treat any elements that contain only non-breaking spaces as well as
+            //   regular whitespace as empty, and remove them when %AutoForamt.RemoveEmpty is enabled.
+            $tliPurifierConfig->set('AutoFormat.RemoveEmpty.RemoveNbsp', true);
+
+            //When enabled, HTML Purifier will attempt to remove empty elements that contribute no semantic information to the document
+            $tliPurifierConfig->set('AutoFormat.RemoveEmpty', true);
+
+            // This is the content of the alt tag of an image if the user had not previously specified an alt attribute. This applies to all images without a valid alt attribute
+            $tliPurifierConfig->set('Attr.DefaultImageAlt', '');
+
+            $tliPurifierConfig->set('HTML.SafeIframe', true);
+            $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
+
+            $this->htmlPurifier = new HTMLPurifier($tliPurifierConfig);
+        }
+
+        return $this->htmlPurifier->purify($text);
     }
 
 
-    public function processArticleBodyForStorage(string $body) : string
+    public function removeExternalImages(?string $text) : string
+    {
+        // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
+
+        if( empty($normalized) ) {
+            return $text;
+        }
+
+        $text = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
+
+        $arrImgSrcCompleti = [];
+        if( preg_match_all('/<img [^>]*>/i', $text,$arrImgSrcCompleti) !== false ) {
+
+            foreach($arrImgSrcCompleti[0] as $imgSrcCompleto) {
+
+                $imgSrcCompletoElaborato =
+                    str_ireplace([
+                        'src="https://turbolab.it', 'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
+                    ], 'src="', $imgSrcCompleto);
+
+                if( str_starts_with($imgSrcCompletoElaborato, 'src=/immagini/med') ) {
+
+                    $text = str_ireplace($imgSrcCompleto, $imgSrcCompletoElaborato, $text);
+
+                } else {
+
+                    $text = str_ireplace($imgSrcCompleto, '**** IMMAGINE ESTERNA AL SITO RIMOSSA AUTOMATICAMENTE ****', $text);
+                }
+            }
+        }
+
+        return $text;
+    }
+
+
+    public function removeAltAttribute(?string $text) : string
+    {
+        if( empty($text) ) {
+            return $text;
+        }
+
+        return preg_replace('/\s*alt\s*=\s*([\'"]).*?\1/i', '', $text);
+    }
+
+
+    public function processArticleBody(string $body) : string
     {
         $domDoc = $this->parseHTML($body);
         if( $domDoc === false ) {

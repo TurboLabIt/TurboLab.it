@@ -6,8 +6,8 @@ use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
+use App\Service\HtmlProcessorForDisplay;
 use App\Service\PhpBB\Topic;
-use App\Service\User;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
@@ -50,7 +50,7 @@ class Article extends BaseCmsService
     protected ?array $arrAuthors            = null;
     protected ?array $arrFiles              = null;
     protected ?ImageService $spotlight      = null;
-    protected HtmlProcessor $htmlProcessor;
+    protected HtmlProcessorForDisplay $htmlProcessor;
     protected ?TagService $topTag           = null;
     protected ?Topic $commentsTopic         = null;
     protected ?string $articleBodyForDisplay = null;
@@ -64,7 +64,7 @@ class Article extends BaseCmsService
     {
         parent::clear();
 
-        $this->htmlProcessor = new HtmlProcessor($this->factory);
+        $this->htmlProcessor = new HtmlProcessorForDisplay($this->factory);
 
         foreach([
                 'arrTags', 'arrAuthors', 'arrFiles', 'arrAuthors',
@@ -439,7 +439,7 @@ class Article extends BaseCmsService
             return $this->articleBodyForDisplay;
         }
 
-        return $this->articleBodyForDisplay = $this->htmlProcessor->processArticleBodyForDisplay($this);
+        return $this->articleBodyForDisplay = $this->htmlProcessor->processArticleBody($this);
     }
 
     public function textLengthIndex() : int
