@@ -35,7 +35,6 @@ abstract class HtmlProcessorBase
         }
 
         $arrLegacyEntities = $this->getLegacyEntities();
-
         return str_replace($arrLegacyEntities, array_keys($arrLegacyEntities), $text);
     }
 
@@ -48,7 +47,8 @@ abstract class HtmlProcessorBase
 
         $arrEntities = [
             // convert single-quote entity from HTML4 to HTML5;
-            '&#039;' => '&apos;'
+            '&#039;' => '&apos;',
+            '&nbsp;' => ' '
         ];
 
         foreach(Dictionary::FINE_TYPOGRAPHY_CHARS as $fineChar => $standardChar) {

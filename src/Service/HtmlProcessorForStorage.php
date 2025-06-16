@@ -47,13 +47,9 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     }
 
 
-    public function removeExternalImages(?string $text) : string
+    public function removeExternalImages(string $text) : string
     {
         // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
-
-        if( empty($text) ) {
-            return $text;
-        }
 
         $text = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
 
@@ -68,7 +64,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
             $imgSrcCompletoElaborato =
                 str_ireplace([
-                    'src="https://turbolab.it', 'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
+                    'src="http://turbolab.it', 'src="https://turbolab.it',
+                    'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
                 ], 'src="', $imgSrcCompleto);
 
             if( str_contains($imgSrcCompletoElaborato, 'src="/immagini/') ) {
@@ -82,6 +79,28 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         }
 
         return $text;
+    }
+
+
+    public function fixCodeErrors(string $text) : string
+    {
+        // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
+
+        $arrReplace = [
+            '<br>'				=> '<p></p>',
+            '<br/>'				=> '<p></p>',
+            '<br />'			=> '<p></p>',
+
+            '<h2><strong>'		=> '<h2>',
+            '</strong></h2>'	=> '</h2>',
+
+            '>&gt;&gt;'			=> '>&raquo;',
+            '::hamburger::'		=> '≡',
+            '::vdots::'			=> '⋮',
+            '::hdots::'			=> '⋯'
+        ];
+
+        return str_ireplace( array_keys($arrReplace), $arrReplace, $text);
     }
 
 

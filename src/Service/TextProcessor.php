@@ -38,6 +38,7 @@ class TextProcessor
 
         $normalized = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($normalized);
         $normalized = $this->htmlProcessor->removeExternalImages($normalized);
+        $normalized = $this->htmlProcessor->fixCodeErrors($normalized);
         $normalized = $this->htmlProcessor->purify($normalized);
         $normalized = $this->htmlProcessor->removeAltAttribute($normalized);
         $normalized = $this->removeDoubleChars($normalized);
