@@ -226,62 +226,27 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         /** @var DOMElement $a */
         foreach($arrNodes as $a) {
 
-            $safeLinkNode = $domDoc->createElement('a');
-            $safeLinkNode->nodeValue = $this->renderDomDocAsHTML($domDoc, $a);
-
             $href = $a->getAttribute("href");
 
-            //
+
             $articleId  = $articleUrl->extractIdFromUrl($href);
             if( !empty($articleId) ) {
-
-                $code = '==###contenuto::id::' . $articleId . '###==';
-                $safeLinkNode->setAttribute("href", $code);
-                $arrNodesToReplace[] = [
-                    "replace"   => $a,
-                    "with"      => $safeLinkNode
-                ];
-
+                $a->setAttribute("href", '==###contenuto::id::' . $articleId . '###==');
                 continue;
             }
 
-            //
+
             $tagId = $tagUrl->extractIdFromUrl($href);
             if( !empty($tagId) ) {
-
-                $code = '==###tag::id::' . $tagId . '###==';
-                $safeLinkNode->setAttribute("href", $code);
-                $arrNodesToReplace[] = [
-                    "replace"   => $a,
-                    "with"      => $safeLinkNode
-                ];
-
+                $a->setAttribute("href", '==###tag::id::' . $tagId . '###==');
                 continue;
             }
 
-            //
+
             $fileId = $fileUrl->extractIdFromUrl($href);
             if( !empty($fileId) ) {
-
-                $code = '==###file::id::' . $fileId . '###==';
-                $safeLinkNode->setAttribute("href", $code);
-                $arrNodesToReplace[] = [
-                    "replace"   => $a,
-                    "with"      => $safeLinkNode
-                ];
-
-                continue;
+                $a->setAttribute("href", '==###file::id::' . $fileId . '###==');
             }
-
-            $safeLinkNode->setAttribute("href", $href);
-            $arrNodesToReplace[] = [
-                "replace"   => $a,
-                "with"      => $safeLinkNode
-            ];
-        }
-
-        foreach($arrNodesToReplace as $arrMap) {
-            $arrMap["replace"]->parentNode->replaceChild($arrMap["with"], $arrMap["replace"]);
         }
 
         return $this;

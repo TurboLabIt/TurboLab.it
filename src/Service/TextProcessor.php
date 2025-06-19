@@ -41,7 +41,9 @@ class TextProcessor
         $processing = $this->htmlProcessor->purify($processing);
         $processing = $this->htmlProcessor->removeAltAttribute($processing);
 
-        $finalHtml  = $this->htmlProcessor->processArticleBody($processing);
+        $processing = $this->htmlProcessor->processArticleBody($processing);
+
+        $finalHtml  = $this->cleanTextBeforeStorage($processing);
 
         $this->spotlightId  = $this->htmlProcessor->getSpotlightId();
         $this->abstract     = $this->htmlProcessor->getAbstract();

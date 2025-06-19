@@ -58,9 +58,10 @@ class ArticleEditorTest extends BaseT
                     <p><img src="https://example.com/immagini/med/2/come-svolgere-test-automatici-9999999.avif" alt="some alt text"></p>
                     <p>Perch&egrave; troppi &euro;!</p>
                     <script>alert("bòòm")</script>
+                    <p><a href="https://turbolab.it/turbolab.it-1/turbolab.it-chi-siamo-cosa-facciamo-40">TurboLab.it: chi siamo e cosa facciamo - XSS: <script>alert("bòòm");</script> | Plaintext: &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;</a></p>
                 ',
                 'output'=> '
-                    <p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>*** IMMAGINE ESTERNA RIMOSSA AUTOMATICAMENTE ***</p><p>Perchè troppi €!</p>
+                    <p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>*** IMMAGINE ESTERNA RIMOSSA AUTOMATICAMENTE ***</p><p>Perchè troppi €!</p><p><a href="==###contenuto::id::40###==">TurboLab.it: chi siamo e cosa facciamo - XSS: | Plaintext: &lt;script&gt;alert("bòòm");&lt;/script&gt;</a></p>
                 ',
                 'abstract' => 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;',
                 'spotlight'=> 9513
