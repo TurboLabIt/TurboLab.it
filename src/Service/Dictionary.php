@@ -9,6 +9,8 @@ class Dictionary
 
     // https://www.w3.org/wiki/Common_HTML_entities_used_for_typography
     const array FINE_TYPOGRAPHY_CHARS = [
+        // non-breaking space
+        "\xc2\xa0" => ' ',
         // dash
         '–' => '-', '—' => '-',
         // Single quotes

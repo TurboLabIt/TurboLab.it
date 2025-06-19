@@ -66,7 +66,15 @@ abstract class BaseServiceEntity
 
     public function getId() : ?int { return $this->entity->getId(); }
 
-    public function getTitle() : ?string { return $this->entity->getTitle(); }
+    public function getTitle() : ?string
+    {
+        // this will return: Come mostrare un "messaggio" con 'JS' – <script>alert("bòòm");</script>
+        $processing = $this->entity->getTitle();
+
+        // this will return: Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
+        return htmlspecialchars($processing, ENT_NOQUOTES | ENT_HTML5);
+    }
+
 
     public function getCacheKey() : string
         { return strtolower( substr(strrchr(get_class($this), '\\'), 1) ) . "-" . $this->getId(); }

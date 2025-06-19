@@ -4,7 +4,6 @@ namespace App\Service\Cms;
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleTag;
 use App\Service\Factory;
-use App\Service\HtmlProcessorForStorage;
 use App\Service\PhpBB\Topic;
 use App\Service\TextProcessor;
 use App\Service\User;
@@ -14,15 +13,9 @@ use Exception;
 
 class ArticleEditor extends Article
 {
-    protected HtmlProcessorForStorage $htmlProcessorForStorage;
-    protected TextProcessor $textProcessor;
-
-
-    public function __construct(Factory $factory)
+    public function __construct(Factory $factory, protected TextProcessor $textProcessor)
     {
         parent::__construct($factory);
-        $this->htmlProcessorForStorage  = new HtmlProcessorForStorage($factory);
-        $this->textProcessor            = new TextProcessor($this->htmlProcessorForStorage);
     }
 
 
@@ -78,7 +71,7 @@ class ArticleEditor extends Article
         $cleanBody = $this->textProcessor->processRawInputBodyForStorage($body);
         $this->entity->setBody($cleanBody);
 
-        $spotlightId = $this->htmlProcessorForStorage->getSpotlightId();
+        $spotlightId = $this->textProcessor->getSpotlightId();
         if( empty($spotlightId) ) {
 
             $this->entity->setSpotlight(null);
@@ -94,7 +87,7 @@ class ArticleEditor extends Article
             }
         }
 
-        $abstract = $this->htmlProcessorForStorage->getAbstract();
+        $abstract = $this->textProcessor->getAbstract();
         $this->entity->setAbstract($abstract);
 
         return $this;

@@ -77,6 +77,11 @@ class Factory
 
     public function getViews() : Views { return (new Views($this, $this->urlGenerator)); }
 
+    protected function createTextProcessor() : TextProcessor
+    {
+        return new TextProcessor( new HtmlProcessorForStorage($this) );
+    }
+
 
     //<editor-fold defaultstate="collapsed" desc="*** Article ***">
     public function createArticle(?ArticleEntity $entity = null) : ArticleService
@@ -92,7 +97,7 @@ class Factory
 
     public function createArticleEditor(?ArticleEntity $entity = null) : ArticleEditor
     {
-        $service = new ArticleEditor($this);
+        $service = new ArticleEditor($this, $this->createTextProcessor());
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

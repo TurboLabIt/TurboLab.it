@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests\Unit;
+namespace App\Tests\Editor;
 
 use App\Service\Cms\ArticleEditor;
 use App\Tests\BaseT;
@@ -20,11 +20,15 @@ class ArticleEditorTest extends BaseT
         return [
             [
                 'input' => 'Come mostrare un “messaggio” con ‘JS’ – <script>alert("bòòm");</script>',
-                'output'=> 'Come mostrare un &quot;messaggio&quot; con &apos;JS&apos; - &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
+                'output'=> 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;'
             ],
             [
                 'input' => 'Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – <script>alert("b&ograve;òm");</script>',
-                'output'=> 'Come mostrare un &quot;messaggio&quot; con &apos;JS&apos; - &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;'
+                'output'=> 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;'
+            ],
+            [
+                'input' => 'Come mostrare un "messaggio" con \'JS\' - <script>alert("bòòm");</script>',
+                'output'=> 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;'
             ]
         ];
     }
@@ -50,20 +54,16 @@ class ArticleEditorTest extends BaseT
         return [
             [
                 'input' => '
-                    <p>Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;</p>
-                    <p><img src="https://turbolab.it/immagini/med/2/come-svolgere-test-automatici-9513.avif" alt="some alt text"></p>
+                    <p>Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – &lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;<img src="https://turbolab.it/immagini/med/2/come-svolgere-test-automatici-9513.avif" alt="some alt text"></p>
+                    <p><img src="https://example.com/immagini/med/2/come-svolgere-test-automatici-9999999.avif" alt="some alt text"></p>
                     <p>Perch&egrave; troppi &euro;!</p>
+                    <script>alert("bòòm")</script>
                 ',
-                'output'=> '<p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>Perchè troppi €!</p>'
-            ],
-            [
-                'input' => '
-                    <p>... PRE-xss-text ...</p>
-                    <p>XSS: <script>alert("bòòm")</script></p>
-                    <p><script>alert("bòòm")</script></p>
-                    <p>... POST-xss-text...</p>
+                'output'=> '
+                    <p>Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;</p><p><img src="==###immagine::id::9513###=="></p><p>*** IMMAGINE ESTERNA RIMOSSA AUTOMATICAMENTE ***</p><p>Perchè troppi €!</p>
                 ',
-                'output'=> '<p>... PRE-xss-text ...</p><p>XSS: </p><p>... POST-xss-text...</p>'
+                'abstract' => 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;',
+                'spotlight'=> 9513
             ],
             [
                 'input' => '
@@ -71,15 +71,18 @@ class ArticleEditorTest extends BaseT
                 ',
                 'output' => '
                     <p>Quando una applicazione smette di rispondere, e non riusciamo a chiuderla normalmente, non ci rimane altro da fare che aprire la Gestione attività (il Task Manager) di Windows, cercare il programma bloccato (e nella lunga lista di nomi presenti non è sempre immediato trovarlo) e terminarlo sperando di riuscire a chiuderlo senza dover riavviare il computer. Oppure, tramite una piccola modifica nelle Impostazioni di Windows, è possibile aggiungere l\'opzione <code>Termina attività</code> al menu contestuale di tutti i programmi aperti nella barra delle applicazioni.</p><p><img src="==###immagine::id::26428###=="></p><p>Non è detto che faccia "miracoli" con tutte le applicazioni che non rispondono, però è sicuramente più veloce, e comodo, che farlo da Gestione attività di Windows.</p><p>Non è possibile chiudere in questo modo processi di sistema, come Esplora risorse, per questi bisogna sempre usare Gestione attività.</p><p>Per abilitare questa opzione bisogna andare nelle <code>Impostazioni</code> di Windows, <code>Sistema</code>, <code>Per sviluppatori</code>.</p><p><img src="==###immagine::id::26429###=="></p><p>E qui si sposta lo switch su <code>Attivato</code> per <code>Termina attività</code>. La modifica è immediatamente attiva, non serve riavviare il computer.</p><p><img src="==###immagine::id::26430###=="></p>
-                '
+                ',
+                'abstract' => '
+                    Quando una applicazione smette di rispondere, e non riusciamo a chiuderla normalmente, non ci rimane altro da fare che aprire la Gestione attività (il Task Manager) di Windows, cercare il programma bloccato (e nella lunga lista di nomi presenti non è sempre immediato trovarlo) e terminarlo sperando di riuscire a chiuderlo senza dover riavviare il computer. Oppure, tramite una piccola modifica nelle Impostazioni di Windows, è possibile aggiungere l\'opzione <code>Termina attività</code> al menu contestuale di tutti i programmi aperti nella barra delle applicazioni.
+                ',
+                'spotlight'=> 26428
             ]
         ];
     }
 
 
     #[DataProvider('bodiesProvider')]
-    #[Group('editor')]
-    public function testSetBody(string $input, string $output)
+    public function testSetBody(string $input, string $output, string $abstract, int $spotlight)
     {
         $editor =
             static::buildEditor()
@@ -89,5 +92,32 @@ class ArticleEditorTest extends BaseT
 
         $this->assertNoLegacyEntities($actualBody);
         $this->assertEquals( trim($output), $actualBody);
+    }
+
+
+    #[DataProvider('bodiesProvider')]
+    public function testAbstract(string $input, string $output, string $abstract, int $spotlight)
+    {
+        $editor =
+            static::buildEditor()
+                ->setBody($input);
+
+        $actualAbstract = $editor->getAbstract();
+
+        $this->assertNoLegacyEntities($actualAbstract);
+        $this->assertEquals( trim($abstract), $actualAbstract);
+    }
+
+
+    #[DataProvider('bodiesProvider')]
+    public function testSpotlight(string $input, string $output, string $abstract, int $spotlight)
+    {
+        $editor =
+            static::buildEditor()
+                ->setBody($input);
+
+        $actualSpotlightId = $editor->getSpotlight()?->getId();
+
+        $this->assertEquals($spotlight, $actualSpotlightId);
     }
 }

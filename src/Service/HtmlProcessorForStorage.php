@@ -43,48 +43,18 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $this->htmlPurifier = new \HTMLPurifier($tliPurifierConfig);
         }
 
+        // all the quotes in non-attributes will be decoded
+        // input:  This is a &quot;Tag&quot;: <img src="image.png">, but 100 &gt; 1
+        // output: This is a "Tag": <img src="image.png" alt="" />, but 100 &gt; 1
         return $this->htmlPurifier->purify($text);
     }
 
 
-    public function removeExternalImages(string $text) : string
+    public function fixFormattingErrors(string $text) : string
     {
         // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
 
-        $text = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
-
-        $arrImgSrcCompleti = [];
-        preg_match_all('/<img [^>]*>/i', $text,$arrImgSrcCompleti);
-
-        if( empty($arrImgSrcCompleti) ) {
-            return $text;
-        }
-
-        foreach($arrImgSrcCompleti[0] as $imgSrcCompleto) {
-
-            $imgSrcCompletoElaborato =
-                str_ireplace([
-                    'src="http://turbolab.it', 'src="https://turbolab.it',
-                    'src="https://next.turbolab.it', 'src="https://dev0.turbolab.it'
-                ], 'src="', $imgSrcCompleto);
-
-            if( str_contains($imgSrcCompletoElaborato, 'src="/immagini/') ) {
-
-                $text = str_ireplace($imgSrcCompleto, $imgSrcCompletoElaborato, $text);
-
-            } else {
-
-                $text = str_ireplace($imgSrcCompleto, '**** IMMAGINE ESTERNA AL SITO RIMOSSA AUTOMATICAMENTE ****', $text);
-            }
-        }
-
-        return $text;
-    }
-
-
-    public function fixCodeErrors(string $text) : string
-    {
-        // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
+        $processing = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
 
         $arrReplace = [
             '<br>'				=> '<p></p>',
@@ -94,13 +64,16 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             '<h2><strong>'		=> '<h2>',
             '</strong></h2>'	=> '</h2>',
 
+            '<p><p>'            => '<p>',
+            '</p></p>'          => '</p>',
+
             '>&gt;&gt;'			=> '>&raquo;',
             '::hamburger::'		=> '≡',
             '::vdots::'			=> '⋮',
             '::hdots::'			=> '⋯'
         ];
 
-        return str_ireplace( array_keys($arrReplace), $arrReplace, $text);
+        return str_ireplace( array_keys($arrReplace), $arrReplace, $processing);
     }
 
 
@@ -124,6 +97,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         return
             $this
                 ->removeLinksFromImages($domDoc)
+                ->removeExternalImages($domDoc)
                 ->imagesFromUrlToPlaceholder($domDoc)
                 ->internalLinksFromUrlToPlaceholder($domDoc)
                 ->extractAbstract($domDoc)
@@ -160,7 +134,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     }
 
 
-    protected function imagesFromUrlToPlaceholder(DOMDocument $domDoc) : static
+    protected function removeExternalImages(DOMDocument $domDoc) : static
     {
         $urlGenerator = $this->factory->getImageUrlGenerator();
 
@@ -171,17 +145,35 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         foreach($arrNodes as $img) {
 
             $src = $img->getAttribute('src');
-            if( !$urlGenerator->isInternalUrl($src) ) {
 
-                $nodeImageRemovedAlert = $domDoc->createElement('p');
-                $nodeImageRemovedAlert->textContent = '*** IMMAGINE ESTERNA RIMOSSA AUTOMATICAMENTE ***';
-                $arrNodesToReplace[] = [
-                    "replace"   => $img,
-                    "with"      => $nodeImageRemovedAlert
-                ];
-
+            if( $urlGenerator->isInternalUrl($src) ) {
                 continue;
             }
+
+            $nodeImageRemovedAlert = $domDoc->createTextNode('*** IMMAGINE ESTERNA RIMOSSA AUTOMATICAMENTE ***');
+            $arrNodesToReplace[] = [
+                "replace"   => $img,
+                "with"      => $nodeImageRemovedAlert
+            ];
+        }
+
+        foreach($arrNodesToReplace as $arrMap) {
+            $arrMap["replace"]->parentNode->replaceChild($arrMap["with"], $arrMap["replace"]);
+        }
+
+        return $this;
+    }
+
+
+    protected function imagesFromUrlToPlaceholder(DOMDocument $domDoc) : static
+    {
+        $arrNodesToReplace = [];
+        $arrNodes = $domDoc->getElementsByTagName('img');
+
+        /** @var DOMElement $img */
+        foreach($arrNodes as $img) {
+
+            $src = $img->getAttribute('src');
 
             $arrMatches = [];
             $extractResult = preg_match('/(\d+)(?!.*\d)/', $src, $arrMatches);
@@ -301,9 +293,13 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         $arrNodes = $domDoc->getElementsByTagName('p');
         foreach($arrNodes as $node) {
 
-            $text = $node->nodeValue;
-            $text = strip_tags($text, ['em']);
-            $text = trim($text);
+            /**
+             * if we access $node->nodeValue directly, all the entities would be decoded, even if the underlying
+             * text is actually encoded
+             */
+            $processing = $this->renderDomDocAsHTML($domDoc, $node);
+            $processing = strip_tags($processing, ['em', 'code']);
+            $text       = trim($processing);
 
             if( !empty($text) ) {
 
@@ -314,7 +310,6 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
         return $this;
     }
-
 
     public function getAbstract() : ?string { return $this->abstract; }
 }

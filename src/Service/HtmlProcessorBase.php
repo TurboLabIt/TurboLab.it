@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use DOMDocument;
+use DOMNode;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
@@ -48,7 +49,6 @@ abstract class HtmlProcessorBase
         $arrEntities = [
             // convert single-quote entity from HTML4 to HTML5;
             '&#039;' => '&apos;',
-            '&nbsp;' => ' '
         ];
 
         foreach(Dictionary::FINE_TYPOGRAPHY_CHARS as $fineChar => $standardChar) {
@@ -104,19 +104,19 @@ abstract class HtmlProcessorBase
             }
         }
 
-        $domDoc->encoding = 'UTF-8'; // insert proper
+        $domDoc->encoding = 'UTF-8';
         return $domDoc;
     }
 
 
-    protected function renderDomDocAsHTML(DOMDocument $domDoc) : string
+    protected function renderDomDocAsHTML(DOMDocument $domDoc, ?DOMNode $singleNodeOnly = null) : string
     {
         // pretty output https://www.php.net/manual/en/class.domdocument.php
         // doesn't work, likely due to "whitespace nodes being created by the load
         // https://www.php.net/manual/en/domdocument.savexml.php#76867
         //$domDoc->formatOutput = true;
 
-        $text = $domDoc->saveHTML();
+        $text = empty($singleNodeOnly) ? $domDoc->saveHTML() : $domDoc->saveHTML($singleNodeOnly);
         return $this->convertLegacyEntitiesToUtf8Chars($text);
     }
 }
