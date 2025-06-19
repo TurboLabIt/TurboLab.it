@@ -227,7 +227,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         foreach($arrNodes as $a) {
 
             $safeLinkNode = $domDoc->createElement('a');
-            $safeLinkNode->nodeValue = $a->nodeValue;
+            $safeLinkNode->nodeValue = $this->renderDomDocAsHTML($domDoc, $a);
 
             $href = $a->getAttribute("href");
 
