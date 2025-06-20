@@ -85,3 +85,20 @@ Ci limitiamo dunque a:
 1. utilizzare [HTML Purifier](http://htmlpurifier.org/) per rimuovere i tag malformati o non permessi, compreso `<script>`
 2. salvare il testo ottenuto a database
 3. in visualizzazione: mostriamo il testo as-is
+
+
+## Articolo e test
+
+🔗 Esempio live su TLI: [Come svolgere test automatici su TurboLab.it](https://turbolab.it/1939)
+
+I test su questo articolo vengono eseguiti in:
+
+- [ArticleEditorTest](https://github.com/TurboLabIt/TurboLab.it/blob/main/tests/Editor/ArticleEditorTest.php)
+- [ArticleTest](https://github.com/TurboLabIt/TurboLab.it/blob/main/tests/Smoke/ArticleTest.php)
+
+
+## Riferimenti
+
+- stackoverflow: [Store html entities in database?](https://stackoverflow.com/q/1970880/1204976)
+- softwareengineering: [Should I HTML encode all output from my API?](https://softwareengineering.stackexchange.com/q/117512/165409)
+- forum TLI: [phpBB come salva l'HTML a database?](https://turbolab.it/forum/viewtopic.php?t=13553)
