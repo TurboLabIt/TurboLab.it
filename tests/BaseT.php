@@ -433,20 +433,30 @@ abstract class BaseT extends WebTestCase
     }
 
 
-    protected function assertNoLegacyEntities(string $text)
+    protected function assertNoLegacyEntities(string $text) : void
     {
         $arrEntities = $this->getService('App\\Service\\HtmlProcessorForDisplay')->getLegacyEntities();
-        foreach($arrEntities as $entity) {
-            $this->assertStringNotContainsString($entity, $text);
-        }
+
+        $escapedEntities = array_map(function($entity) {
+            return preg_quote($entity, '/');
+        }, $arrEntities );
+
+        $pattern = '/' . implode('|', $escapedEntities) . '/';
+
+        $this->assertDoesNotMatchRegularExpression($pattern, $text);
     }
 
 
-    protected function assertNoEntities(string $text)
+    protected function assertNoEntities(string $text) : void
     {
         $arrEntities = get_html_translation_table(HTML_ENTITIES);
-        foreach($arrEntities as $entity) {
-            $this->assertStringNotContainsString($entity, $text);
-        }
+
+        $escapedEntities = array_map(function($entity) {
+            return preg_quote($entity, '/');
+        }, $arrEntities );
+
+        $pattern = '/' . implode('|', $escapedEntities) . '/';
+
+        $this->assertDoesNotMatchRegularExpression($pattern, $text);
     }
 }
