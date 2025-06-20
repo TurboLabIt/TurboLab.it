@@ -12,16 +12,21 @@ elif [ "${APP_ENV}" = "staging" ]; then
 
   fxSshTestAccess root@turbolab.it
   bash "${SCRIPT_DIR}deploy.sh"
-  bash "${SCRIPT_DIR}tli1-download.sh"
-  bash "${SCRIPT_DIR}tli1-import.sh"
 
 elif [ "${APP_ENV}" = "dev" ]; then
 
   fxSshTestAccess root@turbolab.it
-  bash "${SCRIPT_DIR}tli1-download.sh"
-  bash "${SCRIPT_DIR}tli1-import.sh"
 
 else
 
   fxCatastrophicError "Unhandled branch ##${APP_ENV}##"
+fi
+
+
+if [ "${APP_ENV}" != "prod" ]; then
+
+  bash "${SCRIPT_DIR}tli1-download.sh"
+  rm -rf ${PROJECT_DIR}backup/db-dumps/*.sql
+  bash "${SCRIPT_DIR}db-restore.sh"
+  bash "${SCRIPT_DIR}tli1-import.sh"
 fi

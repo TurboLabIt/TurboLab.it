@@ -2,10 +2,17 @@
 
 Per attivare questo sito è necessario importare svariati dati dalla versione precedente di TLI.
 
-⏩ Comando rapido per dev (richiede `ForwardAgent yes`, vedi seguito)
+⏩ Comando rapido per **download+import*** in qualsiasi ambiente (richiede `ForwardAgent yes` in config SSH, vedi seguito)
 
 ````bash
-cd /var/www/turbolab.it && clear && bash scripts/tli1-download.sh && bash scripts/tli1-import.sh
+cd /var/www/turbolab.it && bash scripts/autodeploy-download-import.sh
+
+````
+
+⏩ Comando rapido per **solo import*** in non-prod
+
+````bash
+cd /var/www/turbolab.it && bash scripts/tli1-import.sh
 
 ````
 
@@ -18,7 +25,7 @@ I dati del sito sono:
 - immagini caricate negli articoli
 - file allegati agli articoli
 
-Questi dati **NON possono** essere utilizzati "così come sono" a causa della diversa architettura dell'applicazione. Vanno invece importati tramite [src/Command/TLI1ImporterCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/TLI1ImporterCommand.php).
+Questi dati **NON possono** essere utilizzati "così come sono" a causa della diversa architettura dell'applicazione. Vanno invece importati tramite i comandi indicati sopra.
 
 
 ## Forum

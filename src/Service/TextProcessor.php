@@ -52,6 +52,23 @@ class TextProcessor
     }
 
 
+
+    public function processTli1BodyForStorage(string $body) : string
+    {
+        $processing = $this->cleanTextBeforeStorage($body);
+
+        $processing = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($processing);
+        $processing = $this->htmlProcessor->fixFormattingErrors($processing);
+
+        // can't purify here (YouTube iframe with src="###youtube.." gets removed)
+        //$processing = $this->htmlProcessor->purify($processing);
+
+        $finalHtml  = $this->htmlProcessor->removeAltAttribute($processing);
+
+        return trim($finalHtml);
+    }
+
+
     protected function cleanTextBeforeStorage(string $text) : string
     {
         // Remove null bytes

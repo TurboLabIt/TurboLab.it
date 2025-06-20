@@ -49,7 +49,7 @@ class ArticleTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell&apos;impianto &amp; &quot;collaudo&quot;) | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; &apos;single quoted&apos; \ / | » fine');
+        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell\'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" \'single quoted\' \ / | » fine');
 
         // H2
         $crawler = $this->fetchDomNode($url, 'article');

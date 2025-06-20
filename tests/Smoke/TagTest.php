@@ -123,8 +123,7 @@ class TagTest extends BaseT
         // H1
         $this->tagTitleAsH1Checker(
             $tag, $crawler,
-            "Tli Test Tag | @ &amp; òàùèéì # § |!&quot;£$%&amp;/()=?^ &lt; &gt; &quot;double-quoted&quot; " .
-            "&apos;single Quoted&apos; \ / | » Fine: articoli, guide e news"
+            'Tli Test Tag | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" \'single Quoted\' \ / | » Fine: articoli, guide e news'
         );
 
         $html = $this->fetchHtml($url);

@@ -334,7 +334,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1Article(int $articleId, array $arrArticle)
     {
         $title          = $this->convertTitleFromTli1ToTli2($arrArticle["titolo"]);
-        $abstract       = $this->convertValueFromTli1ToTli2($arrArticle["abstract"], true);
+        $abstract       = $this->convertBodyFromTli1ToTli2($arrArticle["abstract"]);
 
         $pubStatus = match( $arrArticle["finito"] ) {
             0       => ArticleEntity::PUBLISHING_STATUS_DRAFT,
@@ -347,7 +347,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $rating         = (int)$arrArticle["rating"];
         $ads            = (bool)$arrArticle["ads"];
         $commentsTopic  = $this->topicRepository->selectOrNull($arrArticle["id_commenti_phpbb"]);
-        $body           = $this->convertValueFromTli1ToTli2($arrArticle["corpo"]);
+        $body           = $this->convertBodyFromTli1ToTli2($arrArticle["corpo"]);
 
         $commentTopicNeedsUpdate = mb_stripos($body, 'tutti i giorni? Nessun problema! Ecco a te') !== false;
 
@@ -987,8 +987,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $this->badgeRepository
                 ->selectOrNew($badgeId)
                 ->setTitle( $this->convertTitleFromTli1ToTli2($arrBadge["titolo"]) )
-                ->setAbstract( $this->convertValueFromTli1ToTli2($arrBadge["testo_breve"]) )
-                ->setBody( $this->convertValueFromTli1ToTli2($arrBadge["testo_esteso"]) )
+                ->setAbstract( $this->convertBodyFromTli1ToTli2($arrBadge["testo_breve"]) )
+                ->setBody( $this->convertBodyFromTli1ToTli2($arrBadge["testo_esteso"]) )
                 ->setImageUrl( $arrBadge["spotlight"] )
                 ->setUserSelectable(false)
                 ->setCreatedAt($createdAt)
@@ -1066,26 +1066,9 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     }
 
 
-    protected function convertValueFromTli1ToTli2($value, $encodeQuotes = false) : ?string
+    protected function convertBodyFromTli1ToTli2($value) : ?string
     {
         // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
-
-        if( !is_string($value) ) {
-            return $value;
-        }
-
-        $valueConverted = trim($value);
-
-        if($encodeQuotes) {
-
-            $arrQuoteEncodeMap = [
-                '"' => '&quot;',
-                "'" => '&apos;'
-            ];
-
-            $valueConverted = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $valueConverted);
-        }
-
-        return $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($valueConverted);
+        return $this->textProcessor->processTli1BodyForStorage($value);
     }
 }
