@@ -11,17 +11,6 @@ abstract class HtmlProcessorBase
     public function __construct(protected Factory $factory) {}
 
 
-    public function getHtmlSpecialChars() : array
-    {
-        $arrChars = [];
-        foreach(Dictionary::HTML_SPECIAL_CHARS as $char) {
-            $arrChars[$char] = htmlspecialchars($char, ENT_QUOTES, 'UTF-8');
-        }
-
-        return $arrChars;
-    }
-
-
     public function getLegacyEntities() : array
     {
         $arrAllEntities = get_html_translation_table(HTML_ENTITIES);
