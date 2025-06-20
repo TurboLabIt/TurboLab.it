@@ -11,4 +11,5 @@ bash "${SCRIPT_DIR}migrate.sh"
 
 cd ${PROJECT_DIR}
 wsuSymfony console tli1
-wsuSymfony console cache:clear
+
+bash "${SCRIPT_DIR}cache-clear.sh"
