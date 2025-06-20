@@ -227,7 +227,6 @@ class TagTest extends BaseT
         $this->assertNoLegacyEntities($tagTitle);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
-        $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
         $this->assertEquals("$tagTitle: articoli, guide e news", $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {

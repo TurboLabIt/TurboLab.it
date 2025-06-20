@@ -202,7 +202,6 @@ class ArticleTest extends BaseT
         $this->assertNoLegacyEntities($title);
 
         $H1FromCrawler = $crawler->filter('article h1')->html();
-        $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
         $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {

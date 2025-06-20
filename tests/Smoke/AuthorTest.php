@@ -176,7 +176,6 @@ class AuthorTest extends BaseT
         $this->assertNoLegacyEntities($authorName);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
-        $H1FromCrawler = $this->encodeQuotes($H1FromCrawler);
         $this->assertEquals("Articoli, guide e news a cura di $authorName", $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {

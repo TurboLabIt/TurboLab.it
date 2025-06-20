@@ -178,19 +178,6 @@ abstract class BaseT extends WebTestCase
     }
 
 
-    protected function encodeQuotes(string $H1FromCrawler) : string
-    {
-        // workaround for: the quotes are decoded automatically by the crawler - this is unacceptable in a test!
-        $arrQuoteEncodeMap = [
-            '"' => '&quot;',
-            "'" => '&apos;'
-        ];
-
-        $H1FromCrawler = str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $H1FromCrawler);
-        return $H1FromCrawler;
-    }
-
-
     protected function internalLinksChecker(Crawler $crawler) : static
     {
         $aNodes = $crawler->filter('a');
