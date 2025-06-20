@@ -29,6 +29,14 @@ class ArticleEditorTest extends BaseT
             [
                 'input' => 'Come mostrare un "messaggio" con \'JS\' - <script>alert("bòòm");</script>',
                 'output'=> 'Come mostrare un "messaggio" con \'JS\' - &lt;script&gt;alert("bòòm");&lt;/script&gt;'
+            ],
+            [
+                'input' => 'O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11',
+                'output'=> 'O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11'
+            ],
+            [
+                'input' => 'O&O AppBuster rimuove e reinstalla le app da Windows 10 e 11',
+                'output'=> 'O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11'
             ]
         ];
     }
