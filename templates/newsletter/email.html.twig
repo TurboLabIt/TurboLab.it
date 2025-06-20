@@ -82,10 +82,10 @@
 
                     <row>
                         <columns>
-                            <a href="{{ Videos|first.url|raw }}">
+                            <a href="{{ Videos|first.url }}">
                                 <h4 class="tli-article-title">{{ Videos|first.title|raw }}</h4>
                                 <img class="float-center"
-                                      src="{{ Videos|first.thumbnails.high.url|raw }}" alt="{{ Videos|first.title|raw }}">
+                                      src="{{ Videos|first.thumbnails.high.url }}" alt="{{ Videos|first.title|raw }}">
                             </a>
                         </columns>
                     </row>
@@ -97,7 +97,7 @@
                             <ul>
                                 {% for Video in Videos %}
                                     {% if not loop.first %}
-                                        <li><a href="{{ Video.url|raw }}">▶️ {{ Video.title|raw }}</a></li>
+                                        <li><a href="{{ Video.url }}">▶️ {{ Video.title|raw }}</a></li>
                                     {% endif %}
                                 {% endfor %}
                             </ul>

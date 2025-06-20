@@ -3,16 +3,16 @@
 {% block userbarContent %}
 
     <strong>
-        <a href="{{ loginUrl|raw }}" data-bs-toggle="modal" data-bs-target="#login-modal">
+        <a href="{{ loginUrl }}" data-bs-toggle="modal" data-bs-target="#login-modal">
             <i class="fa-solid fa-user fa-shake" style="color: #000000;"></i> Esegui login
         </a>
     </strong> |
-    <a href="{{ registerUrl|raw }}">
+    <a href="{{ registerUrl }}">
         Non hai ancora l'account? <i class="fa-solid fa-users" style="color: #000000;"></i>
         <strong>Iscriviti ora (gratis!)</strong>
     </a>
     per <a href="{{ path('app_home') }}forum">partecipare al forum</a>,
     <a href="{{ path('app_editor_new') }}">pubblicare articoli sul sito</a> e
-    <a href="{{ newsletterUrl|raw }}">ricevere la newsletter</a>!
+    <a href="{{ newsletterUrl }}">ricevere la newsletter</a>!
 
 {% endblock %}
