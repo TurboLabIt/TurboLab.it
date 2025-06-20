@@ -28,13 +28,13 @@
                             <div class="col-lg-6">
                                 <div class="trending-news-item">
                                     <div class="trending-news-thumb">
-                                        <a href="{{ Article.url|raw }}">
+                                        <a href="{{ Article.url }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                  class="tli-uniform-slider-image" alt="{{ Article.title|raw }}">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
-                                        <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                        <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
                                     </div>
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
@@ -93,13 +93,13 @@
                                     </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
-                                            <a href="{{ Article.url|raw }}">
+                                            <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -134,13 +134,13 @@
                                     </div>
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
-                                            <a href="{{ Article.url|raw }}">
+                                            <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -215,13 +215,13 @@
                                     </div>
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_thumb">
-                                            <a href="{{ Article.url|raw }}">
+                                            <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -251,7 +251,7 @@
                                             <span>{{ Article.publishedAt|friendlyDate }}</span>
                                         </div>
                                     </div>
-                                    <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
                                 </div>
                             </div>
                         </div>
@@ -340,13 +340,13 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="trending-news-item mb-30">
                                         <div class="trending-news-thumb">
-                                            <a href="{{ Article.url|raw }}">
+                                            <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                      class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="trending-news-content">
-                                            <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                            <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
 
                                             <div class="tli-mosaic-post-meta">
                                                 <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
@@ -372,7 +372,7 @@
                                                 {% endif %}
                                             </div>
 
-                                            <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                            <p class="text"><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
                                         </div>
                                     </div>
                                 </div>
@@ -386,7 +386,7 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6">
                                             <div class="business-post-thumb">
-                                                <a href="{{ Article.url|raw }}">
+                                                <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
                                                          class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
@@ -395,7 +395,7 @@
                                         <div class="col-lg-6 col-md-6">
                                             <div class="trending-news-item">
                                                 <div class="trending-news-content">
-                                                    <h3 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h3>
+                                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
 
                                                     <div class="tli-mosaic-post-meta">
                                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
@@ -421,7 +421,7 @@
                                                         {% endif %}
                                                     </div>
 
-                                                    <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                                    <p class="text"><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -467,13 +467,13 @@
                                         </div>
                                         <div class="gallery_item gallery_item-style-2">
                                             <div class="gallery_item_thumb">
-                                                <a href="{{ Article.url|raw }}">
+                                                <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('micro')|raw }}"
                                                          class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
                                             </div>
                                             <div class="gallery_item_content">
-                                                <h4 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h4>
+                                                <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
                                             </div>
                                         </div>
                                     {% endfor %}

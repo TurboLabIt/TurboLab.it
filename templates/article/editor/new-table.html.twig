@@ -9,7 +9,7 @@
     <tbody>
         {% for Article in Articles %}
             <tr>
-                <td><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></td>
+                <td><a href="{{ Article.url }}">{{ Article.title|raw }}</a></td>
                 <td>{{ Article.views }}</td>
                 <td>{{ Article.UpdatedAt|date('d/m/Y') }}</td>
             </tr>

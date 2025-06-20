@@ -8,11 +8,11 @@
                     <div class="trending-news-item mb-30">
 
                         <div class="trending-news-content">
-                            <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
+                            <h2 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
                         </div>
 
                         <div class="trending-news-thumb">
-                            <a href="{{ Article.url|raw }}">
+                            <a href="{{ Article.url }}">
                                 <img src="{{ Article.spotlightOrDefaultUrl('med')|raw }}"
                                      class="tli-uniform-slider-image" alt="{{ Article.title|raw }}"
                                      {% if loop.index > 2 %}loading="lazy"{% endif %}>

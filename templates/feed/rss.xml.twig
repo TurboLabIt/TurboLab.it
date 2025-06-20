@@ -34,7 +34,7 @@
         {% for Article in Articles %}
             <item>
                 <title>{{ Article.title|raw }}</title>
-                <link>{{ Article.url|raw }}</link>
+                <link>{{ Article.url }}</link>
                 {% if fullFeed %}
                     <content:encoded><![CDATA[{{ Article.bodyForDisplay|raw }}]]></content:encoded>
                 {% else %}

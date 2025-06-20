@@ -247,7 +247,7 @@
                                         <tbody>
                                         {% for Article in CurrentUserPublishedArticles %}
                                             <tr>
-                                                <td><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></td>
+                                                <td><a href="{{ Article.url }}">{{ Article.title|raw }}</a></td>
                                                 <td><small>{{ Article.publishedAtRecencyLabel }}</small></td>
                                                 <td>{{ Article.PublishedAt|date('d/m/Y H:i') }}</td>
                                                 <td>{{ Article.views }}</td>
@@ -324,7 +324,7 @@
                                             {% include 'article/publishing-status.html.twig' %}
 
                                             <div style="margin-bottom: 5px; font-weight: bold">
-                                                <a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a>
+                                                <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
                                             </div>
 
                                             <div>

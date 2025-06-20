@@ -76,8 +76,8 @@
                                         <div class="trending-news-item mb-30">
 
                                             <div class="trending-news-thumb">
-                                                <a href="{{ Article.url|raw }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl('slider')|raw }}"
+                                                <a href="{{ Article.url }}">
+                                                    <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
                                                          class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
                                                 </a>
                                             </div>
@@ -97,7 +97,7 @@
                                             </div>
 
                                             <div class="trending-news-content">
-                                                <h2 class="title"><a href="{{ Article.url|raw }}">{{ Article.title|raw }}</a></h2>
+                                                <h2 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h2>
                                             </div>
 
                                             <div class="tli-mosaic-post-meta">
@@ -133,7 +133,7 @@
                                             </div>
 
                                             <div class="trending-news-content">
-                                                <p class="text"><a href="{{ Article.url|raw }}">{{ Article.abstract|raw }}</a></p>
+                                                <p class="text"><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
                                             </div>
 
                                         </div>
