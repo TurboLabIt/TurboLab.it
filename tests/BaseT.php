@@ -144,7 +144,7 @@ abstract class BaseT extends WebTestCase
 
     public function expectRedirect(string $urlFirst, string $expectedUrlRedirectTo, int $expectedHttpStatus = Response::HTTP_MOVED_PERMANENTLY)
     {
-        $crawler = $this->browse($urlFirst);
+        $this->browse($urlFirst);
         $this->assertResponseRedirects(
             $expectedUrlRedirectTo, $expectedHttpStatus,
             'Redirect failed! URL: ##' . $urlFirst . '## doesn\'t redirect to ##' . $expectedUrlRedirectTo . "##"
@@ -154,7 +154,7 @@ abstract class BaseT extends WebTestCase
 
     public function expect404(string $url)
     {
-        $crawler = $this->browse($url);
+        $this->browse($url);
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND,
             'Expected 404 check failed! URL: ##' . $url . '## doesn\'t return ' . Response::HTTP_NOT_FOUND
         );
