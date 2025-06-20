@@ -77,8 +77,8 @@ class ArticleController extends BaseController
 
         $html =
             $this->twig->render('article/index.html.twig', [
-                'metaTitle'             => $article->getTitle(),
-                'metaDescription'       => $article->getAbstract(),
+                'metaTitle'             => $article->getTitleForHTMLAttribute(),
+                'metaDescription'       => $article->getAbstractForHTMLAttribute(),
                 'metaCanonicalUrl'      => $article->getUrl(),
                 'metaOgType'            => 'article',
                 'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),

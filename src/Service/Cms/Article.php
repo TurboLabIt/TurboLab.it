@@ -413,6 +413,14 @@ class Article extends BaseCmsService
     }
 
 
+    public function getTitleForHTMLAttribute() : ?string
+    {
+        $processing = $this->getTitleWithFreshUpdatedAt();
+        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+
     public function getAbstract() : ?string
     {
         if( $this->isListable() ) {
@@ -420,6 +428,15 @@ class Article extends BaseCmsService
         }
 
         return null;
+    }
+
+
+    public function getAbstractForHTMLAttribute() : ?string
+    {
+        $processing = $this->getAbstract();
+        $processing = strip_tags($processing);
+        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
 

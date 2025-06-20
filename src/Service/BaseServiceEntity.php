@@ -72,7 +72,15 @@ abstract class BaseServiceEntity
         $processing = $this->entity->getTitle();
 
         // this will return: Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
-        return htmlspecialchars($processing, ENT_NOQUOTES | ENT_HTML5);
+        return htmlspecialchars($processing, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+
+    public function getTitleForHTMLAttribute() : ?string
+    {
+        $processing = $this->getTitle();
+        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
 
