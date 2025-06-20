@@ -25,7 +25,7 @@ class AuthorTest extends BaseT
         $url = $author->getUrl();
 
         $crawler = $this->fetchDomNode($url);
-        $this->authorNameAsH1Checker($author, $crawler);
+        $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di crazy.cat (Marco Ricci)");
     }
 
 
@@ -63,6 +63,7 @@ class AuthorTest extends BaseT
         $author = static::getService("App\\Service\\User");
         $author->load($id);
         $url = $author->getUrl();
+        $authorName = $author->getFullName();
 
         $crawler = $this->fetchDomNode($url);
 
@@ -101,10 +102,7 @@ class AuthorTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->authorNameAsH1Checker(
-            $author, $crawler,
-            "Articoli, guide e news a cura di tecniconapoletano"
-        );
+        $this->authorNameAsH1Checker($author, $crawler, "Pagina dell'utente tecniconapoletano");
 
         $html = $this->fetchHtml($url);
 
@@ -163,11 +161,12 @@ class AuthorTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         //
-        $this->authorNameAsH1Checker($author, $crawler);
+        $authorName = $author->getFullName();
+        $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di $authorName");
     }
 
 
-    protected function authorNameAsH1Checker(User $author, Crawler $crawler, ?string $expectedH1 = null) : void
+    protected function authorNameAsH1Checker(User $author, Crawler $crawler, string $expectedH1) : void
     {
         $assertFailureMessage = "Failing URL: " . $author->getUrl();
 
@@ -176,10 +175,6 @@ class AuthorTest extends BaseT
         $this->assertNoLegacyEntities($authorName);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
-        $this->assertEquals("Articoli, guide e news a cura di $authorName", $H1FromCrawler, $assertFailureMessage);
-
-        if( $expectedH1 !== null ) {
-            $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
-        }
+        $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
     }
 }
