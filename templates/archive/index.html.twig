@@ -85,7 +85,7 @@
                                             <div class="tli-mosaic-post-meta">
 
                                                 {% if Article.isListable %}
-                                                    <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                    <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                                         {{ Article.TopTagOrDefault.title|upper|raw }}
                                                     </a>
 

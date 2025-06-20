@@ -37,7 +37,7 @@
                                         <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
                                     </div>
                                     <div class="tli-mosaic-post-meta">
-                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
@@ -69,7 +69,7 @@
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic1 %}
                                     <div class="tli-mosaic-post-meta">
-                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
@@ -110,7 +110,7 @@
                             <div class="trending-news-post-items">
                                 {% for Article in ArticlesLatestMosaic2 %}
                                     <div class="tli-mosaic-post-meta">
-                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
@@ -193,7 +193,7 @@
                             <div class="post_gallery_items">
                                 {% for Article in ArticlesLatestSecurity %}
                                     <div class="tli-mosaic-post-meta">
-                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                         </a>
                                         {% if Article.AuthorsNotSystem is not empty %}
@@ -245,7 +245,7 @@
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
-                                            <a href="{{ Article.TopTagOrDefault.url|raw }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
+                                            <a href="{{ Article.TopTagOrDefault.url }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
                                         </div>
                                         <div class="meta-date">
                                             <span>{{ Article.publishedAt|friendlyDate }}</span>
@@ -349,7 +349,7 @@
                                             <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
 
                                             <div class="tli-mosaic-post-meta">
-                                                <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                                     {{ Article.TopTagOrDefault.title|upper|raw }}
                                                 </a>
                                                 <span class="tli-meta-slash"> · </span>
@@ -398,7 +398,7 @@
                                                     <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
 
                                                     <div class="tli-mosaic-post-meta">
-                                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                                        <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                                             {{ Article.TopTagOrDefault.title|upper|raw }}
                                                         </a>
                                                         <span class="tli-meta-slash"> · </span>
@@ -445,7 +445,7 @@
                                 <div class="post_gallery_items">
                                     {% for Article in HalfArticlesMostViews %}
                                         <div class="tli-mosaic-post-meta">
-                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url|raw }}">
+                                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
                                                 {{ Article.TopTagOrDefault.title|upper|raw }}
                                             </a>
                                             <br>
