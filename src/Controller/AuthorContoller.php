@@ -88,11 +88,9 @@ class AuthorContoller extends BaseController
             return $this->redirect($lastPageUrl);
         }
 
-        $metaTitle = "Articoli, guide e news a cura di " . $user->getFullName() . ( $page < 2 ? '' : " - Pagina $page");
-
         return
             $this->twig->render('user/author.html.twig', [
-                'metaTitle'             => $metaTitle,
+                'metaTitle'             => $user->getTitleForHTMLAttribute() . ($page < 2 ? '' : " - pagina $page"),
                 'metaCanonicalUrl'      => $user->getUrl($page),
                 'metaPageImageUrl'      => $user->getAvatarUrl(),
                 'activeMenu'            => null,
