@@ -185,7 +185,7 @@
 
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Topic.url|raw }}">{{ Topic.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Topic.url }}">{{ Topic.title|raw }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -300,9 +300,9 @@
                             <div class="trending-sidebar-slider">
                                 <div class="populer-post-slider">
                                     {% for Video in Videos|slice(0, 4) %}
-                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl|raw }}">
+                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
                                             <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url|raw }}" alt="Video" loading="lazy">
+                                                <img src="{{ Video.thumbnails.default.url }}" alt="Video" loading="lazy">
                                             </div>
                                             <div class="gallery_item_content">
                                                 <h4 class="title">{{ Video.title|raw }}</h4>
@@ -312,9 +312,9 @@
                                 </div>
                                 <div class="populer-post-slider">
                                     {% for Video in Videos|slice(4) %}
-                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl|raw }}">
+                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
                                             <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url|raw }}" alt="Video" loading="lazy">
+                                                <img src="{{ Video.thumbnails.default.url }}" alt="Video" loading="lazy">
                                             </div>
                                             <div class="gallery_item_content">
                                                 <h4 class="title">{{ Video.title|raw }}</h4>
