@@ -440,4 +440,13 @@ abstract class BaseT extends WebTestCase
             $this->assertStringNotContainsString($entity, $text);
         }
     }
+
+
+    protected function assertNoEntities(string $text)
+    {
+        $arrEntities = get_html_translation_table(HTML_ENTITIES);
+        foreach($arrEntities as $entity) {
+            $this->assertStringNotContainsString($entity, $text);
+        }
+    }
 }

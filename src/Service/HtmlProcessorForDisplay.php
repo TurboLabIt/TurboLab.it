@@ -23,7 +23,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
             return $text;
         }
 
-        return
+        $processing =
             $this
                 ->imagesFromPlaceholderToUrl($domDoc, $article)
                 ->articleLinksFromPlaceholderToUrl($domDoc)
@@ -31,6 +31,8 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
                 ->fileLinksFromPlaceholderToUrl($domDoc)
                 ->YouTubeIframesFromPlaceholderToUrl($domDoc)
                 ->renderDomDocAsHTML($domDoc);
+
+        return trim($processing);
     }
 
 
