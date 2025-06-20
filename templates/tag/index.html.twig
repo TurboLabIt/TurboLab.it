@@ -6,11 +6,11 @@
 
     {% if currentPage < 2 %}
 
-        <li class="breadcrumb-item active">Tag &quot;{{ Tag.navTitle|raw }}&quot;</li>
+        <li class="breadcrumb-item active">Tag "{{ Tag.navTitle|raw }}"</li>
 
     {% else %}
 
-        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag &quot;{{ Tag.navTitle|raw }}&quot;</a></li>
+        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag "{{ Tag.navTitle|raw }}"</a></li>
         {{ parent() }}
 
     {% endif %}

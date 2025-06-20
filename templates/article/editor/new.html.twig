@@ -67,7 +67,7 @@
                                     {% block alertTitle %}Prima di cominciare a scrivere...{% endblock %}
                                     {% block alertBody%}
                                         <a href="{{ ArticleHowTo.url }}">
-                                            Per favore, leggi sempre la guida &quot;{{ ArticleHowTo.title|raw }}&quot;
+                                            Per favore, leggi sempre la guida "{{ ArticleHowTo.title|raw }}"
                                         </a>
                                     {% endblock %}
                                 {% endembed %}
@@ -187,7 +187,7 @@
                                 {% if CurrentUserInReviewArticles.count or CurrentUserPublishedArticles.count %}
 
                                     <h2 style="color: #f5c211;">
-                                        <i class="fa-solid fa-book"></i> I tuoi articoli in stato &quot;Pronto e finito&quot;
+                                        <i class="fa-solid fa-book"></i> I tuoi articoli in stato "Pronto e finito"
                                     </h2>
 
                                 {% endif %}
@@ -205,7 +205,7 @@
                                 {% elseif CurrentUserPublishedArticles.count %}
 
                                     <p>
-                                        Al momento, non sono presenti tuoi articoli in stato &quot;Pronto e finito&quot;.
+                                        Al momento, non sono presenti tuoi articoli in stato "Pronto e finito".
 
                                         {% if CurrentUserDraftArticles.count %}
 

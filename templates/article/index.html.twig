@@ -57,7 +57,7 @@
                                     {% block alertBodyStyle %}{% endblock %}
                                     {% block alertBody %}
                                         <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
-                                        <div>Prima di cominciare a scrivere, ri-leggi sempre la guida &quot;<a href="{{ ArticleHowTo.url }}">{{ ArticleHowTo.title|raw }}</a>&quot;.</div>
+                                        <div>Prima di cominciare a scrivere, ri-leggi sempre la guida "<a href="{{ ArticleHowTo.url }}">{{ ArticleHowTo.title|raw }}</a>".</div>
                                     {% endblock %}
 
                                 {% endembed %}
@@ -158,7 +158,7 @@
                                 {% block alertBodyStyle %}text-start post-text tli-article-body{% endblock %}
                                 {% block alertBody %}
                                     <div>
-                                        Questo articolo non è ancora stato marcato dall'autore come &quot;finito&quot;.
+                                        Questo articolo non è ancora stato marcato dall'autore come "finito".
                                         È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
                                     </div>
                                     {% if Article.isReadable %}
