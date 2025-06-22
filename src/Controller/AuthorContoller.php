@@ -88,10 +88,24 @@ class AuthorContoller extends BaseController
             return $this->redirect($lastPageUrl);
         }
 
+
+        if( $authorArticles->count() ) {
+
+            $metaTitle = "Articoli, guide e news a cura di " . $user->getTitleForHTMLAttribute();
+
+        } else {
+
+            $metaTitle =
+                htmlspecialchars("Pagina dell'utente ", ENT_QUOTES | ENT_HTML5, 'UTF-8') .
+                    $user->getTitleForHTMLAttribute();
+        }
+
+        $metaTitle .= $page < 2 ? '' : " - pagina $page";
+
         return
             $this->twig->render('user/author.html.twig', [
-                'metaTitle'             => $user->getTitleForHTMLAttribute() . ($page < 2 ? '' : " - pagina $page"),
-                'metaDescription'       => $user->getAbstractForHTMLAttribute()  . ($page < 2 ? '' : " - pagina $page"),
+                'metaTitle'             => $metaTitle,
+                'metaDescription'       => $metaTitle,
                 'metaCanonicalUrl'      => $user->getUrl($page),
                 'metaPageImageUrl'      => $user->getAvatarUrl(),
                 'activeMenu'            => null,

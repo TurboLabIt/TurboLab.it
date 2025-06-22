@@ -81,11 +81,7 @@ class User extends BaseServiceEntity
 
     public function getTitleForHTMLAttribute() : string
     {
-        $name = $this->getFullName();
-
-        return
-            $this->getArticlesNum(false)
-                ? "Articoli, guide e news a cura di $name" : "Pagina dell'utente $name";
+        return $this->getFullName();
     }
 
 
