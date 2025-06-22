@@ -2,19 +2,17 @@
 
     {% if Article is not empty %}
 
-        <div class="post-reader-prev tli-prev-next-article">
+        <div class="post-reader-prev tli-prev-next-article mb-3">
+
             <a href="{{ Article.url }}">
-                <span>
-                    <i class="fa {% block prevNextArticleIcon %}{% endblock %}"></i>
-                    {% block prevNextArticleTitle %}{% endblock %}
+                <span class="d-block mb-3 {% block prevNextArticleNavClass %}{% endblock %}">
+                    {% block prevNextArticleNavText %}{% endblock %}
                 </span>
+
+                <img class="d-block mx-auto mb-3" src="{{ Article.spotlightOrDefaultUrl('min') }}" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                <span class="fs-4 tli-prev-next-article-title">{{ Article.title|raw }} {{ Article.title|raw }} {{ Article.title|raw }} {{ Article.title|raw }}</span>
             </a>
-            <h4 class="title">
-                <div class="mb-3 text-center">
-                    <img src="{{ Article.spotlightOrDefaultUrl('min') }}">
-                </div>
-                <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
-            </h4>
+
         </div>
 
     {% endif %}

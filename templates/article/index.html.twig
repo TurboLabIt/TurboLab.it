@@ -262,7 +262,7 @@
                                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                         <a href="{{ Author.url }}">
                                             {% if Author.avatarUrl is not empty %}
-                                                    <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.username|raw }}">
+                                                    <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar di {{ Author.titleForHTMLAttribute|raw }}">
                                             {% else %}
                                                 <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
                                             {% endif %}
@@ -297,13 +297,16 @@
                         <div class="row">
 
                             {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.previousArticle ?? null } %}
-                                {% block prevNextArticleIcon %}fa-angle-left{% endblock %}
-                                {% block prevNextArticleTitle %}PRECEDENTE{% endblock %}
+                                {% block prevNextArticleNavText %}
+                                    <i class="fa fa-angle-left"></i> PRECEDENTE
+                                {% endblock %}
                             {% endembed %}
 
                             {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.nextArticle ?? null } %}
-                                {% block prevNextArticleIcon %}fa-angle-right{% endblock %}
-                                {% block prevNextArticleTitle %}SUCCESSIVO{% endblock %}
+                                {% block prevNextArticleNavClass %}text-end{% endblock %}
+                                {% block prevNextArticleNavText %}
+                                    SUCCCESSIVO <i class="fa fa-angle-right"></i>
+                                {% endblock %}
                             {% endembed %}
 
                         </div>
