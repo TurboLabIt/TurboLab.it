@@ -78,7 +78,7 @@
                                             <div class="trending-news-thumb">
                                                 <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
-                                                         class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                         class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttributeForHTMLAttribute|raw }}" loading="lazy">
                                                 </a>
                                             </div>
 
@@ -106,7 +106,7 @@
                                                     <span class="tli-meta-authors">
                                                         a cura di
                                                         {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                            <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </span>
                                                 {% endif %}

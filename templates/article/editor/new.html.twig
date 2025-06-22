@@ -330,7 +330,7 @@
                                             <div>
                                                 di
                                                 {% for Author in Article.Authors %}
-                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                                 <i class="fa-regular fa-clock"></i> {{ Article.updatedAt|friendlyDate }}
                                             </div>

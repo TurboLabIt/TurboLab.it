@@ -30,7 +30,7 @@
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
-                                                 class="tli-uniform-slider-image" alt="{{ Article.title|raw }}">
+                                                 class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
@@ -47,7 +47,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -79,7 +79,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -95,7 +95,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -120,7 +120,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -136,7 +136,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -201,7 +201,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -217,7 +217,7 @@
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
@@ -241,7 +241,7 @@
                         <div class="col-lg-6">
                             <div class="single-play-post-item">
                                 <img src="{{ Article.spotlightOrDefaultUrl('med') }}"
-                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
@@ -342,7 +342,7 @@
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                             </a>
                                         </div>
                                         <div class="trending-news-content">
@@ -359,7 +359,7 @@
                                                     <span class="tli-meta-authors">
                                                         a cura di
                                                         {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                            <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </span>
                                                 {% endif %}
@@ -388,7 +388,7 @@
                                             <div class="business-post-thumb">
                                                 <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
-                                                         class="tli-uniform-slider-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                         class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                                 </a>
                                             </div>
                                         </div>
@@ -408,7 +408,7 @@
                                                             <span class="tli-meta-authors">
                                                                 a cura di
                                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                                 {% endfor %}
                                                             </span>
                                                         {% endif %}
@@ -453,7 +453,7 @@
                                                 <span class="tli-meta-authors">
                                                     a cura di
                                                     {% for Author in Article.AuthorsNotSystem %}
-                                                        <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                        <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
                                                 </span>
                                             {% endif %}
@@ -469,7 +469,7 @@
                                             <div class="gallery_item_thumb">
                                                 <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
-                                                         class="tli-uniform-mosaic-image" alt="{{ Article.title|raw }}" loading="lazy">
+                                                         class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                                 </a>
                                             </div>
                                             <div class="gallery_item_content">
