@@ -91,6 +91,7 @@ class AuthorContoller extends BaseController
         return
             $this->twig->render('user/author.html.twig', [
                 'metaTitle'             => $user->getTitleForHTMLAttribute() . ($page < 2 ? '' : " - pagina $page"),
+                'metaDescription'       => $user->getAbstractForHTMLAttribute()  . ($page < 2 ? '' : " - pagina $page"),
                 'metaCanonicalUrl'      => $user->getUrl($page),
                 'metaPageImageUrl'      => $user->getAvatarUrl(),
                 'activeMenu'            => null,

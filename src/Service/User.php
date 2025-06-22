@@ -83,11 +83,15 @@ class User extends BaseServiceEntity
     {
         $name = $this->getFullName();
 
-        $processing =
+        return
             $this->getArticlesNum(false)
                 ? "Articoli, guide e news a cura di $name" : "Pagina dell'utente $name";
+    }
 
-        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    public function getAbstractForHTMLAttribute() : string
+    {
+        return $this->getTitleForHTMLAttribute();
     }
     //</editor-fold>
 

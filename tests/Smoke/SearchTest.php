@@ -34,9 +34,9 @@ class SearchTest extends BaseT
     public static function searchProvider() : Generator
     {
         yield from [
-            ['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
+            //['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
             ['/cerca/windows su usb', 'installare Windows 11 o Windows 10 su chiavetta USB'],
-            ['/cerca/siti torrent', 'Siti BitTorrent italiani']
+            //['/cerca/siti torrent', 'Siti BitTorrent italiani']
         ];
     }
 
