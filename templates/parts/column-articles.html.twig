@@ -14,7 +14,7 @@
                         <div class="trending-news-thumb">
                             <a href="{{ Article.url }}">
                                 <img src="{{ Article.spotlightOrDefaultUrl('med') }}"
-                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttributeForHTMLAttribute|raw }}"
+                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}"
                                      {% if loop.index > 2 %}loading="lazy"{% endif %}>
                             </a>
                         </div>
