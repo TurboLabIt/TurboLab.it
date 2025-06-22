@@ -22,6 +22,15 @@ class Topic extends BaseServiceEntity
 
     public function __construct(protected Factory $factory) { $this->clear(); }
 
+
+    public function getTitle() : ?string
+    {
+        // this will return: Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
+        return $this->getEntity()->getTitle();
+    }
+
+
+
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
     public function getRepository() : TopicRepository
     {
