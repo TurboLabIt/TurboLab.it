@@ -97,5 +97,12 @@ class UserCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadBySearchUsername(string $username) : static
+    {
+        $arrUsers = $this->getRepository()->searchByUsername($username);
+        return $this->setEntities($arrUsers);
+    }
+
+
     public function createService(?UserEntity $entity = null) : User { return $this->factory->createUser($entity); }
 }

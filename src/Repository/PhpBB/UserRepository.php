@@ -207,4 +207,25 @@ class UserRepository extends BasePhpBBRepository
 
         return $this;
     }
+
+
+    public function searchByUsername(string $username) : array
+    {
+        $termToSearch = trim($username);
+
+        if( empty($termToSearch) ) {
+            return [];
+        }
+
+        $termToSearch = mb_strtolower($termToSearch);
+        $termToSearch = preg_replace('/[^a-z0-9_ \.]/i', '', $termToSearch);
+
+        return
+            $this->getQueryBuilderComplete()
+                ->andWhere('t.username_clean LIKE :termToSearch')
+                ->setParameter("termToSearch", "%$termToSearch%")
+                ->orderBy('t.user_posts', 'DESC')
+                ->getQuery()
+                ->getResult();
+    }
 }
