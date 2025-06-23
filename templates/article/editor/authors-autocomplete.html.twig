@@ -1,8 +1,12 @@
 {% if Authors.count > 0 %}
 
-    {% for Author in Authors %}
-        <p>{{ Author.fullName|raw }}</p>
-    {% endfor %}
+    {% embed 'article/editor/authors-modal-list-items.html.twig' %}
+        {% block authorActionButton %}
+            <button type="button" class="btn btn-sm btn-outline-danger tli-add-author">
+                <i class="bi bi-person-dash"></i> Aggiungi
+            </button>
+        {% endblock %}
+    {% endembed %}
 
 {% else %}
 

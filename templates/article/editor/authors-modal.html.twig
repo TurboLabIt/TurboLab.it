@@ -15,39 +15,13 @@
 
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list" style="max-height: 200px; overflow-y: auto;">
 
-            {% for Author in Article.Authors %}
-
-                <div class="list-group-item d-flex justify-content-between align-items-center"
-                     {% if loop.last %}style="border-bottom-style: none"{% endif %}
-                     data-author-id="{{ Author.id }}">
-
-                    <div class="tli-article-editor-author-info">
-
-                        <div class="tli-article-editor-author-avatar-container">
-
-                            {% if Author.avatarUrl is not empty %}
-
-                                <img src="{{ Author.avatarUrl }}" width="64" class="tli-article-editor-author-avatar"
-                                     alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
-
-                            {% else %}
-
-                                <i class="fa-solid fa-user-tie" style="color: #deddda;"></i>
-
-                            {% endif %}
-
-                        </div>
-
-                        <span class="ml-5">{% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}</span>
-
-                    </div>
-
+            {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} %}
+                {% block authorActionButton %}
                     <button type="button" class="btn btn-sm btn-outline-danger tli-remove-author">
                         <i class="bi bi-person-dash"></i> Rimuovi
                     </button>
-                </div>
-
-            {% endfor %}
+                {% endblock %}
+            {% endembed %}
 
             <div class="text-muted text-center tli-no-author-message collapse">Nessun utente selezionato come autore</div>
 
@@ -66,7 +40,7 @@
                 data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
         </div>
 
-        <div class="list-group border rounded-3 mt-2 tli-article-editor-candidate-authors-list collapse"
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-authors-list collapse"
              style="max-height: 250px; overflow-y: auto;"></div>
 
     </div>

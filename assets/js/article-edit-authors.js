@@ -26,7 +26,7 @@ jQuery(document).on('input', 'input.tli-authors-autocomplete', debounce(function
         return true;
     }
 
-    let target      = jQuery(this).closest('.tli-authors-autocomplete-container').find('.tli-article-editor-candidate-authors-list');
+    let target = jQuery(this).closest('.tli-authors-autocomplete-container').find('.tli-article-editor-candidate-authors-list');
 
     //cleanup
     target.find('.tli-no-author-message').remove();
@@ -41,16 +41,12 @@ jQuery(document).on('input', 'input.tli-authors-autocomplete', debounce(function
     // fetch results
     let endpoint = jQuery(this).data('autocomplete-url');
 
-    jQuery.get(endpoint, { username: username }, function(data) {
-        target.append(data);
+    jQuery.get(endpoint, {username: username}, function(data) {
+        target.html(data);
     }, 'html')
 
         .fail(function(jqXHR, textStatus, errorThrown) {
             target.html(jqXHR.responseText);
-        })
-
-        .always(function() {
-            target.find('.tli-loaderino').remove();
         });
 
 }, 300));

@@ -1,0 +1,31 @@
+{% for Author in Authors %}
+
+    <div class="list-group-item d-flex justify-content-between align-items-center"
+         {% if loop.last %}style="border-bottom-style: none"{% endif %}
+         data-author-id="{{ Author.id }}">
+
+        <div class="tli-article-editor-author-info">
+
+            <div class="tli-article-editor-author-avatar-container">
+
+                {% if Author.avatarUrl is not empty %}
+
+                    <img src="{{ Author.avatarUrl }}" width="64" class="tli-article-editor-author-avatar"
+                         alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+
+                {% else %}
+
+                    <i class="fa-solid fa-user-tie" style="color: #deddda;"></i>
+
+                {% endif %}
+
+            </div>
+
+            <span class="ml-5">{% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}</span>
+
+        </div>
+
+        {% block authorActionButton %}{% endblock %}
+    </div>
+
+{% endfor %}
