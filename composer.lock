@@ -1151,16 +1151,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "3.4.0",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "4664373bd0668d71b40cc368b950de95e1dba2f8"
+                "reference": "92e2f6db831be44bc041fdfbc49402a063ec33cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/4664373bd0668d71b40cc368b950de95e1dba2f8",
-                "reference": "4664373bd0668d71b40cc368b950de95e1dba2f8",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/92e2f6db831be44bc041fdfbc49402a063ec33cc",
+                "reference": "92e2f6db831be44bc041fdfbc49402a063ec33cc",
                 "shasum": ""
             },
             "require": {
@@ -1235,9 +1235,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/3.4.0"
+                "source": "https://github.com/doctrine/orm/tree/3.4.1"
             },
-            "time": "2025-06-14T11:47:14+00:00"
+            "time": "2025-06-21T10:44:26+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -7520,12 +7520,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle.git",
-                "reference": "79997b1ed91e4d5835009d85ba2b6860a23b2fc5"
+                "reference": "09ed877b619700625edb51ff5d9f2b0b17e390c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/79997b1ed91e4d5835009d85ba2b6860a23b2fc5",
-                "reference": "79997b1ed91e4d5835009d85ba2b6860a23b2fc5",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-service-entity-plus-bundle/zipball/09ed877b619700625edb51ff5d9f2b0b17e390c6",
+                "reference": "09ed877b619700625edb51ff5d9f2b0b17e390c6",
                 "shasum": ""
             },
             "require": {
@@ -7559,7 +7559,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/tree/main"
             },
-            "time": "2024-08-27T13:29:43+00:00"
+            "time": "2025-06-23T19:42:12+00:00"
         },
         {
             "name": "twig/cssinliner-extra",
@@ -7857,16 +7857,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.10.2",
+            "version": "v7.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "cfcf4de3ec195967d9062e7aa32d17d7a040c91e"
+                "reference": "cfee22cc949d170e61e7111c89ea9fc86aa02ffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/cfcf4de3ec195967d9062e7aa32d17d7a040c91e",
-                "reference": "cfcf4de3ec195967d9062e7aa32d17d7a040c91e",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/cfee22cc949d170e61e7111c89ea9fc86aa02ffb",
+                "reference": "cfee22cc949d170e61e7111c89ea9fc86aa02ffb",
                 "shasum": ""
             },
             "require": {
@@ -7877,10 +7877,10 @@
                 "fidry/cpu-core-counter": "^1.2.0",
                 "jean85/pretty-package-versions": "^2.1.1",
                 "php": "~8.3.0 || ~8.4.0",
-                "phpunit/php-code-coverage": "^12.3.0",
+                "phpunit/php-code-coverage": "^12.3.1",
                 "phpunit/php-file-iterator": "^6",
                 "phpunit/php-timer": "^8",
-                "phpunit/phpunit": "^12.2.1",
+                "phpunit/phpunit": "^12.2.3",
                 "sebastian/environment": "^8.0.2",
                 "symfony/console": "^6.4.20 || ^7.3.0",
                 "symfony/process": "^6.4.20 || ^7.3.0"
@@ -7894,7 +7894,7 @@
                 "phpstan/phpstan-deprecation-rules": "^2.0.3",
                 "phpstan/phpstan-phpunit": "^2.0.6",
                 "phpstan/phpstan-strict-rules": "^2.0.4",
-                "squizlabs/php_codesniffer": "^3.13.0",
+                "squizlabs/php_codesniffer": "^3.13.2",
                 "symfony/filesystem": "^6.4.13 || ^7.3.0"
             },
             "bin": [
@@ -7935,7 +7935,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.10.2"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.10.3"
             },
             "funding": [
                 {
@@ -7947,7 +7947,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2025-06-09T05:52:59+00:00"
+            "time": "2025-06-22T16:27:15+00:00"
         },
         {
             "name": "fidry/cpu-core-counter",
@@ -8767,16 +8767,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.2.2",
+            "version": "12.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "19e25c2da3f8071a683ee1e445b0e24bba25de61"
+                "reference": "60a8ea2d8b2f070000051b56778009e11576e7d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/19e25c2da3f8071a683ee1e445b0e24bba25de61",
-                "reference": "19e25c2da3f8071a683ee1e445b0e24bba25de61",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60a8ea2d8b2f070000051b56778009e11576e7d1",
+                "reference": "60a8ea2d8b2f070000051b56778009e11576e7d1",
                 "shasum": ""
             },
             "require": {
@@ -8790,13 +8790,13 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.3",
-                "phpunit/php-code-coverage": "^12.3.0",
+                "phpunit/php-code-coverage": "^12.3.1",
                 "phpunit/php-file-iterator": "^6.0.0",
                 "phpunit/php-invoker": "^6.0.0",
                 "phpunit/php-text-template": "^5.0.0",
                 "phpunit/php-timer": "^8.0.0",
                 "sebastian/cli-parser": "^4.0.0",
-                "sebastian/comparator": "^7.0.1",
+                "sebastian/comparator": "^7.1.0",
                 "sebastian/diff": "^7.0.0",
                 "sebastian/environment": "^8.0.2",
                 "sebastian/exporter": "^7.0.0",
@@ -8844,7 +8844,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.2.2"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.2.3"
             },
             "funding": [
                 {
@@ -8868,7 +8868,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-13T05:49:28+00:00"
+            "time": "2025-06-20T11:33:06+00:00"
         },
         {
             "name": "rector/rector",
