@@ -169,16 +169,9 @@ class ArticleEditorController extends BaseController
             }
 
             $username = $this->request->get('username');
-            $username = trim($username);
-
-            if( empty($username) ) {
-                throw $this->createNotFoundException('Inserire uno username');
-            }
-
-            $username = mb_strtolower($username);
 
             return $this->render('article/editor/authors-autocomplete.html.twig', [
-               'Authors' => $this->factory->createUserCollection()->load([2, 60])
+               'Authors' => $this->factory->createUserCollection()->loadBySearchUsername($username)
             ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
