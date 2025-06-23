@@ -1,3 +1,5 @@
-//import $ from 'jquery';
+import './styles/article-edit.css';
+
 import './js/article-edit-contenteditable';
 import './js/modal-ajax';
+import './js/article-edit-authors';

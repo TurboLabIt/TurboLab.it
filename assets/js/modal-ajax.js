@@ -10,7 +10,7 @@ jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
 
     let modalFrame  = jQuery('#tli-ajax-modal');
     let targetTitle = modalFrame.find('.modal-title');
-    let targetBody  = modalFrame.find('.modal-body');
+    let targetBody  = modalFrame.find('.tli-ajax-modal-content');
 
     let loaderino = modalFrame.find('.tli-loaderino').clone().removeClass('collapse').prop('outerHTML');
 

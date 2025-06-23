@@ -6,6 +6,11 @@
     <link rel="preload" href="{{ asset('build/article.css') }}"
         as="style" onload="this.onload=null;this.rel='stylesheet'">
 
+    {% if Article.currentUserCanEdit %}
+        <link rel="preload" href="{{ asset('build/article-edit.css') }}"
+              as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {% endif %}
+
 {% endblock %}
 
 
@@ -338,6 +343,8 @@
         </div>
     </section>
     <!-- ARTICLE bodyMainContent END -->
+
+    {% include 'parts/modal-ajax.html.twig' %}
 
     <!-- ARTICLE comments START -->
     {% if Article.commentsTopic is not empty and Article.isListable %}

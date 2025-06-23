@@ -1,1 +1,79 @@
-<h2>{{ Article.title|raw }}</h2>
+<div class="modal-body">
+
+    <div class="mb-4">
+        <p>Aggiungi e rimuovi gli autori dell'articolo</p>
+        <p>
+            Ricorda che la nostra linea editoriale prevede che chiunque abbia partecipato alla realizzazione dell'articolo,
+            anche se ha svolto solo qualche correzione, venga accreditato fra gli autori.
+        </p>
+    </div>
+
+
+    <div class="mb-4">
+        <h6>Autori attuali</h6>
+
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list" style="max-height: 200px; overflow-y: auto;">
+
+            {% for Author in Article.Authors %}
+
+                <div class="list-group-item d-flex justify-content-between align-items-center"
+                     {% if loop.last %}style="border-bottom-style: none"{% endif %}
+                     data-author-id="{{ Author.id }}">
+
+                    <div class="tli-article-editor-author-info">
+
+                        <div class="tli-article-editor-author-avatar-container">
+
+                            {% if Author.avatarUrl is not empty %}
+
+                                <img src="{{ Author.avatarUrl }}" width="64" class="tli-article-editor-author-avatar"
+                                     alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+
+                            {% else %}
+
+                                <i class="fa-solid fa-user-tie" style="color: #deddda;"></i>
+
+                            {% endif %}
+
+                        </div>
+
+                        <span class="ml-5">{% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}</span>
+
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-outline-danger tli-remove-author">
+                        <i class="bi bi-person-dash"></i> Rimuovi
+                    </button>
+                </div>
+
+            {% endfor %}
+
+            <div class="list-group-item text-muted text-center tli-no-author-message collapse">Nessun utente selezionato come autore</div>
+
+        </div>
+    </div>
+
+    <hr class="my-4"> <!-- More prominent separator -->
+
+    <!-- Add Authors Section -->
+    <div class="mb-3">
+        <h6>Add New Authors</h6>
+        <div class="input-group mb-2">
+            <input type="text" class="form-control rounded-start-3" id="authorSearchInput" placeholder="Search for authors by name..." aria-label="Search for authors">
+            <button class="btn btn-outline-secondary rounded-end-3" type="button" id="clearAuthorSearchBtn" title="Clear Search">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div id="authorSearchResults" class="list-group border rounded-3 mt-2" style="max-height: 250px; overflow-y: auto; display: none;">
+            <div class="list-group-item text-muted text-center">Type to search for authors...</div>
+            <!-- Search results will be dynamically loaded here via JavaScript -->
+        </div>
+        <div class="mt-2 text-muted small" id="noResultsMessage" style="display: none;">No authors found.</div>
+    </div>
+
+</div>
+
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>

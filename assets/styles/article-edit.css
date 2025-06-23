@@ -1,0 +1,29 @@
+.tli-article-editor-author-avatar-container {
+    width: 64px; /* Fixed size for consistency */
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px; /* Spacing between avatar/icon and name */
+    border: 1px solid #ddd; /* Subtle border for definition */
+    border-radius: .25rem; /* Small radius for square with rounded corners */
+    flex-shrink: 0; /* Prevent container from shrinking */
+    overflow: hidden; /* Hide overflow for images */
+}
+
+.tli-article-editor-author-avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure image covers the area without distortion */
+    border-radius: .25rem; /* Apply to image itself for consistency */
+}
+
+.tli-article-editor-author-avatar-container .fa-user-tie {
+    font-size: 32px; /* Adjust Font Awesome icon size to fit 64px container */
+    color: #6c757d; /* Bootstrap secondary color for icon */
+}
+
+.tli-article-editor-author-info {
+    display: flex;
+    align-items: center;
+}
