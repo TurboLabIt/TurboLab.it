@@ -1,0 +1,11 @@
+{% if Authors.count > 0 %}
+
+    {% for Author in Authors %}
+        <p>{{ Author.fullName|raw }}</p>
+    {% endfor %}
+
+{% else %}
+
+    <div class="text-muted text-center tli-no-author-message">🤷 Nessun utente trovato</div>
+
+{% endif %}

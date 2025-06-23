@@ -1,4 +1,5 @@
 //import $ from 'jquery';
+import debounce from "./debouncer";
 
 
 jQuery(document).on('click', '.tli-remove-author',  function(event) {
@@ -15,3 +16,41 @@ jQuery(document).on('click', '.tli-remove-author',  function(event) {
         currentAuthorsList.find('.tli-no-author-message').toggleClass('collapse', authorsNum != 0);
     });
 });
+
+
+jQuery(document).on('input', 'input.tli-authors-autocomplete', debounce(function() {
+
+    let username = jQuery(this).val().trim();
+
+    if( username == '' ) {
+        return true;
+    }
+
+    let target      = jQuery(this).closest('.tli-authors-autocomplete-container').find('.tli-article-editor-candidate-authors-list');
+
+    //cleanup
+    target.find('.tli-no-author-message').remove();
+    target.find('[data-author-id]').remove();
+
+    // show loaderino
+    let loaderino = jQuery('#tli-ajax-modal').find('.tli-loaderino').first().clone().removeClass('collapse').prop('outerHTML');
+    target.append(loaderino);
+
+    target.show();
+
+    // fetch results
+    let endpoint = jQuery(this).data('autocomplete-url');
+
+    jQuery.get(endpoint, { username: username }, function(data) {
+        target.append(data);
+    }, 'html')
+
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            target.html(jqXHR.responseText);
+        })
+
+        .always(function() {
+            target.find('.tli-loaderino').remove();
+        });
+
+}, 300));

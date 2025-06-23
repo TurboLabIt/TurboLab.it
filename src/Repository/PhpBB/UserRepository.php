@@ -9,7 +9,8 @@ use Doctrine\DBAL\Statement;
 class UserRepository extends BasePhpBBRepository
 {
     const string ENTITY_CLASS       = User::class;
-    const string DEFAULT_INDEXED_BY = 't.user_id';
+    const string ID_FIELD           = 't.user_id';
+    const string DEFAULT_INDEXED_BY = self::ID_FIELD;
 
     const string AUTHENTICATED_USER_FIELDS  = '
         users.user_id, user_type, username, username_clean,user_email,

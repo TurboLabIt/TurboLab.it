@@ -142,7 +142,7 @@ class ArticleEditorController extends BaseController
     }
 
 
-    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/get-authors', name: 'app_editor_article_get-authors-modal', methods: ['GET'])]
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/get-authors-modal', name: 'app_editor_article_get-authors-modal', methods: ['GET'])]
     public function getAuthorsModal(int $articleId) : Response
     {
         try {
@@ -151,9 +151,34 @@ class ArticleEditorController extends BaseController
 
             return $this->json([
                 "title" => "Modifica autori",
-                "body" => $this->twig->render('article/editor/authors.html.twig', [
+                "body" => $this->twig->render('article/editor/authors-modal.html.twig', [
                     "Article" => $this->articleEditor
                 ])
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+    }
+
+
+    #[Route('/ajax/editor/authors/', name: 'app_editor_article_authors-autocomplete', methods: ['GET'])]
+    public function authorsAutocomplete() : Response
+    {
+        try {
+            if( empty($this->getUser()) ) {
+                throw $this->createAccessDeniedException('Non sei loggato!');
+            }
+
+            $username = $this->request->get('username');
+            $username = trim($username);
+
+            if( empty($username) ) {
+                throw $this->createNotFoundException('Inserire uno username');
+            }
+
+            $username = mb_strtolower($username);
+
+            return $this->render('article/editor/authors-autocomplete.html.twig', [
+               'Authors' => $this->factory->createUserCollection()->load([2, 60])
             ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
