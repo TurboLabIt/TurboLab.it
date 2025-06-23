@@ -7,6 +7,8 @@ fxHeader "🧪 ${APP_NAME} Test Runner"
 #fxTitle "Pages to check"
 #fxAskConfirmation "Update the values in tests/BaseT.php before proceeding"
 
+wsuSymfony console cache:clear
+
 # https://github.com/TurboLabIt/webstackup/tree/master/script/php/test-runner-package.sh
 export XDEBUG_PORT=
 export WSU_TEST_RUNNER_PARALLEL=0
