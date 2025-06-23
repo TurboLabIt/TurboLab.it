@@ -62,7 +62,7 @@
 
                                 {% endembed %}
 
-                                <h1 class="title" contenteditable="true" data-tli-editable-id="title">{{ Article.title|raw }}</h1>
+                                <h1 class="title form-control" contenteditable="true" data-tli-editable-id="title">{{ Article.title|raw }}</h1>
 
                             {% else %}
 
@@ -71,8 +71,32 @@
                             {% endif %}
 
                             <div class="post-categories d-flex justify-content-between align-content-center">
-
                                 <div class="categories-share">
+
+                                    {% if Article.AuthorsNotSystem is not empty or Article.currentUserCanEdit or Article.commentsTopic is not empty %}
+                                        <ul>
+                                            {% if Article.AuthorsNotSystem is not empty %}
+                                                <li>
+                                                    <i class="fa-solid fa-user-tie"></i> a cura di
+                                                    {% for Author in Article.AuthorsNotSystem %}
+                                                        <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </li>
+                                            {% endif %}
+
+                                            {% if Article.currentUserCanEdit %}
+                                                <li style="color: #74C0FC;" class="fw-bold">
+                                                    <i class="fa-solid fa-user-pen"></i>
+                                                    Modifica autori
+                                                </li>
+                                                <li style="color: #74C0FC;" class="fw-bold">
+                                                    <i class="fa-solid fa-tags"></i>
+                                                    Modifica tag
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    {% endif %}
+
                                     <ul>
                                         {% if Article.commentsTopic is not empty %}
                                             <li>
@@ -90,18 +114,10 @@
                                             Aggiornato: {{ Article.updatedAt|friendlyDate }}
                                         </li>
                                         <li>{% include('article/publishing-status.html.twig') %}</li>
-                                        {% if Article.AuthorsNotSystem is not empty %}
-                                            <li>
-                                                <i class="fa-solid fa-user-tie"></i> a cura di
-                                                {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </li>
-                                        {% endif %}
                                     </ul>
                                 </div>
-
                             </div>
+
 
                         </div>
 
@@ -195,7 +211,7 @@
 
                         {% if Article.isReadable %}
 
-                            <div class="post-text mt-30 tli-article-body"
+                            <div class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
                                  {% if Article.currentUserCanEdit %}
                                     contenteditable="true" data-tli-editable-id="body"
                                 {% endif %}>

@@ -42,3 +42,12 @@ $this->validateCsrfToken();
     {% block alertBody %}CONTENT{% endblock %}
 {% endembed %}
 ````
+
+
+
+## Editor
+
+````html
+{% if Article.currentUserCanEdit %}
+{% endif %}
+````
