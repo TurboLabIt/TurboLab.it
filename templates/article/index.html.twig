@@ -40,7 +40,7 @@
                 </div>
 
                 <!-- ARTICLE main content START -->
-                <article class="col-lg-8" data-save-url="{{ Article.updateUrl }}">
+                <article class="col-lg-8" data-save-url="{{ path('app_editor_article_update', {articleId: Article.id}) }}">
 
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
@@ -85,9 +85,12 @@
                                             {% endif %}
 
                                             {% if Article.currentUserCanEdit %}
-                                                <li style="color: #74C0FC;" class="fw-bold">
-                                                    <i class="fa-solid fa-user-pen"></i>
-                                                    Modifica autori
+                                                <li>
+                                                    <a href="#" class="form-control fw-bold"
+                                                       data-tli-modal-url="{{ path('app_editor_article_get-authors-modal', {articleId: Article.id}) }}">
+                                                        <i class="fa-solid fa-user-pen"></i>
+                                                        Modifica autori
+                                                    </a>
                                                 </li>
                                                 <li style="color: #74C0FC;" class="fw-bold">
                                                     <i class="fa-solid fa-tags"></i>
@@ -117,7 +120,6 @@
                                     </ul>
                                 </div>
                             </div>
-
 
                         </div>
 

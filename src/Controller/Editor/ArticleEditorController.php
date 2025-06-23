@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Twig\Environment;
 
 
 class ArticleEditorController extends BaseController
@@ -25,7 +26,8 @@ class ArticleEditorController extends BaseController
     public function __construct(
         protected Factory $factory,
         protected ArticleEditor $articleEditor, protected Article $article, RequestStack $requestStack,
-        protected FrontendHelper $frontendHelper, protected CsrfTokenManagerInterface $csrfTokenManager
+        protected FrontendHelper $frontendHelper, protected CsrfTokenManagerInterface $csrfTokenManager,
+        protected Environment $twig
     )
         { $this->request = $requestStack->getCurrentRequest(); }
 
@@ -122,18 +124,7 @@ class ArticleEditorController extends BaseController
     public function update(int $articleId) : Response
     {
         try {
-            $this->ajaxOnly();
-
-            if( empty($this->getUser()) ) {
-                throw $this->createAccessDeniedException('Non sei loggato!');
-            }
-
-            $this->articleEditor->load($articleId);
-
-            if( !$this->articleEditor->currentUserCanEdit() ) {
-                throw $this->createAccessDeniedException('Non sei autorizzato a modificare questo articolo');
-            }
-
+            $this->loadArticleEditor($articleId);
             //
             foreach(['title', 'body'] as $param) {
 
@@ -148,5 +139,39 @@ class ArticleEditorController extends BaseController
             return new Response("✅ OK! Articolo salvato - $savedAt");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+    }
+
+
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/get-authors', name: 'app_editor_article_get-authors-modal', methods: ['GET'])]
+    public function getAuthorsModal(int $articleId) : Response
+    {
+        try {
+
+            $this->loadArticleEditor($articleId);
+
+            return $this->json([
+                "title" => "Modifica autori",
+                "body" => $this->twig->render('article/editor/authors.html.twig', [
+                    "Article" => $this->articleEditor
+                ])
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+    }
+
+
+    protected function loadArticleEditor(int $articleId) : void
+    {
+        $this->ajaxOnly();
+
+        if( empty($this->getUser()) ) {
+            throw $this->createAccessDeniedException('Non sei loggato!');
+        }
+
+        $this->articleEditor->load($articleId);
+
+        if( !$this->articleEditor->currentUserCanEdit() ) {
+            throw $this->createAccessDeniedException('Non sei autorizzato a modificare questo articolo');
+        }
     }
 }

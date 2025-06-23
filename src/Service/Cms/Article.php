@@ -491,11 +491,6 @@ class Article extends BaseCmsService
     }
 
     public function getSlug() : ?string { return $this->factory->getArticleUrlGenerator()->buildSlug($this); }
-
-    public function getUpdateUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-    {
-        return $this->factory->getArticleUrlGenerator()->generateUpdateUrl($this, $urlType);
-    }
     //</editor-fold>
 
 
