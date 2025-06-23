@@ -102,11 +102,9 @@ class Tag extends BaseCmsService
     }
 
 
-    public function getTitleForHTMLAttribute() : string
+    public function getTitleForHTMLAttribute() : ?string
     {
-        $processing = $this->getNavTitle() . ': articoli, guide e news';
-        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return $this->encodeTextForHTMLAttribute( $this->getNavTitle() );
     }
     //</editor-fold>
 

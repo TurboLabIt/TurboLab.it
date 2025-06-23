@@ -415,9 +415,7 @@ class Article extends BaseCmsService
 
     public function getTitleForHTMLAttribute() : ?string
     {
-        $processing = $this->getTitleWithFreshUpdatedAt();
-        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return $this->encodeTextForHTMLAttribute( $this->getTitleWithFreshUpdatedAt() );
     }
 
 

@@ -76,10 +76,13 @@ abstract class BaseServiceEntity
     }
 
 
-    public function getTitleForHTMLAttribute() : ?string
+    protected function encodeTextForHTMLAttribute(?string $html) : ?string
     {
-        $processing = $this->getTitle();
-        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        if( empty($html) ) {
+            return $html;
+        }
+
+        $processing = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 

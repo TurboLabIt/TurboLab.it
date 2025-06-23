@@ -102,7 +102,7 @@ class AuthorTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->authorNameAsH1Checker($author, $crawler, "Pagina dell'utente tecniconapoletano");
+        $this->authorNameAsH1Checker($author, $crawler, "Pagina dell&apos;utente tecniconapoletano");
 
         $html = $this->fetchHtml($url);
 
@@ -156,12 +156,17 @@ class AuthorTest extends BaseT
 
         $url = $author->getUrl();
         $assertFailureMessage = "Failing URL: $url";
-        $this->assertStringEndsWith($author->getUsernameClean(), $url, $assertFailureMessage);
+
+        $authorNameInUrl = urlencode($author->getUsernameClean());
+        // fix different output between urlencode and UrlGeneratorInterface->generate()
+        $authorNameInUrl = str_ireplace(['%3B'], [';'], $authorNameInUrl);
+
+        $this->assertStringEndsWith($authorNameInUrl, $url, $assertFailureMessage);
 
         $crawler = $this->fetchDomNode($url);
 
         //
-        $authorName = $author->getFullName();
+        $authorName = $author->getFullNameForHTMLAttribute();
         $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di $authorName");
     }
 
@@ -175,6 +180,8 @@ class AuthorTest extends BaseT
         $this->assertNoLegacyEntities($authorName);
 
         $H1FromCrawler = $crawler->filter('body h1')->html();
-        $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
+        // workaround: the crawler decodes entities automatically
+        $H1FromCrawlerNormalized = $this->encodeQuotes($H1FromCrawler);
+        $this->assertEquals($expectedH1, $H1FromCrawlerNormalized, "Explict H1 check failure! " . $assertFailureMessage);
     }
 }

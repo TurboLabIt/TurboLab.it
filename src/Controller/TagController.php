@@ -89,9 +89,13 @@ class TagController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
+        $metaTitle  = $tag->getTitleForHTMLAttribute() . ': articoli, guide e news';
+        $metaTitle .= $page < 2 ? '' : " - pagina $page";
+
         return
             $this->twig->render('tag/index.html.twig', [
-                'metaTitle'         => $tag->getTitleForHTMLAttribute() . ($page < 2 ? '' : " - pagina $page"),
+                'metaTitle'         => $metaTitle,
+                'metaDescription'   => $metaTitle,
                 'metaCanonicalUrl'  => $tag->getUrl($page),
                 'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
                 'activeMenu'        => $tag->getActiveMenu(),

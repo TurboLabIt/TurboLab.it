@@ -69,25 +69,26 @@ class User extends BaseServiceEntity
 
     public function getFullName() : string
     {
-        $username   = $this->getUsername();
+        $username = $this->getUsername();
+        $usernameDecoded = html_entity_decode($username, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $usernameEncoded = htmlspecialchars($usernameDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+
         $personName = $this->loadAdditionalFields()['pf_tli_fullname'] ?? null;
 
         if( empty($personName) ) {
-            return $username;
+            return $usernameEncoded;
         }
 
-        return "$username ($personName)";
+        $personNameDecoded = html_entity_decode($personName, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $personNameEncoded = htmlspecialchars($personNameDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+
+        return "$usernameEncoded ($personNameEncoded)";
     }
 
-    public function getTitleForHTMLAttribute() : string
-    {
-        return $this->getFullName();
-    }
 
-
-    public function getAbstractForHTMLAttribute() : string
+    public function getFullNameForHTMLAttribute() : ?string
     {
-        return $this->getTitleForHTMLAttribute();
+        return $this->encodeTextForHTMLAttribute( $this->getFullName() );
     }
     //</editor-fold>
 

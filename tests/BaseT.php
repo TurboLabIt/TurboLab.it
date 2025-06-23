@@ -459,4 +459,16 @@ abstract class BaseT extends WebTestCase
 
         $this->assertDoesNotMatchRegularExpression($pattern, $text);
     }
+
+
+    protected function encodeQuotes(string $htmlFromCrawler) : string
+    {
+        // workaround for: the quotes are decoded automatically by the crawler
+        $arrQuoteEncodeMap = [
+            '"' => '&quot;',
+            "'" => '&apos;'
+        ];
+
+        return str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $htmlFromCrawler);
+    }
 }
