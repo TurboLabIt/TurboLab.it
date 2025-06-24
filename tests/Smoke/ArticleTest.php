@@ -62,7 +62,7 @@ class ArticleTest extends BaseT
         $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
         // header (comments, updated, publishing status, authors)
-        $articleMetaDataAsLi = $crawler->filter('ul')->first()->filter('li');
+        $articleMetaDataAsLi = $crawler->filter('.categories-share')->filter('li');
         $arrUnmatchedUlContent = ['comment', 'aggiornat', 'pubblicato', 'a cura di'];
         foreach($articleMetaDataAsLi as $li) {
 
