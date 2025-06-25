@@ -18,7 +18,7 @@ if [ "$APP_ENV" = "dev" ]; then
   sudo rm -f /etc/php/${PHP_VER}/fpm/conf.d/30-webstackup-opcache.ini
 
   fxTitle "Removing composer stuff..."
-  rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
+  sudo rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
 
   fxTitle "npm-check-updates..."
   yarn npm-check-updates -u

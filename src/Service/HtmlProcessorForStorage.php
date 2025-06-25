@@ -100,8 +100,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
                 ->removeExternalImages($domDoc)
                 ->imagesFromUrlToPlaceholder($domDoc)
                 ->internalLinksFromUrlToPlaceholder($domDoc)
+                ->YouTubeIframesFromUrlToPlaceholder($domDoc)
                 ->extractAbstract($domDoc)
-                //->YouTubeIframesFromUrlToPlaceholder($domDoc)
                 ->renderDomDocAsHTML($domDoc);
     }
 
@@ -220,14 +220,12 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         $tagUrl     = $this->factory->getTagUrlGenerator();
         $fileUrl    = $this->factory->getFileUrlGenerator();
 
-        $arrNodesToReplace = [];
         $arrNodes = $domDoc->getElementsByTagName('a');
 
         /** @var DOMElement $a */
         foreach($arrNodes as $a) {
 
             $href = $a->getAttribute("href");
-
 
             $articleId  = $articleUrl->extractIdFromUrl($href);
             if( !empty($articleId) ) {
@@ -246,6 +244,108 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $fileId = $fileUrl->extractIdFromUrl($href);
             if( !empty($fileId) ) {
                 $a->setAttribute("href", '==###file::id::' . $fileId . '###==');
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
+    protected function YouTubeIframesFromUrlToPlaceholder(DOMDocument $domDoc) : static
+    {
+        $arrNodes = $domDoc->getElementsByTagName('iframe');
+
+        $iframesToProcess = [];
+        foreach ($arrNodes as $iframe) {
+
+            $url = $iframe->getAttribute("src");
+
+            if( !preg_match('/^(https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//i', $url) ) {
+                continue;
+            }
+
+            $iframesToProcess[] = $iframe;
+        }
+
+        $arrRegex = [
+            '/(?<=(\/embed\/))([a-z0-9_-]+)/i',
+            '/(?<=(\/watch\?v=))([a-z0-9_-]+)/i'
+        ];
+
+        /** @var DOMElement $iframe */
+        foreach($iframesToProcess as $iframe) {
+
+            foreach($arrRegex as $regex) {
+
+                $url = $iframe->getAttribute("src");
+
+                $arrMatches = [];
+                preg_match($regex, $url, $arrMatches);
+
+                if( !empty($arrMatches[0]) ) {
+
+                    $placeholderText = '==###youtube::code::' . $arrMatches[0] . '###==';
+
+                    // Create a new text node with the placeholder
+                    $placeholderNode = $domDoc->createTextNode($placeholderText);
+
+                    // Get the parent of the iframe
+                    $parentNode = $iframe->parentNode;
+
+                    //// Ensure parentNode exists
+                    if( !$parentNode ) {
+                        continue;
+                    }
+
+                    // Replace the iframe with the new text node
+                    $parentNode->replaceChild($placeholderNode, $iframe);
+                    break;
+                }
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
+
+
+
+
+
+
+    protected function YouTubeIframesFromUrlToPlaceholderLEGACY(DOMDocument $domDoc) : static
+    {
+        $arrNodes = $domDoc->getElementsByTagName('iframe');
+
+        /** @var DOMElement $a */
+        foreach($arrNodes as $iframe) {
+
+            $url = $iframe->getAttribute("src");
+
+            if( !preg_match('/^(https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//i', $url) ) {
+                continue;
+            }
+
+            $arrRegex = [
+                '/(?<=(\/embed\/))([a-z0-9])*/i',
+                '/(?<=(\/watch\?v=))([a-z0-9])*/i'
+            ];
+
+            foreach($arrRegex as $regex) {
+
+                $arrMatches = [];
+                preg_match($regex, $url, $arrMatches);
+
+                if( !empty($arrMatches[0]) ) {
+
+                    $iframe->setAttribute("src", '==###youtube::code::' . $arrMatches[0] . '###==');
+                    break;
+                }
             }
         }
 
@@ -275,6 +375,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
         return $this;
     }
+
 
     public function getAbstract() : ?string { return $this->abstract; }
 }

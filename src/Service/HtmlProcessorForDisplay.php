@@ -5,6 +5,7 @@ use App\Entity\Cms\Image as ImageEntity;
 use App\Service\Cms\Article;
 use App\Service\Cms\Image;
 use DOMDocument;
+use DOMXPath;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
@@ -176,9 +177,64 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
+
+
     protected function YouTubeIframesFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
-        $ytRegEx        = '/(?<=(==###youtube::code::))[a-zA-z0-9-_]+(?=(###==))/';
+        $regex = '/^==###youtube::code::([a-z0-9-_]+)###==$/i';
+
+        $xpath = new DOMXPath($domDoc);
+        $textNodes = $xpath->query('//text()'); // Select all text nodes in the document
+
+        $nodesToReplace = [];
+
+        foreach ($textNodes as $textNode) {
+
+            $nodeValue = trim($textNode->nodeValue);
+
+            if( preg_match($regex, $nodeValue, $matches) ) {
+                $nodesToReplace[] = [
+                    'node' => $textNode,
+                    'code' => $matches[1]
+                ];
+            }
+        }
+
+        foreach ($nodesToReplace as $item) {
+
+            $textNode   = $item['node'];
+            $videoCode  = $item['code'];
+
+            $iframe = $domDoc->createElement('iframe');
+
+            $url = 'https://www.youtube-nocookie.com/embed/' . $videoCode . '?rel=0';
+            $iframe->setAttribute('src', $url);
+            $iframe->setAttribute('frameborder', '0');
+            $iframe->setAttribute('width', '100%');
+            $iframe->setAttribute('height', '540px');
+            $iframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+            $iframe->setAttribute('allowfullscreen', 'allowfullscreen');
+
+            $parentNode = $textNode->parentNode;
+            if($parentNode) {
+                $parentNode->replaceChild($iframe, $textNode);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
+
+
+
+
+
+    protected function YouTubeIframesFromPlaceholderToUrlLEGACY(DOMDocument $domDoc) : static
+    {
+        $ytRegEx        = '/(?<=(==###youtube::code::))[a-z0-9-_]+(?=(###==))/i';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'iframe', 'src', $ytRegEx);
 
         foreach($arrLinkNodes as $ytVideoCode => $arrIframesWithThisCode) {
