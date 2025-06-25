@@ -178,13 +178,12 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
 
 
-
     protected function YouTubeIframesFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $regex = '/^==###youtube::code::([a-z0-9-_]+)###==$/i';
 
         $xpath = new DOMXPath($domDoc);
-        $textNodes = $xpath->query('//text()'); // Select all text nodes in the document
+        $textNodes = $xpath->query('//text()');
 
         $nodesToReplace = [];
 
@@ -218,36 +217,6 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
             $parentNode = $textNode->parentNode;
             if($parentNode) {
                 $parentNode->replaceChild($iframe, $textNode);
-            }
-        }
-
-        return $this;
-    }
-
-
-
-
-
-
-
-
-
-    protected function YouTubeIframesFromPlaceholderToUrlLEGACY(DOMDocument $domDoc) : static
-    {
-        $ytRegEx        = '/(?<=(==###youtube::code::))[a-z0-9-_]+(?=(###==))/i';
-        $arrLinkNodes   = $this->extractNodes($domDoc, 'iframe', 'src', $ytRegEx);
-
-        foreach($arrLinkNodes as $ytVideoCode => $arrIframesWithThisCode) {
-
-            foreach($arrIframesWithThisCode as $oneIframe) {
-
-                $url = '//www.youtube-nocookie.com/embed/' . $ytVideoCode . '?&rel=0';
-                $oneIframe->setAttribute('src', $url);
-                $oneIframe->setAttribute('frameborder', 0);
-                $oneIframe->setAttribute('width', '100%');
-                $oneIframe->setAttribute('height', '540px');
-                $oneIframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-                $oneIframe->setAttribute('allowfullscreen', 'allowfullscreen');
             }
         }
 

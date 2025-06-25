@@ -252,7 +252,6 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
 
 
-
     protected function YouTubeIframesFromUrlToPlaceholder(DOMDocument $domDoc) : static
     {
         $arrNodes = $domDoc->getElementsByTagName('iframe');
@@ -301,49 +300,6 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
                     // Replace the iframe with the new text node
                     $parentNode->replaceChild($placeholderNode, $iframe);
-                    break;
-                }
-            }
-        }
-
-        return $this;
-    }
-
-
-
-
-
-
-
-
-
-
-    protected function YouTubeIframesFromUrlToPlaceholderLEGACY(DOMDocument $domDoc) : static
-    {
-        $arrNodes = $domDoc->getElementsByTagName('iframe');
-
-        /** @var DOMElement $a */
-        foreach($arrNodes as $iframe) {
-
-            $url = $iframe->getAttribute("src");
-
-            if( !preg_match('/^(https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//i', $url) ) {
-                continue;
-            }
-
-            $arrRegex = [
-                '/(?<=(\/embed\/))([a-z0-9])*/i',
-                '/(?<=(\/watch\?v=))([a-z0-9])*/i'
-            ];
-
-            foreach($arrRegex as $regex) {
-
-                $arrMatches = [];
-                preg_match($regex, $url, $arrMatches);
-
-                if( !empty($arrMatches[0]) ) {
-
-                    $iframe->setAttribute("src", '==###youtube::code::' . $arrMatches[0] . '###==');
                     break;
                 }
             }
