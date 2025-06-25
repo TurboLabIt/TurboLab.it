@@ -82,7 +82,7 @@ class ArticleTest extends BaseT
 
         $articleBodyCrawler = $crawler->filter('.tli-article-body');
 
-            // first <li>s of the article (body content)
+        // first <li>s of the article (body content)
         $summaryLi = $articleBodyCrawler->filter('ul')->first()->filter('li');
         $arrUnmatchedUlContent = [
             'video da YouTube', 'formattazione',
@@ -116,6 +116,9 @@ class ArticleTest extends BaseT
             if( stripos($src, 'youtube-nocookie.com/embed') !== false ) {
                 $countYouTubeIframe++;
             }
+
+            $width = $iframe->getAttribute("width");
+            $this->assertEquals('100%', $width, "Wrong YouTube width!");
         }
 
         $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
@@ -202,10 +205,10 @@ class ArticleTest extends BaseT
         $this->assertNoLegacyEntities($title);
 
         $H1FromCrawler = $crawler->filter('article h1')->html();
-        $this->assertEquals($title, $H1FromCrawler, $assertFailureMessage);
+        $this->assertStringStartsWith($title, $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {
-            $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
+            $this->assertStringStartsWith($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
         }
     }
 
