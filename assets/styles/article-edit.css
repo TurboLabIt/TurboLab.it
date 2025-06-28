@@ -1,14 +1,14 @@
 .tli-article-editor-author-avatar-container {
-    width: 64px; /* Fixed size for consistency */
-    height: 64px;
+    width: 48px;
+    height: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 15px; /* Spacing between avatar/icon and name */
-    border: 1px solid #ddd; /* Subtle border for definition */
-    border-radius: .25rem; /* Small radius for square with rounded corners */
-    flex-shrink: 0; /* Prevent container from shrinking */
-    overflow: hidden; /* Hide overflow for images */
+    margin-right: 15px;
+    border: 1px solid #ddd;
+    border-radius: .25rem;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .tli-article-editor-author-avatar-container img {
