@@ -62,3 +62,8 @@ div.stellarnav.mobile.active ul {
     max-width: 340px;
     z-index: 999;
 }
+
+
+.tli-loaderino {
+    color: #f8e45c;
+}
