@@ -13,7 +13,8 @@
 
         <h6>Autori attuali</h6>
 
-        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list" style="max-height: 200px; overflow-y: auto;">
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list"
+             data-changed="0">
 
             {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} only %}
                 {% block authorActionButton %}
@@ -59,5 +60,6 @@
 
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-success tli-author-button-ok">Salva</button>
+    <button type="button" class="btn btn-secondary tli-author-button-cancel" data-bs-dismiss="modal">Annulla</button>
 </div>

@@ -6,7 +6,9 @@ jQuery(document).on('click', '.tli-remove-author',  function(event) {
 
     event.preventDefault();
 
-    let currentAuthorsList = $('#tli-ajax-modal .tli-article-editor-current-authors-list');
+    let currentAuthorsList = $('.tli-article-editor-current-authors-list');
+    currentAuthorsList.data('changed', 1);
+
     let authorInList= $(this).closest('.list-group-item');
     //let authorId    = authorInList.data['author-id'];
     authorInList.fadeOut('slow', function(){
@@ -15,6 +17,17 @@ jQuery(document).on('click', '.tli-remove-author',  function(event) {
         let authorsNum = currentAuthorsList.find('[data-author-id]').length;
         currentAuthorsList.find('.tli-no-author-message').toggleClass('collapse', authorsNum != 0);
     });
+});
+
+
+jQuery(document).on('click', '.tli-add-author',  function(event) {
+
+    event.preventDefault();
+
+    let currentAuthorsList = $('.tli-article-editor-current-authors-list');
+    currentAuthorsList.data('changed', 1);
+
+    alert("ADDING...");
 });
 
 
@@ -76,4 +89,17 @@ function loadAuthors(username)
             });
 }
 
-loadAuthors();
+
+jQuery(document).on('click', '.tli-author-button-ok',  function(event) {
+
+    event.preventDefault();
+    let currentAuthorsList = $('.tli-article-editor-current-authors-list');
+
+    if( currentAuthorsList.data("changed") == "0" ) {
+
+        $('.tli-author-button-cancel').trigger('click');
+        return false;
+    }
+
+    alert("CHANGED, SAVING");
+});

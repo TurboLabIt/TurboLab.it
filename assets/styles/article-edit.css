@@ -28,7 +28,7 @@
     align-items: center;
 }
 
-.tli-article-editor-candidate-authors-list {
+.tli-article-editor-current-authors-list, .tli-article-editor-candidate-authors-list {
     max-height: 250px;
     overflow-y: auto;
 }
