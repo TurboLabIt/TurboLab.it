@@ -41,12 +41,10 @@
         </div>
 
         <div class="list-group list-group-flush border rounded-3 p-2 d-flex justify-content-center align-items-center d-none">
-            <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse" style="color: #f8e45c;"></i>
+            <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse fa-5x" style="color: #f8e45c;"></i>
         </div>
 
-        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-authors-list">
-            {% include 'article/editor/authors-autocomplete.html.twig' with {'Authors': LatestAuthors} only %}
-        </div>
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-authors-list"></div>
     </div>
 
 </div>
@@ -56,3 +54,5 @@
     <button type="button" class="btn btn-success tli-author-button-ok">Salva</button>
     <button type="button" class="btn btn-secondary tli-author-button-cancel" data-bs-dismiss="modal">Annulla</button>
 </div>
+
+<script>jQuery('.tli-authors-autocomplete').trigger('input')</script>

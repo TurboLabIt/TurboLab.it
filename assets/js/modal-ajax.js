@@ -12,11 +12,6 @@ jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
     let targetTitle = modalFrame.find('.modal-title');
     let targetBody  = modalFrame.find('.tli-ajax-modal-content');
 
-    let loaderino = modalFrame.find('.tli-loaderino').clone().removeClass('collapse').prop('outerHTML');
-
-    targetTitle.html(loaderino);
-    targetBody.html(loaderino);
-
     new bootstrap.Modal(modalFrame).show();
 
     jQuery.get(endpoint, function(data) {
