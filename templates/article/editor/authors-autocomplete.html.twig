@@ -1,14 +1,7 @@
 {% if Authors|length %}
 
     {% embed 'article/editor/authors-modal-list-items.html.twig' %}
-        {% block authorActionButton %}
-            <button type="button" class="btn btn-sm btn-outline-success tli-add-author">
-                <i class="fa-solid fa-user-plus mr-5"></i> Aggiungi
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-success disabled d-none tli-author-already">
-                <i class="fa-solid fa-user-plus mr-5"></i> È già autore
-            </button>
-        {% endblock %}
+        {% block removeAuthorClass %}d-none{% endblock %}
     {% endembed %}
 
 {% else %}

@@ -14,11 +14,7 @@
              data-changed="0">
 
             {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} only %}
-                {% block authorActionButton %}
-                    <button type="button" class="btn btn-sm btn-outline-danger tli-remove-author">
-                        <i class="fa-solid fa-user-minus mr-5"></i> Rimuovi
-                    </button>
-                {% endblock %}
+                {% block addAuthorClass %}d-none{% endblock %}
             {% endembed %}
 
             <div class="text-muted text-center tli-no-author-message collapse">Nessun utente selezionato come autore</div>
