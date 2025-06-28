@@ -10,12 +10,23 @@ jQuery(document).on('click', '.tli-remove-author',  function(event) {
     currentAuthorsList.data('changed', 1);
 
     let authorInList= $(this).closest('.list-group-item');
-    //let authorId    = authorInList.data['author-id'];
+
     authorInList.fadeOut('slow', function(){
 
+        let authorId    = authorInList.data('author-id');
+
         authorInList.remove();
+
         let authorsNum = currentAuthorsList.find('[data-author-id]').length;
         currentAuthorsList.find('.tli-no-author-message').toggleClass('collapse', authorsNum != 0);
+
+        let candidateUserContainer = jQuery('.tli-article-editor-candidate-authors-list [data-author-id='+ authorId + ']');
+        if( candidateUserContainer.length == 0 ) {
+            return true;
+        }
+
+        candidateUserContainer.find('.tli-add-author').removeClass('d-none');
+        candidateUserContainer.find('.tli-author-already').addClass('d-none');
     });
 });
 
@@ -75,17 +86,17 @@ function loadAuthors(username)
         jQuery.get(endpoint, {username: username}, function(data) {
 
             target.html(data);
+
             jQuery('.tli-article-editor-current-authors-list [data-author-id]').each(function() {
 
                 let userContainer = target.find('[data-author-id='+ jQuery(this).data('author-id') +']');
-
                 if( userContainer.length == 0 ) {
                     return true;
                 }
 
                 userContainer.find('.tli-add-author').addClass('d-none');
                 userContainer.find('.tli-author-already').removeClass('d-none');
-            })
+            });
 
         }, 'html')
 
