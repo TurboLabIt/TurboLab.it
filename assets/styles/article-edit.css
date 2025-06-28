@@ -27,3 +27,8 @@
     display: flex;
     align-items: center;
 }
+
+.tli-article-editor-candidate-authors-list {
+    max-height: 250px;
+    overflow-y: auto;
+}

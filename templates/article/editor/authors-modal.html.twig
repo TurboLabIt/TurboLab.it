@@ -15,10 +15,10 @@
 
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list" style="max-height: 200px; overflow-y: auto;">
 
-            {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} %}
+            {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} only %}
                 {% block authorActionButton %}
                     <button type="button" class="btn btn-sm btn-outline-danger tli-remove-author">
-                        <i class="bi bi-person-dash"></i> Rimuovi
+                        <i class="fa-solid fa-user-minus mr-5"></i> Rimuovi
                     </button>
                 {% endblock %}
             {% endembed %}
@@ -31,18 +31,28 @@
 
 
     <!-- Add Authors Section -->
-    <div class="mb-3 tli-authors-autocomplete-container">
+    <div class="mb-3 tli-authors-autocomplete-container"
+         data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
 
         <h6>Aggiungi nuovi autori</h6>
 
-        <div class="input-group mb-2">
-            <input type="text" name="username" class="form-control tli-authors-autocomplete" placeholder="Cerca utente per username"
-                data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
+        <div class="mb-3">
+            <div class="input-group">
+                <input type="text" name="username" class="form-control tli-authors-autocomplete" placeholder="Cerca utente per username">
+            </div>
+            <small class="form-text text-muted mt-0">
+                <i class="fa-solid fa-circle-info"></i>
+                Digita almeno 3 caratteri dello username per cercare
+            </small>
         </div>
 
-        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-authors-list collapse"
-             style="max-height: 250px; overflow-y: auto;"></div>
+        <div class="list-group list-group-flush border rounded-3 p-2 d-flex justify-content-center align-items-center d-none">
+            <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse" style="color: #f8e45c;"></i>
+        </div>
 
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-authors-list">
+            {% include 'article/editor/authors-autocomplete.html.twig' with {'Authors': LatestAuthors} only %}
+        </div>
     </div>
 
 </div>

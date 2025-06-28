@@ -152,7 +152,8 @@ class ArticleEditorController extends BaseController
             return $this->json([
                 "title" => "Modifica autori",
                 "body" => $this->twig->render('article/editor/authors-modal.html.twig', [
-                    "Article" => $this->articleEditor
+                    "Article"       => $this->articleEditor,
+                    "LatestAuthors" => $this->factory->createUserCollection()->loadLatestAuthors()
                 ])
             ]);
 
@@ -170,8 +171,12 @@ class ArticleEditorController extends BaseController
 
             $username = $this->request->get('username');
 
+            $authors = $this->factory->createUserCollection();
+
+            empty($username) ? $authors->loadLatestAuthors() : $authors->loadBySearchUsername($username);
+
             return $this->render('article/editor/authors-autocomplete.html.twig', [
-               'Authors' => $this->factory->createUserCollection()->loadBySearchUsername($username)
+               'Authors' => $authors
             ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }

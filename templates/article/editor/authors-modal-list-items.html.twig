@@ -21,7 +21,19 @@
 
             </div>
 
-            <span class="ml-5">{% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}</span>
+            <a href="{{ Author.url }}" class="ml-5" target="_blank">
+                {% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}
+                <br>
+                <small>
+                    {% if Author.isSystem %}
+                        🤖 Bot ufficiale di TurboLab.it
+                    {% else %}
+                        {{ Author.articlesNum }} {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
+                    {% endif %}
+                </small>
+
+
+            </a>
 
         </div>
 

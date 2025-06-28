@@ -104,5 +104,12 @@ class UserCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadLatestAuthors() : static
+    {
+        $arrUsers = $this->getRepository()->findLatestAuthors();
+        return $this->setEntities($arrUsers);
+    }
+
+
     public function createService(?UserEntity $entity = null) : User { return $this->factory->createUser($entity); }
 }

@@ -18,30 +18,44 @@ jQuery(document).on('click', '.tli-remove-author',  function(event) {
 });
 
 
-var userSearchRequest = null;
-
 jQuery(document).on('input', 'input.tli-authors-autocomplete', debounce(function() {
 
     let username = jQuery(this).val().trim();
 
-    if( username.length < 2 ) {
-        return true;
+    let container = jQuery('.tli-authors-autocomplete-container');
+    let target = container.find('.tli-article-editor-candidate-authors-list');
+
+    if( username.length > 0 && username.length < 3 ) {
+
+        target.html('');
+        return;
     }
 
+    loadAuthors(username);
+
+}, 350));
+
+
+var userSearchRequest = null;
+
+function loadAuthors(username)
+{
     if( userSearchRequest != null ) {
         userSearchRequest.abort();
     }
 
-    let target = jQuery(this).closest('.tli-authors-autocomplete-container').find('.tli-article-editor-candidate-authors-list');
+    let container = jQuery('.tli-authors-autocomplete-container');
+
+    let target = container.find('.tli-article-editor-candidate-authors-list');
+    target.hide();
+    target.html();
 
     // show loaderino
-    let loaderino = jQuery('#tli-ajax-modal').find('.tli-loaderino').first().clone().removeClass('collapse').prop('outerHTML');
-    target.html(loaderino);
-
-    target.show();
+    let loaderino = container.find('.tli-loaderino').closest('div');
+    loaderino.removeClass('d-none');
 
     // fetch results
-    let endpoint = jQuery(this).data('autocomplete-url');
+    let endpoint = container.data('autocomplete-url');
 
     userSearchRequest =
 
@@ -54,6 +68,12 @@ jQuery(document).on('input', 'input.tli-authors-autocomplete', debounce(function
                 if(responseText != 'abort') {
                     target.html(jqXHR.responseText);
                 }
-            });
+            })
 
-}, 300));
+            .always(function(jqXHR, responseText) {
+                target.show();
+                loaderino.addClass('d-none');
+            });
+}
+
+loadAuthors();

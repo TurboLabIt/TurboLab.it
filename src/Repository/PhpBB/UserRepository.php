@@ -2,6 +2,7 @@
 namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\User;
+use App\Service\Cms\Article;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 
@@ -227,5 +228,34 @@ class UserRepository extends BasePhpBBRepository
                 ->orderBy('t.user_posts', 'DESC')
                 ->getQuery()
                 ->getResult();
+    }
+
+
+    public function findLatestAuthors(int $num = 25) : array
+    {
+        $arrIds =
+            $this->getIdsFromSqlQuery('
+                SELECT user_id #, COUNT(1) AS num
+                FROM
+                    turbolab_it.article_author
+                INNER JOIN
+                  turbolab_it.article
+                ON
+                    turbolab_it.article_author.article_id = turbolab_it.article.id
+                WHERE
+                    article_author.created_at >= NOW() - INTERVAL 1 YEAR AND
+                    turbolab_it.article.publishing_status = ' . Article::PUBLISHING_STATUS_PUBLISHED . '
+                GROUP BY
+                    user_id
+                ORDER BY
+                    COUNT(1) DESC
+                LIMIT ' . $num
+            );
+
+        if( empty($arrIds) ) {
+            return [];
+        }
+
+        return $this->getById($arrIds);
     }
 }
