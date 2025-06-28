@@ -1,8 +1,7 @@
 {% for Author in Authors %}
 
     <div class="list-group-item d-flex justify-content-between align-items-center"
-         {% if loop.last %}style="border-bottom-style: none"{% endif %}
-         data-author-id="{{ Author.id }}">
+         {% if loop.last %}style="border-bottom-style: none"{% endif %} data-author-id="{{ Author.id }}">
 
         <div class="tli-article-editor-author-info">
 
@@ -31,13 +30,12 @@
                         {{ Author.articlesNum }} {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
                     {% endif %}
                 </small>
-
-
             </a>
 
         </div>
 
         {% block authorActionButton %}{% endblock %}
+
     </div>
 
 {% endfor %}

@@ -73,7 +73,20 @@ function loadAuthors(username)
     userSearchRequest =
 
         jQuery.get(endpoint, {username: username}, function(data) {
+
             target.html(data);
+            jQuery('.tli-article-editor-current-authors-list [data-author-id]').each(function() {
+
+                let userContainer = target.find('[data-author-id='+ jQuery(this).data('author-id') +']');
+
+                if( userContainer.length == 0 ) {
+                    return true;
+                }
+
+                userContainer.find('.tli-add-author').addClass('d-none');
+                userContainer.find('.tli-author-already').removeClass('d-none');
+            })
+
         }, 'html')
 
             .fail(function(jqXHR, responseText) {
@@ -84,6 +97,7 @@ function loadAuthors(username)
             })
 
             .always(function(jqXHR, responseText) {
+
                 target.show();
                 loaderino.addClass('d-none');
             });
