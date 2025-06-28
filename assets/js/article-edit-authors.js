@@ -101,5 +101,11 @@ jQuery(document).on('click', '.tli-author-button-ok',  function(event) {
         return false;
     }
 
+    if( currentAuthorsList.find('[data-author-id]').length == 0 ) {
+
+        alert("L\'articolo deve avere almeno 1 autore");
+        return false;
+    }
+
     alert("CHANGED, SAVING");
 });
