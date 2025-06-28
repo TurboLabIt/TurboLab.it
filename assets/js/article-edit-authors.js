@@ -38,7 +38,16 @@ jQuery(document).on('click', '.tli-add-author',  function(event) {
     let currentAuthorsList = $('.tli-article-editor-current-authors-list');
     currentAuthorsList.data('changed', 1);
 
-    alert("ADDING...");
+    let clickedUserContainer = jQuery(this).closest('[data-author-id]');
+
+    clickedUserContainer.find('.tli-add-author').addClass('d-none');
+    clickedUserContainer.find('.tli-remove-author').removeClass('d-none');
+
+    currentAuthorsList.append(clickedUserContainer);
+
+    jQuery('.tli-authors-autocomplete')
+        .val('')
+        .trigger('input');
 });
 
 
