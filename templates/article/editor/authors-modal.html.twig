@@ -1,17 +1,14 @@
 <div class="modal-body">
 
-    <div class="mb-4">
-        <p>Aggiungi e rimuovi gli autori dell'articolo</p>
-        <p>
-            Ricorda che chiunque abbia partecipato alla realizzazione o al miglioramento dell'articolo,
-            anche se ha svolto solo qualche correzione, deve essere accreditato fra gli autori.
-        </p>
+    <div class="mb-3">
+        Ricorda che chiunque abbia partecipato alla realizzazione o al miglioramento dell'articolo,
+        anche se ha svolto solo qualche correzione, deve essere accreditato fra gli autori.
     </div>
 
 
     <div class="mb-4">
 
-        <h6>Autori attuali</h6>
+        <h6 class="mb-2">Autori attuali</h6>
 
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list"
              data-changed="0">
@@ -32,10 +29,10 @@
 
 
     <!-- Add Authors Section -->
-    <div class="mb-3 tli-authors-autocomplete-container"
+    <div class="tli-authors-autocomplete-container"
          data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
 
-        <h6>Aggiungi nuovi autori</h6>
+        <h6 class="mb-2">Aggiungi altri autori</h6>
 
         <div class="mb-3">
             <div class="input-group">
