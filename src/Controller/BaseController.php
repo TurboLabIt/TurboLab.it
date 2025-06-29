@@ -150,7 +150,7 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function textErrorResponse(Exception|Error $ex, ?string $emoji = null) : Response
+    protected function textErrorResponse(Exception|Error $ex, ?string $emoji = '🚨') : Response
     {
         $statusCode =
             $ex instanceof HttpExceptionInterface

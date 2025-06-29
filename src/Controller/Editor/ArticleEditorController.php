@@ -29,9 +29,12 @@ class ArticleEditorController extends BaseController
         protected FrontendHelper $frontendHelper, protected CsrfTokenManagerInterface $csrfTokenManager,
         protected Environment $twig
     )
-        { $this->request = $requestStack->getCurrentRequest(); }
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🆕 /scrivi ***">
     #[Route('/scrivi', name: 'app_editor_new', methods: ['GET'])]
     public function new() : Response
     {
@@ -117,14 +120,15 @@ class ArticleEditorController extends BaseController
 
         return $this->redirect( $this->articleEditor->getUrl() );
     }
+    //</editor-fold>
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 📜 Title and Body ***">
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}', name: 'app_editor_article_update', methods: ['POST'])]
     public function update(int $articleId) : Response
     {
         try {
             $this->loadArticleEditor($articleId);
-            //
+
             foreach(['title', 'body'] as $param) {
 
                 $value  = $this->request->get($param);
@@ -133,19 +137,17 @@ class ArticleEditorController extends BaseController
             }
 
             $this->articleEditor->save();
+            return $this->textOKResponse("Articolo salvato");
 
-            $savedAt = $this->articleEditor->getUpdatedAt()->format('Y-m-d H:i:s');
-            return new Response("✅ OK! Articolo salvato - $savedAt");
-
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
+    //</editor-fold>
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 👥 Authors ***">
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/get-authors-modal', name: 'app_editor_article_get-authors-modal', methods: ['GET'])]
     public function getAuthorsModal(int $articleId) : Response
     {
         try {
-
             $this->loadArticleEditor($articleId);
 
             return $this->json([
@@ -156,7 +158,7 @@ class ArticleEditorController extends BaseController
                 ])
             ]);
 
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
 
 
@@ -175,14 +177,33 @@ class ArticleEditorController extends BaseController
             empty($username) ? $authors->loadLatestAuthors() : $authors->loadBySearchUsername($username);
 
             return $this->render('article/editor/authors-autocomplete.html.twig', [
-               'Authors' => $authors
+                'Authors' => $authors
             ]);
 
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex, '🚨'); }
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
 
 
-    protected function loadArticleEditor(int $articleId) : void
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-authors', name: 'app_editor_article_set-authors', methods: ['POST'])]
+    public function setAuthors(int $articleId) : Response
+    {
+        try {
+
+            $arrAuthorIds = $this->request->get('authors') ?? [];
+
+            $this->loadArticleEditor($articleId)
+                ->setAuthorsFromIds($arrAuthorIds);
+
+            $this->factory->getEntityManager()->flush();
+
+            return $this->textOKResponse("Autori salvati");
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+    //</editor-fold>
+
+
+    protected function loadArticleEditor(int $articleId) : ArticleEditor
     {
         $this->ajaxOnly();
 
@@ -195,5 +216,14 @@ class ArticleEditorController extends BaseController
         if( !$this->articleEditor->currentUserCanEdit() ) {
             throw $this->createAccessDeniedException('Non sei autorizzato a modificare questo articolo');
         }
+
+        return $this->articleEditor;
+    }
+
+
+    protected function textOKResponse(string $text) : Response
+    {
+        $savedAt = (new \DateTime())->format('Y-m-d H:i:s');
+        return new Response("✅ OK! $text - $savedAt");
     }
 }

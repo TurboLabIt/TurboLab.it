@@ -2,7 +2,7 @@
 
     <div class="mb-3">
         Ricorda che chiunque abbia partecipato alla realizzazione o al miglioramento dell'articolo
-        deve essere accreditato fra gli autori, anche se ha svolto solo qualche correzione.
+        deve essere accreditato fra gli autori, persino se ha contribuito solo correzioni minori.
     </div>
 
 
@@ -11,7 +11,7 @@
         <h6 class="mb-2">Autori attuali</h6>
 
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list"
-             data-changed="0">
+             data-changed="0" data-save-url="{{ path('app_editor_article_set-authors', {'articleId': Article.id}) }}">
 
             {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} only %}
                 {% block addAuthorClass %}d-none{% endblock %}

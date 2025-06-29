@@ -141,5 +141,31 @@ jQuery(document).on('click', '.tli-author-button-ok',  function(event) {
         return false;
     }
 
-    alert("CHANGED, SAVING");
+    let authorIds =
+        currentAuthorsList.find('[data-author-id]').map(function() {
+            return $(this).data('author-id');
+        }).get();
+
+
+    let endpoint = currentAuthorsList.data("save-url");
+    let target = jQuery('body');
+
+    jQuery.post(endpoint, {authors: authorIds}, function(data) {
+
+        target.html(data);
+
+    }, 'html')
+
+        .fail(function(jqXHR, responseText) {
+
+            if(responseText != 'abort') {
+                target.html(jqXHR.responseText);
+            }
+        })
+
+        .always(function(jqXHR, responseText) {
+
+            //target.show();
+            //loaderino.addClass('d-none');
+        });
 });

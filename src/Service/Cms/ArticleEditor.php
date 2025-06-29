@@ -3,6 +3,7 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleTag;
+use App\Exception\ArticleUpdateException;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\TextProcessor;
@@ -26,6 +27,68 @@ class ArticleEditor extends Article
                 ->setArticle($this->entity)
                 ->setUser( $author->getEntity() )
         );
+
+        return $this;
+    }
+
+
+    public function setAuthorsFromIds(array $arrAuthorIds) : static
+    {
+        if( empty($arrAuthorIds) ) {
+            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 autore');
+        }
+
+        $arrAuthorIds = array_unique($arrAuthorIds);
+
+        $collNewAuthors = $this->factory->createUserCollection()->load($arrAuthorIds);
+
+        if( $collNewAuthors->count() < 1 ) {
+            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 autore');
+        }
+
+        $entityManager = $this->factory->getEntityManager();
+
+        // these would be junctions (array-of-ArticleAuthor)
+        $currentAuthors = $this->entity->getAuthors();
+
+        // remove current authors who are no longer
+        foreach($currentAuthors as $junction) {
+
+            $authorId   = $junction->getUser()->getId();
+            $newAuthor  = $collNewAuthors->get($authorId);
+
+            if( empty($newAuthor) ) {
+                $entityManager->remove($junction);
+            }
+        }
+
+        // add new users
+        $i=1;
+        foreach($collNewAuthors as $author) {
+
+            $existingJunction = null;
+            foreach($currentAuthors as $junction) {
+
+                if( $author->getId() == $junction->getUser()->getId() ) {
+
+                    $existingJunction = $junction;
+                    break;
+                }
+            }
+
+            if( empty($existingJunction) ) {
+
+                $existingJunction =
+                    (new ArticleAuthor())
+                        ->setArticle($this->entity)
+                        ->setUser( $author->getEntity() );
+            }
+
+            $existingJunction->setRanking($i);
+            $entityManager->persist($existingJunction);
+
+            $i++;
+        }
 
         return $this;
     }
