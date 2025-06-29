@@ -37,17 +37,17 @@ jQuery(document).on('click', '.tli-add-author',  function(event) {
 
     let currentAuthorsList = $('.tli-article-editor-current-authors-list');
     currentAuthorsList.data('changed', 1);
+    currentAuthorsList.find('.tli-no-author-message').addClass('collapse');
 
     let clickedUserContainer = jQuery(this).closest('[data-author-id]');
+    let clickedUserContainerCopy = clickedUserContainer.clone();
 
     clickedUserContainer.find('.tli-add-author').addClass('d-none');
-    clickedUserContainer.find('.tli-remove-author').removeClass('d-none');
+    clickedUserContainer.find('.tli-author-already').removeClass('d-none')
 
-    currentAuthorsList.append(clickedUserContainer);
-
-    jQuery('.tli-authors-autocomplete')
-        .val('')
-        .trigger('input');
+    clickedUserContainerCopy.find('.tli-add-author').addClass('d-none');
+    clickedUserContainerCopy.find('.tli-remove-author').removeClass('d-none');
+    currentAuthorsList.append(clickedUserContainerCopy);
 });
 
 

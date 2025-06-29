@@ -29,6 +29,6 @@
 }
 
 .tli-article-editor-current-authors-list, .tli-article-editor-candidate-authors-list {
-    max-height: 250px;
+    height: 170px;
     overflow-y: auto;
 }

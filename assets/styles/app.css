@@ -66,3 +66,11 @@ div.stellarnav.mobile.active ul {
 .tli-loaderino {
     color: #f8e45c;
 }
+
+
+#tli-ajax-modal .modal-header {
+    padding-top: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 3px;
+}
