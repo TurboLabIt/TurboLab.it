@@ -1,6 +1,7 @@
 //import $ from 'jquery';
 import { fastHash16ElementHtml } from './hashing';
 import debounce from './debouncer';
+import StatusBar from './article-edit-statusbar';
 
 
 function cacheTextHashForComparison()
@@ -15,43 +16,7 @@ function cacheTextHashForComparison()
 // pageload init
 cacheTextHashForComparison();
 
-
-function setArticleSavingStatusBar(alertClass, showUnsavedTextMessage, showLoaderino, showTryAgain, responseText)
-{
-    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
-
-    let alertContainer = articleSavingStatusBar.find('.alert');
-    alertContainer
-        .removeClass('alert-primary alert-success alert-danger alert-warning')
-        .addClass(alertClass);
-
-    let textContainer = articleSavingStatusBar.find('.tli-warning-unsaved');
-    showUnsavedTextMessage ? textContainer.removeClass('collapse') : textContainer.addClass('collapse');
-
-    let loaderino = articleSavingStatusBar.find('.tli-loaderino');
-    showLoaderino ? loaderino.removeClass('collapse') : loaderino.addClass('collapse');
-
-    let responseTarget = articleSavingStatusBar.find('.tli-response-target');
-
-    if( responseText === 0 ) {
-
-        responseTarget.addClass('collapse');
-
-    } else {
-
-        responseTarget
-            .removeClass('collapse')
-            .html(responseText);
-    }
-
-    let tryAgain = articleSavingStatusBar.find('.tli-action-try-again');
-    showTryAgain ? tryAgain.removeClass('collapse') : tryAgain.addClass('collapse');
-}
-
-
 jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
-
-    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
 
     let differenceFound = false;
     jQuery('[contenteditable=true]').each(function() {
@@ -61,15 +26,14 @@ jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
 
         if( fastHashedHtml != window[editableId] ) {
 
-            setArticleSavingStatusBar('alert-danger', 1, 0, 0, 0);
-            articleSavingStatusBar.show();
+            StatusBar.setUnsaved();
             differenceFound = true;
             return false; // break
         }
     });
 
     if (!differenceFound) {
-        articleSavingStatusBar.hide();
+        StatusBar.hide();
     }
 
 }, 300));
@@ -89,13 +53,10 @@ var articleSaveRequest = null;
 
 function saveArticle()
 {
-    let articleSavingStatusBar = jQuery('#tli-article-saving-status-bar');
-
     // set to "unknown" until actually saved
     clearCacheTextHashForComparison();
 
-    articleSavingStatusBar.show();
-    setArticleSavingStatusBar('alert-primary', 0, 1, 0, 0);
+    StatusBar.setSaving();
 
     if( articleSaveRequest != null ) {
         articleSaveRequest.abort();
@@ -109,26 +70,21 @@ function saveArticle()
         "token" : null
     };
 
-    let unsavedWarning = articleSavingStatusBar.find('.tli-warning-unsaved');
-
     articleSaveRequest =
 
         $.post(endpoint, payload, function(response) {})
 
             .done(function(responseText) {
 
-                if( !unsavedWarning.is(':visible') ) {
-                    setArticleSavingStatusBar('alert-success', 0, 0, 0, responseText);
-                }
-
+                StatusBar.setSavedIfNotFurtherEdited(responseText);
                 cacheTextHashForComparison();
             })
 
             .fail(function(jqXHR, responseText) {
 
-                if(responseText != 'abort') {
-                    setArticleSavingStatusBar('alert-danger', 0, 0, 1, jqXHR.responseText);
-                }
+                StatusBar
+                    .setError(jqXHR, responseText)
+                    .showTrySaveAgain();
             })
 
             .always(function(response) {});
