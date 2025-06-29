@@ -190,19 +190,8 @@
 
                             {% endif %}
 
-                            <div class="post-tags mt-30">
-                                <ul>
-                                    <li><a class="disabled-link" href="#"><i class="fas fa-tag"></i> Tags</a></li>
-                                    {% if Article.tags|length > 0 %}
-                                        <li>
-                                            {% for Tag in Article.Tags %}
-                                                <a href="{{ Tag.url }}">
-                                                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
-                                                </a>
-                                            {% endfor %}
-                                        </li>
-                                    {% endif %}
-                                </ul>
+                            <div id="tli-article-tags" class="post-tags mt-30">
+                                {% include 'article/tags.html.twig' %}
                             </div>
 
                         {% endif %}

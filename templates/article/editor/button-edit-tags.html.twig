@@ -1,0 +1,8 @@
+{% if Article.currentUserCanEdit %}
+
+    <button type="button" class="btn btn-outline-primary fw-bold"
+            data-tli-modal-url="{{ path('app_editor_article_get-tags-modal', {articleId: Article.id}) }}">
+        <i class="fa-solid fa-tags"></i> Modifica tag
+    </button>
+
+{% endif %}

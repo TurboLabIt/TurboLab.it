@@ -33,20 +33,10 @@
 
 
     {% if Article.currentUserCanEdit %}
-
-        <ul class="mt-2">
-            <li>
-                <a href="#" class="form-control fw-bold" style="color: orangered"
-                   data-tli-modal-url="{{ path('app_editor_article_get-authors-modal', {articleId: Article.id}) }}">
-                    <i class="fa-solid fa-user-pen"></i> Modifica autori
-                </a>
-            </li>
-            <li style="color: #74C0FC;" class="fw-bold">
-                <i class="fa-solid fa-tags"></i>
-                Modifica tag
-            </li>
-        </ul>
-
+        <div class="mt-2">
+            {% include 'article/editor/button-edit-authors.html.twig' %}
+            {% include 'article/editor/button-edit-tags.html.twig' %}
+        </div>
     {% endif %}
 
 </div>

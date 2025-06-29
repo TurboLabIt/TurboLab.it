@@ -5,13 +5,15 @@
  * ArticleMeta.update(json);
  */
 
-const articleMetaStrip = jQuery('#tli-article-meta-strip');
-const articleMetaAuthorsBio = jQuery('#tli-article-authors-bio');
+const articleMetaStrip  = jQuery('#tli-article-meta-strip');
+const articleAuthorsBio = jQuery('#tli-article-authors-bio');
+const articleTags       = jQuery('#tli-article-tags');
 
 const ArticleMeta = {
     update(json) {
-        articleMetaStrip.html(json.metaStrip);
-        articleMetaAuthorsBio.html(json.metaBios);
+        articleMetaStrip.html(json.strip);
+        articleAuthorsBio.html(json.bios);
+        articleTags.html(json.tags);
         return this;
     }
 };

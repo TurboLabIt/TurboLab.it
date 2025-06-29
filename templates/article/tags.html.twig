@@ -1,0 +1,20 @@
+{% if Article.currentUserCanEdit %}
+
+    <div class="mb-3">
+        {% include 'article/editor/button-edit-tags.html.twig' %}
+    </div>
+
+{% endif %}
+
+<ul>
+    <li><a class="disabled-link" href="#"><i class="fas fa-tag"></i> Tag</a></li>
+    {% if Article.tags|length > 0 %}
+        <li>
+            {% for Tag in Article.Tags %}
+                <a href="{{ Tag.url }}">
+                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
+                </a>
+            {% endfor %}
+        </li>
+    {% endif %}
+</ul>
