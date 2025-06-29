@@ -18,7 +18,6 @@ jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
             .clone().removeClass('d-none').prop('outerHTML');
 
     let targetBody = modalFrame.find('.tli-ajax-modal-content');
-    targetBody.html('');
     targetBody.html(loaderino);
 
     new bootstrap.Modal(modalFrame).show();

@@ -1,5 +1,6 @@
 //import $ from 'jquery';
 import debounce from "./debouncer";
+import StatusBar from './article-edit-statusbar';
 
 
 jQuery(document).on('click', '.tli-remove-author',  function(event) {
@@ -147,20 +148,17 @@ jQuery(document).on('click', '.tli-author-button-ok',  function(event) {
         }).get();
 
 
+    jQuery('#tli-ajax-modal').find('.btn-close').trigger('click');
+    StatusBar.setSaving();
+
     let endpoint = currentAuthorsList.data("save-url");
-    let target = jQuery('body');
 
     jQuery.post(endpoint, {authors: authorIds}, function(data) {
-
-        target.html(data);
-
+        StatusBar.setSaved(data);
     }, 'html')
 
         .fail(function(jqXHR, responseText) {
-
-            if(responseText != 'abort') {
-                target.html(jqXHR.responseText);
-            }
+            StatusBar.setError(jqXHR, responseText);
         })
 
         .always(function(jqXHR, responseText) {
