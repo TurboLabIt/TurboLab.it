@@ -1,0 +1,52 @@
+<div class="categories-share">
+
+    <ul>
+        <li>
+            <i class="fa-solid fa-user-tie"></i> a cura di:
+            {% for Author in Article.Authors %}
+                <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+            {% else %}
+                <em>&lt;sconosciuto&gt;</em>
+            {% endfor %}
+        </li>
+
+        {% if Article.commentsTopic is not empty %}
+            <li>
+                <a href="{{ Article.commentsUrl }}">
+                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                </a>
+            </li>
+        {% endif %}
+        {% if Article.views(false) > 1 %}
+            <li><i class="fa-brands fa-readme"></i> {{ Article.views }} visualizzazioni</li>
+        {% endif %}
+    </ul>
+
+    <ul>
+        <li>
+            <i class="fa-solid fa-pen-to-square"></i>
+            Aggiornato: {{ Article.updatedAt|friendlyDate }}
+        </li>
+        <li>{% include('article/publishing-status.html.twig') %}</li>
+    </ul>
+
+
+    {% if Article.currentUserCanEdit %}
+
+        <ul class="mt-2">
+            <li>
+                <a href="#" class="form-control fw-bold" style="color: orangered"
+                   data-tli-modal-url="{{ path('app_editor_article_get-authors-modal', {articleId: Article.id}) }}">
+                    <i class="fa-solid fa-user-pen"></i> Modifica autori
+                </a>
+            </li>
+            <li style="color: #74C0FC;" class="fw-bold">
+                <i class="fa-solid fa-tags"></i>
+                Modifica tag
+            </li>
+        </ul>
+
+    {% endif %}
+
+</div>

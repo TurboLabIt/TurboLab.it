@@ -12,10 +12,15 @@ abstract class BaseCmsService extends BaseServiceEntity
 
 
     public function loadBySlugDashId(string $slugDashId) : static
-        { return $this->internalLoadBySlugDashId($slugDashId, 'getOneById'); }
+    {
+        return $this->internalLoadBySlugDashId($slugDashId, 'getOneById');
+    }
+
 
     public function loadBySlugDashIdComplete(string $slugDashId) : static
-        { return $this->internalLoadBySlugDashId($slugDashId, 'getOneByIdComplete'); }
+    {
+        return $this->internalLoadBySlugDashId($slugDashId, 'getOneByIdComplete');
+    }
 
 
     protected function internalLoadBySlugDashId(string $slugDashId, string $method) : static

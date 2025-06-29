@@ -1,0 +1,43 @@
+<h4>Gli autori</h4>
+
+{% for Author in Article.Authors %}
+
+    <div class="row mt-10">
+
+        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+            <a href="{{ Author.url }}">
+                {% if Author.avatarUrl is not empty %}
+                    <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+                {% else %}
+                    <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
+                {% endif %}
+            </a>
+        </div>
+
+        <div class="col-md-10">
+
+            <p class="tli-author-bio-name">
+                <a href="{{ Author.url }}">{{ Author.fullName|raw }}</a><br>
+                <span class="tli-author-articles-counter">
+                    <a href="{{ Author.url }}">
+                        <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }}
+                        {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
+                    </a>
+                </span>
+            </p>
+
+            <p>
+                <a href="{{ Author.url }}">
+                    {% if Author.bio is not empty %}
+                        {{ Author.bio|raw }}
+                    {% else %}
+                        <em>Questo autore non ha ancora compilato la propria presentazione.</em>
+                    {% endif %}
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+{% endfor %}

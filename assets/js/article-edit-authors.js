@@ -1,7 +1,7 @@
 //import $ from 'jquery';
 import debounce from "./debouncer";
 import StatusBar from './article-edit-statusbar';
-
+import ArticleMeta from './article-edit-meta';
 
 jQuery(document).on('click', '.tli-remove-author',  function(event) {
 
@@ -153,17 +153,14 @@ jQuery(document).on('click', '.tli-author-button-ok',  function(event) {
 
     let endpoint = currentAuthorsList.data("save-url");
 
-    jQuery.post(endpoint, {authors: authorIds}, function(data) {
-        StatusBar.setSaved(data);
-    }, 'html')
+    jQuery.post(endpoint, {authors: authorIds}, function(json) {
+
+        StatusBar.setSaved(json.message);
+        ArticleMeta.update(json);
+
+    }, 'json')
 
         .fail(function(jqXHR, responseText) {
             StatusBar.setError(jqXHR, responseText);
-        })
-
-        .always(function(jqXHR, responseText) {
-
-            //target.show();
-            //loaderino.addClass('d-none');
         });
 });

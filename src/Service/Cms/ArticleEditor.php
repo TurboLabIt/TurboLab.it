@@ -46,6 +46,9 @@ class ArticleEditor extends Article
             throw new ArticleUpdateException('L\'articolo deve avere almeno 1 autore');
         }
 
+        // rebuild the cached author list
+        $this->arrAuthors = [];
+
         $entityManager = $this->factory->getEntityManager();
 
         // these would be junctions (array-of-ArticleAuthor)
@@ -88,6 +91,11 @@ class ArticleEditor extends Article
             $entityManager->persist($existingJunction);
 
             $i++;
+
+            // rebuild the cached author list so that $article->getAuthors() works without a reload
+            $userEntity                     = $author->getEntity();
+            $authorId                       = $userEntity->getId();
+            $this->arrAuthors[$authorId]    = $this->factory->createUser($userEntity);
         }
 
         return $this;

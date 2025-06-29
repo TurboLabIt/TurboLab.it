@@ -8,6 +8,7 @@ use App\Service\Factory;
 use App\Service\FrontendHelper;
 use Error;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -124,7 +125,7 @@ class ArticleEditorController extends BaseController
 
     //<editor-fold defaultstate="collapsed" desc="*** 📜 Title and Body ***">
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}', name: 'app_editor_article_update', methods: ['POST'])]
-    public function update(int $articleId) : Response
+    public function update(int $articleId) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
@@ -137,7 +138,7 @@ class ArticleEditorController extends BaseController
             }
 
             $this->articleEditor->save();
-            return $this->textOKResponse("Articolo salvato");
+            return $this->jsonOKResponse("Articolo salvato");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
@@ -185,18 +186,14 @@ class ArticleEditorController extends BaseController
 
 
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-authors', name: 'app_editor_article_set-authors', methods: ['POST'])]
-    public function setAuthors(int $articleId) : Response
+    public function setAuthors(int $articleId) : JsonResponse|Response
     {
         try {
 
             $arrAuthorIds = $this->request->get('authors') ?? [];
-
-            $this->loadArticleEditor($articleId)
-                ->setAuthorsFromIds($arrAuthorIds);
-
+            $this->loadArticleEditor($articleId)->setAuthorsFromIds($arrAuthorIds);
             $this->factory->getEntityManager()->flush();
-
-            return $this->textOKResponse("Autori salvati");
+            return $this->jsonOKResponse("Autori salvati");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
@@ -221,9 +218,16 @@ class ArticleEditorController extends BaseController
     }
 
 
-    protected function textOKResponse(string $text) : Response
+    protected function jsonOKResponse(string $okMessage) : JsonResponse
     {
-        $savedAt = (new \DateTime())->format('Y-m-d H:i:s');
-        return new Response("✅ OK! $text - $savedAt");
+        return $this->json([
+            "message"   => "✅ OK! $okMessage - " . (new \DateTime())->format('Y-m-d H:i:s'),
+            "metaStrip" => $this->twig->render('article/meta-strip.html.twig', [
+                "Article" => $this->articleEditor,
+            ]),
+            "metaBios"  => $this->twig->render('article/authors-bio.html.twig', [
+                "Article" => $this->articleEditor
+            ])
+        ]);
     }
 }

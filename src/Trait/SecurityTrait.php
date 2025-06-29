@@ -22,8 +22,8 @@ trait SecurityTrait
     }
 
 
-    public function isAuthor(?User $user = null) : bool {
-
+    public function isAuthor(?User $user = null) : bool
+    {
         if( empty($user) ) {
             return false;
         }
@@ -54,5 +54,7 @@ trait SecurityTrait
 
 
     public function getAuthorsNotSystem() : array
-        { return array_filter($this->getAuthors(), fn(User $user) => !$user->isSystem()); }
+    {
+        return array_filter($this->getAuthors(), fn(User $user) => !$user->isSystem());
+    }
 }

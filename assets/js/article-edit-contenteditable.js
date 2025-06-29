@@ -2,6 +2,7 @@
 import { fastHash16ElementHtml } from './hashing';
 import debounce from './debouncer';
 import StatusBar from './article-edit-statusbar';
+import ArticleMeta from "./article-edit-meta";
 
 
 function cacheTextHashForComparison()
@@ -28,7 +29,7 @@ jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
 
             StatusBar.setUnsaved();
             differenceFound = true;
-            return false; // break
+            return false;
         }
     });
 
@@ -71,23 +72,20 @@ function saveArticle()
     };
 
     articleSaveRequest =
+        jQuery.post(endpoint, payload, function(json) {
 
-        $.post(endpoint, payload, function(response) {})
+            StatusBar.setSavedIfNotFurtherEdited(json.message);
+            ArticleMeta.update(json);
+            cacheTextHashForComparison();
 
-            .done(function(responseText) {
-
-                StatusBar.setSavedIfNotFurtherEdited(responseText);
-                cacheTextHashForComparison();
-            })
+        }, 'json')
 
             .fail(function(jqXHR, responseText) {
 
                 StatusBar
                     .setError(jqXHR, responseText)
                     .showTrySaveAgain();
-            })
-
-            .always(function(response) {});
+            });
 }
 
 
