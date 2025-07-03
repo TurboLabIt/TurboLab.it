@@ -1,0 +1,8 @@
+<div class="alert alert-warning {% block alertStyle %}{% endblock %}" role="alert">
+
+    <div class="{% block alertBodyStyle %}text-center{% endblock %}">
+        {% block alertBodyIcon %}<i class="fa-solid fa-triangle-exclamation me-1" style="color: red;"></i>{% endblock %}
+        {% block alertBody %}{% endblock %}
+    </div>
+
+</div>

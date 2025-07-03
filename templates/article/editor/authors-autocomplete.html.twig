@@ -6,6 +6,9 @@
 
 {% else %}
 
-    <div class="text-muted text-center tli-no-author-message">🤷 Nessun utente trovato</div>
+    {% embed 'parts/alert-warning-message.html.twig' %}
+        {% block alertStyle %}tli-no-author-message mb-0{% endblock %}
+        {% block alertBody %}Nessun utente trovato{% endblock %}
+    {% endembed %}
 
 {% endif %}

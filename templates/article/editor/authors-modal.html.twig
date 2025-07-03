@@ -17,7 +17,10 @@
                 {% block addAuthorClass %}d-none{% endblock %}
             {% endembed %}
 
-            <div class="text-muted text-center tli-no-author-message collapse">Nessun utente selezionato come autore</div>
+            {% embed 'parts/alert-warning-message.html.twig' %}
+                {% block alertStyle %}tli-no-author-message mb-0 collapse{% endblock %}
+                {% block alertBody %}Nessun utente selezionato come autore{% endblock %}
+            {% endembed %}
 
         </div>
 
