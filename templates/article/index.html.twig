@@ -75,7 +75,7 @@
 
                             {% endif %}
 
-                            <div id="tli-article-meta-strip" class="post-categories d-flex justify-content-between align-content-center">
+                            <div id="tli-article-meta-strip">
                                 {% include 'article/meta-strip.html.twig' %}
                             </div>
 
@@ -190,7 +190,13 @@
 
                             {% endif %}
 
-                            <div id="tli-article-tags" class="post-tags mt-30">
+                            {% if Article.currentUserCanEdit %}
+                                <div class="mb-3">
+                                    {% include 'article/editor/button-edit-tags.html.twig' %}
+                                </div>
+                            {% endif %}
+
+                            <div id="tli-article-tags">
                                 {% include 'article/tags.html.twig' %}
                             </div>
 

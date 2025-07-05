@@ -1,0 +1,9 @@
+{% if Article.currentUserCanEdit and Article.Tags|length == 0 %}
+
+    {% embed 'parts/alert-warning-message.html.twig' %}
+        {% block alertBody %}
+            <a href="#" data-tli-modal-url="{{ path('app_editor_article_get-tags-modal', {articleId: Article.id}) }}">Nessun tag assegnato all'articolo</a>
+        {% endblock %}
+    {% endembed %}
+
+{% endif %}

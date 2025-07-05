@@ -3,6 +3,7 @@ import debounce from "./debouncer";
 import StatusBar from './article-edit-statusbar';
 import ArticleMeta from './article-edit-meta';
 
+
 jQuery(document).on('click', '.tli-remove-author',  function(event) {
 
     event.preventDefault();

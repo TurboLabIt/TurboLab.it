@@ -20,6 +20,87 @@ class ArticleEditor extends Article
     }
 
 
+    //<editor-fold defaultstate="collapsed" desc="*** 📜 Title and Body ***">
+    public function setTitle(string $newTitle) : static
+    {
+        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
+        $this->entity->setTitle($cleanTitle);
+        return $this;
+    }
+
+
+    public function setBody(string $body) : static
+    {
+        $cleanBody = $this->textProcessor->processRawInputBodyForStorage($body);
+        $this->entity->setBody($cleanBody);
+
+        $spotlightId = $this->textProcessor->getSpotlightId();
+        if( empty($spotlightId) ) {
+
+            $this->entity->setSpotlight(null);
+
+        } else {
+
+            try {
+                $spotlight = $this->factory->createImage()->load($spotlightId)->getEntity();
+                $this->entity->setSpotlight($spotlight);
+
+            } catch(Exception) {
+                $this->entity->setSpotlight(null);
+            }
+        }
+
+        $abstract = $this->textProcessor->getAbstract();
+        $this->entity->setAbstract($abstract);
+
+        return $this;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** ℹ️ Attributes ***">
+    public function setFormat(int $format) : static
+    {
+        $this->entity->setFormat($format);
+        return $this;
+    }
+
+
+    public function setArchived(bool $archived) : static
+    {
+        $this->entity->setArchived($archived);
+        return $this;
+    }
+
+
+    public function setCommentsTopic(Topic $topic) : static
+    {
+        $this->entity->setCommentsTopic( $topic->getEntity() );
+        return $this;
+    }
+
+
+    public function setPublishedAt(?DateTimeInterface $publishedAt) : static
+    {
+        $this->entity->setPublishedAt($publishedAt);
+        return $this;
+    }
+
+
+    public function setPublishingStatus(int $status) : static
+    {
+        $this->entity->setPublishingStatus($status);
+        return $this;
+    }
+
+
+    public function setCommentTopicNeedsUpdate(int $status) : static
+    {
+        $this->entity->setCommentTopicNeedsUpdate($status);
+        return $this;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 👥 Authors ***">
     public function addAuthor(User $author) : static
     {
         $this->entity->addAuthor(
@@ -100,8 +181,9 @@ class ArticleEditor extends Article
 
         return $this;
     }
+    //</editor-fold>
 
-
+    //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
     public function addTag(Tag $tag, User $user) : static
     {
         $this->entity->addTag(
@@ -115,84 +197,77 @@ class ArticleEditor extends Article
     }
 
 
-    public function setTitle(string $newTitle) : static
+    public function setTagsFromIds(array $arrTagIds) : static
     {
-        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
-        $this->entity->setTitle($cleanTitle);
-        return $this;
-    }
+        if( empty($arrTagIds) ) {
+            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 tag');
+        }
 
+        $arrTagIds = array_unique($arrTagIds);
 
-    public function setFormat(int $format) : static
-    {
-        $this->entity->setFormat($format);
-        return $this;
-    }
+        $collNewTags = $this->factory->createTagCollection()->load($arrTagIds);
 
+        if( $collNewTags->count() < 1 ) {
+            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 tag');
+        }
 
-    public function setArchived(bool $archived) : static
-    {
-        $this->entity->setArchived($archived);
-        return $this;
-    }
+        // rebuild the cached tag list
+        $this->arrTags = [];
 
+        $entityManager = $this->factory->getEntityManager();
 
-    public function setBody(string $body) : static
-    {
-        $cleanBody = $this->textProcessor->processRawInputBodyForStorage($body);
-        $this->entity->setBody($cleanBody);
+        // these would be junctions (array-of-ArticleTag)
+        $currentTags = $this->entity->getTags();
 
-        $spotlightId = $this->textProcessor->getSpotlightId();
-        if( empty($spotlightId) ) {
+        // remove current tags who are no longer
+        foreach($currentTags as $junction) {
 
-            $this->entity->setSpotlight(null);
+            $tagId   = $junction->getTag()->getId();
+            $newTag  = $collNewTags->get($tagId);
 
-        } else {
-
-            try {
-                $spotlight = $this->factory->createImage()->load($spotlightId)->getEntity();
-                $this->entity->setSpotlight($spotlight);
-
-            } catch(Exception) {
-                $this->entity->setSpotlight(null);
+            if( empty($newTag) ) {
+                $entityManager->remove($junction);
             }
         }
 
-        $abstract = $this->textProcessor->getAbstract();
-        $this->entity->setAbstract($abstract);
+        // add new tags
+        $i=1;
+        foreach($collNewTags as $tag) {
+
+            $existingJunction = null;
+            foreach($currentTags as $junction) {
+
+                if( $tag->getId() == $junction->getTag()->getId() ) {
+
+                    $existingJunction = $junction;
+                    break;
+                }
+            }
+
+            if( empty($existingJunction) ) {
+
+                $existingJunction =
+                    (new ArticleTag())
+                        ->setArticle($this->entity)
+                        ->setTag( $tag->getEntity() );
+            }
+
+            $existingJunction->setRanking($i);
+            $entityManager->persist($existingJunction);
+
+            $i++;
+
+            // rebuild the cached tag list so that $article->getTags() works without a reload
+            $tagEntity              = $tag->getEntity();
+            $tagId                  = $tagEntity->getId();
+            $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
+        }
 
         return $this;
     }
+    //</editor-fold>
 
-
-    public function setCommentsTopic(Topic $topic) : static
-    {
-        $this->entity->setCommentsTopic( $topic->getEntity() );
-        return $this;
-    }
-
-
-    public function setPublishedAt(?DateTimeInterface $publishedAt) : static
-    {
-        $this->entity->setPublishedAt($publishedAt);
-        return $this;
-    }
-
-
-    public function setPublishingStatus(int $status) : static
-    {
-        $this->entity->setPublishingStatus($status);
-        return $this;
-    }
-
-
-    public function setCommentTopicNeedsUpdate(int $status) : static
-    {
-        $this->entity->setCommentTopicNeedsUpdate($status);
-        return $this;
-    }
-
-
+    //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
     public function save(bool $persist = true) : static
     {
         if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
@@ -217,4 +292,5 @@ class ArticleEditor extends Article
 
         return $this;
     }
+    //</editor-fold>
 }

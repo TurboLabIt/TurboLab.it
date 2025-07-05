@@ -32,3 +32,21 @@
     height: 170px;
     overflow-y: auto;
 }
+
+
+.tli-remove-tag {
+    cursor: pointer;
+    color: red;
+    font-size: x-large;
+}
+
+/* .tli-tag-badge.popular-tag {
+    background-color: #d1ecf1;
+    color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tli-tag-badge.popular-tag:hover {
+    background-color: #c3e6cb;
+}*/

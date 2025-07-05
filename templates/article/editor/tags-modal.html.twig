@@ -1,0 +1,93 @@
+<div class="modal-body">
+
+    <div class="mb-3">
+
+        <h6 class="text-secondary mb-3"><i class="fas fa-tag"></i> Tag già assegnati all'articolo</h6>
+
+        <div class="tli-tags-strip mb-2" data-changed="0" data-save-url="{{ path('app_editor_article_set-tags', {'articleId': Article.id}) }}">
+            <ul>
+                <li><i class="fas fa-tag"></i> Tag:</li>
+                {% for Tag in Article.Tags %}
+                    <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}">
+                        <a href="{{ Tag.url }}" target="_blank">
+                            <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
+                        </a>
+                        <i class="fas fa-times-circle tli-remove-tag ms-2" title="Rimuovi"></i>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% embed 'parts/alert-warning-message.html.twig' %}
+            {% block alertStyle %}{% if Article.Tags|length > 0 %}collapse{% endif %}{% endblock %}
+            {% block alertBody %}Nessun tag assegnato all'articolo{% endblock %}
+        {% endembed %}
+
+    </div>
+
+
+
+    <div class="mb-2">
+        <h6 class="text-secondary mb-3"><i class="fa-solid fa-lightbulb"></i> Tagga per contesto</h6>
+        <div class="d-flex flex-wrap align-items-center">
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="PHP 8.3">Software</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Twig">Hardware</span>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <h6 class="text-secondary mb-3"><i class="fa-solid fa-lightbulb"></i> Tagga per piattaforma</h6>
+        <div class="d-flex flex-wrap align-items-center">
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="PHP 8.3">Windows</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Twig">Android</span>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h6 class="text-secondary mb-3"><i class="fa-solid fa-lightbulb"></i> Altri tag da valutare</h6>
+        <div id="popularTagsContainer" class="d-flex flex-wrap align-items-center">
+
+            <div>
+                <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="PHP 8.3">PHP 8.3</span>
+                <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Twig">Twig</span>
+            </div>
+
+            <div>
+                <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="PHP 8.3">PHP 8.3</span>
+                <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Twig">Twig</span>
+            </div>
+
+            <!-- Example popular tags - these would be dynamically loaded -->
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="PHP 8.3">PHP 8.3</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Twig">Twig</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Bootstrap 5">Bootstrap 5</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Database">Database</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="API">API</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Security">Security</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Performance">Performance</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Testing">Testing</span>
+            <span class="tli-tag-badge popular-tag bg-info bg-opacity-25 text-info shadow-sm" data-tag="Deployment">Deployment</span>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- C) An autocomplete field for the user to search for appropriate tag -->
+    <div class="mb-3">
+        <h6 class="text-secondary mb-3"><i class="fas fa-search me-2"></i> Search & Add New Tag</h6>
+        <div class="input-group">
+            <input type="text" class="form-control autocomplete-input" id="tagSearchInput" placeholder="Type to search or add a new tag...">
+            <button class="btn btn-primary" type="button" id="addCustomTagBtn"><i class="fas fa-plus me-1"></i> Add Tag</button>
+        </div>
+        <div id="autocompleteResults" class="list-group mt-2 shadow-sm" style="display: none;">
+            <!-- Autocomplete results will be injected here -->
+            <!-- Example: <button type="button" class="list-group-item list-group-item-action">Suggested Tag 1</button> -->
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-success tli-tag-button-ok">Salva assegnazione tag</button>
+    <button type="button" class="btn btn-secondary tli-tag-button-cancel" data-bs-dismiss="modal">Annulla</button>
+</div>

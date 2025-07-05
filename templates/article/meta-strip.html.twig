@@ -1,42 +1,46 @@
-<div class="categories-share">
+<div class="post-categories d-flex justify-content-between align-content-center">
+    <div class="categories-share">
 
-    <ul>
-        <li>
-            <i class="fa-solid fa-user-tie"></i> a cura di:
-            {% for Author in Article.Authors %}
-                <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
-            {% else %}
-                <em>&lt;sconosciuto&gt;</em>
-            {% endfor %}
-        </li>
-
-        {% if Article.commentsTopic is not empty %}
+        <ul>
             <li>
-                <a href="{{ Article.commentsUrl }}">
-                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                </a>
+                <i class="fa-solid fa-user-tie"></i> a cura di:
+                {% for Author in Article.Authors %}
+                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                {% else %}
+                    <em>&lt;sconosciuto&gt;</em>
+                {% endfor %}
             </li>
+
+            {% if Article.commentsTopic is not empty %}
+                <li>
+                    <a href="{{ Article.commentsUrl }}">
+                        <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                    </a>
+                </li>
+            {% endif %}
+            {% if Article.views(false) > 1 %}
+                <li><i class="fa-brands fa-readme"></i> {{ Article.views }} visualizzazioni</li>
+            {% endif %}
+        </ul>
+
+        <ul>
+            <li>
+                <i class="fa-solid fa-pen-to-square"></i>
+                Aggiornato: {{ Article.updatedAt|friendlyDate }}
+            </li>
+            <li>{% include('article/publishing-status.html.twig') %}</li>
+        </ul>
+
+
+        {% if Article.currentUserCanEdit %}
+            <div class="mt-2">
+                {% include 'article/editor/button-edit-authors.html.twig' %}
+                {% include 'article/editor/button-edit-tags.html.twig' %}
+            </div>
         {% endif %}
-        {% if Article.views(false) > 1 %}
-            <li><i class="fa-brands fa-readme"></i> {{ Article.views }} visualizzazioni</li>
-        {% endif %}
-    </ul>
 
-    <ul>
-        <li>
-            <i class="fa-solid fa-pen-to-square"></i>
-            Aggiornato: {{ Article.updatedAt|friendlyDate }}
-        </li>
-        <li>{% include('article/publishing-status.html.twig') %}</li>
-    </ul>
-
-
-    {% if Article.currentUserCanEdit %}
-        <div class="mt-2">
-            {% include 'article/editor/button-edit-authors.html.twig' %}
-            {% include 'article/editor/button-edit-tags.html.twig' %}
-        </div>
-    {% endif %}
-
+    </div>
 </div>
+
+{% include 'article/editor/tags-missing-warning.html.twig' %}

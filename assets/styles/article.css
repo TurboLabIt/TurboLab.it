@@ -1,5 +1,6 @@
 .tli-article-main-content {
     padding-top: 15px !important;
+    padding-bottom: 15px !important;
 }
 
 .tli-article-main-content p {
@@ -47,4 +48,25 @@
     font-size: 2.5rem;
     line-height: normal;
     font-weight: 500;
+}
+
+.tli-tags-strip ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.tli-tags-strip ul li:first-child {
+    background: #E4E5E6;
+    border-color: #E4E5E6;
+}
+
+.tli-tags-strip ul li {
+    border: 1px solid #C2C5C7;
+    display: inline-block;
+    line-height: 40px;
+    padding: 0 15px;
+    font-weight: 500;
+    color: black;
+    margin-bottom: 5px;
 }
