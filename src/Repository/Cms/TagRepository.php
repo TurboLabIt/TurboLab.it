@@ -52,17 +52,50 @@ class TagRepository extends BaseRepository
 
     public function findByTitle(string $title) : ?Tag
     {
+        $termToSearch = trim($title);
+        if( empty($termToSearch) ) {
+            return null;
+        }
+
+        $termToSearch = mb_strtolower($termToSearch);
+
         return
             $this->getQueryBuilder()
                 ->andWhere('t.title = :title')
-                    ->setParameter('title', $title)
+                    ->setParameter('title', $termToSearch)
                 ->getQuery()
                 ->getOneOrNullResult();
     }
 
 
+    public function search(string $title) : array
+    {
+        $termToSearch = trim($title);
+        if( empty($termToSearch) ) {
+            return [];
+        }
+
+        $termToSearch = mb_strtolower($termToSearch);
+
+        return
+            $this->getQueryBuilder()
+                ->andWhere('t.title LIKE :title')
+                    ->setParameter('title', '%' . $this->prepareParamForLikeCondition($termToSearch) . '%')
+                ->orderBy('t.ranking', 'DESC')
+                ->getQuery()->getResult();
+    }
+
+
     public function findPopular(?int $num = null) : array
     {
-        return $this->findLatest($num);
+        $sqlQuery = "SELECT tag_id FROM article_tag GROUP BY tag_id HAVING COUNT(1) > 1 ORDER BY COUNT(1) DESC ";
+        if( !empty($num) ) {
+            // cannot be passed as :limit in PDO
+            $sqlQuery .= "LIMIT $num";
+        }
+
+        $arrIds = $this->getIdsFromSqlQuery($sqlQuery);
+
+        return $this->getById($arrIds);
     }
 }

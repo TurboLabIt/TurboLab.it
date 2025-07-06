@@ -14,6 +14,7 @@ use App\Service\Cms\FileUrlGenerator;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\ImageUrlGenerator;
 use App\Service\Cms\Tag as TagService;
+use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
@@ -138,6 +139,17 @@ class Factory
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** Tag ***">
+    public function createTag(?TagEntity $entity = null) : TagService
+    {
+        $service = new TagService($this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+
+
     public function createDefaultTag() : TagService
     {
         if( !empty($this->defaultTag) ) {
@@ -153,9 +165,9 @@ class Factory
     }
 
 
-    public function createTag(?TagEntity $entity = null) : TagService
+    public function createTagEditor(?TagEntity $entity = null) : TagEditor
     {
-        $service = new TagService($this);
+        $service = new TagEditor($this, $this->createTextProcessor());
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

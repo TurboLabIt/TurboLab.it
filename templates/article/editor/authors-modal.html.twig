@@ -9,7 +9,6 @@
     <div class="mb-4">
 
         <h6 class="mb-2">Autori attuali</h6>
-
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list"
              data-changed="0" data-save-url="{{ path('app_editor_article_set-authors', {'articleId': Article.id}) }}">
 
@@ -27,12 +26,10 @@
     </div>
 
 
-    <!-- Add Authors Section -->
     <div class="tli-authors-autocomplete-container"
          data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
 
         <h6 class="mb-2">Aggiungi altri autori</h6>
-
         <div class="mb-2">
             <div class="input-group">
                 <input type="text" name="username" class="form-control tli-authors-autocomplete" placeholder="Cerca utente per username">

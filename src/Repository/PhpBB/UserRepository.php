@@ -213,7 +213,6 @@ class UserRepository extends BasePhpBBRepository
     public function searchByUsername(string $username) : array
     {
         $termToSearch = trim($username);
-
         if( empty($termToSearch) ) {
             return [];
         }

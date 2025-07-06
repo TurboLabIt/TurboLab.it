@@ -23,6 +23,8 @@ class TagCollection extends BaseServiceEntityCollection
         TagService::ID_VIRTUALIZATION, TagService::ID_DEV, TagService::ID_YOUTUBE
     ];
 
+    const array EXCLUDE_FROM_SUGGESTIONS = [TagService::ID_NEWSLETTER_TLI];
+
 
     public function getRepository() : TagRepository
     {
@@ -39,9 +41,12 @@ class TagCollection extends BaseServiceEntityCollection
     public function getCommonGrouped() : array
     {
         $arrGroupsToLoad = [
-            "main"      => static::TOP_CATEGORIES, static::NAV_OTHER_CATEGORIES,
-            "others"    => array_merge_recursive(static::NAV_OTHER_CATEGORIES, [TagService::ID_WEBSERVICES, TagService::ID_MAC, TagService::ID_IOS]),
-            "popular"   => []
+            "main" => array_merge_recursive(static::TOP_CATEGORIES, [
+                TagService::ID_LAPTOP, TagService::ID_SMARTPHONE, TagService::ID_HARDWARE,
+            ], static::NAV_OTHER_CATEGORIES, [
+                TagService::ID_WEBSERVICES, TagService::ID_MAC, TagService::ID_IOS
+            ]),
+            "popular" => []
         ];
 
         $arrTagIdsToLoad = array_merge(...array_values($arrGroupsToLoad));
@@ -62,12 +67,42 @@ class TagCollection extends BaseServiceEntityCollection
 
         $popularTags = $this->getRepository()->findPopular(50);
         foreach($popularTags as $id => $tag) {
-            if( !in_array($id, $arrTagIdsToLoad) ) {
+            if( !in_array($id, $arrTagIdsToLoad) && !in_array($id, static::EXCLUDE_FROM_SUGGESTIONS) )  {
                 $arrGrouped["popular"][(string)$id] = $this->createService($tag);
             }
         }
 
         return $arrGrouped;
+    }
+
+
+    public function loadBySearchTagOrCreate(?string $tag) : static
+    {
+        $arrTags = $this->getRepository()->search($tag);
+        $this->setEntities($arrTags);
+
+        $newTag = $this->factory->createTagEditor()->setTitle($tag);
+
+        $arrPerfectMatch =
+            $this->lookupSearchExtract($newTag, function(TagService $newTagToCheck, TagService $existingTag) {
+                return $newTagToCheck->getSlug() == $existingTag->getSlug();
+            });
+
+        if( empty($arrPerfectMatch) ) {
+            $arrPerfectMatch = ["new" => $newTag];
+        }
+
+        $arrStartWith =
+            $this->lookupSearchExtract($newTag, function(TagService $newTagToCheck, TagService $existingTag) {
+
+                $slug1 = $newTagToCheck->getSlug();
+                $slug2 = $existingTag->getSlug();
+                return str_starts_with($slug1, $slug2)  || str_starts_with($slug2, $slug1);
+            });
+
+        $this->arrData = $arrPerfectMatch + $arrStartWith + $this->arrData;
+
+        return $this;
     }
 
 

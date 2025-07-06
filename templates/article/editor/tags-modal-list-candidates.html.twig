@@ -1,5 +1,12 @@
-<div class="mb-3">
-    <h6 class="text-secondary mb-2"><i class="{% block tagsListFAIcon %}fa-solid fa-lightbulb{% endblock %}"></i> {% block tagsListText %}{% endblock %}:</h6>
+<div class="mb-3 {% block tagsListContainerClass %}tli-tags-suggestion-collapsable{% endblock %}">
+
+    {% block tagsListTitle %}
+        <h6 class="text-secondary mb-2">
+            <i class="{% block tagsListFAIcon %}fa-solid fa-lightbulb{% endblock %}"></i>
+            {% block tagsListText %}{% endblock %}:
+        </h6>
+    {% endblock %}
+
     <div class="tli-tags-strip tli-tags-candidate">
         {% embed 'article/editor/tags-modal-list-items.html.twig' %}
             {% block tagsListLabelItem %}{% endblock %}

@@ -1,0 +1,34 @@
+{#% if Authors|length %}
+
+    {% embed 'article/editor/authors-modal-list-items.html.twig' %}
+        {% block removeAuthorClass %}d-none{% endblock %}
+    {% endembed %}
+
+{% else %}
+
+    {% embed 'parts/alert-warning-message.html.twig' %}
+        {% block alertStyle %}tli-no-author-message mb-0{% endblock %}
+        {% block alertBody %}Nessun utente trovato{% endblock %}
+    {% endembed %}
+
+{% endif %#}
+
+
+
+{% if Tags|length %}
+
+    {% embed 'article/editor/tags-modal-list-candidates.html.twig' %}
+        {% block tagsListContainerClass %}{% endblock %}
+        {% block tagsListTitle %}{% endblock %}
+        {% block tagsListLabelItem %}{% endblock %}
+    {% endembed %}
+
+{#% else %}
+
+    {% embed 'parts/alert-warning-message.html.twig' %}
+        {% block alertStyle %}tli-no-author-message mb-0{% endblock %}
+        {% block alertBody %}Nessun utente trovato{% endblock %}
+    {% endembed %}
+#}
+{% endif %}
+

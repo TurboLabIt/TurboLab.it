@@ -23,6 +23,10 @@ class Tag extends BaseCmsService
     const int ID_MAC                = 26;       // 👀 https://turbolab.it/apple-mac-macos-26
     const int ID_IOS                = 39;       // 👀 https://turbolab.it/iphone-ipad-ios-39
     const int ID_WEBSERVICES        = 24;       // 👀 https://turbolab.it/servizi-web-24
+    const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/
+    const int ID_SMARTPHONE         = 6;        // 👀 https://turbolab.it/
+    const int ID_HARDWARE           = 5;        // 👀 https://turbolab.it/
+    //const int ID_= ;       // 👀 https://turbolab.it/
 
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/filesharing-p2p-peer-to-peer-2914
     const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/sicurezza-13

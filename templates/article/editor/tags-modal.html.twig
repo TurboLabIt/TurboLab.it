@@ -18,21 +18,49 @@
 
     </div>
 
+    <div class="mb-3 text-center">
+        <a href="#" class="tli-article-editor-show-suggested-tags-action" data-status="1"
+           data-show-text="<i class=&quot;fa-solid fa-chevron-down&quot;></i> Apri suggerimenti"
+           data-hide-text="<i class=&quot;fa-solid fa-chevron-up&quot;></i> Chiudi suggerimenti"></a>
+    </div>
+
 
     {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.main} %}
         {% block tagsListText %}Aggiungi uno o più tag "principali"{% endblock %}
     {% endembed %}
 
-    {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.others} %}
-        {% block tagsListText %}Altri tag significativi che potresti aggiungere{% endblock %}
-    {% endembed %}
-
     {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.popular} %}
-        {% block tagsListText %}Altri tag molto usati che potresti aggiungere{% endblock %}
+        {% block tagsListText %}Altri tag usati di frequente che potresti aggiungere{% endblock %}
     {% endembed %}
 
 
-    <hr class="my-4">
+    <div class="tli-tags-autocomplete-container"
+         data-autocomplete-url="{{ path('app_editor_article_tags-autocomplete') }}">
+
+        <h6 class="text-secondary mb-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca un tag o creane uno nuovo:</h6>
+        <div class="mb-2">
+            <div class="input-group">
+                <input type="text" name="tag" class="form-control tli-tags-autocomplete" placeholder="Cerca tag">
+            </div>
+            <small class="form-text text-muted mt-0">
+                <i class="fa-solid fa-circle-info"></i>
+                Digita almeno 2 caratteri del tag per cercare
+            </small>
+        </div>
+
+        <div class="tli-article-editor-search-result"></div>
+
+        {#  <div class="list-group list-group-flush border rounded-3 p-2 d-flex justify-content-center align-items-center d-none">
+            <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse fa-5x"></i>
+        </div>
+
+        <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-candidate-tags-list"></div>
+        #}
+    </div>
+
+
+
+    {#  <hr class="my-4">
 
     <!-- C) An autocomplete field for the user to search for appropriate tag -->
     <div class="mb-3">
@@ -45,7 +73,7 @@
             <!-- Autocomplete results will be injected here -->
             <!-- Example: <button type="button" class="list-group-item list-group-item-action">Suggested Tag 1</button> -->
         </div>
-    </div>
+    </div>#}
 
 </div>
 

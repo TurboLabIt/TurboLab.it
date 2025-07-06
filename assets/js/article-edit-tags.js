@@ -25,7 +25,41 @@ jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list
             tag.addClass('d-none');
         }
     });
+
+    openSuggestions(true);
 });
+
+
+jQuery(document).on('click', '.tli-article-editor-show-suggested-tags-action',  function(event) {
+
+    event.preventDefault();
+    openSuggestions( jQuery(this).data('status') == 0 );
+});
+
+
+function openSuggestions(open)
+{
+    let showSuggestionAction = jQuery('#tli-ajax-modal').find('.tli-article-editor-show-suggested-tags-action');
+    let suggestions = jQuery('#tli-ajax-modal').find('.tli-tags-suggestion-collapsable');
+
+    if(open) {
+
+        showSuggestionAction.html( showSuggestionAction.data('hide-text') );
+        showSuggestionAction.data('status', 1);
+        suggestions.fadeIn();
+        jQuery('#tli-style-tags-suggestion-closed').remove();
+
+    } else {
+
+        showSuggestionAction.html( showSuggestionAction.data('show-text') );
+        showSuggestionAction.data('status', 0);
+        suggestions.fadeOut();
+
+        jQuery('head').append(
+            '<style id="tli-style-tags-suggestion-closed">.tli-article-editor-search-result .tli-tags-candidate {max-height: 600px}</style>'
+        );
+    }
+}
 
 
 jQuery(document).on('click', '.tli-remove-tag',  function(event) {
@@ -102,33 +136,33 @@ jQuery(document).on('click', '.tli-add-tag',  function(event) {
 
 jQuery(document).on('input', 'input.tli-tags-autocomplete', debounce(function() {
 
-    let username = jQuery(this).val().trim();
+    let tag = jQuery(this).val().trim();
 
     let container = jQuery('.tli-tags-autocomplete-container');
-    let target = container.find('.tli-article-editor-candidate-tags-list');
+    let target = container.find('.tli-article-editor-search-result');
 
-    if( username.length > 0 && username.length < 3 ) {
+    if( tag.length < 3 ) {
 
         target.html('');
         return;
     }
 
-    loadTags(username);
+    loadTags(tag);
 
 }, 350));
 
 
-var userSearchRequest = null;
+var tagSearchRequest = null;
 
-function loadTags(username)
+function loadTags(tag)
 {
-    if( userSearchRequest != null ) {
-        userSearchRequest.abort();
+    if( tagSearchRequest != null ) {
+        tagSearchRequest.abort();
     }
 
     let container = jQuery('.tli-tags-autocomplete-container');
 
-    let target = container.find('.tli-article-editor-candidate-tags-list');
+    let target = container.find('.tli-article-editor-search-result');
     target.hide();
     target.html();
 
@@ -139,13 +173,13 @@ function loadTags(username)
     // fetch results
     let endpoint = container.data('autocomplete-url');
 
-    userSearchRequest =
+    tagSearchRequest =
 
-        jQuery.get(endpoint, {username: username}, function(data) {
+        jQuery.get(endpoint, {tag: tag}, function(data) {
 
             target.html(data);
 
-            jQuery('.tli-article-editor-current-tags-list [data-tag-id]').each(function() {
+            /*jQuery('.tli-article-editor-current-tags-list [data-tag-id]').each(function() {
 
                 let userContainer = target.find('[data-tag-id='+ jQuery(this).data('tag-id') +']');
                 if( userContainer.length == 0 ) {
@@ -154,7 +188,7 @@ function loadTags(username)
 
                 userContainer.find('.tli-add-tag').addClass('d-none');
                 userContainer.find('.tli-tag-already').removeClass('d-none');
-            });
+            });*/
 
         }, 'html')
 
