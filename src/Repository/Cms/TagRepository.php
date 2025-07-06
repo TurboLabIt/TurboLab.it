@@ -59,4 +59,10 @@ class TagRepository extends BaseRepository
                 ->getQuery()
                 ->getOneOrNullResult();
     }
+
+
+    public function findPopular(?int $num = null) : array
+    {
+        return $this->findLatest($num);
+    }
 }

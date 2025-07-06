@@ -1,11 +1,10 @@
 <div class="tli-tags-strip {% if Article.Tags|length == 0 %}collapse{% endif %}">
-    <ul>
-        <li class="tli-tag-label"><i class="fas fa-tag"></i> Tag:</li>
-        {% for Tag in Article.Tags %}
-            <li><a href="{{ Tag.url }}"><i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
 
+    {% embed 'article/editor/tags-modal-list-items.html.twig' with {'Tags': Article.Tags} %}
+        {% block linkTargetBlank %}{% endblock %}
+        {% block tagsListActions %}{% endblock %}
+    {% endembed %}
+
+</div>
 
 {% include 'article/editor/tags-missing-warning.html.twig' %}

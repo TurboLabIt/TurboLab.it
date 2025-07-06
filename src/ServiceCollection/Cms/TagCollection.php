@@ -39,8 +39,8 @@ class TagCollection extends BaseServiceEntityCollection
     public function getCommonGrouped() : array
     {
         $arrGroupsToLoad = [
-            "main"      => array_merge_recursive(static::TOP_CATEGORIES, static::NAV_OTHER_CATEGORIES),
-            "others"    => [TagService::ID_WEBSERVICES, TagService::ID_MAC, TagService::ID_IOS],
+            "main"      => static::TOP_CATEGORIES, static::NAV_OTHER_CATEGORIES,
+            "others"    => array_merge_recursive(static::NAV_OTHER_CATEGORIES, [TagService::ID_WEBSERVICES, TagService::ID_MAC, TagService::ID_IOS]),
             "popular"   => []
         ];
 

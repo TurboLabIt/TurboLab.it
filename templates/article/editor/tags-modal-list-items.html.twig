@@ -1,0 +1,14 @@
+<ul>
+    {% block tagsListLabelItem %}<li class="tli-tag-label"><i class="fas fa-tag"></i> Tag:</li>{% endblock %}
+    {% for Tag in Tags %}
+        <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}">
+            <a href="{{ Tag.url }}" {% block linkTargetBlank %}target="_blank"{% endblock %}>
+                <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
+            </a>
+            {% block tagsListActions %}
+                <i class="fas fa-times-circle tli-remove-tag ms-2 {% block removeTagClass %}d-none{% endblock %}" title="Rimuovi"></i>
+                <i class="fa-solid fa-plus tli-add-tag ms-2 {% block addTagClass %}d-none{% endblock %}" title="Aggiungi"></i>
+            {% endblock %}
+        </li>
+    {% endfor %}
+</ul>

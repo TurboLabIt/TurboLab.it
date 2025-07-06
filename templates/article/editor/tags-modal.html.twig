@@ -2,19 +2,13 @@
 
     <div class="mb-3">
 
-        <h6 class="text-secondary mb-3"><i class="fas fa-tag"></i> Tag già assegnati all'articolo</h6>
-        <div class="tli-tags-strip tli-article-editor-current-tags-list mb-2" data-changed="0" data-save-url="{{ path('app_editor_article_set-tags', {'articleId': Article.id}) }}">
-            <ul>
-                <li class="tli-tag-label"><i class="fas fa-tag"></i> Tag:</li>
-                {% for Tag in Article.Tags %}
-                    <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}">
-                        <a href="{{ Tag.url }}" target="_blank">
-                            <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
-                        </a>
-                        <i class="fas fa-times-circle tli-remove-tag ms-2" title="Rimuovi"></i>
-                    </li>
-                {% endfor %}
-            </ul>
+        <h6 class="text-secondary mb-3"><i class="fas fa-tag"></i> Tag già assegnati all'articolo:</h6>
+        <div class="tli-tags-strip tli-article-editor-current-tags-list mb-2" data-changed="0"
+             data-save-url="{{ path('app_editor_article_set-tags', {'articleId': Article.id}) }}">
+
+            {% embed 'article/editor/tags-modal-list-items.html.twig' with {'Tags': Article.Tags} %}
+                {% block removeTagClass %}{% endblock %}
+            {% endembed %}
         </div>
 
         {% embed 'parts/alert-warning-message.html.twig' %}
@@ -25,22 +19,18 @@
     </div>
 
 
-    <div class="mb-2">
-        <h6 class="text-secondary mb-3"><i class="fa-solid fa-lightbulb"></i> Aggiungi uno o più tag "principali"</h6>
-        <div class="tli-tags-strip mb-2 tli-tags-candidate">
-            <ul>
-                {% for Tag in CommonTagGroups.main %}
-                    <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}">
-                        <a href="{{ Tag.url }}" target="_blank">
-                            <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
-                        </a>
-                        <i class="fas fa-times-circle tli-remove-tag ms-2 d-none" title="Rimuovi"></i>
-                        <i class="fa-solid fa-plus tli-add-tag ms-2" title="Aggiungi"></i>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+    {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.main} %}
+        {% block tagsListText %}Aggiungi uno o più tag "principali"{% endblock %}
+    {% endembed %}
+
+    {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.others} %}
+        {% block tagsListText %}Altri tag significativi che potresti aggiungere{% endblock %}
+    {% endembed %}
+
+    {% embed 'article/editor/tags-modal-list-candidates.html.twig' with {'Tags': CommonTagGroups.popular} %}
+        {% block tagsListText %}Altri tag molto usati che potresti aggiungere{% endblock %}
+    {% endembed %}
+
 
     <hr class="my-4">
 

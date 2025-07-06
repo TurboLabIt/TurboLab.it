@@ -34,14 +34,25 @@
 }
 
 
+.tli-tags-candidate {
+    max-height: 140px;
+    overflow-y: auto;
+}
+
 .tli-remove-tag {
     cursor: pointer;
     color: red;
-    font-size: x-large;
+    font-size: large;
 }
 
 .tli-add-tag {
     cursor: pointer;
     color: #198754;
-    font-size: x-large;
+    font-size: large;
+}
+
+
+#tli-ajax-modal .tli-tags-strip ul li {
+    padding: 0 5px;
+    line-height: 25px;
 }
