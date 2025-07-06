@@ -15,9 +15,7 @@ class UserCollection extends BaseServiceEntityCollection
 
     public function getRepository() : UserRepository
     {
-        /** @var UserRepository $repository */
-        $repository = $this->factory->getEntityManager()->getRepository(UserEntity::class);
-        return $repository;
+        return $this->factory->getEntityManager()->getRepository(static::ENTITY_CLASS);
     }
 
 

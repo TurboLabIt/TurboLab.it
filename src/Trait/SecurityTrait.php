@@ -9,6 +9,8 @@ trait SecurityTrait
 {
     public function getCurrentUser() : ?UserService { return $this->factory->getCurrentUser(); }
 
+    public function getCurrentUserAsAuthor() : ?UserService { return $this->factory->getCurrentUserAsAuthor(); }
+
 
     public function currentUserCanEdit() : bool
     {

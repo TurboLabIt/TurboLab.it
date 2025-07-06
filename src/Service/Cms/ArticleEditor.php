@@ -249,7 +249,8 @@ class ArticleEditor extends Article
                 $existingJunction =
                     (new ArticleTag())
                         ->setArticle($this->entity)
-                        ->setTag( $tag->getEntity() );
+                        ->setTag( $tag->getEntity() )
+                        ->setUser( $this->getCurrentUserAsAuthor()->getEntity() );
             }
 
             $existingJunction->setRanking($i);

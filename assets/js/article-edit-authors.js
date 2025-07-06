@@ -45,7 +45,7 @@ jQuery(document).on('click', '.tli-add-author',  function(event) {
     let clickedUserContainerCopy = clickedUserContainer.clone();
 
     clickedUserContainer.find('.tli-add-author').addClass('d-none');
-    clickedUserContainer.find('.tli-author-already').removeClass('d-none')
+    clickedUserContainer.find('.tli-author-already').removeClass('d-none');
 
     clickedUserContainerCopy.find('.tli-add-author').addClass('d-none');
     clickedUserContainerCopy.find('.tli-remove-author').removeClass('d-none');

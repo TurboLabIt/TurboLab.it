@@ -40,13 +40,8 @@
     font-size: x-large;
 }
 
-/* .tli-tag-badge.popular-tag {
-    background-color: #d1ecf1;
-    color: #007bff;
+.tli-add-tag {
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    color: #198754;
+    font-size: x-large;
 }
-
-.tli-tag-badge.popular-tag:hover {
-    background-color: #c3e6cb;
-}*/

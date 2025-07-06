@@ -37,6 +37,7 @@ class Factory
     protected ?ImageService $defaultSpotlight;
     protected ?TagService $defaultTag;
     protected ?User $currentUser;
+    protected ?User $currentUserAsAuthor;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
@@ -69,11 +70,26 @@ class Factory
 
         $entity = $this->security->getUser();
         if( empty($entity) ) {
-            return $this->currentUser = null;
+            return $this->currentUser = $this->currentUserAsAuthor = null;
         }
 
         return $this->currentUser = $this->createUser($entity);
     }
+
+    public function getCurrentUserAsAuthor() : ?UserService
+    {
+        if( !empty($this->currentUserAsAuthor) ) {
+            return $this->currentUserAsAuthor;
+        }
+
+        $cu = $this->getCurrentUser();
+        if( empty($cu) ) {
+            return null;
+        }
+
+        return $this->currentUserAsAuthor = $this->createUser()->load( $cu->getId() );
+    }
+
 
     public function getViews() : Views { return (new Views($this, $this->urlGenerator)); }
 

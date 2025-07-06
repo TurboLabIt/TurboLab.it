@@ -14,9 +14,7 @@ class TopicCollection extends BaseServiceEntityCollection
 
     public function getRepository() : TopicRepository
     {
-        /** @var TopicRepository $repository */
-        $repository = $this->em->getRepository(TopicEntity::class);
-        return $repository;
+        return $this->factory->getEntityManager()->getRepository(static::ENTITY_CLASS);
     }
 
 

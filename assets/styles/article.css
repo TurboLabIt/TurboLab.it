@@ -56,7 +56,7 @@
     margin-bottom: 0;
 }
 
-.tli-tags-strip ul li:first-child {
+.tli-tag-label {
     background: #E4E5E6;
     border-color: #E4E5E6;
 }

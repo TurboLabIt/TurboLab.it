@@ -4,31 +4,57 @@ import StatusBar from './article-edit-statusbar';
 import ArticleMeta from './article-edit-meta';
 
 
+jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list',  function(event) {
+
+    let currentTagsList = jQuery('#tli-ajax-modal').find('.tli-article-editor-current-tags-list');
+    let tagIds =
+        currentTagsList.find('[data-tag-id]').map(function() {
+            return $(this).data('tag-id');
+        }).get();
+
+    if(tagIds.length === 0) {
+        return false;
+    }
+
+    jQuery('#tli-ajax-modal').find('.tli-tags-candidate .tli-add-tag').closest('li').each(function(){
+
+        let tag = jQuery(this);
+        let tagId = tag.data('tag-id');
+
+        if( jQuery.inArray(tagId, tagIds) != -1 ) {
+            tag.addClass('d-none');
+        }
+    });
+});
+
+
 jQuery(document).on('click', '.tli-remove-tag',  function(event) {
 
     event.preventDefault();
 
-    let currentTagsList = $(this).closest('.tli-tags-strip');
+    let currentTagsList = $(this).closest('.tli-article-editor-current-tags-list');
     currentTagsList.data('changed', 1);
 
     let tagInList= $(this).closest('li');
 
     tagInList.fadeOut('slow', function(){
 
-        let tagId = tagInList.data('tag-id');
+        let removedTagId = tagInList.data('tag-id');
 
         tagInList.remove();
 
         let tagsNum = currentTagsList.find('[data-tag-id]').length;
         currentTagsList.parent().find('.alert-warning').toggleClass('collapse', tagsNum != 0);
 
-        /*let candidateUserContainer = jQuery('.tli-article-editor-candidate-tags-list [data-tag-id='+ tagId + ']');
-        if( candidateUserContainer.length == 0 ) {
-            return true;
-        }
+        jQuery('#tli-ajax-modal').find('.tli-tags-candidate .tli-add-tag').closest('li').each(function(){
 
-        candidateUserContainer.find('.tli-add-tag').removeClass('d-none');
-        candidateUserContainer.find('.tli-tag-already').addClass('d-none');*/
+            let tag = jQuery(this);
+            let candidateTag = tag.data('tag-id');
+
+            if( candidateTag == removedTagId ) {
+                tag.removeClass('d-none');
+            }
+        });
     });
 });
 
@@ -37,19 +63,40 @@ jQuery(document).on('click', '.tli-add-tag',  function(event) {
 
     event.preventDefault();
 
-    let currentTagsList = $(this).closest('.tli-tags-strip');
+    let currentTagsList = jQuery('#tli-ajax-modal').find('.tli-article-editor-current-tags-list');
     currentTagsList.data('changed', 1);
-    currentTagsList.find('.tli-no-tag-message').addClass('collapse');
+    currentTagsList.parent().find('.alert-warning').addClass('collapse');
 
-    let clickedUserContainer = jQuery(this).closest('[data-tag-id]');
-    let clickedUserContainerCopy = clickedUserContainer.clone();
+    let clickedTagContainer = jQuery(this).closest('[data-tag-id]');
+    const clickedTagContainerOffset = clickedTagContainer.offset();
 
-    clickedUserContainer.find('.tli-add-tag').addClass('d-none');
-    clickedUserContainer.find('.tli-tag-already').removeClass('d-none')
+    let flyingItem = clickedTagContainer.clone().attr('id', 'flyingItem');
+    flyingItem.addClass('tli-flying-item').css({
+        left:       clickedTagContainerOffset.left,
+        top:        clickedTagContainerOffset.top
+    });
 
-    clickedUserContainerCopy.find('.tli-add-tag').addClass('d-none');
-    clickedUserContainerCopy.find('.tli-remove-tag').removeClass('d-none');
-    currentTagsList.append(clickedUserContainerCopy);
+    jQuery('body').append(flyingItem);
+    clickedTagContainer.addClass("d-none");
+
+    let targetList = currentTagsList.find('ul');
+    let targetListLastItem = targetList.find('li:last-child');
+
+    flyingItem.animate({
+        left:   targetListLastItem.offset().left + targetListLastItem.width(),
+        top:    targetListLastItem.offset().top,
+        opacity: 0.5
+    }, 500, function() {
+
+        flyingItem.remove();
+
+        let clickedTagContainerCopy = clickedTagContainer.clone();
+        clickedTagContainerCopy.removeClass('d-none');
+        clickedTagContainerCopy.find('.tli-add-tag').addClass('d-none');
+        clickedTagContainerCopy.find('.tli-remove-tag').removeClass('d-none');
+
+        targetList.append(clickedTagContainerCopy);
+    });
 });
 
 
@@ -129,7 +176,7 @@ function loadTags(username)
 jQuery(document).on('click', '.tli-tag-button-ok',  function(event) {
 
     event.preventDefault();
-    let currentTagsList = jQuery('#tli-ajax-modal').find('.tli-tags-strip');
+    let currentTagsList = jQuery('#tli-ajax-modal').find('.tli-article-editor-current-tags-list');
 
     if( currentTagsList.data("changed") == "0" ) {
 
@@ -155,14 +202,13 @@ jQuery(document).on('click', '.tli-tag-button-ok',  function(event) {
     let endpoint = currentTagsList.data("save-url");
 
     jQuery.post(endpoint, {tags: tagIds}, function(json) {
-debugger;
+
         StatusBar.setSaved(json.message);
         ArticleMeta.update(json);
 
     }, 'json')
 
         .fail(function(jqXHR, responseText) {
-            debugger;
             StatusBar.setError(jqXHR, responseText);
         });
 });
