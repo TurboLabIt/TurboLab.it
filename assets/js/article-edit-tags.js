@@ -147,6 +147,8 @@ jQuery(document).on('input', 'input.tli-tags-autocomplete', debounce(function() 
         return;
     }
 
+    openSuggestions(false);
+
     loadTags(tag);
 
 }, 350));
@@ -178,17 +180,6 @@ function loadTags(tag)
         jQuery.get(endpoint, {tag: tag}, function(data) {
 
             target.html(data);
-
-            /*jQuery('.tli-article-editor-current-tags-list [data-tag-id]').each(function() {
-
-                let userContainer = target.find('[data-tag-id='+ jQuery(this).data('tag-id') +']');
-                if( userContainer.length == 0 ) {
-                    return true;
-                }
-
-                userContainer.find('.tli-add-tag').addClass('d-none');
-                userContainer.find('.tli-tag-already').removeClass('d-none');
-            });*/
 
         }, 'html')
 
