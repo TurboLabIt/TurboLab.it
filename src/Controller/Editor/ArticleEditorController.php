@@ -278,6 +278,8 @@ class ArticleEditorController extends BaseController
     {
         return $this->json([
             "message"   => "✅ OK! $okMessage - " . (new \DateTime())->format('Y-m-d H:i:s'),
+            "path"      => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
+            "title"     => $this->articleEditor->getTitleForHTMLAttribute(),
             "strip"     => $this->twig->render('article/meta-strip.html.twig', [
                 "Article" => $this->articleEditor,
             ]),

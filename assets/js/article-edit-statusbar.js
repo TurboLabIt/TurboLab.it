@@ -83,7 +83,4 @@ function setArticleSavingStatusBar(alertClass, showUnsavedTextMessage, showLoade
             .removeClass('collapse')
             .html(responseText);
     }
-
-    //let tryAgain = articleSavingStatusBar.find('.tli-action-try-again');
-    //showTryAgain ? tryAgain.removeClass('collapse') : tryAgain.addClass('collapse');
 }

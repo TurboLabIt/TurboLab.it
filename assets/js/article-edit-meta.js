@@ -11,6 +11,8 @@ const articleTags       = jQuery('#tli-article-tags');
 
 const ArticleMeta = {
     update(json) {
+        document.title = json.title;
+        history.replaceState(null, null, json.path);
         articleMetaStrip.html(json.strip);
         articleAuthorsBio.html(json.bios);
         articleTags.html(json.tags);
