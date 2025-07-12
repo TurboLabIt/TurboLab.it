@@ -75,8 +75,6 @@ class TagRepository extends BaseRepository
             return [];
         }
 
-        $termToSearch = mb_strtolower($termToSearch);
-
         return
             $this->getQueryBuilder()
                 ->andWhere('t.title LIKE :title')

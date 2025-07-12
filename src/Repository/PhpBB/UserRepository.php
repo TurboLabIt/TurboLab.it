@@ -217,13 +217,10 @@ class UserRepository extends BasePhpBBRepository
             return [];
         }
 
-        $termToSearch = mb_strtolower($termToSearch);
-        $termToSearch = preg_replace('/[^a-z0-9_ \.]/i', '', $termToSearch);
-
         return
             $this->getQueryBuilderComplete()
                 ->andWhere('t.username_clean LIKE :termToSearch')
-                ->setParameter("termToSearch", "%$termToSearch%")
+                    ->setParameter('termToSearch', '%' . $this->prepareParamForLikeCondition($termToSearch) . '%')
                 ->orderBy('t.user_posts', 'DESC')
                 ->getQuery()
                 ->getResult();
