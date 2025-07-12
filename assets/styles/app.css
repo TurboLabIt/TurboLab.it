@@ -83,3 +83,13 @@ div.stellarnav.mobile.active ul {
     border: 1px solid blue !important;
     padding: 5px !important;
 }
+
+.tli-cc-copyright {
+    display:inline-block;
+}
+
+.tli-cc-copyright-icon {
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    text-decoration: none !important;
+}
