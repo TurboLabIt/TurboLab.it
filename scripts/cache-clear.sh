@@ -26,14 +26,14 @@ if [ "$APP_ENV" = "dev" ]; then
   fxTitle "Removing yarn stuff..."
   rm -f ${PROJECT_DIR}yarn.lock
 
+  fxTitle "Clearing the built images cache..."
+  rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
+  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
+
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwX "${PROJECT_DIR}" -R
-
-  fxTitle "Clearing the built images cache..."
-  rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
-  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
 
   source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
