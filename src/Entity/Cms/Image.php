@@ -3,7 +3,6 @@ namespace App\Entity\Cms;
 
 use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
-use App\Trait\IdableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +24,7 @@ class Image extends BaseCmsEntity
     const string FORMAT_WEBP    = 'webp';
     const string FORMAT_AVIF    = 'avif';
 
-    use IdableEntityTrait, TitleableEntityTrait;
+    use TitleableEntityTrait;
 
     #[ORM\Column(length: 5)]
     protected ?string $format = null;
