@@ -11,3 +11,5 @@ bash "${SCRIPT_DIR}cache-clear.sh"
 
 cd ${PROJECT_DIR}
 wsuSymfony console tli1
+
+bash "${SCRIPT_DIR}cache-clear.sh"
