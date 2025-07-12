@@ -205,7 +205,7 @@ class Article extends BaseCmsService
     public function getTopTag() : ?TagService
     {
         $arrTags = $this->getTags();
-        return reset($arrTags);
+        return reset($arrTags) ?: null;
     }
 
 
