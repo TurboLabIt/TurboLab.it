@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Entity\Cms\ArticleTag;
 use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
@@ -51,7 +52,6 @@ class Article extends BaseCmsService
     protected ?array $arrFiles              = null;
     protected ?ImageService $spotlight      = null;
     protected HtmlProcessorForDisplay $htmlProcessor;
-    protected ?TagService $topTag           = null;
     protected ?Topic $commentsTopic         = null;
     protected ?string $articleBodyForDisplay = null;
     protected array $arrPrevNextArticles    = [];
@@ -68,7 +68,7 @@ class Article extends BaseCmsService
 
         foreach([
                 'arrTags', 'arrAuthors', 'arrFiles', 'arrAuthors',
-                'spotlight', 'topTag', 'commentsTopic', 'articleBodyForDisplay'
+                'spotlight', 'commentsTopic', 'articleBodyForDisplay'
             ] as $property) {
             $this->$property = null;
         }
@@ -171,63 +171,47 @@ class Article extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
     public function getTags() : array
     {
-        if( is_array($this->arrTags) ) {
-            return $this->arrTags;
-        }
+        if( !is_array($this->arrTags) ) {
 
-        $this->arrTags = [];
-
-        $tagJunctionEntities = $this->entity->getTags();
-        foreach($tagJunctionEntities as $junctionEntity) {
-
-            $tagEntity              = $junctionEntity->getTag();
-            $tagId                  = $tagEntity->getId();
-            $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
+            $tagJunctionEntities = $this->entity->getTags()->getValues();
+            $this->setCachedTagsFromJunctions($tagJunctionEntities);
         }
 
         return $this->arrTags;
     }
 
 
+    protected function setCachedTagsFromJunctions(?array $tagJunctionEntities) : static
+    {
+        $this->arrTags = [];
+
+        usort($tagJunctionEntities, function(ArticleTag $junction1, ArticleTag $junction2) {
+            return
+                $junction2->getTag()->getRanking() <=> $junction1->getTag()->getRanking() ?:
+                    $junction2->getRanking() <=> $junction1->getRanking();
+        });
+
+        foreach($tagJunctionEntities as $junctionEntity) {
+
+            $tagEntity              = $junctionEntity->getTag();
+            $tagId                  = (string)$tagEntity->getId();
+            $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
+        }
+
+        return $this;
+    }
+
+
     public function getTopTag() : ?TagService
     {
-        if( !empty($this->topTag) ) {
-            return $this->topTag;
-        }
-
         $arrTags = $this->getTags();
-        if( empty($arrTags) ) {
-            return null;
-        }
-
-        $this->topTag = reset($arrTags);
-
-        /** @var TagService $topTagCandidate */
-        foreach($arrTags as $topTagCandidate) {
-
-            if( $topTagCandidate->getRanking() > $this->topTag->getRanking() ) {
-                $this->topTag = $topTagCandidate;
-            }
-
-            if( $topTagCandidate->getRanking() == $this->topTag->getRanking() ) {
-
-                $this->topTag =
-                    $topTagCandidate->getUpdatedAt() < $this->topTag->getUpdatedAt() ? $topTagCandidate : $this->topTag;
-            }
-        }
-
-        return $this->topTag;
+        return reset($arrTags);
     }
 
 
     public function getTopTagOrDefault() : TagService
     {
-        $topTag = $this->getTopTag();
-        if( !empty($topTag) ) {
-            return $topTag;
-        }
-
-        return $this->topTag = $this->factory->createDefaultTag();
+        return $this->getTopTag() ?? $this->factory->createDefaultTag();
     }
 
 

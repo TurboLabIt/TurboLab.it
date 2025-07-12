@@ -71,7 +71,7 @@ jQuery(document).on('click', '.tli-remove-tag',  function(event) {
 
     let tagInList= $(this).closest('li');
 
-    tagInList.fadeOut('slow', function(){
+    tagInList.fadeOut('fast', function(){
 
         let removedTagId = tagInList.data('tag-id');
 
@@ -215,9 +215,9 @@ jQuery(document).on('click', '.tli-tag-button-ok',  function(event) {
         return false;
     }
 
-    let tagIds =
+    let tags =
         currentTagsList.find('[data-tag-id]').map(function() {
-            return $(this).data('tag-id');
+            return { 'id': $(this).data('tag-id'), 'title': $(this).data('tag') };
         }).get();
 
 
@@ -226,7 +226,7 @@ jQuery(document).on('click', '.tli-tag-button-ok',  function(event) {
 
     let endpoint = currentTagsList.data("save-url");
 
-    jQuery.post(endpoint, {tags: tagIds}, function(json) {
+    jQuery.post(endpoint, {tags: tags}, function(json) {
 
         StatusBar.setSaved(json.message);
         ArticleMeta.update(json);

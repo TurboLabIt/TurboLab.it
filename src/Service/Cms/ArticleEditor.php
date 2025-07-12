@@ -197,19 +197,58 @@ class ArticleEditor extends Article
     }
 
 
-    public function setTagsFromIds(array $arrTagIds) : static
+    public function setTagsFromIdsAndTags(array $arrIdsAndTags) : static
     {
-        if( empty($arrTagIds) ) {
+        // validation
+        $arrValidItems  = [];
+        $arrUniqueIds   = [];
+        $arrUniqueTags  = [];
+
+        foreach($arrIdsAndTags as $item) {
+
+            if( !array_key_exists('id', $item) || !array_key_exists('title', $item) ) {
+                continue;
+            }
+
+            $id = $item["id"];
+
+            if( in_array($id, $arrUniqueIds) ) {
+                continue;
+            }
+
+            if( !empty($id) ) {
+                $arrUniqueIds[] = $id;
+            }
+
+            $tagService = $this->factory->createTagEditor()->setTitle($item["title"]);
+            $title      = $tagService->getTitle();
+
+            if( in_array($title, $arrUniqueTags) ) {
+                continue;
+            }
+
+            $arrUniqueTags[] = $title;
+
+            $arrValidItems[] = [
+                "id"        => $id,
+                "title"     => $title,
+                "service"   => $tagService
+            ];
+        }
+
+        if( empty($arrValidItems) ) {
             throw new ArticleUpdateException('L\'articolo deve avere almeno 1 tag');
         }
 
-        $arrTagIds = array_unique($arrTagIds);
+        $collNewTags = $this->factory->createTagCollection()->load($arrUniqueIds);
+        $arrFinalTags = [];
+        foreach($arrValidItems as $item) {
 
-        $collNewTags = $this->factory->createTagCollection()->load($arrTagIds);
-
-        if( $collNewTags->count() < 1 ) {
-            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 tag');
+            $tagService     = $collNewTags->get( $item["id"] );
+            $arrFinalTags[] = empty($tagService) ? $item["service"] : $tagService;
         }
+
+        $collNewTags->setData($arrFinalTags);
 
         // rebuild the cached tag list
         $this->arrTags = [];
@@ -219,19 +258,20 @@ class ArticleEditor extends Article
         // these would be junctions (array-of-ArticleTag)
         $currentTags = $this->entity->getTags();
 
-        // remove current tags who are no longer
+        // remove unassigned tags
         foreach($currentTags as $junction) {
 
-            $tagId   = $junction->getTag()->getId();
-            $newTag  = $collNewTags->get($tagId);
+            $tagId = $junction->getTag()->getId();
 
-            if( empty($newTag) ) {
+            if( !in_array($tagId, $arrUniqueIds) ) {
                 $entityManager->remove($junction);
             }
         }
 
         // add new tags
-        $i=1;
+        $i = 1;
+        $arrJunctions = [];
+
         foreach($collNewTags as $tag) {
 
             $existingJunction = null;
@@ -246,10 +286,13 @@ class ArticleEditor extends Article
 
             if( empty($existingJunction) ) {
 
+                $tagEntity = $tag->getEntity();
+                $entityManager->persist($tagEntity);
+
                 $existingJunction =
                     (new ArticleTag())
                         ->setArticle($this->entity)
-                        ->setTag( $tag->getEntity() )
+                        ->setTag($tagEntity)
                         ->setUser( $this->getCurrentUserAsAuthor()->getEntity() );
             }
 
@@ -257,14 +300,10 @@ class ArticleEditor extends Article
             $entityManager->persist($existingJunction);
 
             $i++;
-
-            // rebuild the cached tag list so that $article->getTags() works without a reload
-            $tagEntity              = $tag->getEntity();
-            $tagId                  = $tagEntity->getId();
-            $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
+            $arrJunctions[] = $existingJunction;
         }
 
-        return $this;
+        return $this->setCachedTagsFromJunctions($arrJunctions);
     }
     //</editor-fold>
 

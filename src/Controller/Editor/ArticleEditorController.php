@@ -152,7 +152,7 @@ class ArticleEditorController extends BaseController
             $this->loadArticleEditor($articleId);
 
             return $this->json([
-                "title" => "Modifica autori",
+                "title" => "👥 Modifica autori",
                 "body" => $this->twig->render('article/editor/authors-modal.html.twig', [
                     "Article"       => $this->articleEditor,
                     "LatestAuthors" => $this->factory->createUserCollection()->loadLatestAuthors()
@@ -166,7 +166,10 @@ class ArticleEditorController extends BaseController
     #[Route('/ajax/editor/authors/', name: 'app_editor_article_authors-autocomplete', methods: ['GET'])]
     public function authorsAutocomplete() : Response
     {
+        $this->ajaxOnly();
+
         try {
+
             if( empty($this->getUser()) ) {
                 throw $this->createAccessDeniedException('Non sei loggato!');
             }
@@ -199,7 +202,60 @@ class ArticleEditorController extends BaseController
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/get-tags-modal', name: 'app_editor_article_get-tags-modal', methods: ['GET'])]
+    public function getTagsModal(int $articleId) : Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
 
+            return $this->json([
+                "title" => "🏷️ Modifica tag",
+                "body" => $this->twig->render('article/editor/tags-modal.html.twig', [
+                    "Article"           => $this->articleEditor,
+                    "CommonTagGroups"   => $this->factory->createTagCollection()->getCommonGrouped()
+                ])
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+    #[Route('/ajax/editor/tags/', name: 'app_editor_article_tags-autocomplete', methods: ['GET'])]
+    public function tagsAutocomplete() : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            if( empty($this->getUser()) ) {
+                throw $this->createAccessDeniedException('Non sei loggato!');
+            }
+
+            $tag = $this->request->get('tag');
+
+            return $this->render('article/editor/tags-autocomplete.html.twig', [
+                'Tags' => $this->factory->createTagCollection()->loadBySearchTagOrCreate($tag)
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-tags', name: 'app_editor_article_set-tags', methods: ['POST'])]
+    public function setTags(int $articleId) : JsonResponse|Response
+    {
+        try {
+
+            $arrIdsAndTags = $this->request->get('tags') ?? [];
+            $this->loadArticleEditor($articleId)->setTagsFromIdsAndTags($arrIdsAndTags);
+            $this->factory->getEntityManager()->flush();
+            return $this->jsonOKResponse("Tag salvati");
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** ⛑️ Helpers ***">
     protected function loadArticleEditor(int $articleId) : ArticleEditor
     {
         $this->ajaxOnly();
@@ -222,12 +278,16 @@ class ArticleEditorController extends BaseController
     {
         return $this->json([
             "message"   => "✅ OK! $okMessage - " . (new \DateTime())->format('Y-m-d H:i:s'),
-            "metaStrip" => $this->twig->render('article/meta-strip.html.twig', [
+            "strip"     => $this->twig->render('article/meta-strip.html.twig', [
                 "Article" => $this->articleEditor,
             ]),
-            "metaBios"  => $this->twig->render('article/authors-bio.html.twig', [
+            "bios"      => $this->twig->render('article/authors-bio.html.twig', [
+                "Article" => $this->articleEditor
+            ]),
+            "tags"      => $this->twig->render('article/tags.html.twig', [
                 "Article" => $this->articleEditor
             ])
         ]);
     }
+    //</editor-fold>
 }

@@ -1,7 +1,7 @@
 <ul>
     {% block tagsListLabelItem %}<li class="tli-tag-label"><i class="fas fa-tag"></i> Tag:</li>{% endblock %}
     {% for Tag in Tags %}
-        <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}">
+        <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}" data-tag="{{ Tag.title }}">
 
             {% if Tag.id is not empty %}
 
@@ -11,7 +11,7 @@
 
             {% else %}
 
-                🆕 CREA tu e associa il tag: {{ Tag.navTitle|raw }}
+                🆕 CREA e associa il tag: {{ Tag.navTitle|raw }}
 
             {% endif %}
 
