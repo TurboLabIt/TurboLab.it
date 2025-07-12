@@ -131,7 +131,7 @@ ls -lah --color=auto
 
 
 fxTitle "🧹 Deleting the cache folder..."
-rm -rf "cache/production"
+sudo rm -rf "cache/production"
 
 fxTitle "🧹 Deleting the ext/turbolabit symlink..."
 rm -rf "ext/turbolabit"
