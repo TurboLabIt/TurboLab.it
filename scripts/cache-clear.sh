@@ -49,15 +49,4 @@ fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
 bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
 
 
-if [ "$APP_ENV" = "dev" ]; then
-
-  fxHeader "Special DEV handling (again)..."
-
-  fxTitle "chown dev..."
-  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
-  sudo chmod ugo= "${PROJECT_DIR}" -R
-  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
-fi
-
-
 source "${SCRIPT_DIR}script_end.sh"

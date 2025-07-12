@@ -7,9 +7,7 @@ fxHeader "TLI1 importer"
 fxEnvNotProd
 
 wsuMysql -e "DROP TABLE IF EXISTS turbolab_it.doctrine_migration_versions"
-bash "${SCRIPT_DIR}migrate.sh"
+bash "${SCRIPT_DIR}cache-clear.sh"
 
 cd ${PROJECT_DIR}
 wsuSymfony console tli1
-
-bash "${SCRIPT_DIR}cache-clear.sh"
