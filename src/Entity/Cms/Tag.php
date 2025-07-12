@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\UniqueConstraint(name: 'title_unique_idx', columns: ['title'])]
 class Tag extends BaseCmsEntity
 {
     use TitleableEntityTrait, AbstractableEntityTrait, RankableEntityTrait, ViewableEntityTrait;

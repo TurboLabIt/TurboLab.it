@@ -40,18 +40,22 @@ final class Version00000000000000 extends AbstractMigration
         // ARTICLES
         $this->addSql('CREATE TABLE article (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, format SMALLINT UNSIGNED NOT NULL, publishing_status SMALLINT UNSIGNED NOT NULL DEFAULT ' . Article::PUBLISHING_STATUS_DRAFT . ', archived TINYINT(1) NOT NULL DEFAULT 0, comments_topic_id INT UNSIGNED DEFAULT NULL, spotlight_id INT UNSIGNED DEFAULT NULL, views INT UNSIGNED NOT NULL DEFAULT 0, show_ads TINYINT(1) NOT NULL DEFAULT 1, abstract VARCHAR(2000) DEFAULT NULL, body LONGTEXT DEFAULT NULL, published_at DATETIME DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_23A0E663049EF9 (spotlight_id), INDEX IDX_23A0E668D8A6755 (comments_topic_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE FULLTEXT INDEX title_fulltext_idx ON article (title)');
+        $this->addSql('CREATE UNIQUE INDEX title_unique_idx ON article (title)');
 
         // IMAGES
         $this->addSql('CREATE TABLE image (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, format VARCHAR(5) NOT NULL, watermark_position SMALLINT UNSIGNED NOT NULL DEFAULT 4, reusable TINYINT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 
         // TAGS
         $this->addSql('CREATE TABLE tag (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, ranking SMALLINT UNSIGNED NOT NULL DEFAULT 1, views INT UNSIGNED NOT NULL DEFAULT 0, abstract VARCHAR(2000) DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE UNIQUE INDEX title_unique_idx ON tag (title)');
 
         // FILES
         $this->addSql('CREATE TABLE file (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, format VARCHAR(15) DEFAULT NULL, url VARCHAR(2500) DEFAULT NULL, views INT UNSIGNED NOT NULL DEFAULT 0, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE UNIQUE INDEX title_unique_idx ON file (title)');
 
         // BADGES
         $this->addSql('CREATE TABLE badge (id INT UNSIGNED AUTO_INCREMENT NOT NULL, title VARCHAR(512) NOT NULL, image_url VARCHAR(1024) DEFAULT NULL, user_selectable TINYINT(1) NOT NULL DEFAULT 0, abstract VARCHAR(2000) DEFAULT NULL, body LONGTEXT DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE UNIQUE INDEX title_unique_idx ON badge (title)');
 
 
         // 🔗 ARTICLES <-> AUTHORS

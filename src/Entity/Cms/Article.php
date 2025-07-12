@@ -18,7 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ORM\Index(columns: ['title'], name: 'title_fulltext_idx', flags: ['fulltext'])]
+#[ORM\UniqueConstraint(name: 'title_unique_idx', columns: ['title'])]
+#[ORM\Index(name: 'title_fulltext_idx', columns: ['title'], flags: ['fulltext'])]
 class Article extends BaseCmsEntity
 {
     use

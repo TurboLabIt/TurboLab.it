@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
+#[ORM\UniqueConstraint(name: 'title_unique_idx', columns: ['title'])]
 class File extends BaseCmsEntity
 {
     use TitleableEntityTrait, ViewableEntityTrait;
