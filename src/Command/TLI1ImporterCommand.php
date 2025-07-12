@@ -759,11 +759,13 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $createdAt  = DateTime::createFromFormat('YmdHis', $arrTagAssoc["data_creazione"]);
+        $ranking    = $article->getTags()->count() + 1;
 
         $articleTag =
             (new ArticleTag())
                 ->setTag($tag)
                 ->setUser($attacher)
+                ->setRanking($ranking)
                 ->setCreatedAt($createdAt)
                 ->setUpdatedAt($createdAt);
 
