@@ -3,6 +3,7 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
 use App\Entity\PhpBB\Topic;
+use App\Service\Newsletter;
 use Doctrine\ORM\QueryBuilder;
 
 
@@ -62,13 +63,20 @@ class TopicRepository extends BasePhpBBRepository
 
     public function findLatestForNewsletter() : array
     {
-        $qb =
-            $this->getQueryBuilderCompleteFromSqlQuery(
-                $this->getSqlSelectQuery() . "
-                AND FROM_UNIXTIME(topic_last_post_time) BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
-                ORDER BY topic_views DESC
-                LIMIT 25
-            ");
+        $sqlSelect = $this->getSqlSelectQuery() . "
+            AND FROM_UNIXTIME(topic_last_post_time) BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW()
+        ";
+
+        foreach(Newsletter::FORBIDDEN_WORDS as $word) {
+            $sqlSelect .= " AND topic_title NOT LIKE '%$word%'";
+        }
+
+        $sqlSelect .= "
+            ORDER BY topic_views DESC
+            LIMIT 25
+        ";
+
+        $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect);
 
         if( empty($qb) ) {
             return [];

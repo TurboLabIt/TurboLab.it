@@ -25,6 +25,8 @@ use Twig\Environment;
 
 class Newsletter extends Mailer
 {
+    const array FORBIDDEN_WORDS = ['example.com', 'casino', 'casinò', 'scommesse', 'betting'];
+
     protected string $newsletterOnSiteUrl;
     protected string $privacyUrl;
     protected string $newsletterName;

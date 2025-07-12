@@ -6,6 +6,7 @@ use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
+use App\Service\Newsletter;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -363,6 +364,10 @@ class ArticleRepository extends BaseRepository
               published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
               title NOT LIKE 'Questa settimana su TLI%'
             ";
+
+        foreach(Newsletter::FORBIDDEN_WORDS as $word) {
+            $sqlSelect .= " AND title NOT LIKE '%$word%' AND abstract NOT LIKE '%$word%'";
+        }
 
         $qb = $this->getQueryBuilderCompleteFromSqlQuery($sqlSelect);
 
