@@ -56,7 +56,7 @@ if [ "$APP_ENV" = "dev" ]; then
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
-  sudo chmod ugo=rwx "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
 fi
 
 
