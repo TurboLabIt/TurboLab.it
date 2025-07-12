@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
@@ -25,6 +26,10 @@ class Image extends BaseCmsEntity
     const string FORMAT_AVIF    = 'avif';
 
     use TitleableEntityTrait;
+    // overwrite to remove "unique"
+    #[ORM\Column(length: self::TITLE_MAX_LENGTH)]
+    #[NotBlank]
+    protected ?string $title = null;
 
     #[ORM\Column(length: 5)]
     protected ?string $format = null;

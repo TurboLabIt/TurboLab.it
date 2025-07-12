@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ORM\UniqueConstraint(name: 'title_unique_idx', columns: ['title'])]
 #[ORM\Index(name: 'title_fulltext_idx', columns: ['title'], flags: ['fulltext'])]
 class Article extends BaseCmsEntity
 {
@@ -46,9 +45,11 @@ class Article extends BaseCmsEntity
     protected Collection $images;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    //#[ORM\OrderBy(['ranking' => 'ASC'])] no! Tags are order via code, below (can also be re-ordered at runtime)
     protected Collection $tags;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $files;
 
 

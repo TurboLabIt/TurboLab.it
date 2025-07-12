@@ -8,7 +8,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 trait TitleableEntityTrait
 {
-    #[ORM\Column(length: 512)]
+    const int TITLE_MAX_LENGTH = 512;
+
+    #[ORM\Column(length: self::TITLE_MAX_LENGTH, unique: true)]
     #[NotBlank]
     protected ?string $title = null;
 
