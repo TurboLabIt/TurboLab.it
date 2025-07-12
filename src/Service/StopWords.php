@@ -45,12 +45,7 @@ class StopWords
         $text = trim($text);
 
         // remove double spaces
-        do {
-            $previousText = $text;
-            $text = preg_replace('/\s+/', ' ', $text);
-            $text = trim($text);
-
-        } while( $text !== $previousText );
+        $text = preg_replace("/ {2,}/", ' ', $text);
 
         $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
         if( !file_exists($processedStringCacheFilePath) ) {

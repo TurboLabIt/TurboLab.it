@@ -173,3 +173,7 @@ soltanto
 sì
 talché
 tuttavia
+
+## altro
+è
+é
