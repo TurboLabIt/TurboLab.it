@@ -10,5 +10,5 @@ wsuMysql -e "DROP TABLE IF EXISTS turbolab_it.doctrine_migration_versions"
 bash "${SCRIPT_DIR}migrate.sh"
 
 cd ${PROJECT_DIR}
-wsuSymfony console tli1
+wsuSymfony console tli1 "$@"
 wsuSymfony console cache:clear
