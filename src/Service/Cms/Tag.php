@@ -26,8 +26,9 @@ class Tag extends BaseCmsService
     const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/
     const int ID_SMARTPHONE         = 6;        // 👀 https://turbolab.it/
     const int ID_HARDWARE           = 5;        // 👀 https://turbolab.it/
-    //const int ID_= ;       // 👀 https://turbolab.it/
 
+    const int ID_FAKE_NEWS          = 6429;     // 👀 https://turbolab.it/disinformazione-bufale-fake-news-6429
+    const int ID_ANTIVIRUS_MALWARE  = 399;      // 👀 https://turbolab.it/virus-antivirus-malware-antimalware-399
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/filesharing-p2p-peer-to-peer-2914
     const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/sicurezza-13
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/guida-mercato-640
@@ -36,6 +37,11 @@ class Tag extends BaseCmsService
     const int ID_DEV                = 232;      // 👀 https://turbolab.it/programmazione-232
     const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/youtube-42
     const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-4904
+    const int ID_UNINSTALL          = 521;      // 👀 https://turbolab.it/disinstallazione-rimozione-programmi-521
+    const int ID_SOFTWARE_UPDATE    = 282;      // 👀 https://turbolab.it/aggiornamenti-software-282
+    const int ID_INTERNET_PROVIDER  = 3408;     // 👀 https://turbolab.it/connessione-internet-provider-isp-3408
+    const int ID_LAN                = 5549;     // 👀 https://turbolab.it/reti-locali-lan-5549
+    const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/wake-on-lan-wol-3177
 
     const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/ssd-dischi-fissi-hard-disk-570
     const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/server-1224
@@ -112,6 +118,15 @@ class Tag extends BaseCmsService
     public function getTitleForHTMLAttribute() : ?string
     {
         return $this->encodeTextForHTMLAttribute( $this->getNavTitle() );
+    }
+
+
+    public function getTitleForAggregationComparison(?string $title = null) : string
+    {
+        $title = empty($title) ? $this->getTitle() : $title;
+        $processed = mb_strtolower($title);
+        $processed = preg_replace('/[^a-z0-9]/i', '', $processed);
+        return trim($processed);
     }
     //</editor-fold>
 
@@ -217,4 +232,11 @@ class Tag extends BaseCmsService
     public function getAuthors() : Collection { return $this->entity->getAuthors(); }
 
     public function getRanking() : ?int { return $this->entity->getRanking(); }
+
+    public function setReplacement(Tag|TagEntity|null $tag) : static
+    {
+        $tag = $tag instanceof Tag ? $tag->getEntity() : $tag;
+        $this->entity->setReplacement($tag);
+        return $this;
+    }
 }

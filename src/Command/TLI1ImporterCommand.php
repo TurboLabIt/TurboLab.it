@@ -22,6 +22,7 @@ use App\Repository\Cms\TagRepository;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\Image;
+use App\Service\Cms\Tag;
 use App\Service\Factory;
 use App\Service\HtmlProcessorForStorage;
 use App\Service\TextProcessor;
@@ -653,14 +654,45 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected function processTli1Tag(int $tagId, array $arrTag)
     {
         // change the tag title from "criptovalute (bitcoin/ethereum/litecoin)"
-        if( $tagId == 4904 ) {
+        if( $tagId == Tag::ID_CRYPTOCURRENCIES ) {
+
             $arrTag["tag"] = 'bitcoin ethereum criptovalute';
+
+        // change the tag title from "virus"
+        } else if( $tagId == Tag::ID_ANTIVIRUS_MALWARE ) {
+
+            $arrTag["tag"] = 'virus antivirus malware antimalware';
+            $ranking = 77;
+
+        // change the tag title from "disinstallazione"
+        } else if( $tagId == Tag::ID_UNINSTALL ) {
+
+            $arrTag["tag"] = 'disinstallazione rimozione programmi';
+            $ranking = 50;
+
+        // change the tag title from "aggiornamenti"
+        } else if( $tagId == Tag::ID_SOFTWARE_UPDATE ) {
+
+            $arrTag["tag"] = 'aggiornamenti software';
+            $ranking = 50;
+
+        // change the tag title from "provider connettività accesso internet (ISP)"
+        } else if( $tagId == Tag::ID_INTERNET_PROVIDER ) {
+
+            $arrTag["tag"] = 'connessione internet provider isp';
+            $ranking = 50;
+
+        // change the tag title from "lan"
+        } else if( $tagId == Tag::ID_LAN ) {
+
+            $arrTag["tag"] = 'reti locali lan';
+            $ranking = 50;
         }
 
         $title = $this->convertTitleFromTli1ToTli2($arrTag["tag"]);
 
-        $ranking    = (int)$arrTag["peso"];
-        $createdAt = DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
+        $ranking    = $ranking ?? (int)$arrTag["peso"];
+        $createdAt  = DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
 
         /** @var TagEntity $entityTli2Tag */
         $entityTli2Tag =
@@ -742,7 +774,6 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $tagId  = $arrTagAssoc["id_tag"];
         $tag    = $this->arrNewTags[$tagId] ?? null;
-
         if ( empty($tag) ) {
             $this->endWithError("No related tag: " . print_r($arrTagAssoc, true) );
         }
