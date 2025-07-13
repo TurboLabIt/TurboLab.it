@@ -5,7 +5,6 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use App\Repository\PhpBB\UserRepository;
 use Ddeboer\Imap\Server;
 use Ddeboer\Imap\Message;
-use Ddeboer\Imap\Message\Attachment;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +38,9 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     public function __construct(
         protected array $arrConfig, protected ParameterBagInterface $parameters, protected UserRepository $userRepository
     )
-        { parent::__construct($arrConfig); }
+    {
+        parent::__construct($arrConfig);
+    }
 
 
     protected function execute(InputInterface $input, OutputInterface $output) : int

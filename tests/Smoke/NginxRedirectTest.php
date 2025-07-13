@@ -1,95 +1,203 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Command\TagAggregatorCommand;
+use App\Service\Cms\Tag;
+use App\ServiceCollection\Cms\TagCollection;
 use App\Tests\BaseT;
-use Generator;
 use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 class NginxRedirectTest extends BaseT
 {
-    public static function urlProvider(): Generator
+    protected static array $arrUrlToTest = [];
+
+
+    public static function urlProvider(): array
     {
-        yield from [
+        $arrUrlToTest = [
             [
                 'requestUrl'    => '/codice',
-                'redirectToUrl' => 'https://github.com/TurboLabIt/TurboLab.it'
+                'redirectToUrl' => 'https://github.com/TurboLabIt/TurboLab.it',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/dona',
-                'redirectToUrl' => '/1126'
+                'redirectToUrl' => '/1126',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/iscriviti',
-                'redirectToUrl' => '/forum/ucp.php?mode=register'
+                'redirectToUrl' => '/forum/ucp.php?mode=register',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/something-245',
-                'redirectToUrl' => '/ssd-dischi-fissi-hard-disk-570'
+                'redirectToUrl' => '/ssd-dischi-fissi-hard-disk-570',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/intelligenza%20artificiale',
+                'redirectToUrl' => '/ai-intelligenza-artificiale-6960',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/mac',
+                'redirectToUrl' => '/mac-macos-26',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/macos',
+                'redirectToUrl' => '/mac-macos-26',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/apple-mac-macos',
+                'redirectToUrl' => '/mac-macos-26',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/apple%20mac%20macos',
+                'redirectToUrl' => '/mac-macos-26',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/ios',
+                'redirectToUrl' => '/iphone-ipad-ios-39',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
+                'requestUrl'    => '/tag/iphone',
+                'redirectToUrl' => '/iphone-ipad-ios-39',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/viste/tutti',
-                'redirectToUrl' => '/'
+                'redirectToUrl' => '/',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/viste/tutti/77',
-                'redirectToUrl' => '/'
+                'redirectToUrl' => '/',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/viste/news',
-                'redirectToUrl' => '/news'
+                'redirectToUrl' => '/news',
+                'alsoTestWithTrailingSlash' => true
             ],
             [
                 'requestUrl'    => '/viste/news/100',
-                'redirectToUrl' => '/news'
+                'redirectToUrl' => '/news',
+                'alsoTestWithTrailingSlash' => true
             ]
-            /*[
-                'requestUrl'    => '',
-                'redirectToUrl' => ''
-            ]*/
         ];
+
+        /** @var TagCollection $tags */
+        $tags = static::getService("App\\ServiceCollection\\Cms\\TagCollection");
+        $tags->load(TagAggregatorCommand::BAD_TAGS);
+
+        foreach(TagAggregatorCommand::BAD_TAGS as $badTag => $replacementTagId) {
+
+            if( str_starts_with($badTag, 'windows') ) {
+                continue;
+            }
+
+            $tag = $tags->get($replacementTagId);
+            if( empty($tag) ) {
+                continue;
+            }
+
+            $redirectToUrl = $tags->get($replacementTagId)->getUrl(null, UrlGeneratorInterface::ABSOLUTE_PATH);
+
+            $arrUrlToTest[] = [
+                'requestUrl'    => "/tag/$badTag",
+                'redirectToUrl' => $redirectToUrl,
+                'alsoTestWithTrailingSlash' => true
+            ];
+        }
+
+
+        $windowsTagUrl = $tags->get(Tag::ID_WINDOWS)->getUrl(null, UrlGeneratorInterface::ABSOLUTE_PATH);
+
+        foreach(TagAggregatorCommand::BAD_TAGS as $badTag => $replacementTagId) {
+
+            if( !str_starts_with($badTag, 'windows') ) {
+                continue;
+            }
+
+            $arrUrlToTest[] = [
+                'requestUrl'    => "/tag/$badTag",
+                'redirectToUrl' => $windowsTagUrl,
+                'alsoTestWithTrailingSlash' => true
+            ];
+
+            $arrUrlToTest[] = [
+                'requestUrl'    => "/tag/" . str_ireplace('windows', 'windows ', $badTag),
+                'redirectToUrl' => $windowsTagUrl,
+                'alsoTestWithTrailingSlash' => true
+            ];
+
+            $arrUrlToTest[] = [
+                'requestUrl'    => "/tag/" . str_ireplace('windows', 'windows-', $badTag),
+                'redirectToUrl' => $windowsTagUrl,
+                'alsoTestWithTrailingSlash' => true
+            ];
+        }
+
+
+        foreach([1256,2011,2291,2372,10462,13182] as $windowsVersionTagId) {
+
+            $arrUrlToTest[] = [
+                'requestUrl'    => "/windows-ver-$windowsVersionTagId",
+                'redirectToUrl' => $windowsTagUrl,
+                'alsoTestWithTrailingSlash' => false
+            ];
+        }
+
+
+        return $arrUrlToTest;
     }
 
 
     #[DataProvider('urlProvider')]
-    public function testRedirect(string $requestUrl, string $redirectToUrl)
+    public function testRedirect(string $requestUrl, string $redirectToUrl, bool $alsoTestWithTrailingSlash)
     {
-        $httpClient =
-            HttpClient::create([
-                'max_redirects' => 0,
-                'verify_peer'   => false,
-                'verify_host'   => false
-            ]);
-
         if( stripos($requestUrl, 'https://') !== 0 ) {
             $requestUrl = $this->generateUrl() . ltrim($requestUrl, '/');
         }
 
-        $response = $httpClient->request('GET', $requestUrl);
+        $arrHttpClientOptions = [
+            'max_redirects'     => 0,
+            'verify_peer'       => false,
+            'verify_host'       => false,
+            'timeout'           => 5
+        ];
 
-        // 301 HTTP Status Code check
+        $response = HttpClient::create($arrHttpClientOptions)->request('GET', $requestUrl);
+
+        // HTTP 301 check
         $httpStatusCode = $response->getStatusCode();
         $this->assertSame(Response::HTTP_MOVED_PERMANENTLY, $httpStatusCode);
-
-        // HTTP location check
-        if( stripos($redirectToUrl, 'https://') !== 0 ) {
-            $redirectToUrl = $this->generateUrl() . ltrim($redirectToUrl, '/');
-        }
-
-        $this->assertSame($redirectToUrl, $response->getHeaders(false)['location'][0]);
+        $responseLocation = $response->getHeaders(false)['location'][0];
+        $this->assertSameUrlWithoutDomain($redirectToUrl, $responseLocation);
 
         // test the redirect-to URL
-        if( stripos( $redirectToUrl, $this->generateUrl() . 'forum' ) !== false ) {
+        if( stripos($redirectToUrl, '/forum/') !== false ) {
 
             // forum URLs are not managed by Symfony, but still end with an HTTPClient timeout
 
-        } else if( stripos( $redirectToUrl, $this->generateUrl() ) === 0 ) {
+        } else if( str_starts_with($responseLocation, $this->generateUrl() ) ) {
 
-            $this->browse($redirectToUrl);
+            // internal URL, try to pen it
+            $this->browse($responseLocation);
             try {
+                // if it's another redirect, follow it
+                // if it's not, ignore the LogicException
                 static::$client->followRedirect();
             } catch (LogicException) {}
 
@@ -98,18 +206,16 @@ class NginxRedirectTest extends BaseT
         } else {
 
             $httpStatusCode =
-                HttpClient::create()
-                    ->request('GET', $redirectToUrl)
+                HttpClient::create($arrHttpClientOptions)
+                    ->request('GET', $responseLocation)
                     ->getStatusCode();
 
             $this->assertSame(Response::HTTP_OK, $httpStatusCode);
-
-            unset($httpStatusCode);
         }
 
         // also test request with trailing-slash
-        if( !str_ends_with($requestUrl, '/') ) {
-            $this->testRedirect($requestUrl . "/", $redirectToUrl);
+        if($alsoTestWithTrailingSlash) {
+            $this->testRedirect($requestUrl . "/", $redirectToUrl, false);
         }
     }
 }

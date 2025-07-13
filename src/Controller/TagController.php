@@ -62,8 +62,14 @@ class TagController extends BaseController
 
     protected function buildHtml(string $tagSlugDashId, int $page) : string|Response
     {
-        $this->mainTag = $tag =
-            $this->factory->createTag()->loadBySlugDashId($tagSlugDashId);
+        $tag = $this->factory->createTag()->loadBySlugDashId($tagSlugDashId);
+        $replacementUrl = $tag->getReplacement()?->getUrl();
+
+        if( !empty($replacementUrl) ) {
+            return $this->redirect($replacementUrl, Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        $this->mainTag = $tag;
 
         $tagRealUrl = $tag->checkRealUrl($tagSlugDashId, $page);
         if( !empty($tagRealUrl) ) {
@@ -111,8 +117,9 @@ class TagController extends BaseController
     #[Route('/tag/{tag<[^/]+>}/{page<[0-9]*>}', name: 'app_tag_legacy')]
     public function legacyUrl(string $tag, ?string $page = null) : Response
     {
-        $page   = empty($page) ? null : (int)$page;
-        $tag    = $this->factory->createTag()->loadByTitle($tag);
-        return $this->redirect($tag->getUrl($page), Response::HTTP_MOVED_PERMANENTLY);
+        $page       = empty($page) ? null : (int)$page;
+        $tag        = $this->factory->createTag()->loadByTitle($tag);
+        $redirectUrl= $tag->getReplacement()?->getUrl() ?? $tag->getUrl($page);
+        return $this->redirect($redirectUrl, Response::HTTP_MOVED_PERMANENTLY);
     }
 }

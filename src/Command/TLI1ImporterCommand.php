@@ -664,6 +664,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $arrTag["tag"] = 'virus antivirus malware antimalware';
             $ranking = 77;
 
+        // change the tag title from "bufale"
+        } else if( $tagId == Tag::ID_FAKE_NEWS ) {
+
+            $arrTag["tag"] = 'disinformazione bufale fake news';
+            $ranking = 70;
+
         // change the tag title from "disinstallazione"
         } else if( $tagId == Tag::ID_UNINSTALL ) {
 

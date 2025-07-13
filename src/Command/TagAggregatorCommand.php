@@ -15,15 +15,14 @@ class TagAggregatorCommand extends AbstractBaseCommand
 {
     const array BAD_TAGS = [
         'windowsxp' => Tag::ID_WINDOWS, 'windows7' => Tag::ID_WINDOWS,
-        'windows8' => Tag::ID_WINDOWS, 'windows8.0' => Tag::ID_WINDOWS, 'windows8.1' => Tag::ID_WINDOWS,
+        'windows8' => Tag::ID_WINDOWS, 'windows80' => Tag::ID_WINDOWS, 'windows81' => Tag::ID_WINDOWS,
         'windows10' => Tag::ID_WINDOWS, 'windows11' => Tag::ID_WINDOWS, 'windows12' => Tag::ID_WINDOWS,
         //
         'malware' => Tag::ID_ANTIVIRUS_MALWARE, 'antivirus/antimalware' => Tag::ID_ANTIVIRUS_MALWARE,
         'ransomware' => Tag::ID_ANTIVIRUS_MALWARE, 'adware' => Tag::ID_ANTIVIRUS_MALWARE,
         'rootkit' => Tag::ID_ANTIVIRUS_MALWARE, 'browserhijacking' => Tag::ID_ANTIVIRUS_MALWARE,
         //
-        'bufale' => Tag::ID_FAKE_NEWS, 'bufala' => Tag::ID_FAKE_NEWS,
-        'fakenews' => Tag::ID_FAKE_NEWS, 'disinformazione' => Tag::ID_FAKE_NEWS,
+        'bufale' => Tag::ID_FAKE_NEWS, 'bufala' => Tag::ID_FAKE_NEWS, 'fakenews' => Tag::ID_FAKE_NEWS, 'disinformazione' => Tag::ID_FAKE_NEWS,
         //
         'disinstallare' => Tag::ID_UNINSTALL, 'disinstallazioni' => Tag::ID_UNINSTALL,
         'rimozioneprogrammi' => Tag::ID_UNINSTALL,
@@ -31,7 +30,7 @@ class TagAggregatorCommand extends AbstractBaseCommand
         'aggiornamentosoftware' => Tag::ID_SOFTWARE_UPDATE, 'aggiornamento' => Tag::ID_SOFTWARE_UPDATE,
         //
         'connettività' => Tag::ID_INTERNET_PROVIDER, 'connessione' => Tag::ID_INTERNET_PROVIDER,
-        'retedatimobile3g4glte' => Tag::ID_INTERNET_PROVIDER,
+        'retedatimobile3g4glte' => Tag::ID_INTERNET_PROVIDER, 'operatoriditelefonia' => Tag::ID_INTERNET_PROVIDER,
         //
         'wakeonlan' => Tag::ID_WAKE_ON_LAN
     ];
@@ -81,6 +80,10 @@ class TagAggregatorCommand extends AbstractBaseCommand
 
         if( empty($replacement) ) {
             $this->endWithError("Replacement tag with ID ##$replacementId## for ##$key## doesn't exist");
+        }
+
+        if( $tag->getId() == $replacement->getId() ) {
+            $this->endWithError("Tag ##$key## cannot be self-replacing!");
         }
 
         $tag->setReplacement($replacement);

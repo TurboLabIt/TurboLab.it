@@ -471,4 +471,14 @@ abstract class BaseT extends WebTestCase
 
         return str_ireplace(array_keys($arrQuoteEncodeMap), $arrQuoteEncodeMap, $htmlFromCrawler);
     }
+
+
+    protected function assertSameUrlWithoutDomain(string $expectedUrl, string $actualUrl, ?string $errorMessage = '') : void
+    {
+        foreach([&$expectedUrl, &$actualUrl] as &$url) {
+            $url = ltrim($url, 'https://' . $_ENV["APP_SITE_DOMAIN"]);
+        }
+
+        $this->assertSame($expectedUrl, $actualUrl, $errorMessage);
+    }
 }
