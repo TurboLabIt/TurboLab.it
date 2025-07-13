@@ -154,6 +154,12 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
 
         $this->fxTitle("Generating the article on the website...");
+
+        // prevent duplicates in dev (multiple runs per day)
+        if( $this->isNotProd() ) {
+            $this->newsletter->setAddTimestampToWebArticle();
+        }
+
         $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
         $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
 

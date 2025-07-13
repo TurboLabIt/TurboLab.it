@@ -34,11 +34,12 @@ class Newsletter extends Mailer
     protected array $arrVideos;
     protected Tag $tagNewsletterTli;
     protected User $userSystem;
-    protected array $arrRecipients = [];
+    protected array $arrRecipients              = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;
-    protected bool $showingTestArticles = false;
-    protected bool $showingTestTopics = false;
+    protected bool $showingTestArticles         = false;
+    protected bool $showingTestTopics           = false;
+    protected bool $addTimestampToWebArticle    = false;
 
 
     public function __construct(
@@ -247,6 +248,13 @@ class Newsletter extends Mailer
     }
 
 
+    public function setAddTimestampToWebArticle(bool $addTimestampToWebArticle = true) : static
+    {
+        $this->addTimestampToWebArticle = $addTimestampToWebArticle;
+        return $this;
+    }
+
+
     public function saveOnTheWeb(bool $persist) : ?string
     {
         $articleBody =
@@ -262,9 +270,14 @@ class Newsletter extends Mailer
 
         $topicComment = $this->factory->createTopic()->load(Topic::ID_NEWSLETTER_COMMENTS);
 
+        $articleTitle = $this->newsletterName;
+        if( $this->addTimestampToWebArticle ) {
+            $articleTitle .= ' - ' . (new DateTime())->format('H:i:s');
+        }
+
         $article =
             $this->factory->createArticleEditor()
-                ->setTitle($this->newsletterName)
+                ->setTitle($articleTitle)
                 ->addAuthor($this->userSystem)
                 ->addTag($this->tagNewsletterTli, $this->userSystem)
                 ->setFormat(Article::FORMAT_ARTICLE)
