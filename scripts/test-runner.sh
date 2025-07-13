@@ -14,7 +14,13 @@ export XDEBUG_PORT=
 #export WSU_TEST_RUNNER_PARALLEL=0
 source "${WEBSTACKUP_SCRIPT_DIR}php/test-runner-package.sh"
 
-fxTitle "🧹 Cleaning up..."
-#rm -rf /tmp/any-temp-dir
+
+if [ "$APP_ENV" = "dev" ]; then
+
+  fxTitle "chown dev..."
+  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
+  sudo chmod ugo= "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
+fi
 
 source "${SCRIPT_DIR}/script_end.sh"
