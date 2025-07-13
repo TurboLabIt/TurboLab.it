@@ -11,4 +11,5 @@ bash "${SCRIPT_DIR}migrate.sh"
 
 cd ${PROJECT_DIR}
 wsuSymfony console tli1 "$@"
+wsuSymfony console TagAggregator
 wsuSymfony console cache:clear

@@ -16,6 +16,10 @@ class Tag extends BaseCmsEntity
 {
     use TitleableEntityTrait, AbstractableEntityTrait, RankableEntityTrait, ViewableEntityTrait;
 
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    protected ?self $replacement = null;
+
     #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
@@ -33,6 +37,15 @@ class Tag extends BaseCmsEntity
         $this->authors  = new ArrayCollection();
         $this->articles = new ArrayCollection();
         $this->badges   = new ArrayCollection();
+    }
+
+
+    public function getReplacement() : ?Tag { return $this->replacement; }
+
+    public function setReplacement(?Tag $replacement) : static
+    {
+        $this->replacement = $replacement;
+        return $this;
     }
 
 
