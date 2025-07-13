@@ -89,17 +89,68 @@ class TagCollection extends BaseServiceEntityCollection
                 return $newTagToCheck->getSlug() == $existingTag->getSlug();
             });
 
+        $perfectMatch = reset($arrPerfectMatch) ?: null;
+        $perfectMatchReplacement = $perfectMatch?->getReplacement();
+
+        if( !empty($perfectMatchReplacement) ) {
+
+            $id = $perfectMatchReplacement->getId();
+            $arrPerfectMatch = [$id => $perfectMatchReplacement];
+        }
+
         $arrNew = empty($arrPerfectMatch) ? ["new" => $newTag] : [];
+        $perfectMatchId = array_key_first($arrPerfectMatch);
 
         $arrStartWith =
             $this->lookupSearchExtract($newTag, function(TagService $newTagToCheck, TagService $existingTag) {
 
                 $slug1 = $newTagToCheck->getSlug();
                 $slug2 = $existingTag->getSlug();
-                return str_starts_with($slug1, $slug2)  || str_starts_with($slug2, $slug1);
+                return str_starts_with($slug1, $slug2) || str_starts_with($slug2, $slug1);
             });
 
-        $this->arrData = $arrPerfectMatch + $arrStartWith + $this->arrData + $arrNew;
+        $arrStartWithSelected = [];
+        foreach($arrStartWith as $id => $tag) {
+
+            if( $id == $perfectMatchId ) {
+                continue;
+            }
+
+            $replacement    = $tag->getReplacement();
+            $replacementId  = $replacement?->getId();
+
+            if( !empty($replacementId) && $replacementId == $perfectMatchId ) {
+                continue;
+            }
+
+            if( empty($replacementId) ) {
+
+                $arrStartWithSelected[$id] = $tag;
+
+            } else {
+
+                $arrStartWithSelected[$replacementId] = $replacement;
+            }
+        }
+
+        foreach($this->arrData as $id => $tag) {
+
+            if( $id == $perfectMatchId || array_key_exists($id, $arrStartWithSelected) ) {
+                unset($this->arrData[$id]);
+            }
+
+            $replacementId = $tag->getReplacement()?->getId();
+
+            if( empty($replacementId) ) {
+                continue;
+            }
+
+            if( $replacementId == $perfectMatchId || array_key_exists($replacementId, $arrStartWithSelected) ) {
+                unset($this->arrData[$id]);
+            }
+        }
+
+        $this->arrData = $arrPerfectMatch + $arrStartWithSelected + $this->arrData + $arrNew;
 
         return $this;
     }
