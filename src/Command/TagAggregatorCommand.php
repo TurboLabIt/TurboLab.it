@@ -2,6 +2,7 @@
 namespace App\Command;
 
 use App\Service\Cms\Tag;
+use App\Service\Factory;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -36,7 +37,7 @@ class TagAggregatorCommand extends AbstractBaseCommand
     ];
 
 
-    public function __construct(protected TagCollection $tags, protected EntityManagerInterface $em)
+    public function __construct(protected TagCollection $tags, protected EntityManagerInterface $em, protected Factory $factory)
     {
         parent::__construct();
     }
@@ -86,7 +87,8 @@ class TagAggregatorCommand extends AbstractBaseCommand
             $this->endWithError("Tag ##$key## cannot be self-replacing!");
         }
 
-        $tag->setReplacement($replacement);
+        $this->factory->createTagEditor( $tag->getEntity() )
+            ->setReplacement($replacement);
 
         return $this;
     }

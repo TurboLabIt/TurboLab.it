@@ -239,11 +239,4 @@ class Tag extends BaseCmsService
         $entity = $this->entity->getReplacement();
         return empty($entity) ? null : $this->factory->createTag($entity);
     }
-
-    public function setReplacement(Tag|TagEntity|null $tag) : static
-    {
-        $tag = $tag instanceof Tag ? $tag->getEntity() : $tag;
-        $this->entity->setReplacement($tag);
-        return $this;
-    }
 }
