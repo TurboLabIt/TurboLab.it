@@ -682,6 +682,11 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             $arrTag["tag"] = 'aggiornamenti software';
             $ranking = 50;
 
+        // change the ranking for "windows update"
+        } else if( $tagId == Tag::ID_WINDOWS_UPDATE ) {
+
+            $ranking = 59;
+
         // change the tag title from "provider connettività accesso internet (ISP)"
         } else if( $tagId == Tag::ID_INTERNET_PROVIDER ) {
 

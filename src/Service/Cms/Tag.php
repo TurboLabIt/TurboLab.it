@@ -39,6 +39,7 @@ class Tag extends BaseCmsService
     const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-4904
     const int ID_UNINSTALL          = 521;      // 👀 https://turbolab.it/disinstallazione-rimozione-programmi-521
     const int ID_SOFTWARE_UPDATE    = 282;      // 👀 https://turbolab.it/aggiornamenti-software-282
+    const int ID_WINDOWS_UPDATE     = 280;      // 👀 https://turbolab.it/windows-update-280
     const int ID_INTERNET_PROVIDER  = 3408;     // 👀 https://turbolab.it/connessione-internet-provider-isp-3408
     const int ID_LAN                = 5549;     // 👀 https://turbolab.it/reti-locali-lan-5549
     const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/wake-on-lan-wol-3177
