@@ -26,8 +26,36 @@ jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list
         }
     });
 
+    openTaggingGuide(false);
     openSuggestions(true);
 });
+
+
+jQuery(document).on('click', '.tli-article-editor-show-guide-action',  function(event) {
+
+    event.preventDefault();
+    openTaggingGuide( jQuery(this).data('status') == 0 );
+});
+
+
+function openTaggingGuide(open)
+{
+    let showGuideAction = jQuery('#tli-ajax-modal').find('.tli-article-editor-show-guide-action');
+    let guide = jQuery('#tli-ajax-modal').find('.tli-tags-guide-collapsable');
+
+    if(open) {
+
+        showGuideAction.html( showGuideAction.data('hide-text') );
+        showGuideAction.data('status', 1);
+        guide.slideDown();
+
+    } else {
+
+        showGuideAction.html( showGuideAction.data('show-text') );
+        showGuideAction.data('status', 0);
+        guide.slideUp();
+    }
+}
 
 
 jQuery(document).on('click', '.tli-article-editor-show-suggested-tags-action',  function(event) {
@@ -46,14 +74,14 @@ function openSuggestions(open)
 
         showSuggestionAction.html( showSuggestionAction.data('hide-text') );
         showSuggestionAction.data('status', 1);
-        suggestions.fadeIn();
+        suggestions.slideDown();
         jQuery('#tli-style-tags-suggestion-closed').remove();
 
     } else {
 
         showSuggestionAction.html( showSuggestionAction.data('show-text') );
         showSuggestionAction.data('status', 0);
-        suggestions.fadeOut();
+        suggestions.slideUp();
 
         jQuery('head').append(
             '<style id="tli-style-tags-suggestion-closed">.tli-article-editor-search-result .tli-tags-candidate {max-height: 600px}</style>'

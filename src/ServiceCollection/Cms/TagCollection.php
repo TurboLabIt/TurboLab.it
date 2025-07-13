@@ -88,9 +88,7 @@ class TagCollection extends BaseServiceEntityCollection
                 return $newTagToCheck->getSlug() == $existingTag->getSlug();
             });
 
-        if( empty($arrPerfectMatch) ) {
-            $arrPerfectMatch = ["new" => $newTag];
-        }
+        $arrNew = empty($arrPerfectMatch) ? ["new" => $newTag] : [];
 
         $arrStartWith =
             $this->lookupSearchExtract($newTag, function(TagService $newTagToCheck, TagService $existingTag) {
@@ -100,7 +98,7 @@ class TagCollection extends BaseServiceEntityCollection
                 return str_starts_with($slug1, $slug2)  || str_starts_with($slug2, $slug1);
             });
 
-        $this->arrData = $arrPerfectMatch + $arrStartWith + $this->arrData;
+        $this->arrData = $arrPerfectMatch + $arrStartWith + $this->arrData + $arrNew;
 
         return $this;
     }

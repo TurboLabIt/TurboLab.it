@@ -1,5 +1,66 @@
 <div class="modal-body">
 
+    {% embed 'parts/alert-chalkboard.html.twig' %}
+        {% block alertTitleStyle %}fs-7 mb-2{% endblock %}
+        {% block alertTitle %}Scegliere i tag è difficile, ma importante!{% endblock %}
+        {% block alertBody %}
+            <div>
+                <a href="#" class="tli-article-editor-show-guide-action" data-status="0"
+                   data-show-text="<i class=&quot;fa-solid fa-chevron-down&quot;></i> Apri la guida"
+                   data-hide-text="<i class=&quot;fa-solid fa-chevron-up&quot;></i> Chiudi la guida"></a>
+            </div>
+            <div class="tli-tags-guide-collapsable collapse text-start">
+                <p>
+                    I tag ("etichette") consentono di raccogliere i contenuti che trattano uno stesso argomento.
+                    Vogliamo applicare solo tag altamente pertinenti, senza contemplare sinonimi o varianti:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>nomi delle piattaforme compatibili (<em>windows</em>, <em>linux</em>, <em>android</em>, <em>mac</em>, ...)</strong>,
+                        <span class="text-decoration-underline">senza specificare la versione, l'edizione o la distribuzione</span>
+                    </li>
+                    <li>
+                        Per i siti web e le "web app", indicare solo <em>servizi web</em>.
+                        Se però esistono app native, aggiungere anche i tag delle piattaforme
+                    </li>
+                    <li><em>hardware</em> e/o <em>software</em></li>
+                    <li>marchi dei produttori (<em>microsoft</em>, <em>samsung</em>, <em>mozilla</em>, ...)</li>
+                    <li>
+                        nomi dei prodotti citati (<em>google chrome</em>, <em>firefox</em>, <em>thunderbird</em>, <em>microsoft office</em>, ...),
+                        <span class="text-decoration-underline">senza specificare la versione</span>
+                    </li>
+                    <li>
+                        ambiti generici principali
+                        (<em>sicurezza</em>, <em>manutenzione</em>, <em>condivisione file</em>, <em>audio</em>, <em>controllo remoto</em>, ...)
+                    </li>
+                    <li>parole-chiave specifiche (<em>esecuzione automatica</em>, <em>processi</em>, <em>partizioni</em>, ...)</li>
+                </ul>
+
+                <p>Se possibile, <strong>dovresti usare i tag esistenti piuttosto che crearne di nuovi</strong>. In ogni caso, dovresti preferire:</p>
+                <ul>
+                    <li>termini in italiano (<em>sicurezza</em>, <em>programmazione</em>, ...) rispetto agli originali in inglese</li>
+                    <li>
+                        nomi per esteso (<em>sistemi operativi</em>, <em>dischi fissi</em>, ...) invece di abbreviazioni (<em>OS</em>, <em>HDD</em>).
+                        Chiaramente, però, i nomi propri (<em>USB</em>, <em>Facebook</em>, <em>Wi-Fi</em>, ...) vanno mantenuti nella lingua originale
+                    </li>
+                </ul>
+
+                <p>
+                    Plurali o i singolari? L'idea è di pensare ai tag come a "categorie".
+                    Diremo quindi </em>immagini</em>, <em>bufale</em>, <em>processori</em>, ... ma anche
+                    <em>programmazione</em>, <em>produttività</em>, ...
+                </p>
+
+                <p class="text-center mb-0">
+                    <a href="#" class="tli-article-editor-show-guide-action" data-status="1"
+                       data-hide-text="<i class=&quot;fa-solid fa-chevron-up&quot;></i> Chiudi la guida"></a>
+                </p>
+
+            </div>
+        {% endblock %}
+    {% endembed %}
+
     <div class="mb-3">
 
         <h6 class="text-secondary mb-3"><i class="fas fa-tag"></i> Tag già assegnati all'articolo:</h6>
