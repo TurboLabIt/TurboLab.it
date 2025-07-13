@@ -117,7 +117,7 @@
                                     </li>
                                     <li class="has-sub">
                                         <a href="{{ path('app_home') }}forum">
-                                            <i class="fa-solid fa-users"></i> Forum... <i class="fa-solid fa-angle-down"></i>
+                                            <i class="fa-solid fa-users"></i> Forum <i class="fa-solid fa-angle-down"></i>
                                         </a>
                                         <ul>
                                             <li><a href="{{ path('app_home') }}forum/search.php?search_id=egosearch">I tuoi messaggi</a></li>
@@ -138,7 +138,7 @@
 
                                     <li class="has-sub">
                                         <a class="{{ activeMenu == 'guide' ? 'active' : '' }} disabled-link" href="#">
-                                            <i class="fa-solid fa-book"></i> Guide... <i class="fa-solid fa-angle-down"></i>
+                                            <i class="fa-solid fa-book"></i> Guide <i class="fa-solid fa-angle-down"></i>
                                         </a>
                                         <ul>
                                             {% for Link in FrontendHelper.NavOtherCategories %}
@@ -154,7 +154,7 @@
                                     <li class="has-sub">
                                         <a class="{{ activeMenu == 'cerca' ? 'active' : '' }} disabled-link" href="#">
                                             <i class="fa-solid fa-magnifying-glass" style="color: #e66100;"></i>
-                                            Cerca... <i class="fa-solid fa-angle-down"></i>
+                                            Cerca <i class="fa-solid fa-angle-down"></i>
                                         </a>
                                         <ul id="tli-nav-search">
                                             <li>
