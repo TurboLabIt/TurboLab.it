@@ -3,10 +3,17 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "🧪 ${APP_NAME} Test Runner"
+devOnlyCheck
 
 #fxTitle "Pages to check"
 #fxAskConfirmation "Update the values in tests/BaseT.php before proceeding"
 
+sudo nginx -t
+if [ "$?" -ne 0 ]; then
+  fxCatastrophicError "NGINX config is failing, cannot proceed"
+fi
+
+sudo service nginx restart
 wsuSymfony console cache:clear
 
 # https://github.com/TurboLabIt/webstackup/tree/master/script/php/test-runner-package.sh
