@@ -627,12 +627,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
               etichette.tipo = 'contenuto'
             GROUP BY
               etichette.id_tag
+            ## these are special tags, to be imported even if they are unassigned
             UNION
-              ## this is a special tag, needed for testing. It must be imported even if it's unassigned
               SELECT
                 tag.*, 0 AS usageCount
                 FROM tag
-                WHERE id_tag = 12600
+                WHERE id_tag IN(" . implode(',', [
+                    Tag::ID_TEST_NO_ARTICLES
+                ]) . ")
             ORDER BY
               id_tag ASC
         ");

@@ -9,9 +9,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class TagTest extends BaseT
 {
-    // 👀 https://turbolab.it/something-12600
-    const int NO_ARTICLES_TAG_ID = 12600;
-
     protected static array $arrTestTags;
     protected static array $arrCategories;
 
@@ -115,7 +112,7 @@ class TagTest extends BaseT
     {
         /** @var Tag $tag */
         $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load( static::NO_ARTICLES_TAG_ID );
+        $tag->load( Tag::ID_TEST_NO_ARTICLES );
         $url = $tag->getUrl();
 
         $crawler = $this->fetchDomNode($url);

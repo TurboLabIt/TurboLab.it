@@ -16,6 +16,7 @@ class Tag extends BaseCmsService
     const string NOT_FOUND_EXCEPTION    = 'App\Exception\TagNotFoundException';
 
     const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/pc-642
+    const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/something-12600
 
     const int ID_WINDOWS            = 10;       // 👀 https://turbolab.it/windows-10
     const int ID_LINUX              = 27;       // 👀 https://turbolab.it/linux-27
