@@ -19,21 +19,30 @@ class TagAggregatorCommand extends AbstractBaseCommand
         'windows8' => Tag::ID_WINDOWS, 'windows80' => Tag::ID_WINDOWS, 'windows81' => Tag::ID_WINDOWS,
         'windows10' => Tag::ID_WINDOWS, 'windows11' => Tag::ID_WINDOWS, 'windows12' => Tag::ID_WINDOWS,
         //
-        'malware' => Tag::ID_ANTIVIRUS_MALWARE, 'antivirusantimalware' => Tag::ID_ANTIVIRUS_MALWARE,
+        'blockchain' => Tag::ID_CRYPTOCURRENCIES, 'bitcoin' => Tag::ID_CRYPTOCURRENCIES,
+        //
+        'virus' => Tag::ID_ANTIVIRUS_MALWARE, 'malware' => Tag::ID_ANTIVIRUS_MALWARE, 'antivirusantimalware' => Tag::ID_ANTIVIRUS_MALWARE,
         'ransomware' => Tag::ID_ANTIVIRUS_MALWARE, 'adware' => Tag::ID_ANTIVIRUS_MALWARE,
         'rootkit' => Tag::ID_ANTIVIRUS_MALWARE, 'browserhijacking' => Tag::ID_ANTIVIRUS_MALWARE,
         //
         'bufale' => Tag::ID_FAKE_NEWS, 'bufala' => Tag::ID_FAKE_NEWS, 'fakenews' => Tag::ID_FAKE_NEWS, 'disinformazione' => Tag::ID_FAKE_NEWS,
         //
-        'disinstallare' => Tag::ID_UNINSTALL, 'disinstallazioni' => Tag::ID_UNINSTALL,
+        'disinstallare' => Tag::ID_UNINSTALL, 'disinstallazioni' => Tag::ID_UNINSTALL, 'disinstallazione' => Tag::ID_UNINSTALL,
         'rimozioneprogrammi' => Tag::ID_UNINSTALL,
         //
-        'aggiornamentosoftware' => Tag::ID_SOFTWARE_UPDATE, 'aggiornamento' => Tag::ID_SOFTWARE_UPDATE,
+        'aggiornamentosoftware' => Tag::ID_SOFTWARE_UPDATE, 'aggiornamento' => Tag::ID_SOFTWARE_UPDATE, 'aggiornamenti' => Tag::ID_SOFTWARE_UPDATE,
         //
-        'connettività' => Tag::ID_INTERNET_PROVIDER, 'connessione' => Tag::ID_INTERNET_PROVIDER,
+        'providerconnettivitaccessointernetisp' => Tag::ID_INTERNET_PROVIDER, 'digitaldivide' => Tag::ID_INTERNET_PROVIDER,
+        'adsl' => Tag::ID_INTERNET_PROVIDER, 'fibra' => Tag::ID_INTERNET_PROVIDER,
+        'connessione' => Tag::ID_INTERNET_PROVIDER,
         'retedatimobile3g4glte' => Tag::ID_INTERNET_PROVIDER, 'operatoriditelefonia' => Tag::ID_INTERNET_PROVIDER,
+        'isp' => Tag::ID_INTERNET_PROVIDER,
         //
-        'wakeonlan' => Tag::ID_WAKE_ON_LAN
+        'lan' => Tag::ID_LAN,
+        //
+        'wakeonlan' => Tag::ID_WAKE_ON_LAN,
+        //
+        'bloccapubblicitadblock' => Tag::ID_ADBLOCK
     ];
 
 

@@ -41,6 +41,11 @@ class NginxRedirectTest extends BaseT
                 'alsoTestWithTrailingSlash' => true
             ],
             [
+                'requestUrl'    => '/tag/criptovalute-bitcoin-ethereum-litecoin',
+                'redirectToUrl' => '/bitcoin-criptovalute-blockchain-4904',
+                'alsoTestWithTrailingSlash' => true
+            ],
+            [
                 'requestUrl'    => '/tag/intelligenza%20artificiale',
                 'redirectToUrl' => '/ai-intelligenza-artificiale-6960',
                 'alsoTestWithTrailingSlash' => true

@@ -632,7 +632,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
               SELECT
                 tag.*, 0 AS usageCount
                 FROM tag
-                WHERE id_tag IN(" . implode(',', [
+                WHERE id_tag IN(" . implode(',', TagAggregatorCommand::BAD_TAGS + [
                     Tag::ID_TEST_NO_ARTICLES
                 ]) . ")
             ORDER BY
@@ -658,27 +658,27 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         // change the tag title from "criptovalute (bitcoin/ethereum/litecoin)"
         if( $tagId == Tag::ID_CRYPTOCURRENCIES ) {
 
-            $arrTag["tag"] = 'bitcoin ethereum criptovalute';
+            $arrTag["tag"] = 'bitcoin criptovalute blockchain';
 
-        // change the tag title from "virus"
+        // tli2-special-antivirus
         } else if( $tagId == Tag::ID_ANTIVIRUS_MALWARE ) {
 
             $arrTag["tag"] = 'virus antivirus malware antimalware';
             $ranking = 77;
 
-        // change the tag title from "bufale"
+        // tli2-special-fake-news
         } else if( $tagId == Tag::ID_FAKE_NEWS ) {
 
             $arrTag["tag"] = 'disinformazione bufale fake news';
             $ranking = 70;
 
-        // change the tag title from "disinstallazione"
+        // tli2-special-uninstall
         } else if( $tagId == Tag::ID_UNINSTALL ) {
 
             $arrTag["tag"] = 'disinstallazione rimozione programmi';
             $ranking = 50;
 
-        // change the tag title from "aggiornamenti"
+        // tli2-special-updates
         } else if( $tagId == Tag::ID_SOFTWARE_UPDATE ) {
 
             $arrTag["tag"] = 'aggiornamenti software';
@@ -689,13 +689,13 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
             $ranking = 59;
 
-        // change the tag title from "provider connettività accesso internet (ISP)"
+        // tli2-special-isp
         } else if( $tagId == Tag::ID_INTERNET_PROVIDER ) {
 
-            $arrTag["tag"] = 'connessione internet provider isp';
+            $arrTag["tag"] = 'connessione internet e provider (isp)';
             $ranking = 50;
 
-        // change the tag title from "lan"
+        // tli2-special-lan
         } else if( $tagId == Tag::ID_LAN ) {
 
             $arrTag["tag"] = 'reti locali lan';

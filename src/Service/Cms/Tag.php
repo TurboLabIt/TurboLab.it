@@ -28,8 +28,8 @@ class Tag extends BaseCmsService
     const int ID_SMARTPHONE         = 6;        // 👀 https://turbolab.it/
     const int ID_HARDWARE           = 5;        // 👀 https://turbolab.it/
 
-    const int ID_FAKE_NEWS          = 6429;     // 👀 https://turbolab.it/disinformazione-bufale-fake-news-6429
-    const int ID_ANTIVIRUS_MALWARE  = 399;      // 👀 https://turbolab.it/virus-antivirus-malware-antimalware-399
+    const int ID_FAKE_NEWS          = 13663;     // 👀 https://turbolab.it/disinformazione-bufale-fake-news-13663
+    const int ID_ANTIVIRUS_MALWARE  = 13662;      // 👀 https://turbolab.it/virus-antivirus-malware-antimalware-13662
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/filesharing-p2p-peer-to-peer-2914
     const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/sicurezza-13
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/guida-mercato-640
@@ -38,12 +38,13 @@ class Tag extends BaseCmsService
     const int ID_DEV                = 232;      // 👀 https://turbolab.it/programmazione-232
     const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/youtube-42
     const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-4904
-    const int ID_UNINSTALL          = 521;      // 👀 https://turbolab.it/disinstallazione-rimozione-programmi-521
-    const int ID_SOFTWARE_UPDATE    = 282;      // 👀 https://turbolab.it/aggiornamenti-software-282
+    const int ID_UNINSTALL          = 13664;      // 👀 https://turbolab.it/disinstallazione-rimozione-programmi-13664
+    const int ID_SOFTWARE_UPDATE    = 13665;      // 👀 https://turbolab.it/aggiornamenti-software-13665
     const int ID_WINDOWS_UPDATE     = 280;      // 👀 https://turbolab.it/windows-update-280
-    const int ID_INTERNET_PROVIDER  = 3408;     // 👀 https://turbolab.it/connessione-internet-provider-isp-3408
-    const int ID_LAN                = 5549;     // 👀 https://turbolab.it/reti-locali-lan-5549
+    const int ID_INTERNET_PROVIDER  = 13666;     // 👀 https://turbolab.it/connessione-internet-provider-isp-13666
+    const int ID_LAN                = 13667;     // 👀 https://turbolab.it/reti-locali-lan-5549
     const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/wake-on-lan-wol-3177
+    const int ID_ADBLOCK            = 8892;     // 👀 https://turbolab.it/adblock-8892
 
     const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/ssd-dischi-fissi-hard-disk-570
     const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/server-1224
