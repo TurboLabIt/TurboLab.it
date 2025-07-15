@@ -15,42 +15,39 @@ class Tag extends BaseCmsService
     const string ENTITY_CLASS           = TagEntity::class;
     const string NOT_FOUND_EXCEPTION    = 'App\Exception\TagNotFoundException';
 
-    const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/pc-642
-    const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/something-12600
+    const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/tag-642
+    const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/tag-12600
+    const int ID_SPONSOR            = 5443;     // 👀 https://turbolab.it/tag-5443
 
-    const int ID_WINDOWS            = 10;       // 👀 https://turbolab.it/windows-10
-    const int ID_LINUX              = 27;       // 👀 https://turbolab.it/linux-27
-    const int ID_ANDROID            = 28;       // 👀 https://turbolab.it/android-28
-    const int ID_MAC                = 26;       // 👀 https://turbolab.it/apple-mac-macos-26
-    const int ID_IOS                = 39;       // 👀 https://turbolab.it/iphone-ipad-ios-39
-    const int ID_WEBSERVICES        = 24;       // 👀 https://turbolab.it/servizi-web-24
-    const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/
-    const int ID_SMARTPHONE         = 6;        // 👀 https://turbolab.it/
-    const int ID_HARDWARE           = 5;        // 👀 https://turbolab.it/
-
-    const int ID_FAKE_NEWS          = 13663;     // 👀 https://turbolab.it/disinformazione-bufale-fake-news-13663
-    const int ID_ANTIVIRUS_MALWARE  = 13662;      // 👀 https://turbolab.it/virus-antivirus-malware-antimalware-13662
-    const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/filesharing-p2p-peer-to-peer-2914
-    const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/sicurezza-13
-    const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/guida-mercato-640
-    const int ID_VPN                = 2942;     // 👀 https://turbolab.it/vpn-2942
-    const int ID_VIRTUALIZATION     = 535;      // 👀 https://turbolab.it/virtualizzazione-535
-    const int ID_DEV                = 232;      // 👀 https://turbolab.it/programmazione-232
-    const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/youtube-42
-    const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/criptovalute-bitcoin-ethereum-4904
-    const int ID_UNINSTALL          = 13664;      // 👀 https://turbolab.it/disinstallazione-rimozione-programmi-13664
-    const int ID_SOFTWARE_UPDATE    = 13665;      // 👀 https://turbolab.it/aggiornamenti-software-13665
-    const int ID_WINDOWS_UPDATE     = 280;      // 👀 https://turbolab.it/windows-update-280
-    const int ID_INTERNET_PROVIDER  = 13666;     // 👀 https://turbolab.it/connessione-internet-provider-isp-13666
-    const int ID_LAN                = 13667;     // 👀 https://turbolab.it/reti-locali-lan-5549
-    const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/wake-on-lan-wol-3177
-    const int ID_ADBLOCK            = 8892;     // 👀 https://turbolab.it/adblock-8892
-
-    const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/ssd-dischi-fissi-hard-disk-570
-    const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/server-1224
-
-    const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/newsletter-turbolab.it-1349
-    const int ID_SPONSOR            = 5443;     // 👀 https://turbolab.it/sponsor-5443
+    const int ID_ANTIVIRUS_MALWARE  = 2;        // 👀 https://turbolab.it/tag-2
+    const int ID_FAKE_NEWS          = 3;        // 👀 https://turbolab.it/tag-3
+    const int ID_UNINSTALL          = 4;        // 👀 https://turbolab.it/tag-4
+    const int ID_HARDWARE           = 5;        // 👀 https://turbolab.it/tag-5
+    const int ID_SMARTPHONE         = 6;        // 👀 https://turbolab.it/tag-6
+    const int ID_SOFTWARE_UPDATE    = 7;        // 👀 https://turbolab.it/tag-7
+    const int ID_WINDOWS            = 10;       // 👀 https://turbolab.it/tag-10
+    const int ID_SECURITY           = 13;       // 👀 https://turbolab.it/tag-13
+    const int ID_INTERNET_PROVIDER  = 17;       // 👀 https://turbolab.it/tag-17
+    const int ID_LAN                = 22;       // 👀 https://turbolab.it/tag-22
+    const int ID_WEBSERVICES        = 24;       // 👀 https://turbolab.it/tag-24
+    const int ID_MAC                = 26;       // 👀 https://turbolab.it/tag-26
+    const int ID_LINUX              = 27;       // 👀 https://turbolab.it/tag-27
+    const int ID_ANDROID            = 28;       // 👀 https://turbolab.it/tag-28
+    const int ID_IOS                = 39;       // 👀 https://turbolab.it/tag-39
+    const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/tag-42
+    const int ID_DEV                = 232;      // 👀 https://turbolab.it/tag-232
+    const int ID_WINDOWS_UPDATE     = 280;      // 👀 https://turbolab.it/tag-280
+    const int ID_VIRTUALIZATION     = 535;      // 👀 https://turbolab.it/tag-535
+    const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/tag-570
+    const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/tag-640
+    const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/tag-897
+    const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/tag-1224
+    const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/tag-1349
+    const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/tag-2914
+    const int ID_VPN                = 2942;     // 👀 https://turbolab.it/tag-2942
+    const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/tag-3177
+    const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/tag-4904
+    const int ID_ADBLOCK            = 8892;     // 👀 https://turbolab.it/tag-8892
 
     use ViewableServiceTrait;
 
