@@ -703,6 +703,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         }
 
         $title = $this->convertTitleFromTli1ToTli2($arrTag["tag"]);
+        $title = mb_strtolower($title);
 
         $ranking    = $ranking ?? (int)$arrTag["peso"];
         $createdAt  = DateTime::createFromFormat('YmdHis', $arrTag["data_creazione"]);
