@@ -122,7 +122,7 @@ class Tag extends BaseCmsService
     }
 
 
-    public function getTitleForAggregationComparison(?string $title = null) : string
+    public function getTitleComparable(?string $title = null) : string
     {
         $title = empty($title) ? $this->getTitle() : $title;
         $processed = mb_strtolower($title);

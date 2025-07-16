@@ -336,7 +336,7 @@ class ArticleEditor extends Article
                 $tags->lookupSearchExtract(
                     $this->factory->createTagEditor()->setTitle($candidate),
                     function(Tag $candidateTag, Tag $realTag) {
-                        return $candidateTag->getTitleForAggregationComparison() == $realTag->getTitleForAggregationComparison();
+                        return $candidateTag->getTitleComparable() == $realTag->getTitleComparable();
                     }
                 );
 
