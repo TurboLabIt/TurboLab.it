@@ -103,8 +103,20 @@ class ArticleEditorController extends BaseController
 
         // TODO zaneee! Rate limiting on new article
 
-        $newArticleTitle    = $this->request->get(static::TITLE_FIELD_NAME);
-        $newArticleFormat   = $this->request->get(static::FORMAT_FIELD_NAME);
+        $newArticleTitle = $this->request->get(static::TITLE_FIELD_NAME);
+
+        $this->articleEditor->setTitle($newArticleTitle);
+
+        $articles =
+            $this->factory->createArticleCollection()->loadByComparableSearch(
+                $this->articleEditor->getTitleComparable(), 'title'
+            );
+
+        if( $articles->count() ) {
+            return $this->redirect( $articles->first()->getUrl() );
+        }
+
+        $newArticleFormat = $this->request->get(static::FORMAT_FIELD_NAME);
 
         /*
          * $currentUser is unknown to Doctrine: if we try to set it as Author directly:
@@ -114,7 +126,6 @@ class ArticleEditorController extends BaseController
         $author = $this->factory->createUser()->load($currentUserId);
 
         $this->articleEditor
-            ->setTitle($newArticleTitle)
             ->setFormat($newArticleFormat)
             ->addAuthor($author)
             ->autotag($author)
