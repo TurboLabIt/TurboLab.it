@@ -42,7 +42,9 @@ class TagAggregatorCommand extends AbstractBaseCommand
         //
         'wakeonlan' => Tag::ID_WAKE_ON_LAN,
         //
-        'bloccapubblicitadblock' => Tag::ID_ADBLOCK
+        'bloccapubblicitadblock' => Tag::ID_ADBLOCK,
+        //
+        'connettoreusb' => Tag::ID_USB, 'usb3' => Tag::ID_USB, 'usbconnector' => Tag::ID_USB
     ];
 
 

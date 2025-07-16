@@ -37,6 +37,7 @@ class Tag extends BaseCmsService
     const int ID_IOS                = 39;       // 👀 https://turbolab.it/tag-39
     const int ID_YOUTUBE            = 42;       // 👀 https://turbolab.it/tag-42
     const int ID_DEV                = 232;      // 👀 https://turbolab.it/tag-232
+    const int ID_USB                = 275;      // 👀 https://turbolab.it/tag-275
     const int ID_WINDOWS_UPDATE     = 280;      // 👀 https://turbolab.it/tag-280
     const int ID_VIRTUALIZATION     = 535;      // 👀 https://turbolab.it/tag-535
     const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/tag-570
