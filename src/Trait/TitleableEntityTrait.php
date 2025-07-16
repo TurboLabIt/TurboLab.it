@@ -16,6 +16,16 @@ trait TitleableEntityTrait
 
     public function getTitle() : ?string { return $this->title; }
 
+
+    public function getTitleComparable() : string
+    {
+        $title = $this->getTitle() ?: '';
+        $processed = mb_strtolower($title);
+        $processed = preg_replace('/[^a-z0-9]/i', '', $processed);
+        return trim($processed);
+    }
+
+
     public function setTitle(string $title) : static
     {
         $title = trim($title);

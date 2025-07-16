@@ -89,4 +89,7 @@ abstract class BaseServiceEntity
 
     public function getCacheKey() : string
         { return strtolower( substr(strrchr(get_class($this), '\\'), 1) ) . "-" . $this->getId(); }
+
+
+    public function getTitleComparable() : string { return $this->entity->getTitleComparable(); }
 }

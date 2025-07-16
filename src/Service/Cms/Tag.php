@@ -120,15 +120,6 @@ class Tag extends BaseCmsService
     {
         return $this->encodeTextForHTMLAttribute( $this->getNavTitle() );
     }
-
-
-    public function getTitleComparable(?string $title = null) : string
-    {
-        $title = empty($title) ? $this->getTitle() : $title;
-        $processed = mb_strtolower($title);
-        $processed = preg_replace('/[^a-z0-9]/i', '', $processed);
-        return trim($processed);
-    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
