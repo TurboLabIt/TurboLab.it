@@ -77,9 +77,16 @@ class TagCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadBySearch(string|array $arrTagToSearch, bool $replaceReplacedWithReplacement) : static
+    {
+        $arrTags = $this->getRepository()->search($arrTagToSearch, $replaceReplacedWithReplacement);
+        return $this->setEntities($arrTags);
+    }
+
+
     public function loadBySearchTagOrCreate(?string $tag) : static
     {
-        $arrTags = $this->getRepository()->search($tag);
+        $arrTags = $this->getRepository()->search($tag, false);
         $this->setEntities($arrTags);
 
         $newTag = $this->factory->createTagEditor()->setTitle($tag);

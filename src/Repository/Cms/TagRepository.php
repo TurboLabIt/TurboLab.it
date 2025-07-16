@@ -68,19 +68,42 @@ class TagRepository extends BaseRepository
     }
 
 
-    public function search(string $title) : array
+    public function search(null|string|array $title, bool $replaceReplacedWithReplacement) : array
     {
-        $termToSearch = trim($title);
-        if( empty($termToSearch) ) {
+        if( empty($title) ) {
             return [];
         }
 
-        return
-            $this->getQueryBuilder()
-                ->andWhere('t.title LIKE :title')
-                    ->setParameter('title', '%' . $this->prepareParamForLikeCondition($termToSearch) . '%')
+        $queryBuilder = $this->getQueryBuilder();
+        $whereCondition = '';
+        $arrTitles = is_array($title) ? $title : [$title];
+
+        foreach($arrTitles as $key => $termToSearch) {
+
+            $termToSearch = trim($termToSearch);
+            if( empty($termToSearch) ) {
+                continue;
+            }
+
+            if( !empty($whereCondition) ) {
+                $whereCondition .= ' OR ';
+            }
+
+            $whereCondition .= "t.title LIKE :title$key";
+            $queryBuilder->setParameter("title$key", '%' . $this->prepareParamForLikeCondition($termToSearch) . '%');
+        }
+
+        if( empty($whereCondition) ) {
+            return [];
+        }
+
+        $arrTags =
+            $queryBuilder
+                ->andWhere($whereCondition)
                 ->orderBy('t.ranking', 'DESC')
                 ->getQuery()->getResult();
+
+        return $replaceReplacedWithReplacement ? $this->replaceReplacedWithReplacement($arrTags) : $arrTags;
     }
 
 
@@ -95,5 +118,37 @@ class TagRepository extends BaseRepository
         $arrIds = $this->getIdsFromSqlQuery($sqlQuery);
 
         return $this->getById($arrIds);
+    }
+
+
+    protected function replaceReplacedWithReplacement(array $arrTags) : array
+    {
+        $arrTagsWithoutReplaced = [];
+
+        /** @var Tag $tag */
+        foreach($arrTags as $id => $tag) {
+
+            $id = (string)$id;
+
+            if( array_key_exists($id, $arrTagsWithoutReplaced) ) {
+                continue;
+            }
+
+            $replacement = $tag->getReplacement();
+            if( empty($replacement) ) {
+
+                $arrTagsWithoutReplaced[$id] = $tag;
+                continue;
+            }
+
+            $idReplacement = (string)$replacement->getId();
+            if( array_key_exists($idReplacement, $arrTagsWithoutReplaced) ) {
+                continue;
+            }
+
+            $arrTagsWithoutReplaced[$idReplacement] = $replacement;
+        }
+
+        return $arrTagsWithoutReplaced;
     }
 }

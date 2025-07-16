@@ -19,6 +19,7 @@ class TagEditor extends Tag
     public function setTitle(string $newTitle) : static
     {
         $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
+        $cleanTitle = mb_strtolower($cleanTitle);
         $this->entity->setTitle($cleanTitle);
         return $this;
     }

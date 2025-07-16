@@ -117,6 +117,7 @@ class ArticleEditorController extends BaseController
             ->setTitle($newArticleTitle)
             ->setFormat($newArticleFormat)
             ->addAuthor($author)
+            ->autotag($author)
             ->save();
 
         return $this->redirect( $this->articleEditor->getUrl() );

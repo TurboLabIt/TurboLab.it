@@ -3,6 +3,7 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleTag;
+use App\Entity\Cms\Tag as TagEntity;
 use App\Exception\ArticleUpdateException;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
@@ -184,12 +185,14 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
-    public function addTag(Tag $tag, User $user) : static
+    public function addTag(Tag|TagEntity $tag, User $user) : static
     {
+        $tagToAdd = $tag instanceof Tag ? $tag->getEntity() : $tag;
+
         $this->entity->addTag(
             (new ArticleTag())
                 ->setArticle($this->entity)
-                ->setTag( $tag->getEntity() )
+                ->setTag($tagToAdd)
                 ->setUser( $user->getEntity() )
         );
 
@@ -304,6 +307,64 @@ class ArticleEditor extends Article
         }
 
         return $this->setCachedTagsFromJunctions($arrJunctions);
+    }
+
+
+    public function autotag(User $user) : static
+    {
+        $title = $this->getTitle();
+        $titleNoStopWords = $this->factory->getStopWords()->removeFromSting($title);
+        $arrTitleWords = preg_split('/[^a-zA-Z0-9]+/', $titleNoStopWords, -1, PREG_SPLIT_NO_EMPTY);
+
+        $arrNoAutoTags = [Tag::ID_DEFAULT_TAG, Tag::ID_TEST_NO_ARTICLES, Tag::ID_NEWSLETTER_TLI];
+
+        $tags =
+            $this->factory->createTagCollection()->loadBySearch($arrTitleWords, false)
+                ->filter(function(Tag $tag) use ($arrNoAutoTags) { return !in_array($tag->getId(), $arrNoAutoTags); });
+
+        $arrTitleWordsCombined = $arrTitleWords;
+        for($i = 0; $i < count($arrTitleWords) - 1; $i++) {
+            // the separator is just for visual clarity - it will be removed before the comparison
+            $arrTitleWordsCombined[] = $arrTitleWords[$i] . "|" . $arrTitleWords[$i+1];
+        }
+
+        $arrAddedTag = [];
+
+        foreach($arrTitleWordsCombined as $candidate) {
+
+            $arrTagToAdd =
+                $tags->lookupSearchExtract(
+                    $this->factory->createTagEditor()->setTitle($candidate),
+                    function(Tag $candidateTag, Tag $realTag) {
+                        return $candidateTag->getTitleForAggregationComparison() == $realTag->getTitleForAggregationComparison();
+                    }
+                );
+
+            /** @var Tag $tagToAdd */
+            foreach($arrTagToAdd as $tagToAdd) {
+
+                $tagId              = $tagToAdd->getId();
+                $replacementTag     = $tagToAdd->getReplacement();
+                $replacementTagId   = $replacementTag?->getId();
+
+                if(
+                    in_array($tagId, $arrAddedTag) ||
+                    ( !empty($replacementTagId) && in_array($replacementTagId, $arrAddedTag) )
+                ) {
+                    continue;
+                }
+
+                $arrAddedTag[] = $tagId;
+                if( !empty($replacementTagId) ) {
+                    $arrAddedTag[] = $replacementTagId;
+                }
+
+                $tagToAdd = $replacementTag ?? $tagToAdd;
+                $this->addTag($tagToAdd, $user);
+            }
+        }
+
+        return $this;
     }
     //</editor-fold>
 

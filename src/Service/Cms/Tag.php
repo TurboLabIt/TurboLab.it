@@ -17,6 +17,7 @@ class Tag extends BaseCmsService
 
     const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/tag-642
     const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/tag-12600
+    const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/tag-1349
     const int ID_SPONSOR            = 5443;     // 👀 https://turbolab.it/tag-5443
 
     const int ID_ANTIVIRUS_MALWARE  = 2;        // 👀 https://turbolab.it/tag-2
@@ -42,7 +43,6 @@ class Tag extends BaseCmsService
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/tag-640
     const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/tag-897
     const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/tag-1224
-    const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/tag-1349
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/tag-2914
     const int ID_VPN                = 2942;     // 👀 https://turbolab.it/tag-2942
     const int ID_WAKE_ON_LAN        = 3177;     // 👀 https://turbolab.it/tag-3177
