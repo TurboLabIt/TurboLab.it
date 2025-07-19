@@ -93,3 +93,7 @@ div.stellarnav.mobile.active ul {
     vertical-align: text-bottom;
     text-decoration: none !important;
 }
+
+.tli-social-icons .icon-wrapper {
+    max-width: 64px;
+}

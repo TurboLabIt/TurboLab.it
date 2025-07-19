@@ -150,19 +150,9 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="trending-right-sidebar">
-                        <div class="trending-social">
-                            <div class="section-title">
-                                <h3 class="title">Seguici</h3>
-                            </div>
-                            <div class="social-links">
-                                {% for Link in FrontendHelper.FollowUsLinks %}
-                                    <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                        <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}"
-                                        width="54" height="54">
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        </div>
+
+                        {% include 'parts/social-icons.html.twig' %}
+
                         <div class="trending-most-view mt-25">
                             <div class="section-title">
                                 <h3 class="title">Aggiornamenti</h3>

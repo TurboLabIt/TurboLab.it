@@ -45,14 +45,10 @@
 
                             <h3 class="mt-20">Sito irraggiungibile?</h3>
                             <p>Seguici sui social per essere informato quando il sito diviene irraggiungibile.</p>
-                            <div class="social-links">
-                                {% for Link in FrontendHelper.InCaseOfDownSocialLinks %}
-                                    <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                                        <img src="{{ asset(Link.icon) }}" alt="{{ Link.name }}" title="{{ Link.name }}"
-                                             width="54" height="54">
-                                    </a>
-                                {% endfor %}
-                            </div>
+
+                            {% embed 'parts/social-icons.html.twig' with {'SocialLinks': FrontendHelper.InCaseOfDownSocialLinks} only %}
+                                {% block socialIconsTitle %}{% endblock %}
+                            {% endembed %}
 
                             <h3 class="mt-20">Vuoi segnalare un problema con il sito?</h3>
                             <p>
