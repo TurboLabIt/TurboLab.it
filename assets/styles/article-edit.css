@@ -55,3 +55,10 @@
     padding: 0 5px;
     line-height: 25px;
 }
+
+
+#tli-article-editor-image-gallery {
+    padding: 5px;
+    max-height: 100vh;
+    z-index: 10;
+}

@@ -43,10 +43,9 @@ class Article extends BaseCmsService
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
     use PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait, SecurityTrait;
 
-    protected ArticleEntity $entity;
-
-
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
+    protected ArticleEntity $entity;
+    protected ?array $arrImages             = null;
     protected ?array $arrTags               = null;
     protected ?array $arrAuthors            = null;
     protected ?array $arrFiles              = null;
@@ -68,7 +67,7 @@ class Article extends BaseCmsService
 
         foreach([
                 'arrTags', 'arrAuthors', 'arrFiles', 'arrAuthors',
-                'spotlight', 'commentsTopic', 'articleBodyForDisplay'
+                'spotlight', 'commentsTopic', 'articleBodyForDisplay', 'arrImages'
             ] as $property) {
             $this->$property = null;
         }
@@ -168,6 +167,68 @@ class Article extends BaseCmsService
     public function isNews() : bool { return $this->entity->getFormat() == ArticleEntity::FORMAT_NEWS; }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🖼️ Images ***">
+    public function getImages() : array
+    {
+        if( !is_array($this->arrImages) ) {
+
+            $this->arrImages = [];
+
+            foreach( $this->entity->getImages() as $junction ) {
+
+                $image      = $junction->getImage();
+                $idImage    = $image->getId();
+                $this->arrImages[$idImage] = $this->factory->createImage($image);
+            }
+
+            usort($this->arrImages, function(Image $img1, Image $img2) {
+                return $img2->getEntity()->getCreatedAt() <=> $img1->getEntity()->getCreatedAt();
+            });
+        }
+
+        return $this->arrImages;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** ☀️ Spotlight ***">
+    public function getSpotlightOrDefaultUrl(string $size) : string
+    {
+        return $this->getSpotlightOrDefault()->getUrl($this, $size);
+    }
+
+    public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($this, $size); }
+
+    public function getSpotlight() : ?ImageService
+    {
+        if( !$this->isListable() ) {
+            return null;
+        }
+
+        if( !empty($this->spotlight) ) {
+            return $this->spotlight;
+        }
+
+        $spotlightEntity = $this->entity->getSpotlight();
+        if( empty($spotlightEntity) ) {
+            return null;
+        }
+
+        $this->spotlight = $this->factory->createImage($spotlightEntity);
+        return $this->spotlight;
+    }
+
+
+    public function getSpotlightOrDefault() : ImageService
+    {
+        $spotlight = $this->getSpotlight();
+        if( !empty($spotlight) ) {
+            return $spotlight;
+        }
+
+        return $this->spotlight = $this->factory->createDefaultSpotlight();
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
     public function getTags() : array
     {
@@ -238,45 +299,6 @@ class Article extends BaseCmsService
         }
 
         return $this->arrFiles;
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="*** ☀️ Spotlight ***">
-    public function getSpotlightOrDefaultUrl(string $size) : string
-    {
-        return $this->getSpotlightOrDefault()->getUrl($this, $size);
-    }
-
-    public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($this, $size); }
-
-    public function getSpotlight() : ?ImageService
-    {
-        if( !$this->isListable() ) {
-            return null;
-        }
-
-        if( !empty($this->spotlight) ) {
-            return $this->spotlight;
-        }
-
-        $spotlightEntity = $this->entity->getSpotlight();
-        if( empty($spotlightEntity) ) {
-            return null;
-        }
-
-        $this->spotlight = $this->factory->createImage($spotlightEntity);
-        return $this->spotlight;
-    }
-
-
-    public function getSpotlightOrDefault() : ImageService
-    {
-        $spotlight = $this->getSpotlight();
-        if( !empty($spotlight) ) {
-            return $spotlight;
-        }
-
-        return $this->spotlight = $this->factory->createDefaultSpotlight();
     }
     //</editor-fold>
 

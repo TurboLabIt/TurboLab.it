@@ -8,8 +8,7 @@
 
             <div class="ratio ratio-1x1 flex-fill icon-wrapper">
                 <a href="{{ Link.url }}" {% if Link.blank %}target="_blank"{% endif %}>
-                    <img src="{{ asset(Link.icon) }}" loading="lazy"
-                         class="rounded-circle h-100 w-100 object-fit-cover"
+                    <img src="{{ asset(Link.icon) }}" loading="lazy" class="rounded-circle h-100 w-100 object-fit-cover"
                          alt="{{ Link.name }}" title="{{ Link.name }}">
                 </a>
             </div>

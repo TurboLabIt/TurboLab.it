@@ -231,7 +231,15 @@
                 </article>
                 <!-- ARTICLE main END -->
 
-                {% include 'parts/column-articles.html.twig' %}
+                {% if Article.currentUserCanEdit %}
+
+                    {% include 'article/editor/images.html.twig' %}
+
+                {% else %}
+
+                    {% include 'parts/column-articles.html.twig' %}
+
+                {% endif %}
 
             </div>
         </div>
