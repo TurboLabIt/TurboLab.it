@@ -2,19 +2,18 @@
 <div id="tli-article-editor-image-gallery" class="col-lg-4 sticky-top overflow-auto mt-15">
 
     {% embed 'parts/alert-chalkboard.html.twig' %}
-        {% block alertStyle %}collapseee tli-images-guide{% endblock %}
+        {% block alertStyle %}{% if Article.Images is empty %}collapse{% endif%} tli-images-guide{% endblock %}
         {% block alertTitle %}Immagini caricate{% endblock %}
         {% block alertBody %}Clicca o trascina un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
 
     {% embed 'parts/alert-chalkboard.html.twig' %}
-        {% block alertStyle %}collapseee tli-no-images-guide{% endblock %}
+        {% block alertStyle %}{% if Article.Images is not empty %}collapse{% endif%} tli-no-images-guide{% endblock %}
         {% block alertTitle %}Nessuna immagine caricata{% endblock %}
         {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
 
     <div class="row row-cols-2 g-1">
-
         {% for Image in Article.Images %}
             <div class="col">
                 <div class="ratio ratio-1x1">
@@ -23,9 +22,13 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
 
+    <div class="sticky-bottom text-center mt-2">
+        <button type="button" class="btn btn-primary">
+            <i class="fa-solid fa-upload"></i> Carica immagini
+        </button>
     </div>
 
 </div>
 <!-- ARTICLE side column editor images gallery END -->
-
