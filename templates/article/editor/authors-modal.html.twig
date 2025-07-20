@@ -10,7 +10,7 @@
 
         <h6 class="mb-2">Autori attuali</h6>
         <div class="list-group list-group-flush border rounded-3 p-2 tli-article-editor-current-authors-list"
-             data-changed="0" data-save-url="{{ path('app_editor_article_set-authors', {'articleId': Article.id}) }}">
+             data-changed="0" data-save-url="{{ path('app_article_edit_authors_submit', {'articleId': Article.id}) }}">
 
             {% embed 'article/editor/authors-modal-list-items.html.twig' with {'Authors': Article.Authors} only %}
                 {% block addAuthorClass %}d-none{% endblock %}
@@ -27,7 +27,7 @@
 
 
     <div class="tli-authors-autocomplete-container"
-         data-autocomplete-url="{{ path('app_editor_article_authors-autocomplete') }}">
+         data-autocomplete-url="{{ path('app_article_edit_authors_autocomplete') }}">
 
         <h6 class="mb-2">Aggiungi altri autori</h6>
         <div class="mb-2">

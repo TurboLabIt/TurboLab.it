@@ -2,7 +2,7 @@
 
     {% embed 'parts/alert-warning-message.html.twig' %}
         {% block alertBody %}
-            <a href="#" data-tli-modal-url="{{ path('app_editor_article_get-tags-modal', {articleId: Article.id}) }}">Nessun tag assegnato all'articolo</a>
+            <a href="#" data-tli-modal-url="{{ path('app_article_edit_tags_get-modal', {articleId: Article.id}) }}">Nessun tag assegnato all'articolo</a>
         {% endblock %}
     {% endembed %}
 

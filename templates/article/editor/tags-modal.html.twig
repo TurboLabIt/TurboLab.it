@@ -65,7 +65,7 @@
 
         <h6 class="text-secondary mb-3"><i class="fas fa-tag"></i> Tag già assegnati all'articolo:</h6>
         <div class="tli-tags-strip tli-article-editor-current-tags-list mb-2" data-changed="0"
-             data-save-url="{{ path('app_editor_article_set-tags', {'articleId': Article.id}) }}">
+             data-save-url="{{ path('app_article_edit_tags_submit', {'articleId': Article.id}) }}">
 
             {% embed 'article/editor/tags-modal-list-items.html.twig' with {'Tags': Article.Tags} %}
                 {% block removeTagClass %}{% endblock %}
@@ -96,7 +96,7 @@
 
 
     <div class="tli-tags-autocomplete-container"
-         data-autocomplete-url="{{ path('app_editor_article_tags-autocomplete') }}">
+         data-autocomplete-url="{{ path('app_article_edit_tags_autocomplete') }}">
 
         <h6 class="text-secondary mb-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca un tag o creane uno nuovo:</h6>
         <div class="mb-2">
