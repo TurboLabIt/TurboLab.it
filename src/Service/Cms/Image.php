@@ -145,6 +145,7 @@ class Image extends BaseCmsService
     {
         $imageFolderMod = $this->getFolderMod();
         $fileName       = $this->getOriginalFileName();
+
         return
             $this->projectDir->createVarDirFromFilePath(
                 static::UPLOADED_IMAGES_FOLDER_NAME . "/originals/$imageFolderMod/$fileName"

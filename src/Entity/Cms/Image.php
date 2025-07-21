@@ -40,6 +40,9 @@ class Image extends BaseCmsEntity
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     protected bool $reusable = false;
 
+    #[ORM\Column(length: 32, unique: true, options: ["fixed" => true])]
+    protected ?string $hash = null;
+
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
@@ -106,6 +109,14 @@ class Image extends BaseCmsEntity
     public function setReusable(bool $reusable) : static
     {
         $this->reusable = $reusable;
+        return $this;
+    }
+
+    public function getHash(): ?string { return $this->hash; }
+
+    public function setHash(string $hash) : static
+    {
+        $this->hash = $hash;
         return $this;
     }
 
