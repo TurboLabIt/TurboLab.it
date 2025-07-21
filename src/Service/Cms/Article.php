@@ -176,12 +176,11 @@ class Article extends BaseCmsService
 
             foreach($this->entity->getImages() as $junction) {
 
-                $junctionRanking = $junction->getRanking();
+                $junctionRanking    = $junction->getRanking();
+                $imageEntity        = $junction->getImage();
+                $imageId            = $imageEntity->getId();
 
-                $imageEntity= $junction->getImage();
-                $idImage    = $imageEntity->getId();
-
-                $this->arrImages[$idImage] =
+                $this->arrImages[$imageId] =
                     $this->factory->createImage($imageEntity)
                         ->setTempOrder($junctionRanking);
             }
