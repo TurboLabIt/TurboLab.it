@@ -18,6 +18,8 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
         formData.append('images[]', files[i]);
     }
 
+    let editorImageGallery = $('#tli-article-editor-image-gallery');
+
     const uploadCommandContainer = $('.tli-image-upload');
     uploadCommandContainer.addClass('d-none');
 
@@ -30,8 +32,11 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
     progressBar.width('0%');
     progressBar.attr('aria-valuenow', 0).text('0%');
 
+    let errorMessage = editorImageGallery.find('.alert-danger');
+    errorMessage.addClass('collapse');
+
     $.ajax({
-        url: $('#tli-article-editor-image-gallery').data('save-url'),
+        url: editorImageGallery.data('save-url'),
         type: 'POST',
         data: formData,
         processData: false,
@@ -49,20 +54,23 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
             return xhr;
         },
         success: function(response) {
-            debugger;
-            progressBar.addClass('bg-success');
-            //progressBarContainer.append('<div class="alert alert-success mt-2">✅ ' + response.message + '</div>');
 
-            $('#tli-article-editor-image-gallery .tli-no-images-guide').fadeOut('slow', function(){
-                $('#tli-article-editor-image-gallery .tli-images-guide').fadeIn('fast');
+            progressBar.addClass('bg-success');
+
+            $('#tli-images-gallery').append(response);
+
+            editorImageGallery.find('.tli-no-images-guide').fadeOut('slow', function(){
+                editorImageGallery.find('.tli-images-guide').fadeIn('fast');
             });
 
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            debugger;
+
             progressBar.addClass('bg-danger');
-            //const errorMsg = jqXHR.responseJSON ? jqXHR.responseJSON.error : 'An unknown error occurred.';
-            //progressBarContainer.append('<div class="alert alert-danger mt-2">❌ ' + errorMsg + '</div>');
+
+            errorMessage
+                .removeClass('collapse')
+                .html(jqXHR.responseText);
         },
         complete: function() {
 

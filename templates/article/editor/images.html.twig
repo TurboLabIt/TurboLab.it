@@ -14,7 +14,7 @@
         {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
 
-    <div class="row row-cols-2 g-1">
+    <div id="tli-images-gallery" class="row row-cols-2 g-1">
         {% for Image in Article.Images %}
             <div class="col">
                 <div class="ratio ratio-1x1">
@@ -38,6 +38,11 @@
              aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar" style="width: 0%"></div>
         </div>
+
+        {% embed 'parts/alert-error-message.html.twig' %}
+            {% block alertStyle %}mt-2 collapse{% endblock %}
+            {% block alertBodyIcon %}{% endblock %}
+        {% endembed %}
 
     </div>
 

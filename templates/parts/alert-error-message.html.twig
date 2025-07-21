@@ -1,0 +1,8 @@
+<div class="alert alert-danger {% block alertStyle %}{% endblock %}" role="alert">
+
+    <div class="{% block alertBodyStyle %}text-center{% endblock %}">
+        {% block alertBodyIcon %}<i class="fa-solid fa-xmark" style="color: red;"></i>{% endblock %}
+        {% block alertBody %}{% endblock %}
+    </div>
+
+</div>
