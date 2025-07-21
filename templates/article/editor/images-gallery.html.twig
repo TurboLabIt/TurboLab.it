@@ -1,0 +1,46 @@
+<!-- ARTICLE side column editor images gallery START -->
+<div id="tli-article-editor-image-gallery" class="col-lg-4 sticky-top overflow-auto mt-15"
+     data-save-url="{{ path('app_article_edit_images-upload', {'articleId': Article.id}) }}">
+
+    {% embed 'parts/alert-chalkboard.html.twig' %}
+        {% block alertStyle %}{% if Article.Images is empty %}collapse{% endif %} tli-images-guide{% endblock %}
+        {% block alertTitle %}Immagini caricate{% endblock %}
+        {% block alertBody %}Clicca o trascina un'immagine per inserirla nell'articolo{% endblock %}
+    {% endembed %}
+
+    {% embed 'parts/alert-warning.html.twig' %}
+        {% block alertStyle %}{% if Article.Images is not empty %}collapse{% endif%} tli-no-images-guide{% endblock %}
+        {% block alertTitle %}Nessuna immagine caricata{% endblock %}
+        {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
+    {% endembed %}
+
+
+    <div id="tli-images-gallery" class="row row-cols-2 g-1">
+        {% embed 'article/editor/images.html.twig' with {'Article': Article, 'Images': Article.Images} only %}
+            {% block imageBorder %}{% endblock %}
+        {% endembed %}
+    </div>
+
+
+    <div class="sticky-bottom text-center mt-2">
+
+        <button type="button" class="btn btn-primary tli-image-upload">
+            <i class="fa-solid fa-upload"></i> Carica immagini
+        </button>
+
+        <input type="file" multiple accept="image/*" class="d-none">
+
+        <div id="tli-image-upload-progress" class="progress mt-2 collapse" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
+
+        {% embed 'parts/alert-error-message.html.twig' %}
+            {% block alertStyle %}mt-2 collapse{% endblock %}
+            {% block alertBodyIcon %}{% endblock %}
+        {% endembed %}
+
+    </div>
+
+</div>
+<!-- ARTICLE side column editor images gallery END -->

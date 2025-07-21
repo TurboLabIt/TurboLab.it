@@ -1,8 +1,0 @@
-{% for Image in Images %}
-    <div class="col">
-        <div class="ratio ratio-1x1">
-            <img src="{{ Image.url(Article, 'med') }}" loading="lazy" class="img-fluid object-fit-cover"
-                 alt="{{ Image.title }}" title="{{ Image.title }}">
-        </div>
-    </div>
-{% endfor %}

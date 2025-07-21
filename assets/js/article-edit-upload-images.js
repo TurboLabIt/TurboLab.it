@@ -35,6 +35,8 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
     let errorMessage = editorImageGallery.find('.alert-danger');
     errorMessage.addClass('collapse');
 
+    editorImageGallery.find('.border-success').removeClass('border border-2 border-success')
+
     $.ajax({
         url: editorImageGallery.data('save-url'),
         type: 'POST',
