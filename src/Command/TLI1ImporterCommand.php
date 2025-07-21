@@ -64,7 +64,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
 
     public function __construct(
-        array $arrConfig, protected ProjectDir $projectDir, protected Factory $Factory,
+        array $arrConfig, protected ProjectDir $projectDir, protected Factory $factory,
         protected TextProcessor $textProcessor, protected HtmlProcessorForStorage $htmlProcessor,
 
         protected EntityManagerInterface $em,
@@ -497,7 +497,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->processItems($arrTli1Images, [$this, 'processTli1Image'], null, [$this, 'buildItemTitle']);
 
         $this
-            ->fxTitle("Assigning the cover image to each article...")
+            ->fxTitle("Assigning the spotlight to each article...")
             ->processItems($this->arrNewArticles, [$this, 'assignSpotlight'], null, function(){ return '';} );
 
         return $this;
@@ -527,6 +527,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                 ->setTitle($title)
                 ->setFormat($format)
                 ->setWatermarkPosition($watermark)
+                // unique hash wasn't implemented in TLI1 -> real hashing would violate it
+                ->setHash("tli1-import_" . $imageId)
                 ->setCreatedAt($createdAt)
                 ->setUpdatedAt($createdAt);
 
@@ -576,7 +578,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->arrNewImages[$imageId] = $entityTli2Image;
 
         // file copy
-        $imageService   = $this->Factory->createImage($entityTli2Image);
+        $imageService   = $this->factory->createImage($entityTli2Image);
         $filename       = $imageService->getOriginalFileName();
         $sourceFilePath = $this->projectDir->getVarDirFromFilePath("uploaded-assets-downloaded-from-remote/images/$filename");
         $destFilePath   = $imageService->getOriginalFilePath();
@@ -908,7 +910,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->arrNewFiles[$fileId] = $entityTli2File;
 
 
-        $fileService = $this->Factory->createFile($entityTli2File);
+        $fileService = $this->factory->createFile($entityTli2File);
         if( !$fileService->isLocal() ) {
             return $this;
         }
