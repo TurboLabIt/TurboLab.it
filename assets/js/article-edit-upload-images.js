@@ -22,11 +22,13 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
     uploadCommandContainer.addClass('d-none');
 
     const progressBarContainer = $('#tli-image-upload-progress');
-    progressBarContainer.removeClass('d-none');
+    progressBarContainer.removeClass('collapse');
 
     const progressBar = progressBarContainer.find('.progress-bar');
     progressBar.addClass('progress-bar-animated progress-bar-striped');
     progressBar.removeClass('bg-success bg-danger');
+    progressBar.width('0%');
+    progressBar.attr('aria-valuenow', 0).text('0%');
 
     $.ajax({
         url: $('#tli-article-editor-image-gallery').data('save-url'),
@@ -60,9 +62,14 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
         complete: function() {
 
             $(this).val('');
-            uploadCommandContainer.removeClass('d-none');
-            //progressBarContainer.addClass('d-none');
             progressBar.removeClass('progress-bar-animated progress-bar-striped');
+
+            progressBarContainer.delay(3000).fadeOut('slow', function(){
+
+                $(this).addClass('collapse');
+                $(this).css('display', '');
+                uploadCommandContainer.removeClass('d-none');
+            });
         }
     });
 });
