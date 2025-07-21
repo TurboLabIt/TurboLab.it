@@ -83,6 +83,7 @@ class Image extends BaseCmsService
     protected ImageEntity $entity;
     protected static ?string $buildFileExtension    = null;
     protected ?string $lastBuiltImageMimeType       = null;
+    protected int $tempOrder = 1;
 
 
     public function __construct(protected Factory $factory)
@@ -390,15 +391,30 @@ class Image extends BaseCmsService
 
     public static function getNewsletterSpotlightId() : int
     {
-        return
-            array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT));
+        return array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT));
     }
+
+
+    public function getUrl(Article $article, string $size) : string
+    {
+        return $this->factory->getImageUrlGenerator()->generateUrl($this, $article, $size);
+    }
+
+
+    public function getShortUrl(string $size) : string
+    {
+        return $this->factory->getImageUrlGenerator()->generateShortUrl($this, $size);
+    }
+
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
-    public function getUrl(Article $article, string $size) : string
-        { return $this->factory->getImageUrlGenerator()->generateUrl($this, $article, $size); }
 
-    public function getShortUrl(string $size) : string
-        { return $this->factory->getImageUrlGenerator()->generateShortUrl($this, $size); }
+    public function getTempOrder() : int { return $this->tempOrder; }
+
+    public function setTempOrder(int $tempOrder) : static
+    {
+        $this->tempOrder = $tempOrder;
+        return $this;
+    }
 }

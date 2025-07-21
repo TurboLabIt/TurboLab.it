@@ -174,15 +174,20 @@ class Article extends BaseCmsService
 
             $this->arrImages = [];
 
-            foreach( $this->entity->getImages() as $junction ) {
+            foreach($this->entity->getImages() as $junction) {
 
-                $image      = $junction->getImage();
-                $idImage    = $image->getId();
-                $this->arrImages[$idImage] = $this->factory->createImage($image);
+                $junctionRanking = $junction->getRanking();
+
+                $imageEntity= $junction->getImage();
+                $idImage    = $imageEntity->getId();
+
+                $this->arrImages[$idImage] =
+                    $this->factory->createImage($imageEntity)
+                        ->setTempOrder($junctionRanking);
             }
 
             usort($this->arrImages, function(Image $img1, Image $img2) {
-                return $img2->getEntity()->getCreatedAt() <=> $img1->getEntity()->getCreatedAt();
+                return $img2->getTempOrder() <=> $img1->getTempOrder();
             });
         }
 
