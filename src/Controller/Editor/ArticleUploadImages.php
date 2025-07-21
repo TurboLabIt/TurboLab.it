@@ -12,6 +12,8 @@ class ArticleUploadImages extends ArticleEditBaseController
     public function upload(int $articleId) : JsonResponse|Response
     {
         try {
+            return new Response('OK');
+
             dd("TODO");
             $arrIdsAndTags = $this->request->get('tags') ?? [];
             $this->loadArticleEditor($articleId)->setTagsFromIdsAndTags($arrIdsAndTags);
