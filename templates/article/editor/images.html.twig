@@ -3,13 +3,13 @@
      data-save-url="{{ path('app_article_edit_images-upload', {'articleId': Article.id}) }}">
 
     {% embed 'parts/alert-chalkboard.html.twig' %}
-        {% block alertStyle %}{% if Article.Images is empty %}collapse{% endif%} tli-images-guide{% endblock %}
+        {% block alertStyle %}{% if Article.Images is empty %}collapse{% endif %} tli-images-guide{% endblock %}
         {% block alertTitle %}Immagini caricate{% endblock %}
         {% block alertBody %}Clicca o trascina un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
 
-    {% embed 'parts/alert-chalkboard.html.twig' %}
-        {% block alertStyle %}{% if Article.Images is not empty %}collapse{% endif%} tli-no-images-guide{% endblock %}
+    {% embed 'parts/alert-warning.html.twig' %}
+        {% block alertStyle %}{% if Article.Images is not empty %}collapseeee{% endif%} tli-no-images-guide{% endblock %}
         {% block alertTitle %}Nessuna immagine caricata{% endblock %}
         {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}

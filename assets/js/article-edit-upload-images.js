@@ -52,6 +52,11 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
             debugger;
             progressBar.addClass('bg-success');
             //progressBarContainer.append('<div class="alert alert-success mt-2">✅ ' + response.message + '</div>');
+
+            $('#tli-article-editor-image-gallery .tli-no-images-guide').fadeOut('slow', function(){
+                $('#tli-article-editor-image-gallery .tli-images-guide').fadeIn('fast');
+            });
+
         },
         error: function(jqXHR, textStatus, errorThrown) {
             debugger;
