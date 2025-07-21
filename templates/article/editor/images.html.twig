@@ -9,7 +9,7 @@
     {% endembed %}
 
     {% embed 'parts/alert-warning.html.twig' %}
-        {% block alertStyle %}{% if Article.Images is not empty %}collapseeee{% endif%} tli-no-images-guide{% endblock %}
+        {% block alertStyle %}{% if Article.Images is not empty %}collapse{% endif%} tli-no-images-guide{% endblock %}
         {% block alertTitle %}Nessuna immagine caricata{% endblock %}
         {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
