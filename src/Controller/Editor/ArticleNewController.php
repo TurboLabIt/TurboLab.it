@@ -68,14 +68,7 @@ class ArticleNewController extends ArticleEditBaseController
     #[Route('/scrivi/salva',  name: 'app_article_new_submit', methods: ['POST'])]
     public function submit() : Response
     {
-        $currentUser = $this->factory->getCurrentUser();
-
-        if( empty($currentUser) ) {
-
-            throw $this->createAccessDeniedException(
-                'Non sei loggato! Solo gli utenti registrati possono creare nuovi articoli.'
-            );
-        }
+        $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
 
         $this->validateCsrfToken();
 
@@ -96,17 +89,10 @@ class ArticleNewController extends ArticleEditBaseController
 
         $newArticleFormat = $this->request->get(static::FORMAT_FIELD_NAME);
 
-        /*
-         * $currentUser is unknown to Doctrine: if we try to set it as Author directly:
-         * A new entity was found through the relationship 'App\Entity\Cms\ArticleAuthor#user' that was not configured to cascade persist operations for entity: App\Entity\PhpBB\User@--
-         */
-        $currentUserId = $currentUser->getId();
-        $author = $this->factory->createUser()->load($currentUserId);
-
         $this->articleEditor
             ->setFormat($newArticleFormat)
-            ->addAuthor($author)
-            ->autotag($author)
+            ->addAuthor($currentUserAsAuthor)
+            ->autotag($currentUserAsAuthor)
             ->save();
 
         return $this->redirect( $this->articleEditor->getUrl() );

@@ -6,6 +6,7 @@ use App\Service\Cms\Article;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
+use App\Service\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -15,6 +16,7 @@ use Twig\Environment;
 
 abstract class ArticleEditBaseController extends BaseController
 {
+    protected User $currentUserAsAuthor;
 
     public function __construct(
         protected Factory $factory,
@@ -31,9 +33,8 @@ abstract class ArticleEditBaseController extends BaseController
     {
         $this->ajaxOnly();
 
-        if( empty($this->getUser()) ) {
-            throw $this->createAccessDeniedException('Non sei loggato!');
-        }
+        // login check
+        $this->getCurrentUserAsAuthor();
 
         $this->articleEditor->load($articleId);
 
@@ -42,6 +43,29 @@ abstract class ArticleEditBaseController extends BaseController
         }
 
         return $this->articleEditor;
+    }
+
+
+    protected function getCurrentUserAsAuthor() : User
+    {
+        /**
+         * $currentUser is unknown to Doctrine: if we try to set it as Author directly:
+         *
+         * A new entity was found through the relationship 'App\Entity\Cms\ArticleAuthor#user' that was not configured
+         *   to cascade persist operations for entity: App\Entity\PhpBB\User@--
+         */
+
+        if( !empty($this->currentUserAsAuthor) ) {
+            return $this->currentUserAsAuthor;
+        }
+
+        $currentUserId = $this->getUser()?->getId();
+
+        if( empty($currentUserId) ) {
+            throw $this->createAccessDeniedException('Non sei loggato!');
+        }
+
+        return $this->factory->createUser()->load($currentUserId);
     }
 
 
