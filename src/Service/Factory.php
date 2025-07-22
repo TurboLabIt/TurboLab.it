@@ -12,11 +12,13 @@ use App\Service\Cms\ArticleUrlGenerator;
 use App\Service\Cms\File as FileService;
 use App\Service\Cms\FileUrlGenerator;
 use App\Service\Cms\Image as ImageService;
+use App\Service\Cms\ImageEditor;
 use App\Service\Cms\ImageUrlGenerator;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
+use App\ServiceCollection\Cms\ImageEditorCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\PhpBB\Topic as TopicService;
@@ -211,10 +213,23 @@ class Factory
     }
 
 
+    public function createImageEditor(?ImageEntity $entity = null) : ImageEditor
+    {
+        $service = new ImageEditor($this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+
+
     public function getImageUrlGenerator() : ImageUrlGenerator { return $this->imageUrlGenerator; }
 
 
     public function createImageCollection() : ImageCollection { return new ImageCollection($this); }
+
+    public function createImageEditorCollection() : ImageCollection { return new ImageEditorCollection($this); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** File ***">

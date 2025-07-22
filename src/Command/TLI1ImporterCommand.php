@@ -22,6 +22,7 @@ use App\Repository\Cms\TagRepository;
 use App\Repository\PhpBB\TopicRepository;
 use App\Repository\PhpBB\UserRepository;
 use App\Service\Cms\Image;
+use App\Service\Cms\ImageEditor;
 use App\Service\Cms\Tag;
 use App\Service\Factory;
 use App\Service\HtmlProcessorForStorage;
@@ -31,6 +32,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use PDO;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -61,6 +63,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     protected array $arrNewTags         = [];
     protected array $arrNewFiles        = [];
     protected array $arrNewBadges       = [];
+
+    protected array $arrImagesReHashReport = [
+        self::SUCCESS   => 0,
+        self::FAILURE   => 0,
+        'list'          => []
+    ];
 
 
     public function __construct(
@@ -148,6 +156,10 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         if( $this->isNotDryRun() ) {
             $this->em->flush();
         }
+
+        $this
+            ->fxTitle("Set hash on imported images...")
+            ->hashImages();
 
         return $this->endWithSuccess();
     }
@@ -493,7 +505,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $this->fxOK( count($arrTli2Images) . " item(s) loaded");
         unset($arrTli2Images);
 
-        $this->io->text("Processing every TLI2 image...");
+        $this->io->text("Processing every TLI1 image...");
         $this->processItems($arrTli1Images, [$this, 'processTli1Image'], null, [$this, 'buildItemTitle']);
 
         $this
@@ -602,6 +614,84 @@ class TLI1ImporterCommand extends AbstractBaseCommand
         $spotlight     = $this->arrNewImages[$spotlightId] ?? null;
 
         $article->setSpotlight($spotlight);
+        return $this;
+    }
+
+
+    protected function hashImages() : static
+    {
+        if( $this->getCliOption(static::OPT_SKIP_IMAGES) ) {
+            return $this->fxWarning('🦘 Skipped!');
+        }
+
+        $sqlSelect = "SELECT id FROM `image` WHERE hash LIKE 'tli1%' ORDER BY id ASC";
+        $arrImageIds = $this->em->getConnection()->fetchFirstColumn($sqlSelect);
+
+        if( empty($arrImageIds) ) {
+            return $this->fxWarning("No TLI1 images to re-hash found!");
+        }
+
+        $imagesToHash = $this->factory->createImageEditorCollection()->load($arrImageIds);
+        $this->fxOK( $imagesToHash->count() . " image(s) to re-hash loaded");
+
+        $this->io->text("Re-hashing images...");
+        $this->processItems($imagesToHash, [$this, 'rehashImage'], $imagesToHash->count(), [$this, 'buildItemTitle']);
+
+        (new Table($this->output))
+            ->setHeaders(['Total', '✅ OK', '❌ Dupes'])
+            ->setRows([
+                [$imagesToHash->count(), $this->arrImagesReHashReport[static::SUCCESS], $this->arrImagesReHashReport[static::FAILURE]],
+            ])->render();
+
+        $rows = array_map(
+            fn($key, $value) => [$key, $value],
+            array_keys($this->arrImagesReHashReport['list']),
+            $this->arrImagesReHashReport['list']
+        );
+
+        (new Table($this->output))
+            ->setHeaders(['Image ID', 'Hash'])
+            ->setRows($rows)
+            ->render();
+
+        return $this;
+    }
+
+
+    protected function rehashImage($index, ImageEditor $image) : static
+    {
+        $imageId = $image->getId();
+        $newHash = $image->rehash()->getEntity()->getHash();
+
+        $sqlUpdate = "
+                UPDATE `image` SET hash = :hash WHERE id = :id AND
+                  NOT EXISTS (
+                    SELECT 1 FROM (
+                      SELECT id FROM `image` WHERE hash = :hash
+                    ) AS temp
+                  )
+            ";
+
+        if( $this->isDryRun() ) {
+            return $this;
+        }
+
+        $affectedRows =
+            $this->em->getConnection()->executeStatement($sqlUpdate, [
+                'hash'  => $newHash,
+                'id'    => $imageId,
+            ]);
+
+        if ($affectedRows === 0) {
+
+            $this->arrImagesReHashReport[static::FAILURE]++;
+            $this->arrImagesReHashReport['list'][$imageId] = $newHash;
+
+        } else {
+
+            $this->arrImagesReHashReport[static::SUCCESS]++;
+        }
+
         return $this;
     }
 

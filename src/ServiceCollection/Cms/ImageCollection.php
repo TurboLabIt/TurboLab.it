@@ -14,6 +14,7 @@ class ImageCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = ImageService::ENTITY_CLASS;
 
+
     public function get404() : ImageService
     {
         $entity =
@@ -26,5 +27,7 @@ class ImageCollection extends BaseServiceEntityCollection
 
 
     public function createService(?ImageEntity $entity = null) : ImageService
-        { return $this->factory->createImage($entity); }
+    {
+        return $this->factory->createImage($entity);
+    }
 }
