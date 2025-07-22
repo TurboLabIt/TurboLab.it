@@ -18,6 +18,8 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
         formData.append('images[]', files[i]);
     }
 
+    let thisInputFile = $(this);
+
     let editorImageGallery = $('#tli-article-editor-image-gallery');
 
     const uploadCommandContainer = $('.tli-image-upload');
@@ -76,7 +78,7 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
         },
         complete: function() {
 
-            $(this).val('');
+            thisInputFile.val('');
             progressBar.removeClass('progress-bar-animated progress-bar-striped');
 
             progressBarContainer.delay(3000).fadeOut('slow', function(){
