@@ -1,6 +1,10 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Entity\Cms\ArticleImage;
+use App\Entity\Cms\ImageAuthor;
+use App\Service\Factory;
+use App\Service\TextProcessor;
 use App\Service\User;
 use Imagine\Exception\NotSupportedException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -9,6 +13,19 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ImageEditor extends Image
 {
     protected UploadedFile $file;
+
+    public function __construct(Factory $factory, protected TextProcessor $textProcessor)
+    {
+        parent::__construct($factory);
+    }
+
+
+    public function setTitle(string $newTitle) : static
+    {
+        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
+        $this->entity->setTitle($cleanTitle);
+        return $this;
+    }
 
     /*
     public function loadOrCreateFromUploadedFile(UploadedFile $uploadedFile) : ImageEditor
@@ -23,19 +40,19 @@ class ImageEditor extends Image
     }
 */
 
-    public function createFromFilePath(UploadedFile $file, User $author, ?string $hash = null) : ImageEditor
+    public function createFromUploadedFile(UploadedFile $file) : ImageEditor
     {
         if( !str_starts_with($file->getMimeType(), 'image') ) {
             throw new NotSupportedException('The MIME is not image/*');
         }
 
-        $hash = $hash ?: hash_file('md5', $file->getPathname() );
+        $hash = hash_file('md5', $file->getPathname() );
 
-        $this->entity
+        $this
             ->setTitle( $file->getClientOriginalName() )
-            ->setFormat( $file->guessExtension() )
-            ->setHash($hash)
-            ->addAuthor($author);
+            ->entity
+                ->setFormat( $file->guessExtension() )
+                ->setHash($hash);
 
         $this->save();
 
@@ -54,6 +71,29 @@ class ImageEditor extends Image
         return $this;
     }
 
+
+    public function addAuthor(User $author) : static
+    {
+        $this->entity->addAuthor(
+            (new ImageAuthor())
+                ->setImage($this->entity)
+                ->setUser( $author->getEntity() )
+        );
+
+        return $this;
+    }
+
+
+    public function addToArticle(ArticleEditor $articleEditor) : static
+    {
+        $this->entity->addArticle(
+            (new ArticleImage())
+                ->setImage($this->entity)
+                ->setArticle( $articleEditor->getEntity() )
+        );
+
+        return $this;
+    }
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">

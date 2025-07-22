@@ -215,7 +215,7 @@ class Factory
 
     public function createImageEditor(?ImageEntity $entity = null) : ImageEditor
     {
-        $service = new ImageEditor($this);
+        $service = new ImageEditor($this, $this->createTextProcessor());
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }

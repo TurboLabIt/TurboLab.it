@@ -26,6 +26,14 @@ class ImageCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadByHash(array|int $hashes) : static
+    {
+        $hashes = is_array($hashes) ? $hashes : [$hashes];
+        $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash($hashes);
+        return $this->setEntities($arrEntities);
+    }
+
+
     public function createService(?ImageEntity $entity = null) : ImageService
     {
         return $this->factory->createImage($entity);

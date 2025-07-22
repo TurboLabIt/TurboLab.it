@@ -2,6 +2,7 @@
 namespace App\ServiceCollection\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
+use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ImageEditor;
 use App\Service\User;
 
@@ -31,39 +32,42 @@ class ImageEditorCollection extends ImageCollection
             ];
         }
 
-        /** @var ImageCollection $existingImages */
-        $existingImages = $this->factory->createImageCollection()->loadByHash( array_keys($arrData) );
+
+        $arrExistingImagesEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash( array_keys($arrData) );
 
         foreach($arrData as $hash => $item) {
 
-            $existingImage = $existingImages->lookupSearchExtract($hash, function(string $hashToCheck, string $image) {
-                return $hashToCheck == $image->getHash();
-            });
+            $existingImageEntity = $arrExistingImagesEntities[$hash] ?? null;
 
-            if( empty($existingImage) ) {
+            if( empty($existingImageEntity) ) {
 
-                $newImage =
-                    $this->factory->createImageEditor()
-                        ->createFromFilePath($item["File"], $hash)
-                        ->save(false);
-
-                $item["Image"] = $newImage;
+                $arrData[$hash]["Image"] =
+                    $this->createService()
+                        ->createFromUploadedFile($item["File"]);
 
             } else {
 
-                $item["Image"] = $existingImage;
+                $arrData[$hash]["Image"] = $this->createService($existingImageEntity);
             }
 
-            $item["Image"]->addAuthor($author);
+            $arrData[$hash]["Image"]->addAuthor($author);
         }
-
-        $this->factory->getEntityManager()->flush();
 
         foreach($arrData as $item) {
 
             $imageId = (string)$item["Image"]->getId();
             $this->arrData[$imageId] = $item["Image"];
         }
+
+        return $this;
+    }
+
+
+    public function addToArticle(ArticleEditor $articleEditor) : static
+    {
+        $this->iterate(function(ImageEditor $image) use($articleEditor) {
+            $image->addToArticle($articleEditor);
+        });
 
         return $this;
     }

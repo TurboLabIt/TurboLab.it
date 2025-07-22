@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller\Editor;
 
+use Error;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,13 +14,24 @@ class ArticleUploadImages extends ArticleEditBaseController
     public function upload(int $articleId) : JsonResponse|Response
     {
         try {
-            return new Response('OK');
 
-            dd("TODO");
-            $arrIdsAndTags = $this->request->get('tags') ?? [];
-            $this->loadArticleEditor($articleId)->setTagsFromIdsAndTags($arrIdsAndTags);
+            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
+
+            $this->loadArticleEditor($articleId);
+
+            $uploadedImages = $this->request->files->get('images', []);
+
+            $images =
+                $this->factory->createImageEditorCollection()
+                    ->setFromUpload($uploadedImages, $currentUserAsAuthor)
+                    ->addToArticle($this->articleEditor);
+
             $this->factory->getEntityManager()->flush();
-            return $this->jsonOKResponse("Tag salvati");
+
+            return $this->render('article/editor/images.html.twig', [
+                'Images'    => $images,
+                'Article'   => $this->articleEditor
+            ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
