@@ -9,12 +9,18 @@ rootCheck
 
 wsuSourceFrameworkScript cleaner
 
-#fxTitle "Deleting processed file..."
-XML_PROCESSED_RETENTION_DAYS=20
-#find "${PROJECT_DIR}var/xml/processed/"* -mtime +${XML_PROCESSED_RETENTION_DAYS} -name '*' -delete
-#fxOK
+if [ "${APP_ENV}" == "dev" ]; then
 
-#fxTitle "Deleting something else..."
-#...
+  source /usr/local/turbolab.it/webstackup/script/mysql/maintenance.sh
+
+  service mysql stop
+  service nginx stop
+
+  apt clean
+  vmware-toolbox-cmd disk shrink /
+
+  service mysql start
+  service nginx start
+fi
 
 source ${SCRIPT_DIR}/script_end.sh
