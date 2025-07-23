@@ -555,13 +555,12 @@ class TLI1ImporterCommand extends AbstractBaseCommand
 
         $articleCreatedAt = $article->getCreatedAt();
 
-        $imageArticleLink =
+        $article->addImage(
             (new ArticleImage())
-                ->setArticle($article)
+                ->setImage($entityTli2Image)
                 ->setCreatedAt($articleCreatedAt)
-                ->setUpdatedAt($articleCreatedAt);
-
-        $entityTli2Image->addArticle($imageArticleLink);
+                ->setUpdatedAt($articleCreatedAt)
+        );
 
         // IMAGE AUTHOR(S)
         $arrArticleAuthors = $article->getAuthors();
@@ -574,7 +573,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             );
         }
 
-        foreach ($arrArticleAuthors as $idx => $articleAuthor) {
+        foreach($arrArticleAuthors as $idx => $articleAuthor) {
 
             $imageAuthor =
                 (new ImageAuthor())
