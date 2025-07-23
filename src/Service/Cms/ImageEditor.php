@@ -1,17 +1,19 @@
 <?php
 namespace App\Service\Cms;
 
-use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ImageAuthor;
 use App\Service\Factory;
 use App\Service\TextProcessor;
 use App\Service\User;
+use App\Trait\SaveableTrait;
 use Imagine\Exception\NotSupportedException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
 class ImageEditor extends Image
 {
+    use SaveableTrait;
+
     protected UploadedFile $file;
 
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
@@ -27,18 +29,6 @@ class ImageEditor extends Image
         return $this;
     }
 
-    /*
-    public function loadOrCreateFromUploadedFile(UploadedFile $uploadedFile) : ImageEditor
-    {
-        if( !str_starts_with($uploadedFile->getMimeType(), 'image') ) {
-            throw new NotSupportedException('The MIME is not image/*');
-        }
-
-        $fileHash =
-
-        $image = $this->loadByHash();
-    }
-*/
 
     public function createFromUploadedFile(UploadedFile $file) : ImageEditor
     {
@@ -76,24 +66,9 @@ class ImageEditor extends Image
     {
         $this->entity->addAuthor(
             (new ImageAuthor())
-                ->setImage($this->entity)
                 ->setUser( $author->getEntity() )
         );
 
         return $this;
     }
-
-
-    //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
-    public function save(bool $persist = true) : static
-    {
-        if($persist) {
-
-            $this->factory->getEntityManager()->persist($this->entity);
-            $this->factory->getEntityManager()->flush();
-        }
-
-        return $this;
-    }
-    //</editor-fold>
 }

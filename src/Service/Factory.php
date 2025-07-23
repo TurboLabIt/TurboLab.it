@@ -19,6 +19,7 @@ use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\ServiceCollection\Cms\ImageEditorCollection;
+use App\ServiceCollection\Cms\TagEditorCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\PhpBB\Topic as TopicService;
@@ -180,7 +181,10 @@ class Factory
 
     public function getTagUrlGenerator() : TagUrlGenerator { return $this->tagUrlGenerator; }
 
+
     public function createTagCollection() : TagCollection { return new TagCollection($this); }
+
+    public function createTagEditorCollection() : TagEditorCollection { return new TagEditorCollection($this); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** Image ***">

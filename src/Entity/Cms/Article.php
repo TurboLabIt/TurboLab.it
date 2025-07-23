@@ -172,16 +172,23 @@ class Article extends BaseCmsEntity
 
     public function addTag(ArticleTag $tag) : static
     {
+        $ranking = 0;
         $currentItems = $this->getTags();
         foreach($currentItems as $item) {
 
             if( $item->getTag()->getId() == $tag->getTag()->getId() ) {
                 return $this;
             }
+
+            $itemRanking    = $item->getRanking();
+            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
         }
 
+        $tag
+            ->setArticle($this)
+            ->setRanking(++$ranking);
+
         $this->tags->add($tag);
-        $tag->setArticle($this);
 
         return $this;
     }

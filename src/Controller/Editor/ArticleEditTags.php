@@ -54,8 +54,18 @@ class ArticleEditTags extends ArticleEditBaseController
     {
         try {
 
+            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
+
+            $this->loadArticleEditor($articleId);
+
             $arrIdsAndTags = $this->request->get('tags') ?? [];
-            $this->loadArticleEditor($articleId)->setTagsFromIdsAndTags($arrIdsAndTags);
+
+            $tags =
+                $this->factory->createTagEditorCollection()
+                    ->setFromIdsAndTags($arrIdsAndTags, $currentUserAsAuthor);
+
+            $this->articleEditor->setTags($tags, $currentUserAsAuthor);
+
             $this->factory->getEntityManager()->flush();
             return $this->jsonOKResponse("Tag salvati");
 

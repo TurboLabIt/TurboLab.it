@@ -2,7 +2,6 @@
 namespace App\ServiceCollection\Cms;
 
 use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ImageEditor;
 use App\Service\User;
 
@@ -33,11 +32,11 @@ class ImageEditorCollection extends ImageCollection
         }
 
 
-        $arrExistingImagesEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash( array_keys($arrData) );
+        $arrExistingImageEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash( array_keys($arrData) );
 
         foreach($arrData as $hash => $item) {
 
-            $existingImageEntity = $arrExistingImagesEntities[$hash] ?? null;
+            $existingImageEntity = $arrExistingImageEntities[$hash] ?? null;
 
             if( empty($existingImageEntity) ) {
 
@@ -58,16 +57,6 @@ class ImageEditorCollection extends ImageCollection
             $imageId = (string)$item["Image"]->getId();
             $this->arrData[$imageId] = $item["Image"];
         }
-
-        return $this;
-    }
-
-
-    public function addToArticle(ArticleEditor $articleEditor) : static
-    {
-        $this->iterate(function(ImageEditor $image) use($articleEditor) {
-            $image->addToArticle($articleEditor);
-        });
 
         return $this;
     }

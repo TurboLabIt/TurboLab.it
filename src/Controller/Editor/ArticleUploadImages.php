@@ -25,7 +25,7 @@ class ArticleUploadImages extends ArticleEditBaseController
                 $this->factory->createImageEditorCollection()
                     ->setFromUpload($uploadedImages, $currentUserAsAuthor);
 
-            $this->articleEditor->addImages($images);
+            $this->articleEditor->addImages($images, $currentUserAsAuthor);
 
             $this->factory->getEntityManager()->flush();
 

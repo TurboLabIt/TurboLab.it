@@ -3,19 +3,24 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
+use App\Entity\Cms\TagAuthor;
 use App\Service\Factory;
 use App\Service\TextProcessor;
+use App\Service\User;
+use App\Trait\SaveableTrait;
 
 
 class TagEditor extends Tag
 {
+    use SaveableTrait;
+
+
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
     {
         parent::__construct($factory);
     }
 
 
-    //<editor-fold defaultstate="collapsed" desc="*** 📜 Title ***">
     public function setTitle(string $newTitle) : static
     {
         $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
@@ -23,9 +28,8 @@ class TagEditor extends Tag
         $this->entity->setTitle($cleanTitle);
         return $this;
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** ♻️ Replacement ***">
+
     public function setReplacement(Tag|TagEntity|null $replacementTag) : static
     {
         $replacementTag = $replacementTag instanceof Tag ? $replacementTag->getEntity() : $replacementTag;
@@ -53,18 +57,15 @@ class TagEditor extends Tag
 
         return $this;
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
-    public function save(bool $persist = true) : static
+
+    public function addAuthor(User $author) : static
     {
-        if($persist) {
-
-            $this->factory->getEntityManager()->persist($this->entity);
-            $this->factory->getEntityManager()->flush();
-        }
+        $this->entity->addAuthor(
+            (new TagAuthor())
+                ->setUser( $author->getEntity() )
+        );
 
         return $this;
     }
-    //</editor-fold>
 }

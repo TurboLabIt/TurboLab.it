@@ -5,12 +5,12 @@ use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
+use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ArticleUpdateException;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\TextProcessor;
 use App\Service\User;
-use App\ServiceCollection\Cms\ImageCollection;
 use DateTimeInterface;
 use Exception;
 
@@ -187,128 +187,53 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
-    public function addTag(Tag|TagEntity $tag, User $user) : static
+    public function addTag(Tag|TagEntity $tag, User $author) : static
     {
         $tagToAdd = $tag instanceof Tag ? $tag->getEntity() : $tag;
 
         $this->entity->addTag(
             (new ArticleTag())
-                ->setArticle($this->entity)
                 ->setTag($tagToAdd)
-                ->setUser( $user->getEntity() )
+                ->setUser( $author->getEntity() )
         );
 
         return $this;
     }
 
 
-    public function setTagsFromIdsAndTags(array $arrIdsAndTags) : static
+    public function setTags(iterable $newTags, User $author) : static
     {
-        // validation
-        $arrValidItems  = [];
-        $arrUniqueIds   = [];
-        $arrUniqueTags  = [];
+        // invalidate the cached tag list
+        $this->arrTags = null;
 
-        foreach($arrIdsAndTags as $item) {
-
-            if( !array_key_exists('id', $item) || !array_key_exists('title', $item) ) {
-                continue;
-            }
-
-            $id = $item["id"];
-
-            if( in_array($id, $arrUniqueIds) ) {
-                continue;
-            }
-
-            if( !empty($id) ) {
-                $arrUniqueIds[] = $id;
-            }
-
-            $tagService = $this->factory->createTagEditor()->setTitle($item["title"]);
-            $title      = $tagService->getTitle();
-
-            if( in_array($title, $arrUniqueTags) ) {
-                continue;
-            }
-
-            $arrUniqueTags[] = $title;
-
-            $arrValidItems[] = [
-                "id"        => $id,
-                "title"     => $title,
-                "service"   => $tagService
-            ];
+        $oldTagJunctions = $this->entity->getTags()->getValues();
+        foreach($oldTagJunctions as $junction) {
+            $this->entity->removeTag($junction);
         }
 
-        if( empty($arrValidItems) ) {
-            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 tag');
-        }
-
-        $collNewTags = $this->factory->createTagCollection()->load($arrUniqueIds);
-        $arrFinalTags = [];
-        foreach($arrValidItems as $item) {
-
-            $tagService     = $collNewTags->get( $item["id"] );
-            $arrFinalTags[] = empty($tagService) ? $item["service"] : $tagService;
-        }
-
-        $collNewTags->setData($arrFinalTags);
-
-        // rebuild the cached tag list
-        $this->arrTags = [];
-
-        $entityManager = $this->factory->getEntityManager();
-
-        // these would be junctions (array-of-ArticleTag)
-        $currentTags = $this->entity->getTags();
-
-        // remove unassigned tags
-        foreach($currentTags as $junction) {
+        $oldTagJunctionByTagId = [];
+        foreach($oldTagJunctions as $junction) {
 
             $tagId = $junction->getTag()->getId();
+            $oldTagJunctionByTagId[$tagId] = $junction;
+        }
 
-            if( !in_array($tagId, $arrUniqueIds) ) {
-                $entityManager->remove($junction);
+        foreach($newTags as $tag) {
+
+            $tagId = $tag->getId();
+            $existingTagJunction = $oldTagJunctionByTagId[$tagId] ?? null;
+
+            if( empty($existingTagJunction) ) {
+
+                $this->addTag($tag, $author);
+
+            } else {
+
+                $this->entity->addTag($existingTagJunction);
             }
         }
 
-        // add new tags
-        $i = 1;
-        $arrJunctions = [];
-
-        foreach($collNewTags as $tag) {
-
-            $existingJunction = null;
-            foreach($currentTags as $junction) {
-
-                if( $tag->getId() == $junction->getTag()->getId() ) {
-
-                    $existingJunction = $junction;
-                    break;
-                }
-            }
-
-            if( empty($existingJunction) ) {
-
-                $tagEntity = $tag->getEntity();
-                $entityManager->persist($tagEntity);
-
-                $existingJunction =
-                    (new ArticleTag())
-                        ->setArticle($this->entity)
-                        ->setTag($tagEntity)
-                        ->setUser( $this->getCurrentUserAsAuthor()->getEntity() );
-            }
-
-            $existingJunction->setRanking($i);
-            $entityManager->persist($existingJunction);
-
-            $i++;
-            $arrJunctions[] = $existingJunction;
-        }
-
-        return $this->setCachedTagsFromJunctions($arrJunctions);
+        return $this;
     }
 
 
@@ -371,15 +296,22 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🖼️ Images ***">
-    public function addImages(iterable $images) : static
+    public function addImage(Image|ImageEntity $image, User $author) : static
+    {
+        $imageToAdd = $image instanceof Image ? $image->getEntity() : $image;
+
+        $this->entity->addImage(
+            (new ArticleImage())
+                ->setImage($imageToAdd)
+        );
+
+        return $this;
+    }
+
+    public function addImages(iterable $images, User $author) : static
     {
         foreach($images as $image) {
-
-            $image = $image instanceof Image ? $image->getEntity() : $image;
-            $this->entity->addImage(
-                (new ArticleImage())
-                    ->setImage($image)
-            );
+            $this->addImage($image, $author);
         }
 
         return $this;

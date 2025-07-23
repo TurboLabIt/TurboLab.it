@@ -163,5 +163,8 @@ class TagCollection extends BaseServiceEntityCollection
     }
 
 
-    public function createService(?TagEntity $entity = null) : TagService { return $this->factory->createTag($entity); }
+    public function createService(?TagEntity $entity = null) : TagService
+    {
+        return $this->factory->createTag($entity);
+    }
 }

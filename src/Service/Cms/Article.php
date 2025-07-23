@@ -236,19 +236,12 @@ class Article extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** 🏷️ Tags ***">
     public function getTags() : array
     {
-        if( !is_array($this->arrTags) ) {
-
-            $tagJunctionEntities = $this->entity->getTags()->getValues();
-            $this->setCachedTagsFromJunctions($tagJunctionEntities);
+        if( is_array($this->arrTags) ) {
+            return $this->arrTags;
         }
 
-        return $this->arrTags;
-    }
-
-
-    protected function setCachedTagsFromJunctions(?array $tagJunctionEntities) : static
-    {
         $this->arrTags = [];
+        $tagJunctionEntities = $this->entity->getTags()->getValues();
 
         usort($tagJunctionEntities, function(ArticleTag $junction1, ArticleTag $junction2) {
             return
@@ -263,7 +256,7 @@ class Article extends BaseCmsService
             $this->arrTags[$tagId]  = $this->factory->createTag($tagEntity);
         }
 
-        return $this;
+        return $this->arrTags;
     }
 
 
