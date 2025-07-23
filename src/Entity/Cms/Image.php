@@ -127,16 +127,23 @@ class Image extends BaseCmsEntity
 
     public function addAuthor(ImageAuthor $author) : static
     {
+        $ranking = 0;
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
 
             if( $item->getUser()->getId() == $author->getUser()->getId() ) {
                 return $this;
             }
+
+            $itemRanking    = $item->getRanking();
+            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
         }
 
+        $author
+            ->setImage($this)
+            ->setRanking(++$ranking);
+
         $this->authors->add($author);
-        $author->setImage($this);
 
         return $this;
     }
@@ -158,22 +165,6 @@ class Image extends BaseCmsEntity
      * @return Collection<int, ArticleImage>
      */
     public function getArticles() : Collection { return $this->articles; }
-
-    public function addArticle(ArticleImage $article) : static
-    {
-        $currentItems = $this->getArticles();
-        foreach($currentItems as $item) {
-
-            if( $item->getArticle()->getId() == $article->getArticle()->getId() ) {
-                return $this;
-            }
-        }
-
-        $this->articles->add($article);
-        $article->setImage($this);
-
-        return $this;
-    }
 
     public function removeArticle(ArticleImage $article) : static
     {

@@ -84,18 +84,6 @@ class ImageEditor extends Image
     }
 
 
-    public function addToArticle(ArticleEditor $articleEditor) : static
-    {
-        $this->entity->addArticle(
-            (new ArticleImage())
-                ->setImage($this->entity)
-                ->setArticle( $articleEditor->getEntity() )
-        );
-
-        return $this;
-    }
-
-
     //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
     public function save(bool $persist = true) : static
     {

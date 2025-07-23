@@ -131,16 +131,23 @@ class Article extends BaseCmsEntity
 
     public function addImage(ArticleImage $image) : static
     {
+        $ranking = 0;
         $currentItems = $this->getImages();
         foreach($currentItems as $item) {
 
             if( $item->getImage()->getId() == $image->getImage()->getId() ) {
                 return $this;
             }
+
+            $itemRanking    = $item->getRanking();
+            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
         }
 
+        $image
+            ->setArticle($this)
+            ->setRanking(++$ranking);
+
         $this->images->add($image);
-        $image->setArticle($this);
 
         return $this;
     }

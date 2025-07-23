@@ -186,7 +186,7 @@ class Article extends BaseCmsService
             }
 
             usort($this->arrImages, function(Image $img1, Image $img2) {
-                return $img2->getTempOrder() <=> $img1->getTempOrder();
+                return $img1->getTempOrder() <=> $img2->getTempOrder();
             });
         }
 

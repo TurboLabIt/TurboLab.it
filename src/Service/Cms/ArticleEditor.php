@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Exception\ArticleUpdateException;
@@ -370,51 +371,18 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🖼️ Images ***">
-    public function setImagesFromUpload(?array $arrUpload)
+    public function addImages(iterable $images) : static
     {
-        if( empty($arrUpload) ) {
-            return [];
+        foreach($images as $image) {
+
+            $image = $image instanceof Image ? $image->getEntity() : $image;
+            $this->entity->addImage(
+                (new ArticleImage())
+                    ->setImage($image)
+            );
         }
 
-        $arrData = [];
-        foreach($arrUpload as $file) {
-
-            if( !str_starts_with($file->getFileName(), 'image') ) {
-                continue;
-            }
-
-            $fileHash = hash_file('md5', $file->getPathname() );
-
-            $arrData[$fileHash] = [
-                'File'  => $file,
-                'Image' => null,
-            ];
-        }
-
-        /** @var ImageCollection $existingImages */
-        $existingImages = $this->factory->createImageCollection()->loadByHash( array_keys($arrData) );
-
-        foreach($arrData as $hash => $item) {
-
-            $existingImage = $existingImages->lookupSearchExtract($hash, function(string $hashToCheck, string $image) {
-                return $hashToCheck == $image->getHash();
-            });
-
-            $item["Image"] = $existingImage;
-
-            if( empty($existingImage) ) {
-
-                $newImage =
-                    $this->factory->createImageEditor()
-                        ->createFromFilePath($item["File"], $hash);
-
-                $this->factory->getEntityManager()->persist($newImage->getEntity());
-
-                $item["Image"] = $newImage;
-            }
-        }
-
-        return $this->factory->createImageCollection()->load([1,5,7,8,9]);
+        return $this;
     }
     //</editor-fold>
 
