@@ -67,6 +67,7 @@ class ArticleEditTags extends ArticleEditBaseController
             $this->articleEditor->setTags($tags, $currentUserAsAuthor);
 
             $this->factory->getEntityManager()->flush();
+
             return $this->jsonOKResponse("Tag salvati");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }

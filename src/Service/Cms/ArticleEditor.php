@@ -116,70 +116,36 @@ class ArticleEditor extends Article
     }
 
 
-    public function setAuthorsFromIds(array $arrAuthorIds) : static
+    public function setAuthors(iterable $newAuthors, User $author) : static
     {
-        if( empty($arrAuthorIds) ) {
-            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 autore');
+        // invalidate the cached author list
+        $this->arrAuthors = null;
+
+        $oldAuthorJunctions = $this->entity->getAuthors()->getValues();
+        foreach($oldAuthorJunctions as $junction) {
+            $this->entity->removeAuthor($junction);
         }
 
-        $arrAuthorIds = array_unique($arrAuthorIds);
+        $oldAuthorJunctionByAuthorId = [];
+        foreach($oldAuthorJunctions as $junction) {
 
-        $collNewAuthors = $this->factory->createUserCollection()->load($arrAuthorIds);
-
-        if( $collNewAuthors->count() < 1 ) {
-            throw new ArticleUpdateException('L\'articolo deve avere almeno 1 autore');
+            $authorId = $junction->getUser()->getId();
+            $oldAuthorJunctionByAuthorId[$authorId] = $junction;
         }
 
-        // rebuild the cached author list
-        $this->arrAuthors = [];
+        foreach($newAuthors as $user) {
 
-        $entityManager = $this->factory->getEntityManager();
+            $userId = $user->getId();
+            $existingAuthorJunction = $oldAuthorJunctionByAuthorId[$userId] ?? null;
 
-        // these would be junctions (array-of-ArticleAuthor)
-        $currentAuthors = $this->entity->getAuthors();
+            if( empty($existingAuthorJunction) ) {
 
-        // remove current authors who are no longer
-        foreach($currentAuthors as $junction) {
+                $this->addAuthor($user);
 
-            $authorId   = $junction->getUser()->getId();
-            $newAuthor  = $collNewAuthors->get($authorId);
+            } else {
 
-            if( empty($newAuthor) ) {
-                $entityManager->remove($junction);
+                $this->entity->addAuthor($existingAuthorJunction);
             }
-        }
-
-        // add new users
-        $i=1;
-        foreach($collNewAuthors as $author) {
-
-            $existingJunction = null;
-            foreach($currentAuthors as $junction) {
-
-                if( $author->getId() == $junction->getUser()->getId() ) {
-
-                    $existingJunction = $junction;
-                    break;
-                }
-            }
-
-            if( empty($existingJunction) ) {
-
-                $existingJunction =
-                    (new ArticleAuthor())
-                        ->setArticle($this->entity)
-                        ->setUser( $author->getEntity() );
-            }
-
-            $existingJunction->setRanking($i);
-            $entityManager->persist($existingJunction);
-
-            $i++;
-
-            // rebuild the cached author list so that $article->getAuthors() works without a reload
-            $userEntity                     = $author->getEntity();
-            $authorId                       = $userEntity->getId();
-            $this->arrAuthors[$authorId]    = $this->factory->createUser($userEntity);
         }
 
         return $this;

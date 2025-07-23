@@ -97,16 +97,23 @@ class Article extends BaseCmsEntity
 
     public function addAuthor(ArticleAuthor $author) : static
     {
+        $ranking = 0;
         $currentItems = $this->getAuthors();
         foreach($currentItems as $item) {
 
             if( $item->getUser()->getId() == $author->getUser()->getId() ) {
                 return $this;
             }
+
+            $itemRanking    = $item->getRanking();
+            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
         }
 
+        $author
+            ->setArticle($this)
+            ->setRanking(++$ranking);
+
         $this->authors->add($author);
-        $author->setArticle($this);
 
         return $this;
     }

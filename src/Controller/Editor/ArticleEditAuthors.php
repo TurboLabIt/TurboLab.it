@@ -58,9 +58,18 @@ class ArticleEditAuthors extends ArticleEditBaseController
     {
         try {
 
+            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
+
+            $this->loadArticleEditor($articleId);
+
             $arrAuthorIds = $this->request->get('authors') ?? [];
-            $this->loadArticleEditor($articleId)->setAuthorsFromIds($arrAuthorIds);
+
+            $authors = $this->factory->createUserCollection()->load($arrAuthorIds);
+
+            $this->articleEditor->setAuthors($authors, $currentUserAsAuthor);
+
             $this->factory->getEntityManager()->flush();
+
             return $this->jsonOKResponse("Autori salvati");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
