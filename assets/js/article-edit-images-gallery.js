@@ -107,7 +107,7 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
  */
 
 let savedRange;
-const editableDiv = $('.tli-article-body');
+const editableDiv = $('.tli-article-body[contenteditable="true"]');
 
 // saves the current selection (cursor position) within the editable div.
 const saveSelection = () => {
