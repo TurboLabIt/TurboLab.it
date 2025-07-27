@@ -7,8 +7,7 @@
         as="style" onload="this.onload=null;this.rel='stylesheet'">
 
     {% if Article.currentUserCanEdit %}
-        <link rel="preload" href="{{ asset('build/article-edit.css') }}"
-              as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="{{ asset('build/article-edit.css') }}">
     {% endif %}
 
 {% endblock %}
@@ -171,12 +170,12 @@
 
                         {% if Article.isReadable %}
 
-                            <div id="tli-article-body" class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
-                                 {% if Article.currentUserCanEdit %}
-                                    contenteditable="true" data-tli-editable-id="body"
-                                {% endif %}>
+                            <div id="tli-article-body" data-tli-editable-id="body"
+                                 class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}">
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
+
+                            {% include 'article/editor/statusbar.html.twig' %}
 
 
                             {% if Article.isInReview or Article.isPublished %}
@@ -201,8 +200,6 @@
                             </div>
 
                         {% endif %}
-
-                        {% include 'article/editor/statusbar.html.twig' %}
 
                     </div>
 

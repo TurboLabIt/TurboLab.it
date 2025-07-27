@@ -86,6 +86,10 @@ class ArticleController extends BaseController
                 'activeMenu'            => $article->getActiveMenu(),
                 'FrontendHelper'        => $this->frontendHelper,
                 'CurrentUser'           => $this->factory->getCurrentUser(),
+                'ArticleFormats'        => [
+                    Article::FORMAT_ARTICLE => 'Articolo, guida, recensione',
+                    Article::FORMAT_NEWS    => 'Notizia, segnalazione'
+                ],
                 'Article'               => $article,
                 'ArticleHowTo'          => $articleHowTo,
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
