@@ -80,7 +80,7 @@ class ArticleTest extends BaseT
 
         $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
 
-        $articleBodyCrawler = $crawler->filter('.tli-article-body');
+        $articleBodyCrawler = $crawler->filter('#tli-article-body');
 
         // first <li>s of the article (body content)
         $summaryLi = $articleBodyCrawler->filter('ul')->first()->filter('li');
