@@ -72,8 +72,16 @@ class ArticleController extends BaseController
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        $articleHowTo =
-            $article->currentUserCanEdit() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
+
+        if( $article->currentUserCanEdit() ) {
+
+            $articleHowTo = $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE);
+
+        } else {
+
+            $articleHowTo = null;
+        }
+
 
         $html =
             $this->twig->render('article/index.html.twig', [

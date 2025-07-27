@@ -19,8 +19,9 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "ckeditor5": "^46.0.0",
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^18.0.1",
+        "npm-check-updates": "^18.0.2",
         "sass": ">=1.89.2",
         "sass-loader": ">=16.0"
     },

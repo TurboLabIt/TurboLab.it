@@ -171,9 +171,10 @@
 
                         {% if Article.isReadable %}
 
-                            <div class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
+                            <div id="tli-article-body" class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
                                  {% if Article.currentUserCanEdit %}
                                     contenteditable="true" data-tli-editable-id="body"
+                                    data-ckeditor-license-key="{{ ckeditorLicenseKey }}"
                                 {% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
@@ -310,7 +311,10 @@
     {{ encore_entry_script_tags('article') }}
 
     {% if Article.currentUserCanEdit %}
+
+        <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.0/ckeditor5.css" crossorigin>
         {{ encore_entry_script_tags('article-edit') }}
+
     {% endif %}
 
 {% endblock %}
