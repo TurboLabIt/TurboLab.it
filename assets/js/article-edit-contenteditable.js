@@ -5,9 +5,19 @@ import StatusBar from './article-edit-statusbar';
 import ArticleMeta from "./article-edit-meta";
 
 
+const ArticleContentEditable = {
+    save(title, body, token) {
+        saveArticle(title, body, token);
+    }
+};
+
+export default ArticleContentEditable;
+
+// --------------- //
+
 function cacheTextHashForComparison()
 {
-    jQuery('[contenteditable=true]').each(function() {
+    jQuery('[data-tli-editable-id]').each(function() {
 
         let editableId = jQuery(this).data('tli-editable-id');
         window[editableId] = fastHash16ElementHtml(this);
@@ -17,10 +27,10 @@ function cacheTextHashForComparison()
 // pageload init
 cacheTextHashForComparison();
 
-jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
+jQuery(document).on('input', '[data-tli-editable-id]', debounce(function() {
 
     let differenceFound = false;
-    jQuery('[contenteditable=true]').each(function() {
+    jQuery('[data-tli-editable-id]').each(function() {
 
         let fastHashedHtml = fastHash16ElementHtml(this);
         let editableId = jQuery(this).data('tli-editable-id');
@@ -42,7 +52,7 @@ jQuery(document).on('input', '[contenteditable=true]', debounce(function() {
 
 function clearCacheTextHashForComparison()
 {
-    jQuery('[contenteditable=true]').each(function() {
+    jQuery('[data-tli-editable-id]').each(function() {
 
         let editableId = jQuery(this).data('tli-editable-id');
         window[editableId] = null;
@@ -51,8 +61,7 @@ function clearCacheTextHashForComparison()
 
 
 var articleSaveRequest = null;
-
-function saveArticle()
+function saveArticle(title, body, token)
 {
     // set to "unknown" until actually saved
     clearCacheTextHashForComparison();
@@ -66,9 +75,9 @@ function saveArticle()
     let article = jQuery('article');
     let endpoint= article.attr('data-save-url');
     let payload = {
-        "title" : jQuery('[data-tli-editable-id=title]').html(),
-        "body"  : jQuery('[data-tli-editable-id=body]').html(),
-        "token" : null
+        "title" : title ?? jQuery('[data-tli-editable-id=title]').html(),
+        "body"  : body ?? jQuery('[data-tli-editable-id=body]').html(),
+        "token" : token ?? null
     };
 
     articleSaveRequest =
