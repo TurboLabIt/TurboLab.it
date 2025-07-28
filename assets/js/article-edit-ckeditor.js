@@ -14,6 +14,7 @@ import {
     Essentials,
     FindAndReplace,
     Fullscreen,
+    Heading,
     ImageBlock,
     ImageToolbar,
     Italic,
@@ -34,6 +35,7 @@ import 'ckeditor5/ckeditor5.css';
 import debounce from './debouncer';
 import ArticleContentEditable from './article-edit-contenteditable';
 import TliSavePlugin from "./ckeditor-plugins/save";
+import TliH2Plugin from "./ckeditor-plugins/h2";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -42,6 +44,8 @@ const editorConfig = {
     toolbar: {
         items: [
             'save',
+            'h2',
+            //'heading',
             '|',
             'undo',
             'redo',
@@ -73,6 +77,7 @@ const editorConfig = {
         Essentials,
         FindAndReplace,
         Fullscreen,
+        Heading,
         ImageBlock,
         ImageToolbar,
         Italic,
@@ -83,7 +88,7 @@ const editorConfig = {
         RemoveFormat,
         Strikethrough,
         // ---- TLI plugins ---- \\
-        TliSavePlugin
+        TliSavePlugin, TliH2Plugin
     ],
     balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
     fullscreen: {
