@@ -21,3 +21,7 @@
     min-width: 795px;
     max-width: 795px;
 }
+
+[data-cke-tooltip-text="Istruzioni (Ctrl+M)"] svg {
+    color: #1AB7EA !important;
+}
