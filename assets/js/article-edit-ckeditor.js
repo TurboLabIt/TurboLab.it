@@ -15,12 +15,14 @@ import {
     FindAndReplace,
     Fullscreen,
     Heading,
+    HeadingButtonsUI,
     ImageBlock,
     ImageToolbar,
     Italic,
     Link,
     List,
     Paragraph,
+    ParagraphButtonUI,
     PasteFromOffice,
     RemoveFormat,
     Strikethrough,
@@ -35,7 +37,6 @@ import 'ckeditor5/ckeditor5.css';
 import debounce from './debouncer';
 import ArticleContentEditable from './article-edit-contenteditable';
 import TliSavePlugin from "./ckeditor-plugins/save";
-import TliH2Plugin from "./ckeditor-plugins/h2";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -43,27 +44,14 @@ const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
 const editorConfig = {
     toolbar: {
         items: [
-            'save',
-            'h2',
-            //'heading',
-            '|',
-            'undo',
-            'redo',
-            '|',
-            'findAndReplace',
-            'fullscreen',
-            '|',
-            'bold',
-            'italic',
-            'strikethrough',
-            'code',
-            'removeFormat',
-            '|',
-            'link',
-            'codeBlock',
-            '|',
-            'bulletedList',
-            'numberedList'
+            'save', '|',
+            'heading2', 'paragraph', '|',
+            'bold', 'italic', 'code', 'strikethrough', '|',
+            'removeFormat', '|',
+            'link', '|',
+            'codeBlock', 'bulletedList', 'numberedList', '|',
+            'undo', 'redo', '|',
+            'findAndReplace', 'fullscreen'
         ],
         shouldNotGroupWhenFull: false
     },
@@ -78,17 +66,19 @@ const editorConfig = {
         FindAndReplace,
         Fullscreen,
         Heading,
+        HeadingButtonsUI,
         ImageBlock,
         ImageToolbar,
         Italic,
         Link,
         List,
         Paragraph,
+        ParagraphButtonUI,
         PasteFromOffice,
         RemoveFormat,
         Strikethrough,
         // ---- TLI plugins ---- \\
-        TliSavePlugin, TliH2Plugin
+        TliSavePlugin
     ],
     balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
     fullscreen: {
@@ -119,7 +109,14 @@ const editorConfig = {
         }
     },
     placeholder: 'Digita qui il testo del tuo articolo',
-    translations: [translations]
+    translations: [translations],
+    // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html
+    heading: {
+        options: [
+            { model: 'heading2', view: 'h2', title: 'Titolo', class: 'ck-heading_heading2' },
+            { model: 'paragraph', title: 'Testo normale', class: 'ck-heading_paragraph' }
+        ]
+    }
 };
 
 
