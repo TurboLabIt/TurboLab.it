@@ -171,7 +171,8 @@
                         {% if Article.isReadable %}
 
                             <div id="tli-article-body" data-tli-editable-id="body"
-                                 class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}">
+                                 class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
+                                 {% if Article.currentUserCanEdit %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
 
