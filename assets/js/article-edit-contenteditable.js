@@ -8,6 +8,12 @@ import ArticleMeta from "./article-edit-meta";
 const ArticleContentEditable = {
     save(title, body, token) {
         saveArticle(title, body, token);
+    },
+    cacheTextHashForComparison() {
+        cacheTextHashForComparison();
+    },
+    showWarningIfChanged() {
+        showWarningIfChanged();
     }
 };
 
@@ -24,11 +30,9 @@ function cacheTextHashForComparison()
     });
 }
 
-// pageload init
-cacheTextHashForComparison();
 
-jQuery(document).on('input', '[data-tli-editable-id]', debounce(function() {
-
+function showWarningIfChanged()
+{
     let differenceFound = false;
     jQuery('[data-tli-editable-id]').each(function() {
 
@@ -46,8 +50,7 @@ jQuery(document).on('input', '[data-tli-editable-id]', debounce(function() {
     if (!differenceFound) {
         StatusBar.hide();
     }
-
-}, 300));
+}
 
 
 function clearCacheTextHashForComparison()
@@ -58,6 +61,11 @@ function clearCacheTextHashForComparison()
         window[editableId] = null;
     });
 }
+
+
+jQuery(document).on('input', 'h1[data-tli-editable-id]', debounce(function() {
+    showWarningIfChanged();
+}, 300));
 
 
 var articleSaveRequest = null;
@@ -101,16 +109,19 @@ function saveArticle(title, body, token)
 jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  function(event) {
 
     event.preventDefault();
-    saveArticle();
+    //saveArticle();
+    $('#tli-ckeditor-save').trigger('click');
 });
+
 
 
 jQuery(document).on('keydown', function(event) {
 
     // CTRL+S or Command+S (Mac)
-    if( (event.ctrlKey || event.metaKey) && event.key === 's') {
+    if( (event.ctrlKey || event.metaKey) && (event.key === 's' || event.key === 'S') ) {
 
         event.preventDefault();
-        saveArticle();
+        //saveArticle();
+        $('#tli-ckeditor-save').trigger('click');
     }
 });

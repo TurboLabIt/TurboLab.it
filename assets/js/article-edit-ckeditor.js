@@ -22,18 +22,27 @@ import {
     Paragraph,
     PasteFromOffice,
     RemoveFormat,
-    Strikethrough
+    Strikethrough,
+    // required for custom plugins
+    Plugin
 } from 'ckeditor5';
 
 import translations from 'ckeditor5/translations/it.js';
-
 import 'ckeditor5/ckeditor5.css';
+
+// ---- TLI plugins ---- \\
+import debounce from './debouncer';
+import ArticleContentEditable from './article-edit-contenteditable';
+import TliSavePlugin from "./ckeditor-plugins/save";
+
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
 
 const editorConfig = {
     toolbar: {
         items: [
+            'save',
+            '|',
             'undo',
             'redo',
             '|',
@@ -72,7 +81,9 @@ const editorConfig = {
         Paragraph,
         PasteFromOffice,
         RemoveFormat,
-        Strikethrough
+        Strikethrough,
+        // ---- TLI plugins ---- \\
+        TliSavePlugin
     ],
     balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
     fullscreen: {
@@ -102,8 +113,43 @@ const editorConfig = {
             }
         }
     },
-    placeholder: 'Type or paste your content here!',
+    placeholder: 'Digita qui il testo del tuo articolo',
     translations: [translations]
 };
 
-ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig);
+
+let ckeditorBodySelector = '.ck.ck-editor__main [contenteditable="true"]';
+
+$(document).on('click', ckeditorBodySelector, function () {
+    $(this).attr('data-tli-editable-id', 'body');
+});
+
+
+$(document).on('blur', ckeditorBodySelector, function () {
+    $(this).attr('data-tli-editable-id', 'body');
+});
+
+
+ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig)
+    .then(editor => {
+
+        $('#tli-article-body').removeAttr('data-tli-editable-id');
+
+        let ckeditorBody = $(ckeditorBodySelector);
+        ckeditorBody.attr('data-tli-editable-id', 'body');
+
+        ArticleContentEditable.cacheTextHashForComparison();
+
+
+        const debouncedShowWarning = debounce(() => {
+            ArticleContentEditable.showWarningIfChanged();
+        }, 300);
+
+        editor.model.document.on('change:data', () => {
+
+            ckeditorBody.attr('data-tli-editable-id', 'body');
+            debouncedShowWarning();
+        });
+    });
+
+

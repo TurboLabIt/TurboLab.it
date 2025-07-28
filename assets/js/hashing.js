@@ -10,7 +10,7 @@ export function fastHash16(str)
 
 export function fastHash16ElementHtml(element)
 {
-    let value = jQuery(element).html().replace(/&nbsp;/g, ' ').trim();
+    let value = $(element).html().replace(/&nbsp;/g, ' ').trim();
 
     if( value == '' ) {
         return '';
