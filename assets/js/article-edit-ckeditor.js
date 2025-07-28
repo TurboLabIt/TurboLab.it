@@ -172,6 +172,14 @@ ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig)
                 tooltip: 'Istruzioni (Ctrl+M)'
             });
         }
+
+
+        $(document).on('click', '#tli-images-gallery img', function(e) {
+
+            e.preventDefault();
+            editor.execute('insertImage', { source: $(this).attr('src') });
+            editor.editing.view.focus();
+        });
     });
 
 
