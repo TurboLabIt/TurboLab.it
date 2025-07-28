@@ -17,7 +17,7 @@ export default class TliH2Plugin extends Plugin {
 
             view.set({
                 label: 'Titolo',
-                icon: saveIcon,
+                icon: h2Icon,
                 tooltip: true,
                 keystroke: 'Ctrl+1'
             });
