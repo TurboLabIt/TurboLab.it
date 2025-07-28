@@ -123,5 +123,8 @@ jQuery(document).on('keydown', function(event) {
         event.preventDefault();
         //saveArticle();
         $('#tli-ckeditor-save').trigger('click');
+        return false;
     }
+
+    return true;
 });
