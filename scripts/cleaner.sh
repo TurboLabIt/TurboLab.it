@@ -9,7 +9,12 @@ rootCheck
 
 wsuSourceFrameworkScript cleaner
 
+source "${WEBSTACKUP_SCRIPT_DIR}frameworks/phpbb/cleaner.sh"
+
+
 if [ "${APP_ENV}" == "dev" ]; then
+
+  fxTitle "Additional cleaning for TLI dev..."
 
   source /usr/local/turbolab.it/webstackup/script/mysql/maintenance.sh
 

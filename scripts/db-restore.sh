@@ -17,7 +17,7 @@ wsuSourceFrameworkScript db-restore
 ## FORUM
 DB_DUMP_FILE_PATH=${DB_DUMP_DIR}thundercracker_turbolab_it_forum_${DAY_NUM}.sql.7z
 ## local database name to import into
-MYSQL_DB_NAME=turbolab_it_forum
+MYSQL_DB_NAME=${PHPBB_DB_NAME}
 SKIP_POST_RESTORE_QUERY=0
 wsuSourceFrameworkScript db-restore
 

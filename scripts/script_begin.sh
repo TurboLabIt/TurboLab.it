@@ -9,6 +9,9 @@ LETS_ENCRYPT_SKIP_RENEW=1
 source "/usr/local/turbolab.it/webstackup/script/filesystem/script_begin_start.sh"
 
 ## Enviroment variables and checks
+
+PHPBB_DB_NAME=turbolab_it_forum
+
 if [ "$APP_ENV" = "prod" ]; then
 
   EMOJI=rocket
