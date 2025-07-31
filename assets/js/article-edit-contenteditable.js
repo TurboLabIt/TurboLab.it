@@ -126,5 +126,13 @@ jQuery(document).on('keydown', function(event) {
         return false;
     }
 
+    // CTRL+1 or Command+1 (Mac)
+    if( (event.ctrlKey || event.metaKey) && event.key === '1' ) {
+
+        event.preventDefault();
+        $('[data-cke-tooltip-text="Titolo (Ctrl+1)"]').trigger('click');
+        return false;
+    }
+
     return true;
 });

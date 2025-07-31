@@ -170,6 +170,8 @@
 
                         {% if Article.isReadable %}
 
+                            {% include 'article/editor/toolbar-icons.html.twig' %}
+
                             <div id="tli-article-body" data-tli-editable-id="body"
                                  class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
                                  {% if Article.currentUserCanEdit %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
