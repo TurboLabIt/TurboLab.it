@@ -64,6 +64,9 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             '<h2><strong>'		=> '<h2>',
             '</strong></h2>'	=> '</h2>',
 
+            '<i>'               => '<em>',
+            '</i>'              => '</em>',
+
             '<p><p>'            => '<p>',
             '</p></p>'          => '</p>',
 
