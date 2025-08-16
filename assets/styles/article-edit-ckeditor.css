@@ -22,6 +22,10 @@
     max-width: 795px;
 }
 
+.ck.ck-content.ck-editor__editable strong {
+    font-weight: 700;
+}
+
 [data-cke-tooltip-text="Istruzioni (Ctrl+M)"] svg {
     color: #1AB7EA !important;
 }

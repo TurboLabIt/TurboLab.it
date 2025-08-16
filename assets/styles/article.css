@@ -3,9 +3,10 @@
     padding-bottom: 15px !important;
 }
 
-.tli-article-main-content p {
+#tli-article-body,.ck.ck-content.ck-editor__editable {
     font-size: 20px;
     line-height: 1.5;
+    color: black;
 }
 
 .tli-article-main-content img {
