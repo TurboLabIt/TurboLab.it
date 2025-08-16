@@ -9,29 +9,6 @@
     color: black;
 }
 
-.tli-article-main-content img {
-    width: 100%;
-}
-
-.tli-article-main-content code {
-    background-color: hsla(0, 0%, 78%, .3);
-    border-radius: 2px;
-    padding: .15em;
-}
-
-.tli-article-main-content ins {
-    display: block;              /* make it a block for callout effect */
-    padding: 0.5em 0.75em;
-    margin: 0.75em 0;
-    background: #e8f8ec;         /* light green background */
-    border-left: 4px solid #28a745; /* vivid green accent */
-    color: inherit;              /* keep normal text color */
-    font-style: normal;          /* cancel ins default underline */
-    text-decoration: none;
-    border-radius: 2px;
-}
-
-
 .tli-article-main-content .alert.alert-warning {
     margin-top: 10px;
 }
@@ -43,6 +20,34 @@
 .tli-file-download {
     font-size: medium;
     font-weight: 600;
+}
+
+.tli-article-main-content img {
+    width: 100%;
+}
+
+/* Istruzioni (<code>) */
+.tli-article-main-content code {
+    background-color: hsla(0, 0%, 78%, .3);
+    border-radius: 2px;
+    padding: .15em;
+}
+
+/* Update (<ins>) */
+.tli-article-main-content ins {
+    display: block;
+    padding: 0.5em 0.75em;
+    margin: 0.75em 0;
+    background: #e8f8ec;
+    border-left: 4px solid #28a745;
+    color: inherit;
+    font-style: normal;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.tli-article-main-content a {
+    all: revert;
 }
 
 .tli-prev-next-article {
