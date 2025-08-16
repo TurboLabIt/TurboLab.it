@@ -37,6 +37,7 @@ import 'ckeditor5/ckeditor5.css';
 import debounce from './debouncer';
 import ArticleContentEditable from './article-edit-contenteditable';
 import TliSavePlugin from "./ckeditor-plugins/save";
+import TliUpdatePlugin from "./ckeditor-plugins/update";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -46,7 +47,9 @@ const editorConfig = {
         items: [
             'save', '|',
             'heading2', 'paragraph', '|',
-            'bold', 'italic', 'code', 'strikethrough', 'removeFormat', '|',
+            'bold', 'italic', 'strikethrough', '|',
+            'code', 'tliUpdate', '|',
+            'removeFormat', '|',
             'link', '|',
             'codeBlock', 'bulletedList', 'numberedList', '|',
             'undo', 'redo', '|',
@@ -77,9 +80,10 @@ const editorConfig = {
         RemoveFormat,
         Strikethrough,
         // ---- TLI plugins ---- \\
-        TliSavePlugin
+        TliSavePlugin,
+        TliUpdatePlugin
     ],
-    balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
+    balloonToolbar: ['bold', 'italic', 'code', 'tliUpdate', 'removeFormat', '|', 'link'],
     fullscreen: {
         onEnterCallback: container =>
             container.classList.add(
