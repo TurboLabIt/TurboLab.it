@@ -21,57 +21,44 @@ class ImageController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{imageFolderMod}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
-    public function index($size, $slugDashId) : Response
+    public function index(string $size, string $imageFolderMod, string $slugDashId, string $format) : Response
     {
-        return $this->build($size, $slugDashId);
-    }
+        $image = $this->getImageOr404Response($slugDashId, $size);
 
-
-    #[Route('/' . self::SECTION_SLUG . '/{id<[1-9]+[0-9]*>}/{size<micro|slider|min|med|max>}', name: 'app_image_shorturl')]
-    public function shortUrl($id, $size = Image::SIZE_MAX) : Response
-    {
-        return $this->build($size, "image-$id");
-    }
-
-
-    protected function build($size, $slugDashId) : Response
-    {
-        // try direct filesystem access, without db
-        $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
-        $entity =
-            (new ImageEntity())
-                ->setId($entityId)
-                ->setFormat( Image::getClientSupportedBestFormat() );
-
-        $imageNoDb  = $this->image->setEntity($entity);
-        $result     = $imageNoDb->tryPreBuilt($size);
-        if($result) {
-            return $this->xSendImage($imageNoDb, $size, '1-tryPreBuilt');
+        if( $image instanceof Response ) {
+            // 404
+            return $image;
         }
 
-        //
+        $imageRealUrl = $image->checkRealUrl($size, $imageFolderMod, $slugDashId, $format);
+        if( !empty($imageRealUrl) ) {
+            return $this->redirect($imageRealUrl, Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        $result = $image->tryPreBuilt($size);
+        if($result) {
+            return $this->xSendImage($image, $size, '1-tryPreBuilt');
+        }
+
+        $image->build($size);
+
+        return $this->xSendImage($image, $size, '99-build');
+    }
+
+
+    protected function getImageOr404Response(string $slugDashId, string $size) : Image|Response
+    {
         try {
-            $image = $this->image->loadBySlugDashId($slugDashId);
+            return $this->image->loadBySlugDashId($slugDashId);
 
-            // let's tryPreBuilt again (the previous direct try via $imageNoDb may have failed due to... reasons?)
-            $result = $image->tryPreBuilt($size);
-            if($result) {
-                return $this->xSendImage($image, $size, '2-tryPreBuilt-again');
-            }
-
-            $image->build($size);
-
-        } catch(ImageNotFoundException $ex) {
+        } catch(ImageNotFoundException) {
 
             $image404 = $this->imageCollection->get404();
-            // can't use X-Sendfile: it always returns 200, but the status code here MUST be 404
             return
                 new Response($image404->getContent($size), Response::HTTP_NOT_FOUND, [
                     'Content-Type' => $image404->getBuiltImageMimeType()
                 ]);
         }
-
-        return $this->xSendImage($image, $size, '99-build');
     }
 
 
@@ -110,9 +97,30 @@ class ImageController extends BaseController
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
-    public function legacyNoFolderMod($size, $slugDashId) : Response
+    #[Route('/' . self::SECTION_SLUG . '/{id<[1-9]+[0-9]*>}/{size<micro|slider|min|med|max>}', name: 'app_image_shorturl')]
+    public function shortUrl(string $id, string $size = Image::SIZE_MAX) : Response
     {
-        return $this->build($size, $slugDashId);
+        return $this->redirectToRealImage($size, "image-$id");
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
+    public function legacyNoFolderMod(string $size, string $slugDashId) : Response
+    {
+        return $this->redirectToRealImage($size, $slugDashId);
+    }
+
+
+    protected function redirectToRealImage(string $size, string $slugDashId) : Response
+    {
+        $image = $this->getImageOr404Response($slugDashId, $size);
+
+        if( $image instanceof Response ) {
+            // 404
+            return $image;
+        }
+
+        $imageRealUrl =  $image->getUrl($size);
+        return $this->redirect($imageRealUrl, Response::HTTP_MOVED_PERMANENTLY);
     }
 }

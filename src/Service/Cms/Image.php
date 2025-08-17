@@ -6,6 +6,7 @@ use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
 use App\Repository\Cms\ImageRepository;
 use App\Service\Factory;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
@@ -396,9 +397,9 @@ class Image extends BaseCmsService
     }
 
 
-    public function getUrl(Article $article, string $size) : string
+    public function getUrl(string $size) : string
     {
-        return $this->factory->getImageUrlGenerator()->generateUrl($this, $article, $size);
+        return $this->factory->getImageUrlGenerator()->generateUrl($this, $size);
     }
 
 
@@ -408,8 +409,33 @@ class Image extends BaseCmsService
     }
 
 
-    public function getFormat() : ?string { return $this->entity->getFormat(); }
+    public function checkRealUrl(string $size, ?string $imageFolderMod, string $slugDashId, ?string $format) : ?string
+    {
+        $candidateUrl   = "/immagini/$size/$imageFolderMod/$slugDashId.$format";
+        $realUrl        = $this->factory->getImageUrlGenerator()->generateUrl($this, $size, UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $candidateUrl == $realUrl ? null : $this->getUrl($size);
+    }
 
+
+    public function getTitle(): ?string
+    {
+        $title = parent::getTitle();
+
+        foreach(ImageEntity::getFormats() as $format) {
+            $title = rtrim($title, ".$format");
+        }
+
+        if( empty($title) ) {
+            $title = 'image';
+        }
+
+        return $title;
+    }
+
+
+    public function getSlug() : ?string { return $this->factory->getImageUrlGenerator()->buildSlug($this); }
+
+    public function getFormat() : ?string { return $this->entity->getFormat(); }
 
     public function getTempOrder() : int { return $this->tempOrder; }
 

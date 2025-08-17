@@ -199,10 +199,10 @@ class Article extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** ☀️ Spotlight ***">
     public function getSpotlightOrDefaultUrl(string $size) : string
     {
-        return $this->getSpotlightOrDefault()->getUrl($this, $size);
+        return $this->getSpotlightOrDefault()->getUrl($size);
     }
 
-    public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($this, $size); }
+    public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($size); }
 
     public function getSpotlight() : ?ImageService
     {

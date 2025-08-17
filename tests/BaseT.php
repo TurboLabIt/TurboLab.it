@@ -60,6 +60,20 @@ abstract class BaseT extends WebTestCase
     }
 
 
+    protected static function getProjectFilePath(string $relativeFilePath) : ?string
+    {
+        return static::getService('TurboLabIt\\BaseCommand\\Service\\ProjectDir')->getProjectDirFromFile($relativeFilePath);
+    }
+
+
+    protected static function getTestAssetContent(string $filename) : ?string
+    {
+        $assetFilePath = "assets/test/$filename";
+        $path = static::getProjectFilePath($assetFilePath);
+        return file_get_contents($path);
+    }
+
+
     protected function fetchHtml(string $url, string $method = Request::METHOD_GET, bool $toLower = true) : string
     {
         $this->browse($url, $method);
