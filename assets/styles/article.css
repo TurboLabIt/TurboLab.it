@@ -3,7 +3,7 @@
     padding-bottom: 15px !important;
 }
 
-#tli-article-body,.ck.ck-content.ck-editor__editable {
+#tli-article-body, .ck.ck-content.ck-editor__editable {
     font-size: 20px;
     line-height: 1.5;
     color: black;
@@ -46,7 +46,8 @@
     border-radius: 2px;
 }
 
-.tli-article-main-content a {
+/* reset links to default look */
+#tli-article-body a, .ck.ck-content.ck-editor__editable a, .tli-file-download a {
     all: revert;
 }
 
