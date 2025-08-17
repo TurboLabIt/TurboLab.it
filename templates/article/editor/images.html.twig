@@ -1,7 +1,7 @@
 {% for Image in Images %}
     <div class="col">
         <div class="ratio ratio-1x1 {% block imageBorder %}border border-2 border-success{% endblock %}">
-            <img src="{{ Image.url(Article, ImageSizes.reg) }}" loading="lazy" class="img-fluid object-fit-cover"
+            <img src="{{ Image.url(ImageSizes.reg) }}" loading="lazy" class="img-fluid object-fit-cover"
                  alt="{{ Image.title }}" title="{{ Image.title }}">
         </div>
     </div>
