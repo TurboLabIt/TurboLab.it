@@ -199,7 +199,7 @@ class Factory
                 ->setId(ImageService::ID_DEFAULT_SPOTLIGHT)
                 ->setFormat(ImageEntity::FORMAT_PNG)
                 ->setWatermarkPosition(ImageEntity::WATERMARK_DISABLED)
-                ->setTitle("TurboLab.it");
+                ->setTitle("T-TurboLab.it");
 
         $this->defaultSpotlight = $this->createImage($entity);
         return $this->defaultSpotlight;
