@@ -38,6 +38,7 @@ import debounce from './debouncer';
 import ArticleContentEditable from './article-edit-contenteditable';
 import TliSavePlugin from "./ckeditor-plugins/save";
 import TliUpdatePlugin from "./ckeditor-plugins/update";
+import TliIstruzioniPlugin from "./ckeditor-plugins/istruzioni";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -48,7 +49,7 @@ const editorConfig = {
             'save', '|',
             'heading2', 'paragraph', '|',
             'bold', 'italic', 'strikethrough', '|',
-            'code', 'tliUpdate', '|',
+            'tliIstruzioni', 'tliUpdate', '|',
             'removeFormat', '|',
             'link', '|',
             'codeBlock', 'bulletedList', 'numberedList', '|',
@@ -81,9 +82,10 @@ const editorConfig = {
         Strikethrough,
         // ---- TLI plugins ---- \\
         TliSavePlugin,
-        TliUpdatePlugin
+        TliUpdatePlugin,
+        TliIstruzioniPlugin
     ],
-    balloonToolbar: ['bold', 'italic', 'code', 'tliUpdate', 'removeFormat', '|', 'link'],
+    balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {
         onEnterCallback: container =>
             container.classList.add(
@@ -100,16 +102,7 @@ const editorConfig = {
     licenseKey: LICENSE_KEY,
     link: {
         addTargetToExternalLinks: true,
-        defaultProtocol: 'https://',
-        decorators: {
-            toggleDownloadable: {
-                mode: 'manual',
-                label: 'Downloadable',
-                attributes: {
-                    download: 'file'
-                }
-            }
-        }
+        defaultProtocol: 'https://'
     },
     placeholder: 'Digita qui il testo del tuo articolo',
     translations: [translations],
@@ -164,17 +157,6 @@ ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig)
         titleButtonView.set({
             icon: $('#tli-toolbar-icons .bi-textarea-t')[0].outerHTML,
             tooltip: 'Titolo (Ctrl+1)'
-        });
-
-
-        // Code
-        const codeButtonView = editor.ui.view.toolbar.items.find(
-            item => item.label === 'Codice'
-        );
-
-        codeButtonView.set({
-            icon: $('#tli-toolbar-icons .bi-x-diamond-fill')[0].outerHTML,
-            tooltip: 'Istruzioni (Ctrl+M)'
         });
 
 
