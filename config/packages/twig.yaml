@@ -13,6 +13,7 @@ twig:
         metaPageImageUrl: '%env(APP_SITE_URL)%%env(APP_SITE_LOGO_PATH)%'
         websiteTwitterHandle: '%env(APP_TWITTER_HANDLE)%'
         ckeditorLicenseKey: '%env(CKEDITOR_LICENSE_KEY)%'
+        ImageSizes: !php/const 'App\Service\Cms\Image::SIZES'
 
 when@test:
     twig:

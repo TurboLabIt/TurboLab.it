@@ -57,12 +57,12 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
                     // this will display an error, but we want to keep the original image URL
                     $fakeImageEntity    = (new ImageEntity())->setId($imgId);
-                    $imgUrl             = $this->factory->createImage($fakeImageEntity)->getUrl(Image::SIZE_FULL);
+                    $imgUrl             = $this->factory->createImage($fakeImageEntity)->getUrl(Image::SIZE_NORMAL);
                     $imageAltText       = 'Immagine non trovata';
 
                 } else {
 
-                    $imgUrl         = $srvImage->getUrl(Image::SIZE_FULL);
+                    $imgUrl         = $srvImage->getUrl(Image::SIZE_NORMAL);
                     $imageAltText   = "Immagine " . $index . " " . $srvImage->getTitle();
                 }
 

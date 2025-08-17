@@ -29,7 +29,7 @@
                                 <div class="trending-news-item">
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url }}">
-                                            <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
+                                            <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
                                                  class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                         </a>
                                     </div>
@@ -94,7 +94,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -135,7 +135,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -206,7 +206,7 @@
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -230,7 +230,7 @@
                     {% for Article in MiddleSlideShow %}
                         <div class="col-lg-6">
                             <div class="single-play-post-item">
-                                <img src="{{ Article.spotlightOrDefaultUrl('med') }}"
+                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.normal) }}"
                                      class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
@@ -331,7 +331,7 @@
                                     <div class="trending-news-item mb-30">
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
                                                      class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                             </a>
                                         </div>
@@ -377,7 +377,7 @@
                                         <div class="col-lg-6 col-md-6">
                                             <div class="business-post-thumb">
                                                 <a href="{{ Article.url }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl('slider') }}"
+                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
                                                          class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                                 </a>
                                             </div>
@@ -458,7 +458,7 @@
                                         <div class="gallery_item gallery_item-style-2">
                                             <div class="gallery_item_thumb">
                                                 <a href="{{ Article.url }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl('micro') }}"
+                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
                                                          class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
                                                 </a>
                                             </div>

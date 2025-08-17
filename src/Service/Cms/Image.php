@@ -48,10 +48,17 @@ class Image extends BaseCmsService
 
     const int HOW_MANY_FILES_PER_FOLDER = 5000;
 
-    const string SIZE_MIN   = 'min';
-    const string SIZE_MED   = 'med';
-    const string SIZE_FULL  = 'full';
-    const string SIZE_MAX   = 'max';
+    const string SIZE_MIN       = 'min';
+    const string SIZE_MED       = 'med';
+    const string SIZE_NORMAL    = 'normal';
+    const string SIZE_MAX       = 'max';
+
+    const array SIZES = [
+        self::SIZE_MIN      => self::SIZE_MIN,
+        self::SIZE_MED      => self::SIZE_MED,
+        self::SIZE_NORMAL   => self::SIZE_NORMAL,
+        self::SIZE_MAX      => self::SIZE_MAX
+    ];
 
     const array SIZE_DIMENSIONS = [
         self::SIZE_MIN  => [
@@ -62,7 +69,7 @@ class Image extends BaseCmsService
             self::WIDTH     => 440,
             self::HEIGHT    => 250,
         ],
-        self::SIZE_FULL  => [
+        self::SIZE_NORMAL  => [
             self::WIDTH     => 960,
             self::HEIGHT    => 540,
         ],
@@ -108,7 +115,7 @@ class Image extends BaseCmsService
     //</editor-fold>
 
 
-    public function getSizes() : array { return array_keys(static::SIZE_DIMENSIONS); }
+    public function getSizes() : array { return static::SIZES; }
 
     public function checkSize(string $size) : static
     {
