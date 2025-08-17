@@ -48,16 +48,16 @@ class Image extends BaseCmsService
 
     const int HOW_MANY_FILES_PER_FOLDER = 5000;
 
-    const string SIZE_MIN       = 'min';
-    const string SIZE_MED       = 'med';
-    const string SIZE_NORMAL    = 'normal';
-    const string SIZE_MAX       = 'max';
+    const string SIZE_MIN   = 'min';
+    const string SIZE_MED   = 'med';
+    const string SIZE_REG   = 'reg';
+    const string SIZE_MAX   = 'max';
 
     const array SIZES = [
-        self::SIZE_MIN      => self::SIZE_MIN,
-        self::SIZE_MED      => self::SIZE_MED,
-        self::SIZE_NORMAL   => self::SIZE_NORMAL,
-        self::SIZE_MAX      => self::SIZE_MAX
+        self::SIZE_MIN  => self::SIZE_MIN,
+        self::SIZE_MED  => self::SIZE_MED,
+        self::SIZE_REG  => self::SIZE_REG,
+        self::SIZE_MAX  => self::SIZE_MAX
     ];
 
     const array SIZE_DIMENSIONS = [
@@ -69,7 +69,7 @@ class Image extends BaseCmsService
             self::WIDTH     => 440,
             self::HEIGHT    => 250,
         ],
-        self::SIZE_NORMAL  => [
+        self::SIZE_REG  => [
             self::WIDTH     => 960,
             self::HEIGHT    => 540,
         ],
