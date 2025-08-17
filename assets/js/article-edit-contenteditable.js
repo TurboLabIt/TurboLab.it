@@ -121,7 +121,6 @@ jQuery(document).on('keydown', function(event) {
     if( (event.ctrlKey || event.metaKey) && (event.key === 's' || event.key === 'S') ) {
 
         event.preventDefault();
-        //saveArticle();
         $('#tli-ckeditor-save').trigger('click');
         return false;
     }
@@ -131,6 +130,14 @@ jQuery(document).on('keydown', function(event) {
 
         event.preventDefault();
         $('[data-cke-tooltip-text="Titolo (Ctrl+1)"]').trigger('click');
+        return false;
+    }
+
+    // CTRL+M or Command+M (Mac)
+    if( (event.ctrlKey || event.metaKey) && (event.key === 'm' || event.key === 'M') ) {
+
+        event.preventDefault();
+        $('[data-cke-tooltip-text="Istruzioni (Ctrl+M)"]').trigger('click');
         return false;
     }
 
