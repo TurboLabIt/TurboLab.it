@@ -48,13 +48,11 @@ const editorConfig = {
         items: [
             'save', '|',
             'heading2', 'paragraph', '|',
-            'bold', 'italic', 'strikethrough', '|',
-            'tliIstruzioni', 'tliUpdate', '|',
-            'removeFormat', '|',
+            'bold', 'italic', 'strikethrough', 'tliIstruzioni', 'tliUpdate', 'removeFormat', '|',
             'link', '|',
-            'codeBlock', 'bulletedList', 'numberedList', '|',
+            /*'codeBlock',*/ 'bulletedList', 'numberedList', '|',
             'undo', 'redo', '|',
-            'findAndReplace', 'fullscreen'
+            'findAndReplace', /*'fullscreen'*/
         ],
         shouldNotGroupWhenFull: false
     },
