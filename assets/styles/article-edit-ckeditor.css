@@ -2,6 +2,10 @@
     font-weight: 700;
 }
 
-[data-cke-tooltip-text="Istruzioni (Ctrl+M)"] svg {
-    color: #1AB7EA !important;
+.ck .ck-dropdown__panel .ck-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border-radius: 0;
+    padding: 6px 10px;
 }

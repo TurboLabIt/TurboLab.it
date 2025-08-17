@@ -39,6 +39,7 @@ import ArticleContentEditable from './article-edit-contenteditable';
 import TliSavePlugin from "./ckeditor-plugins/save";
 import TliUpdatePlugin from "./ckeditor-plugins/update";
 import TliIstruzioniPlugin from "./ckeditor-plugins/istruzioni";
+import TliPublishingStatusPlugin from "./ckeditor-plugins/publishing-status";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -53,6 +54,7 @@ const editorConfig = {
             /*'codeBlock',*/ 'bulletedList', 'numberedList', '|',
             'undo', 'redo', '|',
             'findAndReplace', /*'fullscreen'*/
+            'tliPublishingStatus'
         ],
         shouldNotGroupWhenFull: false
     },
@@ -81,7 +83,8 @@ const editorConfig = {
         // ---- TLI plugins ---- \\
         TliSavePlugin,
         TliUpdatePlugin,
-        TliIstruzioniPlugin
+        TliIstruzioniPlugin,
+        TliPublishingStatusPlugin
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {
