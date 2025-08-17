@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\Cms\Image as ImageEntity;
+use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
 use App\Service\Cms\Image;
 use App\ServiceCollection\Cms\ImageCollection;
@@ -20,7 +20,7 @@ class ImageController extends BaseController
     public function __construct(protected Image $image, protected ImageCollection $imageCollection) {}
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{imageFolderMod}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
+    #[Route('/' . self::SECTION_SLUG . '/{size<[a-z]+>}/{imageFolderMod}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
     public function index(string $size, string $imageFolderMod, string $slugDashId, string $format) : Response
     {
         $image = $this->getImageOr404Response($slugDashId, $size);
@@ -49,11 +49,15 @@ class ImageController extends BaseController
     protected function getImageOr404Response(string $slugDashId, string $size) : Image|Response
     {
         try {
-            return $this->image->loadBySlugDashId($slugDashId);
+            $image = $this->image->loadBySlugDashId($slugDashId);
+            $image->checkSize($size);
+            return $image;
 
-        } catch(ImageNotFoundException) {
+        } catch(ImageNotFoundException|ImageLogicException) {
 
             $image404 = $this->imageCollection->get404();
+            $size = in_array($size, $image404->getSizes() ) ? $size : Image::SIZE_MED;
+
             return
                 new Response($image404->getContent($size), Response::HTTP_NOT_FOUND, [
                     'Content-Type' => $image404->getBuiltImageMimeType()
@@ -97,14 +101,14 @@ class ImageController extends BaseController
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{id<[1-9]+[0-9]*>}/{size<micro|slider|min|med|max>}', name: 'app_image_shorturl')]
+    #[Route('/' . self::SECTION_SLUG . '/{id<[1-9]+[0-9]*>}/{size<[a-z]+>}', name: 'app_image_shorturl')]
     public function shortUrl(string $id, string $size = Image::SIZE_MAX) : Response
     {
         return $this->redirectToRealImage($size, "image-$id");
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{size<micro|slider|min|med|max>}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
+    #[Route('/' . self::SECTION_SLUG . '/{size<[a-z]+>}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image_legacy_no-folder-mod')]
     public function legacyNoFolderMod(string $size, string $slugDashId) : Response
     {
         return $this->redirectToRealImage($size, $slugDashId);

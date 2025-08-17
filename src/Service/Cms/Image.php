@@ -48,27 +48,21 @@ class Image extends BaseCmsService
 
     const int HOW_MANY_FILES_PER_FOLDER = 5000;
 
-
-    const string SIZE_MICRO = 'micro';
-    const string SIZE_SLIDER= 'slider';
     const string SIZE_MIN   = 'min';
     const string SIZE_MED   = 'med';
+    const string SIZE_FULL  = 'full';
     const string SIZE_MAX   = 'max';
 
     const array SIZE_DIMENSIONS = [
-        self::SIZE_MICRO  => [
-            self::WIDTH     => 80,
+        self::SIZE_MIN  => [
+            self::WIDTH     => 178,
             self::HEIGHT    => 100,
         ],
-        self::SIZE_SLIDER  => [
+        self::SIZE_MED  => [
             self::WIDTH     => 440,
             self::HEIGHT    => 250,
         ],
-        self::SIZE_MIN  => [
-            self::WIDTH     => 480,
-            self::HEIGHT    => 270,
-        ],
-        self::SIZE_MED  => [
+        self::SIZE_FULL  => [
             self::WIDTH     => 960,
             self::HEIGHT    => 540,
         ],
