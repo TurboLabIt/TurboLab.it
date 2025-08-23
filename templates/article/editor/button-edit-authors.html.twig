@@ -1,4 +1,4 @@
-{% if Article.currentUserCanEdit %}
+{% if Sentinel.canEdit %}
 
     <button type="button" class="btn btn-outline-primary fw-bold"
             data-tli-modal-url="{{ path('app_article_edit_authors_get-modal', {articleId: Article.id}) }}">

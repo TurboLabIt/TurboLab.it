@@ -257,6 +257,8 @@ class User extends BaseEntity implements UserInterface
 
     public function isEditor() : bool { return in_array(static::ROLE_EDITOR, $this->getRoles()); }
 
+    public function isAdmin() : bool { return in_array(static::ROLE_ADMIN, $this->getRoles()); }
+
 
     /**
      * @see UserInterface

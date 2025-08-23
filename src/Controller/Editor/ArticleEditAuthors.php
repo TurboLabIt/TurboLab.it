@@ -35,9 +35,7 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
         try {
 
-            if( empty($this->getUser()) ) {
-                throw $this->createAccessDeniedException('Non sei loggato!');
-            }
+            $this->sentinel->enforceLoggedUserOnly();
 
             $username = $this->request->get('username');
 
@@ -58,14 +56,13 @@ class ArticleEditAuthors extends ArticleEditBaseController
     {
         try {
 
-            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
-
             $this->loadArticleEditor($articleId);
 
             $arrAuthorIds = $this->request->get('authors') ?? [];
 
             $authors = $this->factory->createUserCollection()->load($arrAuthorIds);
 
+            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
             $this->articleEditor->setAuthors($authors, $currentUserAsAuthor);
 
             $this->factory->getEntityManager()->flush();

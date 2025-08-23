@@ -6,7 +6,7 @@
     <link rel="preload" href="{{ asset('build/article.css') }}"
         as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-    {% if Article.currentUserCanEdit %}
+    {% if Sentinel.canEdit %}
         <link rel="stylesheet" href="{{ asset('build/article-edit.css') }}">
     {% endif %}
 
@@ -45,14 +45,14 @@
 
                 <!-- ARTICLE main content START -->
                 <article class="col-lg-8"
-                         data-save-url="{{ path('app_editor_article_update', {articleId: Article.id}) }}"
-                         data-set-publishing-status-url="{{ path('app_editor_article_set-publishing-status', {articleId: Article.id}) }}">
+                    data-save-url="{{ path('app_editor_article_update', {articleId: Article.id}) }}"
+                    data-set-publishing-status-url="{{ path('app_editor_article_set-publishing-status', {articleId: Article.id}) }}">
 
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
                         <div class="post-content">
 
-                            {% if Article.currentUserCanEdit %}
+                            {% if Sentinel.canEdit %}
 
                                 {% embed 'parts/alert-chalkboard.html.twig' %}
 
@@ -132,8 +132,8 @@
                             {% include 'article/editor/toolbar-icons.html.twig' %}
 
                             <div id="tli-article-body" data-tli-editable-id="body"
-                                 class="post-text mt-30 tli-article-body {% if Article.currentUserCanEdit %}form-control{% endif %}"
-                                 {% if Article.currentUserCanEdit %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
+                                 class="post-text mt-30 tli-article-body {% if Sentinel.canEdit %}form-control{% endif %}"
+                                 {% if Sentinel.canEdit %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
 
@@ -151,7 +151,7 @@
 
                             {% endif %}
 
-                            {% if Article.currentUserCanEdit %}
+                            {% if Sentinel.canEdit %}
                                 <div class="mb-3">
                                     {% include 'article/editor/button-edit-tags.html.twig' %}
                                 </div>
@@ -190,7 +190,7 @@
                 </article>
                 <!-- ARTICLE main END -->
 
-                {% if Article.currentUserCanEdit %}
+                {% if Sentinel.canEdit %}
 
                     {% include 'article/editor/images-gallery.html.twig' %}
 
@@ -268,9 +268,10 @@
     {{ parent() }}
     {{ encore_entry_script_tags('article') }}
 
-    {% if Article.currentUserCanEdit %}
+    {% if Sentinel.canEdit %}
 
         <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.0/ckeditor5.css" crossorigin>
+        <script>window.TLI_EDITOR_AVAILABLE_PUBLISHING_STATUSES = {{ Sentinel.availablePublishingStatuses|json_encode }};</script>
         {{ encore_entry_script_tags('article-edit') }}
 
     {% endif %}

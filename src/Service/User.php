@@ -132,8 +132,10 @@ class User extends BaseServiceEntity
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** 👮 Permissions ***">
+    //<editor-fold defaultstate="collapsed" desc="*** 👮 Roles ***">
     public function isEditor() : bool { return $this->entity->isEditor(); }
+
+    public function isAdmin() : bool { return $this->entity->isAdmin(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">

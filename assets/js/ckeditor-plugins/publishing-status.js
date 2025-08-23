@@ -8,6 +8,7 @@ export default class TliPublishingStatus extends Plugin {
         const editor = this.editor;
 
         editor.ui.componentFactory.add('tliPublishingStatus', locale => {
+
             const dropdownView = createDropdown(locale);
 
             // Initial button label
@@ -17,15 +18,20 @@ export default class TliPublishingStatus extends Plugin {
                 tooltip: true
             });
 
-            const items = [
-                { value: '0', label: '🚧 Bozza in lavorazione (nascosto al pubblico)' },
-                { value: '3', label: '✅ Pronto e finito (visibile al pubblico)' },
-                //{ value: '5', label: '(admin) Pubblicato' },
-                //{ value: '7', label: '(admin) Bloccato/rimosso' }
+            const choices = [
+                { value: 0, label: '🚧 Bozza in lavorazione (nascosto al pubblico)' },
+                { value: 3, label: '✅ Pronto e finito (visibile al pubblico)' },
+                { value: 5, label: '(admin) Pubblicato' },
+                { value: 7, label: '(admin) Bloccato/rimosso' }
             ];
 
             // Build the panel with plain ButtonViews (no Model/Collection needed)
-            for (const { value, label } of items) {
+            for(const { value, label } of choices) {
+
+                if( !TLI_EDITOR_AVAILABLE_PUBLISHING_STATUSES.includes(value) ) {
+                    continue;
+                }
+
                 const itemBtn = new ButtonView(locale);
                 itemBtn.set({
                     label,

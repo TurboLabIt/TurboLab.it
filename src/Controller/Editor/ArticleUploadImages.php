@@ -15,11 +15,10 @@ class ArticleUploadImages extends ArticleEditBaseController
     {
         try {
 
-            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
-
             $this->loadArticleEditor($articleId);
 
             $uploadedImages = $this->request->files->get('images', []);
+            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $images =
                 $this->factory->createImageEditorCollection()

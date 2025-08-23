@@ -111,7 +111,7 @@ class ArticleRepository extends BaseRepository
             ])->fetchFirstColumn();
 
         $query =
-            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUSES_OK, false)
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUSES_LISTABLE, false)
                 ->andWhere('t.id NOT IN(:articleIdBySystem)')
                     ->setParameter('articleIdBySystem', $arrArticleIdBySystem)
                 ->setFirstResult($startAt)

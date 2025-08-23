@@ -8,7 +8,7 @@ use App\Service\FrontendHelper;
 use Error;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -152,9 +152,18 @@ abstract class BaseController extends AbstractController
 
     protected function textErrorResponse(Exception|Error $ex, ?string $emoji = '🚨') : Response
     {
-        $statusCode =
-            $ex instanceof HttpExceptionInterface
-                ? $ex->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+        if( method_exists($ex, 'getStatusCode') ) {
+
+            $statusCode = $ex->getStatusCode();
+
+        } elseif($ex instanceof AccessDeniedException) {
+
+            $statusCode = $ex->getCode();
+
+        } else {
+
+            $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
 
         $message = $ex->getMessage() ?: 'Internal Server Error';
         $message = trim($message);

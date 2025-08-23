@@ -33,7 +33,7 @@
         </ul>
 
 
-        {% if Article.currentUserCanEdit %}
+        {% if Sentinel.canEdit %}
             <div class="mt-2">
                 {% include 'article/editor/button-edit-authors.html.twig' %}
                 {% include 'article/editor/button-edit-tags.html.twig' %}
@@ -62,7 +62,7 @@
     {% endembed %}
 
 
-    {% if Article.currentUserCanEdit %}
+    {% if Sentinel.canEdit %}
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
             {% block alertTitle %}

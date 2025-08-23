@@ -14,6 +14,7 @@ class ArticleEditTags extends ArticleEditBaseController
     public function getTagsModal(int $articleId) : Response
     {
         try {
+
             $this->loadArticleEditor($articleId);
 
             return $this->json([
@@ -35,9 +36,7 @@ class ArticleEditTags extends ArticleEditBaseController
 
         try {
 
-            if( empty($this->getUser()) ) {
-                throw $this->createAccessDeniedException('Non sei loggato!');
-            }
+            $this->sentinel->enforceLoggedUserOnly();
 
             $tag = $this->request->get('tag');
 
@@ -54,11 +53,10 @@ class ArticleEditTags extends ArticleEditBaseController
     {
         try {
 
-            $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
-
             $this->loadArticleEditor($articleId);
 
             $arrIdsAndTags = $this->request->get('tags') ?? [];
+            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $tags =
                 $this->factory->createTagEditorCollection()

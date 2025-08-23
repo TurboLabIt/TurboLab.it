@@ -17,6 +17,7 @@ use App\Service\Cms\ImageUrlGenerator;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
+use App\Service\Sentinel\ArticleSentinel;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\ServiceCollection\Cms\ImageEditorCollection;
 use App\ServiceCollection\Cms\TagEditorCollection;
@@ -41,7 +42,6 @@ class Factory
     protected ?ImageService $defaultSpotlight;
     protected ?TagService $defaultTag;
     protected ?User $currentUser;
-    protected ?User $currentUserAsAuthor;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
@@ -73,27 +73,8 @@ class Factory
         }
 
         $entity = $this->security->getUser();
-        if( empty($entity) ) {
-            return $this->currentUser = $this->currentUserAsAuthor = null;
-        }
-
         return $this->currentUser = $this->createUser($entity);
     }
-
-    public function getCurrentUserAsAuthor() : ?UserService
-    {
-        if( !empty($this->currentUserAsAuthor) ) {
-            return $this->currentUserAsAuthor;
-        }
-
-        $cu = $this->getCurrentUser();
-        if( empty($cu) ) {
-            return null;
-        }
-
-        return $this->currentUserAsAuthor = $this->createUser()->load( $cu->getId() );
-    }
-
 
     public function getViews() : Views { return (new Views($this, $this->urlGenerator)); }
 
@@ -138,6 +119,18 @@ class Factory
         }
 
         return $collection;
+    }
+
+
+    public function createArticleSentinel(?ArticleService $article = null) : ArticleSentinel
+    {
+        $service = new ArticleSentinel($this);
+
+        if( !empty($article) ) {
+            $service->setArticle($article);
+        }
+
+        return $service;
     }
     //</editor-fold>
 
