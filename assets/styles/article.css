@@ -46,9 +46,14 @@
     border-radius: 2px;
 }
 
-/* reset links to default look */
-#tli-article-body a, .ck.ck-content.ck-editor__editable a, .tli-file-download a {
+/* reset links to default look... */
+.alert a, .tli-file-download a, #tli-article-body a, .ck.ck-content.ck-editor__editable a {
     all: revert;
+}
+
+/* ...no purple! */
+.alert a:visited {
+    color: blue;
 }
 
 .tli-prev-next-article {
