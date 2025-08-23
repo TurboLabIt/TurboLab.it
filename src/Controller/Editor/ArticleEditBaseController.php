@@ -76,7 +76,8 @@ abstract class ArticleEditBaseController extends BaseController
             "path"      => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
             "title"     => $this->articleEditor->getTitleForHTMLAttribute(),
             "strip"     => $this->twig->render('article/meta-strip.html.twig', [
-                "Article" => $this->articleEditor,
+                "Article"       => $this->articleEditor,
+                "CurrentUser"   => $this->factory->getCurrentUser(),
             ]),
             "bios"      => $this->twig->render('article/authors-bio.html.twig', [
                 "Article" => $this->articleEditor

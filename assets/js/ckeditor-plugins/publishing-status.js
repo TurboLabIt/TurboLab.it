@@ -1,5 +1,7 @@
 // tliPublishingStatus.js
 import { Plugin, createDropdown, ButtonView } from 'ckeditor5';
+import ArticlePublishable from '../article-edit-publishable';
+
 
 export default class TliPublishingStatus extends Plugin {
     init() {
@@ -16,10 +18,10 @@ export default class TliPublishingStatus extends Plugin {
             });
 
             const items = [
-                { value: '0', label: 'In lavorazione (bozza)' },
-                { value: '3', label: 'Finito e visibile a tutti' },
-                { value: '5', label: 'Pubblicato' },
-                { value: '7', label: 'Non disponibile (bloccato/rimosso)' }
+                { value: '0', label: '🚧 Bozza in lavorazione (nascosto al pubblico)' },
+                { value: '3', label: '✅ Pronto e finito (visibile al pubblico)' },
+                //{ value: '5', label: '(admin) Pubblicato' },
+                //{ value: '7', label: '(admin) Bloccato/rimosso' }
             ];
 
             // Build the panel with plain ButtonViews (no Model/Collection needed)
@@ -31,9 +33,12 @@ export default class TliPublishingStatus extends Plugin {
                 });
 
                 itemBtn.on('execute', () => {
-                    alert(value);
-                    dropdownView.buttonView.set({ label }); // reflect selection on the toolbar button
-                    dropdownView.isOpen = false;            // close the dropdown after picking
+
+                    ArticlePublishable.setPublishingStatus(value, function() {
+                        dropdownView.buttonView.set({ label });
+                    });
+
+                    dropdownView.isOpen = false;
                 });
 
                 dropdownView.panelView.children.add(itemBtn);

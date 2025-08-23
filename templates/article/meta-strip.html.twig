@@ -43,4 +43,61 @@
     </div>
 </div>
 
+
 {% include 'article/editor/tags-missing-warning.html.twig' %}
+
+
+{% if Article.isDraft %}
+
+    {% embed 'parts/alert-warning.html.twig' %}
+        {% block alertIcon %}<i class="fa-regular fa-pen-to-square"></i>{% endblock %}
+        {% block alertTitle %}Articolo in lavorazione (bozza){% endblock %}
+        {% block alertBodyStyle %}text-start post-text tli-article-body{% endblock %}
+        {% block alertBody %}
+            <div>
+                Questo articolo non è ancora stato marcato dall'autore come "finito".
+                È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
+            </div>
+        {% endblock %}
+    {% endembed %}
+
+
+    {% if Article.currentUserCanEdit %}
+        {% embed 'parts/alert-chalkboard.html.twig' %}
+
+            {% block alertTitle %}
+                Tu, {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo
+            {% endblock %}
+            {% block alertBodyStyle %}{% endblock %}
+            {% block alertBody %}
+
+                Ma ricorda che il pubblico, ancora, non può leggerlo. Per rendere visibile l'articolo a tutti:
+                <ol class="mt-2">
+                    <li>Assicurati che l'articolo sia VERAMENTE pronto e finito 😉</li>
+                    <li><a href="#" class="tli-publishing-status-ready">Clicca qui per rendere l'articolo visibile a tutti</a></li>
+                </ol>
+
+            {% endblock %}
+
+        {% endembed %}
+    {% endif %}
+
+{% elseif Article.isKo %}
+
+    {% embed 'parts/alert-warning.html.twig' %}
+        {% block alertIcon %}<i class="fa-solid fa-toilet-paper"></i>{% endblock %}
+        {% block alertTitle %}Articolo non disponibile{% endblock %}
+        {% block alertBodyStyle %}text-start post-text tli-article-body{% endblock %}
+        {% block alertBody %}
+            <div>
+                Questo articolo, nella forma attuale, non rispecchia il livello qualitativo che desideriamo garantire.
+                È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
+            </div>
+            <div>
+                Tu, <i class="fa-solid fa-user ml-5"></i> {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo.
+                Ma ricorda che il pubblico non può leggerlo.
+            </div>
+        {% endblock %}
+    {% endembed %}
+
+{% endif %}
