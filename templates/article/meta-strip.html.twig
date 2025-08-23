@@ -61,7 +61,6 @@
         {% endblock %}
     {% endembed %}
 
-
     {% if Sentinel.canEdit %}
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
@@ -70,13 +69,11 @@
             {% endblock %}
             {% block alertBodyStyle %}{% endblock %}
             {% block alertBody %}
-
                 Ma ricorda che il pubblico, ancora, non può leggerlo. Per rendere visibile l'articolo a tutti:
                 <ol class="mt-2">
                     <li>Assicurati che l'articolo sia VERAMENTE pronto e finito 😉</li>
                     <li><a href="#" class="tli-publishing-status-ready">Clicca qui per rendere l'articolo visibile a tutti</a></li>
                 </ol>
-
             {% endblock %}
 
         {% endembed %}
@@ -93,11 +90,22 @@
                 Questo articolo, nella forma attuale, non rispecchia il livello qualitativo che desideriamo garantire.
                 È quindi visibile solo ai suoi autori e agli utenti con <a href="/40">autorevolezza elevata</a>.
             </div>
-            <div>
-                Tu, <i class="fa-solid fa-user ml-5"></i> {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo.
-                Ma ricorda che il pubblico non può leggerlo.
-            </div>
         {% endblock %}
     {% endembed %}
+
+    {% if Sentinel.canEdit %}
+        {% embed 'parts/alert-chalkboard.html.twig' %}
+
+            {% block alertTitle %}
+                Tu, {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo
+            {% endblock %}
+            {% block alertBodyStyle %}{% endblock %}
+            {% block alertBody %}
+                Il pubblico, al contrario non può leggerlo. Se lo desideri,
+                puoi <a href="/forum/viewforum.php?f=6">chiedere chiarimenti sul forum</a>.
+            {% endblock %}
+
+        {% endembed %}
+    {% endif %}
 
 {% endif %}
