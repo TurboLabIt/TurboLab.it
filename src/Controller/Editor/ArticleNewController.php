@@ -17,7 +17,7 @@ class ArticleNewController extends ArticleEditBaseController
     #[Route('/scrivi', name: 'app_article_new', methods: ['GET'])]
     public function new() : Response
     {
-        $currentUser = $this->factory->getCurrentUser();
+        $currentUser = $this->sentinel->getCurrentUser();
 
         if( empty($currentUser) ) {
 
@@ -68,11 +68,9 @@ class ArticleNewController extends ArticleEditBaseController
     #[Route('/scrivi/salva',  name: 'app_article_new_submit', methods: ['POST'])]
     public function submit() : Response
     {
-        $currentUserAsAuthor = $this->getCurrentUserAsAuthor();
+        $this->sentinel->enforceLoggedUserOnly();
 
         $this->validateCsrfToken();
-
-        // TODO zaneee! Rate limiting on new article
 
         $newArticleTitle = $this->request->get(static::TITLE_FIELD_NAME);
 
@@ -88,6 +86,7 @@ class ArticleNewController extends ArticleEditBaseController
         }
 
         $newArticleFormat = $this->request->get(static::FORMAT_FIELD_NAME);
+        $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
         $this->articleEditor
             ->setFormat($newArticleFormat)
