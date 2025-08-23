@@ -38,6 +38,8 @@ class ArticleEditorController extends ArticleEditBaseController
 
             $publishingStatus = $this->request->get('status');
 
+            $this->sentinel->enforceCanSetPublishingStatusTo($publishingStatus);
+
             $this->articleEditor
                 ->setPublishingStatus($publishingStatus)
                 ->save();

@@ -86,4 +86,16 @@ class ArticleSentinel extends BaseSentinel
 
         return $this;
     }
+
+
+    public function enforceCanSetPublishingStatusTo(mixed $publishingStatus, ?Article $article = null, string $errorMessage = "You're not authorized to set this status on this article") : static
+    {
+        $this->enforceCanEdit($article);
+
+        if( !in_array($publishingStatus, $this->getAvailablePublishingStatuses($article)) ) {
+            throw new AccessDeniedException($errorMessage);
+        }
+
+        return $this;
+    }
 }
