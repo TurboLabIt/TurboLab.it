@@ -6,6 +6,9 @@ import ArticleMeta from './article-edit-meta';
 
 jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list',  function(event) {
 
+    openTaggingGuide(false);
+    openSuggestions(true);
+
     let currentTagsList = jQuery('#tli-ajax-modal').find('.tli-article-editor-current-tags-list');
     let tagIds =
         currentTagsList.find('[data-tag-id]').map(function() {
@@ -25,9 +28,6 @@ jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list
             tag.addClass('d-none');
         }
     });
-
-    openTaggingGuide(false);
-    openSuggestions(true);
 });
 
 
