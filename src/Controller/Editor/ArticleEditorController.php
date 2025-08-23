@@ -36,15 +36,13 @@ class ArticleEditorController extends ArticleEditBaseController
         try {
             $this->loadArticleEditor($articleId);
 
-            foreach(['title', 'body'] as $param) {
+            $publishingStatus = $this->request->get('status');
 
-                $value  = $this->request->get($param);
-                $method = "set" . ucfirst($param);
-                $this->articleEditor->$method($value);
-            }
+            $this->articleEditor
+                ->setPublishingStatus($publishingStatus)
+                ->save();
 
-            $this->articleEditor->save();
-            return $this->jsonOKResponse("Articolo salvato");
+            return $this->jsonOKResponse("Stato di pubblicazione modificato correttamente");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
