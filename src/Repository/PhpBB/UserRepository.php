@@ -155,7 +155,7 @@ class UserRepository extends BasePhpBBRepository
                 // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
                 ->andWhere('t.user_type IN(0,3)')
                 ->andWhere('t.username_clean = :username')
-                ->setParameter('username', $usernameClean)
+                    ->setParameter('username', mb_strtolower($usernameClean))
                 ->getQuery()
                 ->getOneOrNullResult();
     }
@@ -220,7 +220,7 @@ class UserRepository extends BasePhpBBRepository
         return
             $this->getQueryBuilderComplete()
                 ->andWhere('t.username_clean LIKE :termToSearch')
-                    ->setParameter('termToSearch', '%' . $this->prepareParamForLikeCondition($termToSearch) . '%')
+                    ->setParameter('termToSearch', '%' . mb_strtolower($this->prepareParamForLikeCondition($termToSearch)) . '%')
                 ->orderBy('t.user_posts', 'DESC')
                 ->getQuery()
                 ->getResult();
