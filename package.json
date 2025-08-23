@@ -3,10 +3,10 @@
         "@babel/core": ">=7.28.3",
         "@babel/preset-env": ">=7.28.3",
         "@symfony/webpack-encore": ">=5.1.0",
-        "core-js": ">=3.45.0",
+        "core-js": ">=3.45.1",
         "jquery-is-in-viewport": ">=1.0.5",
         "regenerator-runtime": ">=0.14.1",
-        "webpack": ">=5.101.2",
+        "webpack": ">=5.101.3",
         "webpack-cli": "6.0.1",
         "webpack-notifier": ">=1.15.0"
     },
@@ -19,7 +19,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "ckeditor5": ">=46.0.1",
+        "ckeditor5": ">=46.0.2",
         "file-loader": ">=6.2.0",
         "npm-check-updates": "^18.0.2",
         "raw-loader": ">=4.0.2",
