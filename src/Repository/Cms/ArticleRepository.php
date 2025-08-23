@@ -34,6 +34,8 @@ class ArticleRepository extends BaseRepository
     {
         return
             parent::getQueryBuilderComplete()
+                //spotlight
+                ->leftJoin('t.spotlight', 'spotlight')
                 // authors
                 ->leftJoin('t.authors', 'authorsJunction')
                 ->leftJoin('authorsJunction.user', 'user')
@@ -46,7 +48,7 @@ class ArticleRepository extends BaseRepository
                 // comments
                 ->leftJoin('t.commentsTopic', 'commentsTopic')
                 //
-                ->addSelect('authorsJunction', 'user', 'tagsJunction', 'tag',/* 'filesJunction', 'file',*/ 'commentsTopic');
+                ->addSelect('spotlight', 'authorsJunction', 'user', 'tagsJunction', 'tag',/* 'filesJunction', 'file',*/ 'commentsTopic');
     }
 
 
