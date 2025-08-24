@@ -59,7 +59,7 @@ $this->validateCsrfToken();
 ````
 
 * [article/index.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/article/index.html.twig)
-* [🔍 Search]https://github.com/search?q=repo%3ATurboLabIt%2FTurboLab.it%20alert-chalkboard.html.twig&type=code)
+* [🔍 Search](https://github.com/search?q=repo%3ATurboLabIt%2FTurboLab.it%20alert-chalkboard.html.twig&type=code)
 
 
 ## Editor
