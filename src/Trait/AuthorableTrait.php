@@ -2,26 +2,11 @@
 namespace App\Trait;
 
 use App\Service\User;
-use App\Service\User as UserService;
 
 
-trait SecurityTrait
+trait AuthorableTrait
 {
-    public function getCurrentUser() : ?UserService { return $this->factory->getCurrentUser(); }
-
-    public function getCurrentUserAsAuthor() : ?UserService { return $this->factory->getCurrentUserAsAuthor(); }
-
-
-    public function currentUserCanEdit() : bool
-    {
-        $currentUser = $this->getCurrentUser();
-
-        if( empty($currentUser) ) {
-            return false;
-        }
-
-        return $this->isAuthor($currentUser) || $currentUser->isEditor();
-    }
+    protected ?array $arrAuthors = null;
 
 
     public function isAuthor(?User $user = null) : bool

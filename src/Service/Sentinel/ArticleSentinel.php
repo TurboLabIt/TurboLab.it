@@ -20,19 +20,17 @@ class ArticleSentinel extends BaseSentinel
     public function canList(?Article $article = null) : bool
     {
         $article = $article ?? $this->article;
-
         return
-            in_array($article->getPublisingStatus(), Article::PUBLISHING_STATUSES_LISTABLE) ||
-            $this->canRead($article);
+            in_array($article->getPublishingStatus(), Article::PUBLISHING_STATUSES_LISTABLE) ||
+            $this->canView($article);
     }
 
 
     public function canView(?Article $article = null) : bool
     {
         $article = $article ?? $this->article;
-
         return
-            in_array($article->getPublisingStatus(), Article::PUBLISHING_STATUSES_VISIBLE) ||
+            in_array($article->getPublishingStatus(), Article::PUBLISHING_STATUSES_VISIBLE) ||
             $this->canEdit($article);
     }
 
@@ -42,7 +40,7 @@ class ArticleSentinel extends BaseSentinel
         $article        = $article ?? $this->article;
         $currentUser    = $this->getCurrentUser();
 
-        if( empty($currentUser) ) {
+        if( empty($currentUser?->getId()) ) {
             return false;
         }
 

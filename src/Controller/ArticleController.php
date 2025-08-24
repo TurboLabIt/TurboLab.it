@@ -67,18 +67,16 @@ class ArticleController extends BaseController
             return $this->redirect($articleRealUrl, Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $sentinel = $this->factory->createArticleSentinel($article);
-
         // TODO handle visitor counter
         $article
             ->setClientIpAddress( $this->request->getClientIp() )
             ->countOneView();
 
-        $articleHowTo = $sentinel->canEdit() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
+        $articleHowTo = $article->isEditable() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
 
         $html =
             $this->twig->render('article/index.html.twig', [
-                'Sentinel'              => $sentinel,
+                'Sentinel'              => $this->factory->createArticleSentinel($article),
                 'metaTitle'             => $article->getTitleForHTMLAttribute(),
                 'metaDescription'       => $article->getAbstractForHTMLAttribute(),
                 'metaCanonicalUrl'      => $article->getUrl(),

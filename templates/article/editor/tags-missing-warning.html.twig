@@ -1,4 +1,4 @@
-{% if Sentinel.canEdit and Article.Tags|length == 0 %}
+{% if Article.isEditable and Article.Tags|length == 0 %}
 
     {% embed 'parts/alert-warning-message.html.twig' %}
         {% block alertBody %}

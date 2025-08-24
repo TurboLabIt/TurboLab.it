@@ -33,7 +33,7 @@
         </ul>
 
 
-        {% if Sentinel.canEdit %}
+        {% if Article.isEditable %}
             <div class="mt-2">
                 {% include 'article/editor/button-edit-authors.html.twig' %}
                 {% include 'article/editor/button-edit-tags.html.twig' %}
@@ -61,7 +61,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% if Sentinel.canEdit %}
+    {% if Article.isEditable %}
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
             {% block alertTitle %}
@@ -93,7 +93,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% if Sentinel.canEdit %}
+    {% if Article.isEditable %}
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
             {% block alertTitle %}

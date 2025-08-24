@@ -6,7 +6,7 @@
     <link rel="preload" href="{{ asset('build/article.css') }}"
         as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-    {% if Sentinel.canEdit %}
+    {% if Article.isEditable %}
         <link rel="stylesheet" href="{{ asset('build/article-edit.css') }}">
     {% endif %}
 
@@ -52,7 +52,7 @@
 
                         <div class="post-content">
 
-                            {% if Sentinel.canEdit %}
+                            {% if Article.isEditable %}
 
                                 {% embed 'parts/alert-chalkboard.html.twig' %}
 
@@ -132,8 +132,8 @@
                             {% include 'article/editor/toolbar-icons.html.twig' %}
 
                             <div id="tli-article-body" data-tli-editable-id="body"
-                                 class="post-text mt-30 tli-article-body {% if Sentinel.canEdit %}form-control{% endif %}"
-                                 {% if Sentinel.canEdit %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
+                                 class="post-text mt-30 tli-article-body {% if Article.isEditable %}form-control{% endif %}"
+                                 {% if Article.isEditable %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
 
@@ -151,7 +151,7 @@
 
                             {% endif %}
 
-                            {% if Sentinel.canEdit %}
+                            {% if Article.isEditable %}
                                 <div class="mb-3">
                                     {% include 'article/editor/button-edit-tags.html.twig' %}
                                 </div>
@@ -190,7 +190,7 @@
                 </article>
                 <!-- ARTICLE main END -->
 
-                {% if Sentinel.canEdit %}
+                {% if Article.isEditable %}
 
                     {% include 'article/editor/images-gallery.html.twig' %}
 
@@ -268,7 +268,7 @@
     {{ parent() }}
     {{ encore_entry_script_tags('article') }}
 
-    {% if Sentinel.canEdit %}
+    {% if Article.isEditable %}
 
         <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.0/ckeditor5.css" crossorigin>
         <script>window.TLI_EDITOR_AVAILABLE_PUBLISHING_STATUSES = {{ Sentinel.availablePublishingStatuses|json_encode }};</script>

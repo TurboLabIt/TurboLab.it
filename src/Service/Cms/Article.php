@@ -10,9 +10,9 @@ use App\Service\Factory;
 use App\Service\HtmlProcessorForDisplay;
 use App\Service\PhpBB\Topic;
 use App\Trait\ArticleFormatsTrait;
+use App\Trait\AuthorableTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
-use App\Trait\SecurityTrait;
 use App\Trait\ViewableServiceTrait;
 use DateTime;
 use DateTimeInterface;
@@ -41,13 +41,12 @@ class Article extends BaseCmsService
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
     use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait, SecurityTrait;
+    use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected ArticleEntity $entity;
     protected ?array $arrImages             = null;
     protected ?array $arrTags               = null;
-    protected ?array $arrAuthors            = null;
     protected ?array $arrFiles              = null;
     protected ?ImageService $spotlight      = null;
     protected HtmlProcessorForDisplay $htmlProcessor;
@@ -82,7 +81,7 @@ class Article extends BaseCmsService
     public function getRepository() : ArticleRepository
     {
         /** @var ArticleRepository $repository */
-        $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);
+        $repository = $this->factory->getEntityManager()->getRepository(static::ENTITY_CLASS);
         return $repository;
     }
 
@@ -97,36 +96,26 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
-    public function isListable() : bool
-    {
-        return
-            in_array($this->entity->getPublishingStatus(), static::PUBLISHING_STATUSES_OK) ||
-            $this->currentUserCanEdit();
-    }
+    public function getPublishingStatus() : int { return $this->entity->getPublishingStatus(); }
 
-    public function isReadable() : bool
-    {
-        $arrOkStatuses = [ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW, ArticleEntity::PUBLISHING_STATUS_PUBLISHED];
-        return
-            in_array($this->entity->getPublishingStatus(), $arrOkStatuses) ||
-            $this->currentUserCanEdit();
-    }
+    public function isListable() : bool { return $this->factory->createArticleSentinel($this)->canList(); }
 
-    public function isDraft() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_DRAFT; }
+    public function isReadable() : bool { return $this->factory->createArticleSentinel($this)->canView(); }
 
-    public function isInReview() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_READY_FOR_REVIEW; }
+    public function isEditable() : bool { return $this->factory->createArticleSentinel($this)->canEdit(); }
+
+    public function isDraft() : bool { return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_DRAFT; }
+
+    public function isInReview() : bool { return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_READY_FOR_REVIEW; }
 
     public function isPublished() : bool
     {
-        return
-            $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_PUBLISHED &&
-            !empty( $this->getPublishedAt() );
+        return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_PUBLISHED && !empty( $this->getPublishedAt() );
     }
 
-    public function isKo() : bool { return $this->entity->getPublishingStatus() == ArticleEntity::PUBLISHING_STATUS_KO; }
+    public function isKo() : bool { return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_KO; }
 
     public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
-
 
     public function getPublishedAtRecencyLabel() : ?string
     {
@@ -164,7 +153,7 @@ class Article extends BaseCmsService
         return null;
     }
 
-    public function isNews() : bool { return $this->entity->getFormat() == ArticleEntity::FORMAT_NEWS; }
+    public function isNews() : bool { return $this->entity->getFormat() == static::FORMAT_NEWS; }
 
     public function getFormat() : string { return $this->entity->getFormat(); }
     //</editor-fold>
