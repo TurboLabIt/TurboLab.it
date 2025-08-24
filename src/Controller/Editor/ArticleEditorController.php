@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller\Editor;
 
+use App\Service\Cms\ArticleEditor;
+use App\Service\Cms\ArticlePlanner;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,18 +33,24 @@ class ArticleEditorController extends ArticleEditBaseController
 
 
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-publishing-status', name: 'app_editor_article_set-publishing-status', methods: ['POST'])]
-    public function setPublishingStatus(int $articleId) : JsonResponse|Response
+    public function setPublishingStatus(int $articleId, ArticlePlanner $articlePlanner) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
 
             $publishingStatus = $this->request->get('status');
 
-            $this->sentinel->enforceCanSetPublishingStatusTo($publishingStatus);
+            if( $publishingStatus == ArticleEditor::PUBLISHING_ACTION_PUBLISH_URGENTLY ) {
 
-            $this->articleEditor
-                ->setPublishingStatus($publishingStatus)
-                ->save();
+                $publishUrgently    = true;
+                $publishingStatus   = ArticleEditor::PUBLISHING_STATUS_PUBLISHED;
+
+            } else {
+
+                $publishUrgently = false;
+            }
+
+            $articlePlanner->setPublishingStatus($this->articleEditor, $publishingStatus, $publishUrgently);
 
             return $this->jsonOKResponse("Stato di pubblicazione modificato correttamente");
 

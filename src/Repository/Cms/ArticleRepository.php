@@ -751,4 +751,17 @@ class ArticleRepository extends BaseRepository
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }
+
+
+    public function findForScheduling() : array
+    {
+        return
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
+                ->andWhere('t.publishedAt >= :lowLimit')
+                    ->setParameter('lowLimit', (new DateTime())->modify('today midnight') )
+                ->orderBy('t.publishedAt', 'ASC')
+                ->getQuery()
+                ->getResult();
+    }
 }

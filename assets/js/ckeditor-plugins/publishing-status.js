@@ -21,7 +21,8 @@ export default class TliPublishingStatus extends Plugin {
             const choices = [
                 { value: 0, label: '🚧 Bozza in lavorazione (nascosto al pubblico)' },
                 { value: 3, label: '✅ Pronto e finito (visibile al pubblico)' },
-                { value: 5, label: '(admin) Pubblicato' },
+                { value: 5, label: '(admin) Pubblicato rispettando pianificazione' },
+                { value: 55, label: '(admin) Pubblicato urgentemente (scavalca altri articoli)' },
                 { value: 7, label: '(admin) Bloccato/rimosso' }
             ];
 

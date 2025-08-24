@@ -179,4 +179,11 @@ class ArticleCollection extends BaseArticleCollection
         $arrArticles = $this->getRepository()->findPastYearsTitled($page);
         return $this->setEntities($arrArticles);
     }
+
+
+    public function loadForScheduling() : static
+    {
+        $arrArticles = $this->getRepository()->findForScheduling();
+        return $this->setEntities($arrArticles);
+    }
 }

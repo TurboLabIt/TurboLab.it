@@ -61,7 +61,7 @@ class ArticleSentinel extends BaseSentinel
         $currentUser    = $this->getCurrentUser();
 
         if( $currentUser->isAdmin() ) {
-            return Article::PUBLISHING_STATUSES;
+            return array_merge(Article::PUBLISHING_STATUSES, [Article::PUBLISHING_ACTION_PUBLISH_URGENTLY]);
         }
 
         if( $this->canEdit($article) ) {
