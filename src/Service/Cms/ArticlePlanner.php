@@ -20,6 +20,21 @@ class ArticlePlanner
         $sentinel = $this->factory->createArticleSentinel($article);
         $sentinel->enforceCanSetPublishingStatusTo($publishingStatus);
 
+        $publishedAt = $article->getPublishedAt();
+
+        //
+        if(
+            !empty($publishedAt) && $publishedAt > (new DateTime()) &&
+            in_array($publishingStatus, ArticleEditor::PUBLISHING_STATUSES_VISIBLE)
+        ) {
+            return $this->publishOnDate($article, $publishedAt);
+        }
+
+        //
+        if( !empty($publishedAt) && $publishedAt < (new DateTime('today midnight')) ) {
+            $article->setPublishedAt(null);
+        }
+
         //
         if( $article->isNews() && $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED ) {
             return $this->publishOnDate($article, new DateTime());
@@ -43,6 +58,7 @@ class ArticlePlanner
 
             return $this;
         }
+
 
         //
         if($publishUrgently) {
