@@ -43,7 +43,7 @@
 
                         <div class="post-text tli-article-body">
                             <p>
-                                TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti appassionati
+                                TurboLab.it è un sito collaborativo: gli articoli sono scritti dagli utenti
                                 della nostra community (come te!).
                                 Se anche tu vuoi partecipare e pubblicare un nuovo articolo, questa è la pagina giusta.
                             </p>
@@ -73,44 +73,29 @@
                                 {% endembed %}
 
 
-                                {% if CurrentUserDraftArticles.count or CurrentUserPublishedArticles.count %}
+                                {% if CurrentUserDraftArticles.count %}
 
-                                    <h2 {% if CurrentUserDraftArticles.count %}style="color: #f5c211;"{% endif %}>
+                                    <h2 style="color: #f5c211;">
                                         <i class="fa-solid fa-pen-ruler"></i> I tuoi articoli in lavorazione (bozze)
                                     </h2>
-
-                                {% endif %}
-
-                                {% if CurrentUserDraftArticles.count %}
 
                                     <p>
                                         Questi sono gli articoli ai quali stai ancora lavorando.
                                         <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
-                                        Valuta di completare uno di questi prima di iniziarne uno nuovo.
+                                        Valuta di completare uno di questi prima di iniziare un nuovo articolo!
                                     </p>
-
-                                    {% embed 'parts/alert-warning.html.twig' %}
-                                        {% block alertTitle %}Ricorda!{% endblock %}
-                                        {% block alertBodyStyle %}text-start{% endblock %}
-                                        {% block alertBody %}
-                                            Fino a quando non finirai questi articoli, e ne modificherai lo stato in
-                                            <code>Pronto e finito</code>, non saranno disponibili ai visitatori!
-                                        {% endblock %}
-                                    {% endembed %}
 
                                     {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserDraftArticles}) }}
 
-                                {% elseif CurrentUserPublishedArticles.count %}
-
                                     <p>
-                                        Al momento, non hai articoli in lavorazione. Puoi iniziare a scrivere un nuovo articolo
-                                        tramite il form seguente.
+                                        Ricorda: questi articoli non saranno disponibili ai visitatori
+                                        fino a quando non modificherai lo stato in <code>Pronto e finito</code>.
                                     </p>
 
                                 {% endif %}
 
 
-                                <h2 class="show-new-article-form">👉 Inizia un nuovo articolo</h2>
+                                <h2 class="show-new-article-form">Inizia un nuovo articolo</h2>
                                 <p>
                                     Per favore: prima di inserire un articolo, <strong>cerca!</strong>
                                     Devi assicurati che l'argomento non sia già stato trattato.
@@ -202,12 +187,10 @@
 
                                 {% if CurrentUserPublishedArticles.count %}
 
-                                    <h2 style="color: #33d17a;">
-                                        <i class="fa-solid fa-book"></i> I tuoi articoli pubblicati
-                                    </h2>
+                                    <h2 style="color: #33d17a;"><i class="fa-solid fa-book"></i> I tuoi articoli pubblicati</h2>
 
                                     <p>
-                                        Questi sono i tuoi articoli recenti pubblicati in home page e sul sito. Ottimo lavoro!
+                                        Questi articoli sono stati pubblicati in home page e sul sito. Ottimo lavoro!
                                     </p>
 
                                     <table class="table table-hover table-sm">
