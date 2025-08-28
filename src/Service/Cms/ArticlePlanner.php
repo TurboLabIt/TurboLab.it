@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Service\Factory;
+use App\Service\Mailer;
 use App\ServiceCollection\Cms\ArticleCollection;
 use DateTime;
 use DateTimeZone;
@@ -12,7 +13,7 @@ class ArticlePlanner
     protected ?ArticleCollection $articles;
 
 
-    public function __construct(protected Factory $factory) {}
+    public function __construct(protected Factory $factory, protected Mailer $mailer) {}
 
 
     public function setPublishingStatus(ArticleEditor $article, int $publishingStatus, bool $publishUrgently) : static
@@ -75,6 +76,11 @@ class ArticlePlanner
             ->setPublishingStatus(ArticleEditor::PUBLISHING_STATUS_PUBLISHED)
             ->setPublishedAt($publishingDate)
             ->save();
+
+        $this->mailer
+            ->buildNewAuthorAddedToArticle($article, $this->factory->getCurrentUser() )
+            ->block(false)
+            ->send();
 
         return $this;
     }
