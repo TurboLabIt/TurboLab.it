@@ -24,7 +24,7 @@ if( preg_match('/^[1-9]+[0-9]*$/', $topicId) !== 1 ) {
 
 require '../../src/Entity/BaseEntity.php';
 require '../../src/Entity/PhpBB/Forum.php';
-$commentsForumId = Forum::COMMENTS_FORUM_ID;
+$commentsForumId = Forum::ID_COMMENTS;
 if( preg_match('/^[1-9]+[0-9]*$/', $commentsForumId) !== 1 ) {
     tliHtmlResponse("Errore accesso forum commenti. $txtPleaseReport", 500);
 }
@@ -37,7 +37,7 @@ $sqlSelectTopic = '
       topic_id          = ' . $topicId . ' AND
       topic_visibility  = ' . ITEM_APPROVED . ' AND
       topic_delete_time = 0 AND
-      forum_id          NOT IN (' . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ')
+      forum_id          NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')
 ';
 
 $result     = $db->sql_query($sqlSelectTopic);

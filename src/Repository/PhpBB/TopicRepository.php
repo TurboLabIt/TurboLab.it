@@ -17,7 +17,7 @@ class TopicRepository extends BasePhpBBRepository
     {
         return
             parent::getQueryBuilder()
-                ->andWhere('t.forumId NOT IN (' . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ')')
+                ->andWhere('t.forumId NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
                 ->orderBy('t.lastPostTime', 'DESC');
@@ -31,10 +31,10 @@ class TopicRepository extends BasePhpBBRepository
             FROM " . $this->getPhpBBTableName() . "
             WHERE
               (
-                forum_id != " . Forum::COMMENTS_FORUM_ID . " OR
-                (forum_id = " . Forum::COMMENTS_FORUM_ID . " AND topic_posts_approved > 1)
+                forum_id != " . Forum::ID_COMMENTS . " OR
+                (forum_id = " . Forum::ID_COMMENTS . " AND topic_posts_approved > 1)
               ) AND
-            forum_id NOT IN (" . implode(',', Forum::OFFLIMITS_FORUM_IDS) . ")
+            forum_id NOT IN (" . implode(',', Forum::ID_OFFLIMITS) . ")
         ";
     }
 
