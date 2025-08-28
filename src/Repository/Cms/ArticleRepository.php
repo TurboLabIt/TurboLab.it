@@ -109,7 +109,7 @@ class ArticleRepository extends BaseRepository
         $arrArticleIdBySystem =
             $this->sqlQueryExecute(
             "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId", [
-                'authorId' => \App\Service\User::SYSTEM_USER_ID
+                'authorId' => \App\Service\User::ID_SYSTEM
             ])->fetchFirstColumn();
 
         $query =

@@ -119,7 +119,7 @@ class Newsletter extends Mailer
         }
 
         if( empty($this->userSystem) ) {
-            $this->userSystem = $this->factory->createUser()->load(User::SYSTEM_USER_ID);
+            $this->userSystem = $this->factory->createUser()->load(User::ID_SYSTEM);
         }
 
         return $this->generateSubject();

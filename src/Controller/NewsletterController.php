@@ -69,7 +69,7 @@ class NewsletterController extends BaseController
 
         /** @var ?\App\Entity\PhpBB\User $entityCurrentUser */
         $entityCurrentUser = $this->getUser();
-        $userId = $entityCurrentUser?->getId() ?? User::SYSTEM_USER_ID;
+        $userId = $entityCurrentUser?->getId() ?? User::ID_SYSTEM;
         $user   = $currentUser->load($userId);
 
         $email =
@@ -128,7 +128,7 @@ class NewsletterController extends BaseController
         }
 
         //
-        if( $userId == User::SYSTEM_USER_ID ) {
+        if( $userId == User::ID_SYSTEM ) {
             $this->user->subscribeToNewsletter();
         }
 
@@ -178,7 +178,7 @@ class NewsletterController extends BaseController
         }
 
         //
-        if( $userId == User::SYSTEM_USER_ID ) {
+        if( $userId == User::ID_SYSTEM ) {
             $this->user->unsubscribeFromNewsletter();
         }
 
@@ -190,7 +190,7 @@ class NewsletterController extends BaseController
         $this->user->subscribeToNewsletter();
 
         //
-        if( $userId == User::SYSTEM_USER_ID ) {
+        if( $userId == User::ID_SYSTEM ) {
             $this->user->unsubscribeFromNewsletter();
         }
 

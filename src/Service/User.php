@@ -14,11 +14,13 @@ class User extends BaseServiceEntity
     const string ENTITY_CLASS   = UserEntity::class;
     const NOT_FOUND_EXCEPTION   = UserNotFoundException::class;
 
+    const int ID_DEFAULT_ADMIN  = UserEntity::ID_DEFAULT_ADMIN;
+
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
-    const int SYSTEM_USER_ID    = 5103;
+    const int ID_SYSTEM = 5103;
 
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
-    const int TESTER_USER_ID    = 4015;
+    const int ID_TESTER = 4015;
 
     protected ?UserEntity $entity           = null;
     protected ?array $arrAdditionalFields   = null;
@@ -93,7 +95,7 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🪪 User data ***">
-    public function isSystem() : bool { return $this->getId() == static::SYSTEM_USER_ID; }
+    public function isSystem() : bool { return $this->getId() == static::ID_SYSTEM; }
 
     public function getEmail() : string { return $this->entity->getEmail(); }
 

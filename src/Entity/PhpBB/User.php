@@ -28,6 +28,9 @@ class User extends BaseEntity implements UserInterface
     const string ROLE_ADMIN     = 'ROLE_ADMIN';
     const string ROLE_EDITOR    = 'ROLE_EDITOR';
 
+    // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=2
+    const int ID_DEFAULT_ADMIN  = 2;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ['unsigned' => true])]

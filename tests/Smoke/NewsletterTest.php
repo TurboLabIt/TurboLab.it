@@ -119,7 +119,7 @@ class NewsletterTest extends BaseT
 
         /** @var User $user */
         $user = static::getService("App\\Service\\User");
-        return $user->load(User::TESTER_USER_ID);
+        return $user->load(User::ID_TESTER);
     }
 
 

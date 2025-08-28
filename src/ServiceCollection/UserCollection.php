@@ -22,7 +22,7 @@ class UserCollection extends BaseServiceEntityCollection
     public function loadNewsletterTestRecipients() : static
     {
         $arrTestUsers = [
-            "system"            => $this->getRepository()->find(User::SYSTEM_USER_ID),
+            "system"            => $this->getRepository()->find(User::ID_SYSTEM),
             'tli-dev-libero'    => $this->getRepository()->find(7238),
             'tli-dev-outlook'   => $this->getRepository()->find(7239),
         ];
