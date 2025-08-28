@@ -6,6 +6,12 @@
 parameters:
     router.request_context.host: '%env(APP_SITE_DOMAIN)%'
     router.request_context.scheme: 'https'
+    mailer_config:
+        from:
+            name: '%env(APP_SITE_NAME)%'
+            address: '%env(APP_EMAIL)%'
+        subject:
+            tag: '[TLI]'
 
 services:
     # default configuration for services in *this* file
@@ -46,10 +52,18 @@ services:
         arguments:
             $forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
 
+    App\Service\Mailer:
+        arguments:
+            $arrConfig: '%mailer_config%'
+
     App\Service\Newsletter:
         arguments:
-            $arrConfig:
-                useTopArticleTitleAsEmailSubject: '%env(bool:APP_NEWSLETTER_USE_TOP_ARTICLE_TITLE_AS_EMAIL_SUBJECT)%'
+            $arrConfig: '%mailer_config%'
+            $arrExtraConfig:
+                from:
+                    address: 'newsletter@turbolab.it'
+                subject:
+                    useTopArticleTitleAsEmailSubject: '%env(bool:APP_NEWSLETTER_USE_TOP_ARTICLE_TITLE_AS_EMAIL_SUBJECT)%'
 
     App\Service\YouTubeChannelApi:
         arguments:

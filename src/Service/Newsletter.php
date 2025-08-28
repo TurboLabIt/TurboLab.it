@@ -43,7 +43,7 @@ class Newsletter extends Mailer
 
 
     public function __construct(
-        array $arrConfig,
+        array $arrConfig, array $arrExtraConfig,
         protected ArticleCollection $articleCollection, protected YouTubeChannelApi $YouTube,
         protected TopicCollection $topicCollection,
         protected UserCollection $userCollection, protected Factory $factory,
@@ -63,16 +63,7 @@ class Newsletter extends Mailer
 
         $this->newsletterName = "Questa settimana su TLI ($newsletterDate)";
 
-        parent::__construct($mailer, $projectDir, $parameters, [
-            "from" => [
-                "name"      => "TurboLab.it",
-                "address"   => "newsletter@turbolab.it"
-            ],
-            "subject" => [
-                "tag" => "[TLI]",
-                "use-top-article-title" => $arrConfig["useTopArticleTitleAsEmailSubject"]
-            ]
-        ]);
+        parent::__construct($mailer, $projectDir, $parameters, array_merge_recursive($arrConfig, $arrExtraConfig));
     }
 
 

@@ -9,6 +9,8 @@ use App\Service\Cms\Tag;
 use App\Service\FrontendHelper;
 use App\Service\HtmlProcessorForDisplay;
 use App\Service\HtmlProcessorForStorage;
+use App\Service\Mailer;
+use App\Service\User;
 use App\Service\Views;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -48,12 +50,30 @@ class TestController extends BaseController
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/inky/', name: 'app_test_inky', condition: "'%kernel.environment%' == 'dev'")]
-    public function inky() : Response
+    #[Route('/' . self::SECTION_SLUG . '/newsletter/', name: 'app_test_newsletter', condition: "'%kernel.environment%' == 'dev'")]
+    public function newsletter() : Response
     {
         /*$transpiled = Pinky\transformString('<row>Contents</row>');
         echo $transpiled->saveHTML();
         dd("OK");*/
         return $this->render('newsletter/email.html.twig');
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/email/', name: 'app_test_email', condition: "'%kernel.environment%' == 'dev'")]
+    public function email(Mailer $mailer, Article $article, User $userPublisher) : Response
+    {
+        $email =
+            $mailer
+                ->buildNewAuthorAddedToArticle(
+                    $article->load(Article::ID_QUALITY_TEST), $userPublisher->load(User::ID_DEFAULT_ADMIN)
+                )
+                ->getEmail();
+
+        $mailer
+            ->block(false)
+            ->send();
+
+        return $this->render( $email->getHtmlTemplate(), $email->getContext() );
     }
 }

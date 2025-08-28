@@ -23,6 +23,12 @@ class ForumUrlGenerator
     }
 
 
+    public function generateTopicNewUrlFromForumId(int $forumId, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return $this->generateHomeUrl($urlType) . "posting.php?mode=post&f=$forumId";
+    }
+
+
     public function generateTopicViewUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         return
