@@ -1,27 +1,30 @@
 {# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md #}
 {% apply inky_to_html|inline_css( source('@styles/email/foundation-emails.css'), source('@styles/email/email.css') ) %}
-    <html xmlns="http://www.w3.org/1999/xhtml" lang="it" xml:lang="it">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="it" xml:lang="it">
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
     </head>
+
     <body>
+        <!-- prevent Gmail on iOS font size manipulation -->
+        <div style="display:none; white-space:nowrap; font:20px courier; line-height:0;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div>
 
-    <!-- prevent Gmail on iOS font size manipulation -->
-    <div style="display:none; white-space:nowrap; font:20px courier; line-height:0;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div>
+        <container>
 
-    <container>
+            <row>
+                <columns>
+                    <img id="tli-email-logo" class="float-center" alt="Il logo di TurboLab.it"
+                         src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}">
+                </columns>
+            </row>
 
-        <row>
-            <columns>
-                <img id="tli-email-logo" class="float-center" alt="Il logo di TurboLab.it"
-                     src="{{ absolute_url(asset('images/logo/turbolab.it.png')) }}">
-            </columns>
-        </row>
+            {% block body %}{% endblock %}
 
-        {% block body %}{% endblock %}
+        </container>
 
-    </container>
     </body>
-    </html>
+
+</html>
 {% endapply %}
