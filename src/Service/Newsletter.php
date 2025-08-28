@@ -63,7 +63,11 @@ class Newsletter extends Mailer
 
         $this->newsletterName = "Questa settimana su TLI ($newsletterDate)";
 
-        parent::__construct($mailer, $projectDir, $parameters, array_merge_recursive($arrConfig, $arrExtraConfig));
+        parent::__construct(
+            array_replace_recursive($arrConfig, $arrExtraConfig),
+            $this->factory->getForumUrlGenerator(),
+            $mailer, $projectDir, $parameters
+        );
     }
 
 
@@ -121,7 +125,7 @@ class Newsletter extends Mailer
     {
         $this->subject = $this->newsletterName;
 
-        if( !$this->arrConfig["subject"]["use-top-article-title"] ) {
+        if( !$this->arrConfig["subject"]["useTopArticleTitleAsEmailSubject"] ) {
             return $this;
         }
 
