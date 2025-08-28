@@ -184,42 +184,18 @@
                                 </form>
 
 
-                                {% if CurrentUserInReviewArticles.count or CurrentUserPublishedArticles.count %}
+                                {% if CurrentUserInReviewArticles.count %}
 
                                     <h2 style="color: #f5c211;">
                                         <i class="fa-solid fa-book"></i> I tuoi articoli in stato "Pronto e finito"
                                     </h2>
 
-                                {% endif %}
-
-                                {% if CurrentUserInReviewArticles.count %}
-
                                     <p>
                                         Questi sono gli articoli che hai già indicato come <code>Pronto e finito</code>.
                                         Non devi fare null'altro: sono già visibili pubblicamente a tutti.
-                                        Il team editoriale provvederà a valutarli e, in caso, a pubblicarli anche in home page.
                                     </p>
 
                                     {{ include('article/editor/new-table.html.twig', {Articles: CurrentUserInReviewArticles}) }}
-
-                                {% elseif CurrentUserPublishedArticles.count %}
-
-                                    <p>
-                                        Al momento, non sono presenti tuoi articoli in stato "Pronto e finito".
-
-                                        {% if CurrentUserDraftArticles.count %}
-
-                                            Completa uno dei tuoi articoli <code>In lavorazione (bozza)</code>
-                                            e poi marcalo come <code>Pronto e finito</code>.
-                                            Oppure: inserisci un nuovo articolo tramite il form qui sopra.
-
-                                        {% else %}
-
-                                            Se vuoi, puoi inserire un nuovo articolo tramite il form qui sopra.
-
-                                        {% endif %}
-
-                                    </p>
 
                                 {% endif %}
 
@@ -231,8 +207,7 @@
                                     </h2>
 
                                     <p>
-                                        Ottimo lavoro! Questi sono i tuoi articoli più recenti revisionati dal team editoriale e
-                                        pubblicati in home page e sul sito.
+                                        Questi sono i tuoi articoli recenti pubblicati in home page e sul sito. Ottimo lavoro!
                                     </p>
 
                                     <table class="table table-hover table-sm">
