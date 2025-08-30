@@ -15,6 +15,9 @@ class File extends BaseCmsService
     const string ENTITY_CLASS          = FileEntity::class;
     const string NOT_FOUND_EXCEPTION   = 'App\Exception\FileNotFoundException';
 
+    // 👀 https://turbolab.it/scarica/18
+    const int ID_LOGO = 18;
+
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
     use ViewableServiceTrait;
