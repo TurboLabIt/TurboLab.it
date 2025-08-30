@@ -12,7 +12,7 @@ Gli unici caratteri da trasformare in entity, **quando sono parte del contenuto 
 
 Questo è il set minimo: se non vengono trasformati in entity, il parser non è poi in grado di capire se costituiscano istruzioni di markup oppure testo. Ad esempio:
 
-- `<a href>` oppure `1 < 3 > 2`
+- `<strong>` oppure `1 < 3 > 2`
 - `il simbolo di minore in HTML si scrive &lt;` oppure `Barnes & Noble`
 
 `"` (`&quot;`) e `'` (`&apos;`) devono essere trasformate in entity SOLO quando sono contenuto editoriale e dobbiamo stamparli all'interno di un attributo HTML. Questo, generalmente, avviene solo in visualizzazione: a database, generalmente, queste entity non devono figurare.
