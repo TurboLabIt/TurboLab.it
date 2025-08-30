@@ -380,11 +380,12 @@ class Article extends BaseCmsService
 
     public function getTitleWithFreshUpdatedAt() : ?string
     {
+        $title = $this->getTitle();
+
         if( !$this->isListable() ) {
-            return $this->getTitle();
+            return $title;
         }
 
-        $title      = $this->getTitle();
         $updatedAt  = $this->getUpdatedAt();
         $dateLimit  = (new DateTime())->modify('-2 months');
 
