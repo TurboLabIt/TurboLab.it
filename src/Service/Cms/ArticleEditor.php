@@ -106,6 +106,9 @@ class ArticleEditor extends Article
     //<editor-fold defaultstate="collapsed" desc="*** 👥 Authors ***">
     public function addAuthor(User $author) : static
     {
+        // invalidate the cached author list
+        $this->arrAuthors = null;
+
         $this->entity->addAuthor(
             (new ArticleAuthor())
                 ->setArticle($this->entity)
