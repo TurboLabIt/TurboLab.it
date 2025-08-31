@@ -40,7 +40,7 @@ class CacheWarmer implements CacheWarmerInterface
         $currentEnv = $this->parameterBag->get("kernel.environment");
         if( in_array($currentEnv, ["dev"]) ) {
 
-            $this->bashFx?->fxOK(static::CLI_COMMAND_NAME . " skipped on {$currentEnv}");
+            $this->bashFx?->fxOK(static::CLI_COMMAND_NAME . " skipped on $currentEnv");
             return [];
         }
 

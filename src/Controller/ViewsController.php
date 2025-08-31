@@ -41,7 +41,7 @@ class ViewsController extends BaseController
                 if( is_string($buildHtmlResult) ) {
 
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cacheItem->tag([$cacheKey, 'views', "views_{$slug}"]);
+                    $cacheItem->tag([$cacheKey, 'views', "views_$slug"]);
 
                 } else {
 

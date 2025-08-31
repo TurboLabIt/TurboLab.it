@@ -83,7 +83,7 @@ class ServerInfo
         $num   = (int)($num / 24);
         $days  = $num;
 
-        return "{$days} giorni, {$hours} ore, {$mins} minuti e {$secs} secondi";
+        return "$days giorni, $hours ore, $mins minuti e $secs secondi";
     }
     //</editor-fold>
 

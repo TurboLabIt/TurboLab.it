@@ -25,7 +25,7 @@ class ArticleController extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$tagSlugDashId}/{$articleSlugDashId}", function(ItemInterface $cacheItem)
+            $this->cache->get("$tagSlugDashId/$articleSlugDashId", function(ItemInterface $cacheItem)
                 use($tagSlugDashId, $articleSlugDashId, $that) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $articleSlugDashId);

@@ -37,7 +37,7 @@ class TagController extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$tagSlugDashId}/{$page}", function(ItemInterface $cacheItem)
+            $this->cache->get("$tagSlugDashId/$page", function(ItemInterface $cacheItem)
             use($tagSlugDashId, $page, $that) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $page);

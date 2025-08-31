@@ -31,6 +31,6 @@ abstract class BasePhpBBRepository extends BaseRepository
 
         $dbName     = $this->arrConfig["forumDatabaseName"];
         $tableAlias = substr($tableName, strlen(static::TABLE_PREFIX));
-        return "{$dbName}.{$tableName} AS `$tableAlias`";
+        return "$dbName.$tableName AS `$tableAlias`";
     }
 }

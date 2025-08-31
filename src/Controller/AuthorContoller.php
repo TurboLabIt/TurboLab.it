@@ -37,7 +37,7 @@ class AuthorContoller extends BaseController
         $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get("{$usernameClean}/{$page}", function(ItemInterface $cacheItem)
+            $this->cache->get("$usernameClean/$page", function(ItemInterface $cacheItem)
                 use($usernameClean, $page, $that) {
 
                 $buildHtmlResult = $this->buildHtml($usernameClean, $page);
