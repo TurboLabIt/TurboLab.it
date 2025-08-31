@@ -147,7 +147,7 @@ class Article extends BaseCmsEntity
             }
 
             $itemRanking    = $item->getRanking();
-            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
+            $ranking        = max($itemRanking, $ranking);
         }
 
         $image
@@ -188,7 +188,7 @@ class Article extends BaseCmsEntity
             }
 
             $itemRanking    = $item->getRanking();
-            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
+            $ranking        = max($itemRanking, $ranking);
         }
 
         $tag

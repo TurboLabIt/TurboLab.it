@@ -28,7 +28,7 @@ class ArticleCollection extends BaseArticleCollection
         $this->loadLatestPublished();
 
         $sideArticlesNum    = $article->textLengthIndex() / 10;
-        $sideArticlesNum    = $sideArticlesNum < 5 ? $sideArticlesNum : 5;
+        $sideArticlesNum    = min($sideArticlesNum, 5);
 
         $arrFilteredArticles = [];
         foreach($this->arrData as $articleInSetId => $articleInSet) {
