@@ -1,6 +1,4 @@
-import { Plugin } from 'ckeditor5';
-import { ButtonView } from 'ckeditor5';
-import { Command } from 'ckeditor5';
+import { Plugin, ButtonView, Command } from 'ckeditor5';
 
 class TliUpdateEditing extends Plugin {
     init() {

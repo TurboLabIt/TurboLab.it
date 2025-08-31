@@ -1,5 +1,4 @@
-import { Plugin } from 'ckeditor5';
-import { ButtonView } from 'ckeditor5';
+import { Plugin, ButtonView } from 'ckeditor5';
 import ArticleContentEditable from './../article-edit-contenteditable';
 
 

@@ -1,4 +1,3 @@
-// tliPublishingStatus.js
 import { Plugin, createDropdown, ButtonView } from 'ckeditor5';
 import ArticlePublishable from '../article-edit-publishable';
 
