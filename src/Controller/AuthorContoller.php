@@ -66,7 +66,7 @@ class AuthorContoller extends BaseController
             $this->factory->createUser()->loadByusernameClean($usernameClean);
 
         //
-        $currentUser            = $this->factory->getCurrentUser();
+        $currentUser            = $this->getCurrentUser();
         $authorIsCurrentUser    = $user->getId() == $currentUser?->getId();
 
         if($authorIsCurrentUser) {

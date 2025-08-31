@@ -17,7 +17,7 @@ class ArticleNewController extends ArticleEditBaseController
     #[Route('/scrivi', name: 'app_article_new', methods: ['GET'])]
     public function new() : Response
     {
-        $currentUser = $this->sentinel->getCurrentUser();
+        $currentUser = $this->getCurrentUser();
 
         if( empty($currentUser) ) {
 

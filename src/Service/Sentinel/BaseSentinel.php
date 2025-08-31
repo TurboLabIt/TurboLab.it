@@ -8,26 +8,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class BaseSentinel
 {
-    protected User $currentUser;
     protected User $currentUserAsAuthor;
 
     public function __construct(protected Factory $factory) {}
 
-
-    public function getCurrentUser() : ?User
-    {
-        if( !empty($this->currentUser) ) {
-            return $this->currentUser;
-        }
-
-        $currentUser = $this->factory->getCurrentUser();
-
-        if( empty($currentUser?->getId()) ) {
-            return null;
-        }
-
-        return $this->currentUser = $currentUser;
-    }
+    public function getCurrentUser() : ?User { return $this->factory->getCurrentUser(); }
 
 
     public function enforceLoggedUserOnly(string $errorMessage = "You're not logged in!") : static

@@ -85,7 +85,7 @@ class ArticleController extends BaseController
                 'metaRobots'            => $article->getMetaRobots(),
                 'activeMenu'            => $article->getActiveMenu(),
                 'FrontendHelper'        => $this->frontendHelper,
-                'CurrentUser'           => $this->factory->getCurrentUser(),
+                'CurrentUser'           => $this->getCurrentUser(),
                 'ArticleFormats'        => [
                     Article::FORMAT_ARTICLE => 'Articolo, guida, recensione',
                     Article::FORMAT_NEWS    => 'Notizia, segnalazione'

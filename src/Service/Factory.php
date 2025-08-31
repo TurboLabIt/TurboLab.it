@@ -41,7 +41,7 @@ class Factory
 {
     protected ?ImageService $defaultSpotlight;
     protected ?TagService $defaultTag;
-    protected ?User $currentUser;
+    protected User $currentUser;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
@@ -73,6 +73,12 @@ class Factory
         }
 
         $entity = $this->security->getUser();
+        $userId = $entity?->getId();
+
+        if( empty($userId) ) {
+            return null;
+        }
+
         return $this->currentUser = $this->createUser($entity);
     }
 

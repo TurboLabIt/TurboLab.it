@@ -5,6 +5,7 @@ use App\Exception\NotImplementedException;
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
+use App\Service\User;
 use Error;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,6 +41,12 @@ abstract class BaseController extends AbstractController
     )
     {
         $this->request = $requestStack->getCurrentRequest();
+    }
+
+
+    protected function getCurrentUser() : ?User
+    {
+        return $this->factory->getCurrentUser();
     }
 
 
@@ -131,10 +138,7 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function validateCsrfToken(
-        ?string $errorMessage = null,
-        null|int|string $tokenId = null, ?string $tokenParamName = null
-    )
+    protected function validateCsrfToken(?string $errorMessage = null, null|int|string $tokenId = null, ?string $tokenParamName = null)
     {
         $tokenParamName ??= static::CSRF_TOKEN_PARAM_NAME;
         $csrfToken = $this->request->get($tokenParamName);

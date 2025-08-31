@@ -49,7 +49,7 @@ abstract class ArticleEditBaseController extends BaseController
         $arrData = [
             "Article"       => $this->articleEditor,
             "Sentinel"      => $this->sentinel,
-            "CurrentUser"   => $this->sentinel->getCurrentUser()
+            "CurrentUser"   => $this->getCurrentUser()
         ];
 
         return $this->json([
