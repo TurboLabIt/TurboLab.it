@@ -12,9 +12,7 @@ class NewsletterTest extends BaseT
 {
     public function testAppNewsletterIndex()
     {
-        /** @var Article $article */
-        $article = static::getService("App\\Service\\Cms\\Article");
-        $articleUrl = $article->load(Article::ID_NEWSLETTER)->getUrl();
+        $articleUrl = static::getArticle(Article::ID_NEWSLETTER)->getUrl();
         $this->expectRedirect('/newsletter', $articleUrl, Response::HTTP_FOUND);
     }
 
@@ -113,19 +111,9 @@ class NewsletterTest extends BaseT
     }
 
 
-    protected function getTestUser() : User
-    {
-        // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=5103
-
-        /** @var User $user */
-        $user = static::getService("App\\Service\\User");
-        return $user->load(User::ID_TESTER);
-    }
-
-
     public function testUnsubscribeAlreadyUnsubscribedError()
     {
-        $user = $this->getTestUser();
+        $user = static::getUser();
         $user->unsubscribeFromNewsletter();
         $this->getEntityManager()->flush();
 
@@ -144,7 +132,7 @@ class NewsletterTest extends BaseT
 
     public function testSubscribeAlreadySubscribedError()
     {
-        $user = $this->getTestUser();
+        $user = static::getUser();
         $user->subscribeToNewsletter();
         $this->getEntityManager()->flush();
 

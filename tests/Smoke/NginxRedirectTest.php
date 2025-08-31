@@ -102,9 +102,7 @@ class NginxRedirectTest extends BaseT
             ]
         ];
 
-        /** @var TagCollection $tags */
-        $tags = static::getService("App\\ServiceCollection\\Cms\\TagCollection");
-        $tags->load(TagAggregatorCommand::BAD_TAGS);
+        $tags = static::getTagCollection()->load(TagAggregatorCommand::BAD_TAGS);
 
         foreach(TagAggregatorCommand::BAD_TAGS as $badTag => $replacementTagId) {
 

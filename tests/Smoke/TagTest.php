@@ -16,10 +16,7 @@ class TagTest extends BaseT
     public function testingPlayground()
     {
         // 👀 https://turbolab.it/universita-1309
-
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(1309);
+        $tag = static::getTag(1309);
         $url = $tag->getUrl();
 
         $crawler = $this->fetchDomNode($url);
@@ -82,9 +79,7 @@ class TagTest extends BaseT
     #[DataProvider('tagsToTestThoroughlyProvider')]
     public function testSpecialTags(int $id, string $tagTitle, int $totalPageNum)
     {
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load($id);
+        $tag = static::getTag($id);
         $url = $tag->getUrl();
 
         $wrongTagUrl = "/wrong-tag-slug-$id";
@@ -110,9 +105,7 @@ class TagTest extends BaseT
 
     public function testNoArticlesTag()
     {
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load( Tag::ID_TEST_NO_ARTICLES );
+        $tag = static::getTag(Tag::ID_TEST_NO_ARTICLES);
         $url = $tag->getUrl();
 
         $crawler = $this->fetchDomNode($url);
@@ -139,9 +132,7 @@ class TagTest extends BaseT
     {
         if( empty(static::$arrTestTags) ) {
 
-            $latestArticles =
-                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
-                    ->loadLatestPublished();
+            $latestArticles = static::getArticleCollection()->loadLatestPublished();
 
             $arrTags = [];
             foreach($latestArticles as $article) {
@@ -180,11 +171,7 @@ class TagTest extends BaseT
     {
         if( empty(static::$arrCategories) ) {
 
-            $arrData =
-                static::getService("App\\ServiceCollection\\Cms\\TagCollection")
-                    ->loadCategories()
-                    ->getAll();
-
+            $arrData = static::getTagCollection()->loadCategories()->getAll();
             static::$arrCategories = self::repackDataProviderArray($arrData);
         }
 

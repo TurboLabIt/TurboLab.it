@@ -41,9 +41,7 @@ class FileTest extends BaseT
     #[DataProvider('localFileToTestProvider')]
     public function testLocalFiles(int $id, string $title, string $contentType, string $format)
     {
-        /** @var File $file */
-        $file = static::getService("App\\Service\\Cms\\File");
-        $file->load($id);
+        $file = static::getFile($id);
 
         $url = $file->getUrl();
         $this->assertStringEndsWith('/scarica/' . $id, $url);

@@ -1,7 +1,19 @@
 <?php
 namespace App\Tests;
 
-use App\Service\Dictionary;
+use App\Service\Cms\Article;
+use App\Service\Cms\ArticleEditor;
+use App\Service\Cms\ArticleUrlGenerator;
+use App\Service\Cms\File;
+use App\Service\Cms\FileUrlGenerator;
+use App\Service\Cms\Tag;
+use App\Service\Cms\TagUrlGenerator;
+use App\Service\Factory;
+use App\Service\HtmlProcessorForDisplay;
+use App\Service\Mailer;
+use App\Service\User;
+use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -10,6 +22,8 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
+use Twig\Environment;
 
 
 abstract class BaseT extends WebTestCase
@@ -31,6 +45,7 @@ abstract class BaseT extends WebTestCase
     }
 
 
+    //<editor-fold defaultstate="collapsed" desc="*** 👷🏻‍♂️ Services ***">
     protected static function getService(string $name)
     {
         // boots the kernel and prevents LogicException:
@@ -43,37 +58,61 @@ abstract class BaseT extends WebTestCase
         }
 
         $container = static::getContainer();
-        $connector = $container->get($name);
-        return $connector;
+        return $container->get($name);
     }
 
 
-    protected static function getEntityManager() : EntityManagerInterface
+    protected static function getEntityManager() : EntityManagerInterface { return static::getService('doctrine.orm.entity_manager'); }
+
+    protected static function getMailer() : Mailer { return static::getService(Mailer::class); }
+
+    protected static function getTwig() : Environment { return static::getService(Environment::class); }
+
+
+    protected static function getArticle(int $articleId = Article::ID_QUALITY_TEST) : Article
     {
-        return static::getService('doctrine.orm.entity_manager');
+        return static::getService(Factory::class)->createArticle()->load($articleId);
     }
 
 
-    protected function generateUrl($name = 'app_home', $arrUrlParams = [], $urlType = UrlGeneratorInterface::ABSOLUTE_URL)
+    protected static function getArticleEditor(int $articleId = Article::ID_QUALITY_TEST) : ArticleEditor
     {
-        return static::getService('router.default')->generate($name, $arrUrlParams, $urlType);
+        return static::getService(Factory::class)->createArticleEditor()->load($articleId);
     }
 
 
-    protected static function getProjectFilePath(string $relativeFilePath) : ?string
+    protected static function getArticleCollection() : ArticleCollection
     {
-        return static::getService('TurboLabIt\\BaseCommand\\Service\\ProjectDir')->getProjectDirFromFile($relativeFilePath);
+        return static::getService(Factory::class)->createArticleCollection();
     }
 
 
-    protected static function getTestAssetContent(string $filename) : ?string
+    protected static function getTag(int $tagId = Tag::ID_DEFAULT_TAG) : Tag
     {
-        $assetFilePath = "assets/test/$filename";
-        $path = static::getProjectFilePath($assetFilePath);
-        return file_get_contents($path);
+        return static::getService(Factory::class)->createTag()->load($tagId);
     }
 
 
+    protected static function getTagCollection() : TagCollection
+    {
+        return static::getService(Factory::class)->createTagCollection();
+    }
+
+
+    protected static function getUser(int $userId = User::ID_TESTER) : User
+    {
+        return static::getService(Factory::class)->createUser()->load($userId);
+    }
+
+
+    protected static function getFile(int $fileId = File::ID_LOGO) : File
+    {
+        return static::getService(Factory::class)->createFile()->load($fileId);
+    }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🕸️ Crawler ***">
     protected function fetchHtml(string $url, string $method = Request::METHOD_GET, bool $toLower = true) : string
     {
         $this->browse($url, $method);
@@ -135,7 +174,7 @@ abstract class BaseT extends WebTestCase
             static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
             static::$client->setServerParameter('HTTPS', 'https');
 
-        // prevent add the path twice on second call
+            // prevent add the path twice on second call
         } else {
 
             static::$client->restart();
@@ -173,6 +212,27 @@ abstract class BaseT extends WebTestCase
             'Expected 404 check failed! URL: ##' . $url . '## doesn\'t return ' . Response::HTTP_NOT_FOUND
         );
     }
+    //</editor-fold>
+
+
+    protected function generateUrl($name = 'app_home', $arrUrlParams = [], $urlType = UrlGeneratorInterface::ABSOLUTE_URL)
+    {
+        return static::getService('router.default')->generate($name, $arrUrlParams, $urlType);
+    }
+
+
+    protected static function getProjectFilePath(string $relativeFilePath) : ?string
+    {
+        return static::getService(ProjectDir::class)->getProjectDirFromFile($relativeFilePath);
+    }
+
+
+    protected static function getTestAssetContent(string $filename) : ?string
+    {
+        $assetFilePath = "assets/test/$filename";
+        $path = static::getProjectFilePath($assetFilePath);
+        return file_get_contents($path);
+    }
 
 
     protected function listingChecker(array $arrUrlsToTest, array $arrExpectedStrings) : array
@@ -204,7 +264,7 @@ abstract class BaseT extends WebTestCase
 
             // local file: Windows Bootable DVD Generator
             if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                static::getService(FileUrlGenerator::class)->isUrl($href) &&
                 str_ends_with($href, "/scarica/1")
             ) {
                 $file = $this->fetchHtml($href, Request::METHOD_GET, false);
@@ -213,7 +273,7 @@ abstract class BaseT extends WebTestCase
 
                 // local file: Estensioni video HEVC (appx 64 bit)
             } else if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                static::getService(FileUrlGenerator::class)->isUrl($href) &&
                 str_ends_with($href, "/scarica/400") !== false
             ) {
                 $file = $this->fetchHtml($href, Request::METHOD_GET, false);
@@ -222,7 +282,7 @@ abstract class BaseT extends WebTestCase
 
                 // local file: Batch configurazione macOS in VirtualBox
             } else if(
-                static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) &&
+                static::getService(FileUrlGenerator::class)->isUrl($href) &&
                 str_ends_with($href, "/scarica/362") !== false
             ) {
                 $file = $this->fetchHtml($href, Request::METHOD_GET, false);
@@ -230,7 +290,7 @@ abstract class BaseT extends WebTestCase
                 $this->assertResponseHeaderSame('content-type', 'text/x-msdos-batch; charset=UTF-8');
 
                 // remote file (must redirect... somewhere)
-            } else if( static::getService('App\\Service\\Cms\\FileUrlGenerator')->isUrl($href) ) {
+            } else if( static::getService(FileUrlGenerator::class)->isUrl($href) ) {
 
                 $this->browse($href);
                 $this->assertResponseRedirects();
@@ -243,8 +303,8 @@ abstract class BaseT extends WebTestCase
 
                 // article or tag
             } elseif(
-                static::getService('App\\Service\\Cms\\ArticleUrlGenerator')->isUrl($href) ||
-                static::getService('App\\Service\\Cms\\TagUrlGenerator')->isUrl($href)
+                static::getService(ArticleUrlGenerator::class)->isUrl($href) ||
+                static::getService(TagUrlGenerator::class)->isUrl($href)
             ) {
                 $this->fetchHtml($href);
             }
@@ -449,7 +509,7 @@ abstract class BaseT extends WebTestCase
 
     protected function assertNoLegacyEntities(string $text) : void
     {
-        $arrEntities = $this->getService('App\\Service\\HtmlProcessorForDisplay')->getLegacyEntities();
+        $arrEntities = $this->getService(HtmlProcessorForDisplay::class)->getLegacyEntities();
 
         $escapedEntities = array_map(function($entity) {
             return preg_quote($entity, '/');

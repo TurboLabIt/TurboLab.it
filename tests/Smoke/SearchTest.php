@@ -69,15 +69,8 @@ class SearchTest extends BaseT
 
     public static function mainPagesProvider() : Generator
     {
-        /** @var Article $article */
-        $article = static::getService("App\\Service\\Cms\\Article");
-        $article->load(Article::ID_QUALITY_TEST);
-        $articleUrl = $article->getUrl();
-
-        /** @var Tag $tag */
-        $tag = static::getService("App\\Service\\Cms\\Tag");
-        $tag->load(Tag::ID_WINDOWS);
-        $tagUrl = $tag->getUrl();
+        $articleUrl = static::getArticle()->getUrl();
+        $tagUrl     = static::getTag(Tag::ID_WINDOWS)->getUrl();
 
         yield from [['/'], [$articleUrl], [$tagUrl]];
     }

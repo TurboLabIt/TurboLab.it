@@ -19,23 +19,18 @@ class ArticleTest extends BaseT
 
     public function testingPlayground()
     {
-        /** @var Article $article */
-        $article = static::getService("App\\Service\\Cms\\Article");
-        $article->load(488);
+        $article    = static::getArticle(488);
+        $url        = $article->getUrl();
+        $crawler    = $this->fetchDomNode($url);
 
-        $url = $article->getUrl();
-        $crawler = $this->fetchDomNode($url);
         $this->articleTitleAsH1Checker($article, $crawler);
     }
 
 
     public function testSpecialArticle()
     {
-        /** @var Article $article */
-        $article = static::getService("App\\Service\\Cms\\Article");
-        $article->load(Article::ID_QUALITY_TEST);
-
-        $url = $article->getUrl();
+        $article    = static::getArticle();
+        $url        = $article->getUrl();
 
         $wrongTagUrl = '/pc-642/come-svolgere-test-automatici-turbolab.it-verifica-impianto-collaudo-oaueei-gbp-double-quoted-single-quoted-fine-1939';
         $this->expectRedirect($wrongTagUrl, $url);
@@ -164,11 +159,7 @@ class ArticleTest extends BaseT
     {
         if( empty(static::$arrLatestArticles) ) {
 
-            $arrData =
-                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
-                    ->loadLatestPublished()
-                    ->getAll();
-
+            $arrData = static::getArticleCollection()->loadLatestPublished()->getAll();
             static::$arrLatestArticles = static::repackDataProviderArray($arrData);
         }
 
@@ -217,9 +208,7 @@ class ArticleTest extends BaseT
     {
         if( empty(static::$arrKoArticles) ) {
 
-            /** @var ArticleCollection $arrKoArticles */
-            $arrKoArticles = static::getService("App\\ServiceCollection\\Cms\\ArticleCollection");
-            $arrKoArticles->load([2380, 353, 1779]);
+            $arrKoArticles = static::getArticleCollection()->load([2380, 353, 1779]);
 
             $arrData = [
                 [
@@ -291,9 +280,7 @@ class ArticleTest extends BaseT
                 ]
             ];
 
-            /** @var ArticleCollection $oArticles */
-            $oArticles = static::getService("App\\ServiceCollection\\Cms\\ArticleCollection");
-            $oArticles->load( array_keys($arrData) );
+            $oArticles = static::getArticleCollection()->load( array_keys($arrData) );
 
             foreach($arrData as $articleId => &$item) {
                 $item["Article"] = $oArticles->get($articleId);

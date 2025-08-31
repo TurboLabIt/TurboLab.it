@@ -18,11 +18,8 @@ class AuthorTest extends BaseT
     public function testingPlayground()
     {
         // 👀 https://turbolab.it/utenti/crazy.cat
-
-        /** @var User $author */
-        $author = static::getService("App\\Service\\User");
-        $author->load(60);
-        $url = $author->getUrl();
+        $author = static::getUser(60);
+        $url    = $author->getUrl();
 
         $crawler = $this->fetchDomNode($url);
         $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di crazy.cat (Marco Ricci)");
@@ -59,10 +56,8 @@ class AuthorTest extends BaseT
     #[DataProvider('authorsToTestThoroughlyProvider')]
     public function testSpecialAuthors(int $id, string $authorName, int $totalPageNum)
     {
-        /** @var User $author */
-        $author = static::getService("App\\Service\\User");
-        $author->load($id);
-        $url = $author->getUrl();
+        $author     = static::getUser($id);
+        $url        = $author->getUrl();
         $authorName = $author->getFullName();
 
         $crawler = $this->fetchDomNode($url);
@@ -94,10 +89,8 @@ class AuthorTest extends BaseT
 
     public function testNoArticlesAuthor()
     {
-        /** @var User $author */
-        $author = static::getService("App\\Service\\User");
-        $author->load( static::NO_ARTICLES_AUTHOR_ID );
-        $url = $author->getUrl();
+        $author = static::getUser(static::NO_ARTICLES_AUTHOR_ID);
+        $url    = $author->getUrl();
 
         $crawler = $this->fetchDomNode($url);
 
@@ -127,9 +120,7 @@ class AuthorTest extends BaseT
     {
         if( empty(static::$arrTestAuthors) ) {
 
-            $latestArticles =
-                static::getService("App\\ServiceCollection\\Cms\\ArticleCollection")
-                    ->loadLatestPublished();
+            $latestArticles = static::getArticleCollection()->loadLatestPublished();
 
             $arrAuthors = [];
             foreach($latestArticles as $article) {

@@ -2,18 +2,17 @@
 namespace App\Tests\Editor;
 
 use App\Service\Cms\ArticleEditor;
+use App\Service\Factory;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
 
 
 class ArticleEditorTest extends BaseT
 {
     protected static function buildEditor() : ArticleEditor
     {
-        return static::getService('App\\Service\\Factory')->createArticleEditor();
+        return static::getService(Factory::class)->createArticleEditor();
     }
-
 
 
     public static function articleEditorTestProvider() : array
