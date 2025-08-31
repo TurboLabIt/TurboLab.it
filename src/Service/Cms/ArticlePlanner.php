@@ -53,10 +53,7 @@ class ArticlePlanner
         //
         if( $publishingStatus != ArticleEditor::PUBLISHING_STATUS_PUBLISHED ) {
 
-            $article
-                ->setPublishingStatus($publishingStatus)
-                ->save();
-
+            $article->setPublishingStatus($publishingStatus);
             return $this;
         }
 
@@ -74,16 +71,15 @@ class ArticlePlanner
     {
         $article
             ->setPublishingStatus(ArticleEditor::PUBLISHING_STATUS_PUBLISHED)
-            ->setPublishedAt($publishingDate)
-            ->save();
+            ->setPublishedAt($publishingDate);
 
-        $this->mailer
-            ->buildArticlePublished($article, $this->factory->getCurrentUser() )
-            ->block(false)
-            ->send();
+        $this->mailer->buildArticlePublished($article, $this->factory->getCurrentUser() );
 
         return $this;
     }
+
+
+    public function getMailer() : Mailer { return $this->mailer; }
 
 
     protected function publishScheduled(ArticleEditor $article) : static
@@ -216,10 +212,8 @@ class ArticlePlanner
 
             $publishingDate = $this->findPublishingDate();
             $this->factory->createArticleEditor( $articleToShift->getEntity() )
-                ->setPublishedAt($publishingDate)
-                ->save();
+                ->setPublishedAt($publishingDate);
 
-            //
             $this->articles = null;
         }
 

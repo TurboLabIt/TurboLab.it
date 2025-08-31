@@ -50,9 +50,19 @@ class ArticleEditorController extends ArticleEditBaseController
                 $publishUrgently = false;
             }
 
-            $articlePlanner->setPublishingStatus($this->articleEditor, $publishingStatus, $publishUrgently);
+            $mailer =
+                $articlePlanner
+                    ->setPublishingStatus($this->articleEditor, $publishingStatus, $publishUrgently)
+                    ->getMailer();
 
-            return $this->jsonOKResponse("Stato di pubblicazione modificato correttamente");
+            $this->factory->getEntityManager()->flush();
+
+            $jsonOkMessage = "Stato di pubblicazione modificato correttamente";
+
+            return
+                $this
+                    ->handleNotification($mailer, $jsonOkMessage)
+                    ->jsonOKResponse($jsonOkMessage);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
