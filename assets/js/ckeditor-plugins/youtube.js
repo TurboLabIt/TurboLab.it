@@ -25,9 +25,9 @@ export default class TliYoutube extends Plugin {
 
                 const id = m[1];
                 const html =
-                    `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0" frameborder="0" width="100%" height="540px"
+                    `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0" frameborder="0" width="100%" height="540"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen="allowfullscreen"></iframe>`;
+                        allowfullscreen></iframe>`;
 
                 // Insert the raw HTML via the data pipeline.
                 editor.model.change(() => {
@@ -41,18 +41,15 @@ export default class TliYoutube extends Plugin {
         });
     }
 
-    // If GeneralHtmlSupport is present, allow <iframe> so it isn't stripped.
+    // Allow <iframe> and needed attributes
     afterInit() {
         const editor = this.editor;
 
-        // Only if GHS is loaded – otherwise bail quietly.
         if (!editor.plugins.has('GeneralHtmlSupport')) return;
 
-        // Get the DataFilter instance (provided by GHS).
         const dataFilter = editor.plugins.get('DataFilter');
         if (!dataFilter) return;
 
-        // Allow the <iframe> element and the attributes you use.
         dataFilter.allowElement('iframe');
         dataFilter.allowAttributes({
             name: 'iframe',
