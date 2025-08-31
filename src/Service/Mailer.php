@@ -26,7 +26,6 @@ class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
     {
         $this->setFrom(null, $userWhoDidIt->getUsername() );
 
-        $arrTo = [];
         $arrCurrentAuthors = $article->getAuthors();
 
         $arrAuthorsAdded = [];
@@ -57,6 +56,10 @@ class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
             $arrAuthorsRemoved[$authorId] = $author;
         }
 
+        if( empty($arrTo) ) {
+            return $this;
+        }
+
         $this->addCc([[
             "name"      => $userWhoDidIt->getUsername(),
             "address"   => $userWhoDidIt->getEmail(),
@@ -84,8 +87,10 @@ class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
     {
         $this->setFrom(null, $userWhoDidIt->getUsername() );
 
+        $arrCurrentAuthors = $article->getAuthors();
+
         /** @var User $author */
-        foreach($article->getAuthors() as $author) {
+        foreach($arrCurrentAuthors as $author) {
 
             if( $author->getId() == $userWhoDidIt->getId() ) {
                 continue;

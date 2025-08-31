@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Editor;
 
+use App\Service\Mailer;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,11 +53,13 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
 
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-authors', name: 'app_article_edit_authors_submit', methods: ['POST'])]
-    public function setAuthors(int $articleId) : JsonResponse|Response
+    public function setAuthors(int $articleId, Mailer $mailer) : JsonResponse|Response
     {
         try {
 
             $this->loadArticleEditor($articleId);
+
+            $arrPreviousAuthors = $this->articleEditor->getAuthors();
 
             $arrAuthorIds = $this->request->get('authors') ?? [];
 
@@ -67,7 +70,32 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
             $this->factory->getEntityManager()->flush();
 
-            return $this->jsonOKResponse("Autori salvati");
+            $jsonOkMessage = "Autori salvati";
+
+            $email =
+                $mailer
+                    ->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors)
+                    ->getEmail();
+
+            $arrTo = $email->getTo();
+            if( !empty($arrTo) ) {
+
+                $mailer
+                    ->block(false)
+                    ->send();
+
+                $jsonOkMessage .= ". Email di notifica inviata a " .
+                    implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrTo));
+            }
+
+            $arrCC = $email->getCC();
+            if( !empty($arrCC) ) {
+
+                $jsonOkMessage .= ". (e in CC a  " .
+                    implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrCC)) . ")";
+            }
+
+            return $this->jsonOKResponse($jsonOkMessage);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
