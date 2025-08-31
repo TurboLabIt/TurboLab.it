@@ -60,13 +60,12 @@ abstract class BaseController extends AbstractController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
-        $cacheKey   = reset($arrCacheTags) . '_page_' . $page;
-        $that       = $this;
+        $cacheKey = reset($arrCacheTags) . '_page_' . $page;
 
         $buildHtmlResult =
-            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($cacheKey, $that, $fxBuildHtml, $page, $arrCacheTags) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($cacheKey, $fxBuildHtml, $page, $arrCacheTags) {
 
-                $buildHtmlResult = empty($fxBuildHtml) ? $that->buildHtmlNumPage($page) : $fxBuildHtml($page);
+                $buildHtmlResult = empty($fxBuildHtml) ? $this->buildHtmlNumPage($page) : $fxBuildHtml($page);
 
                 if( is_string($buildHtmlResult) ) {
 

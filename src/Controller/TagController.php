@@ -34,11 +34,8 @@ class TagController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
-        $that = $this;
-
         $buildHtmlResult =
-            $this->cache->get("$tagSlugDashId/$page", function(ItemInterface $cacheItem)
-            use($tagSlugDashId, $page, $that) {
+            $this->cache->get("$tagSlugDashId/$page", function(ItemInterface $cacheItem) use($tagSlugDashId, $page) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $page);
 
@@ -46,7 +43,7 @@ class TagController extends BaseController
 
                     $coldCacheStormBuster = 60 * rand(30, 90); // 30-90 minutes
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cacheItem->tag(["tags", $that->mainTag->getCacheKey()]);
+                    $cacheItem->tag(["tags", $this->mainTag->getCacheKey()]);
 
                 } else {
 

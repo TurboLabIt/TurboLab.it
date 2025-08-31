@@ -31,12 +31,11 @@ class ViewsController extends BaseController
         }
 
         $cacheKey = "views_{$slug}_$page";
-        $that = $this;
 
         $buildHtmlResult =
-            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($that, $slug, $arrViewRequested, $page, $cacheKey) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($slug, $arrViewRequested, $page, $cacheKey) {
 
-                $buildHtmlResult = $that->buildHtml($slug, $arrViewRequested, $page);
+                $buildHtmlResult = $this->buildHtml($slug, $arrViewRequested, $page);
 
                 if( is_string($buildHtmlResult) ) {
 

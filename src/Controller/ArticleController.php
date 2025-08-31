@@ -22,11 +22,8 @@ class ArticleController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
-        $that = $this;
-
         $buildHtmlResult =
-            $this->cache->get("$tagSlugDashId/$articleSlugDashId", function(ItemInterface $cacheItem)
-                use($tagSlugDashId, $articleSlugDashId, $that) {
+            $this->cache->get("$tagSlugDashId/$articleSlugDashId", function(ItemInterface $cacheItem) use($tagSlugDashId, $articleSlugDashId) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $articleSlugDashId);
 
@@ -34,7 +31,7 @@ class ArticleController extends BaseController
 
                     $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cacheItem->tag(["articles", $that->mainArticle->getCacheKey()]);
+                    $cacheItem->tag(["articles", $this->mainArticle->getCacheKey()]);
 
                 } else {
 

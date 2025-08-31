@@ -34,11 +34,8 @@ class AuthorContoller extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
-        $that = $this;
-
         $buildHtmlResult =
-            $this->cache->get("$usernameClean/$page", function(ItemInterface $cacheItem)
-                use($usernameClean, $page, $that) {
+            $this->cache->get("$usernameClean/$page", function(ItemInterface $cacheItem) use($usernameClean, $page) {
 
                 $buildHtmlResult = $this->buildHtml($usernameClean, $page);
 
@@ -46,7 +43,7 @@ class AuthorContoller extends BaseController
 
                     $coldCacheStormBuster = 60 * rand(15, 30); // 30-90 minutes
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
-                    $cacheItem->tag(["authors", $that->mainAuthor->getCacheKey()]);
+                    $cacheItem->tag(["authors", $this->mainAuthor->getCacheKey()]);
 
                 } else {
 
