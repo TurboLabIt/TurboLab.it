@@ -24,7 +24,7 @@ class TestController extends BaseController
     #[Route('/' . self::SECTION_SLUG, name: 'app_test', condition: "'%kernel.environment%' == 'dev'")]
     public function index() : Response
     {
-        return $this->render('test/index.html.twig', []);
+        return $this->render('test/index.html.twig');
     }
 
 
@@ -44,36 +44,8 @@ class TestController extends BaseController
         File $file, Image $image, Tag $tag, Views $views,
         HtmlProcessorForDisplay $htmlProcessorForDisplay,
         HtmlProcessorForStorage $htmlProcessorForStorage
-    ) : Response
+    ) : never
     {
         dd("OK");
-    }
-
-
-    #[Route('/' . self::SECTION_SLUG . '/newsletter/', name: 'app_test_newsletter', condition: "'%kernel.environment%' == 'dev'")]
-    public function newsletter() : Response
-    {
-        /*$transpiled = Pinky\transformString('<row>Contents</row>');
-        echo $transpiled->saveHTML();
-        dd("OK");*/
-        return $this->render('newsletter/email.html.twig');
-    }
-
-
-    #[Route('/' . self::SECTION_SLUG . '/email/', name: 'app_test_email', condition: "'%kernel.environment%' == 'dev'")]
-    public function email(Mailer $mailer, Article $article, User $userPublisher) : Response
-    {
-        $email =
-            $mailer
-                ->buildNewAuthorAddedToArticle(
-                    $article->load(Article::ID_QUALITY_TEST), $userPublisher->load(User::ID_DEFAULT_ADMIN)
-                )
-                ->getEmail();
-
-        $mailer
-            ->block(false)
-            ->send();
-
-        return $this->render( $email->getHtmlTemplate(), $email->getContext() );
     }
 }
