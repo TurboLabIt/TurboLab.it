@@ -6,6 +6,7 @@ use App\Service\Cms\Article;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
+use App\Service\Mailer;
 use App\Service\Sentinel\ArticleSentinel;
 use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,6 +43,28 @@ abstract class ArticleEditBaseController extends BaseController
             ->enforceCanEdit();
 
         return $this->articleEditor;
+    }
+
+
+    protected function handleNotification(Mailer $mailer, string &$jsonOkMessage) : static
+    {
+        $sent =
+            $mailer
+                ->block(false)
+                ->sendIfHasToRecipients();
+
+        if($sent) {
+            $jsonOkMessage .= ". 📨 Email di notifica inviata a " .
+                implode(', ', array_map(fn($recipient) => $recipient->getName(), $mailer->getTo()));
+        }
+
+        $arrCc = $mailer->getCc();
+        if( $sent && !empty($arrCc) ) {
+            $jsonOkMessage .= " (e in CC a te, " .
+                implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrCc)) . ")";
+        }
+
+        return $this;
     }
 
 

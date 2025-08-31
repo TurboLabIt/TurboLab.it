@@ -72,30 +72,12 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
             $jsonOkMessage = "Autori salvati";
 
-            $email =
-                $mailer
-                    ->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors)
-                    ->getEmail();
+            $mailer->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors);
 
-            $arrTo = $email->getTo();
-            if( !empty($arrTo) ) {
-
-                $mailer
-                    ->block(false)
-                    ->send();
-
-                $jsonOkMessage .= ". Email di notifica inviata a " .
-                    implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrTo));
-            }
-
-            $arrCC = $email->getCC();
-            if( !empty($arrCC) ) {
-
-                $jsonOkMessage .= ". (e in CC a  " .
-                    implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrCC)) . ")";
-            }
-
-            return $this->jsonOKResponse($jsonOkMessage);
+            return
+                $this
+                    ->handleNotification($mailer, $jsonOkMessage)
+                    ->jsonOKResponse($jsonOkMessage);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
