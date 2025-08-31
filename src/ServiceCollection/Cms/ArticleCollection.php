@@ -4,6 +4,7 @@ namespace App\ServiceCollection\Cms;
 use App\Service\Cms\Article;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
+use DateInvalidOperationException;
 use DateTime;
 
 
@@ -158,7 +159,7 @@ class ArticleCollection extends BaseArticleCollection
     {
         if( $startDate > $endDate || ( !empty($maxDaysApart) && $startDate->diff($endDate)->days > $maxDaysApart )
         ) {
-            throw new \DateInvalidOperationException();
+            throw new DateInvalidOperationException();
         }
 
         $arrArticles = $this->getRepository()->getByPublishedDateInterval($startDate, $endDate);

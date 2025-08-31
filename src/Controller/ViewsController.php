@@ -86,7 +86,6 @@ class ViewsController extends BaseController
             'currentPage'       => $page
         ];
 
-        $txtResponseBody = $this->twig->render('views/index.html.twig', $arrData);
-        return $txtResponseBody;
+        return $this->twig->render('views/index.html.twig', $arrData);
     }
 }

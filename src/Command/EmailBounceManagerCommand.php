@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use RecursiveIteratorIterator;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use App\Repository\PhpBB\UserRepository;
 use Ddeboer\Imap\Server;
@@ -10,6 +11,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use const LATT_NOSELECT;
 
 
 #[AsCommand(name: 'EmailBounceManager', description: 'Unsubscribe bouncing email addresses')]
@@ -60,7 +62,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
 
             // Skip container-only mailboxes
             // @see https://secure.php.net/manual/en/function.imap-getmailboxes.php
-            if( $mailbox->getAttributes() & \LATT_NOSELECT ) {
+            if( $mailbox->getAttributes() & LATT_NOSELECT ) {
 
                 $this->fxInfo("🦘 Skipping IMAP LATT_NOSELECT");
                 continue;
@@ -198,9 +200,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
 
         $arrAddresses = [];
         preg_match_all(static::EMAIL_ADDRESS_REGEX, $body, $arrAddresses);
-        $arrAddresses = reset($arrAddresses);
-
-        return $arrAddresses;
+        return reset($arrAddresses);
     }
 
 
@@ -208,7 +208,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     {
         $arrAllAddresses = [];
 
-        $iterator = new \RecursiveIteratorIterator($message, \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new RecursiveIteratorIterator($message, RecursiveIteratorIterator::SELF_FIRST);
         foreach($iterator as $part) {
 
             $arrAddresses = [];

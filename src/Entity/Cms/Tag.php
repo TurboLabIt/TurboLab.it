@@ -65,7 +65,7 @@ class Tag extends BaseCmsEntity
             }
 
             $itemRanking    = $item->getRanking();
-            $ranking        = $itemRanking > $ranking ? $itemRanking : $ranking;
+            $ranking        = max($itemRanking, $ranking);
         }
 
         $author

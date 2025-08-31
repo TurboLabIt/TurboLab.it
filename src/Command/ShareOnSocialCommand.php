@@ -16,6 +16,7 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TurboLabIt\MessengersBundle\BaseMessenger;
 use TurboLabIt\MessengersBundle\FacebookPageMessenger;
 use TurboLabIt\MessengersBundle\LinkedInPageMessenger;
 use TurboLabIt\MessengersBundle\TelegramMessenger;
@@ -257,8 +258,8 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $arrServiceFilter = $this->getCliOption(static::CLI_OPT_SERVICES);
         $arrServiceFilter = array_map('strtolower', $arrServiceFilter);
 
-        if( !empty($arrServiceFilter) && in_array(TwitterMessenger::SERVICE_X, $arrServiceFilter) ) {
-            $arrServiceFilter[] = TwitterMessenger::SERVICE_TWITTER;
+        if( !empty($arrServiceFilter) && in_array(BaseMessenger::SERVICE_X, $arrServiceFilter) ) {
+            $arrServiceFilter[] = BaseMessenger::SERVICE_TWITTER;
         }
 
         $arrServicesMap = [
@@ -402,7 +403,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ LinkedIn: ");
 
         $title          = $arrParams["title"];
-        $url            = $arrParams["prodUrl"];;
+        $url            = $arrParams["prodUrl"];
         $spotlight      = $arrParams["spotlight"];
 
         try {

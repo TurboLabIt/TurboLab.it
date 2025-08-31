@@ -7,6 +7,7 @@ use App\Service\Cms\ArticleEditor;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
 use App\Service\Sentinel\ArticleSentinel;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -53,7 +54,7 @@ abstract class ArticleEditBaseController extends BaseController
         ];
 
         return $this->json([
-            "message"   => "✅ OK! $okMessage - " . (new \DateTime())->format('Y-m-d H:i:s'),
+            "message"   => "✅ OK! $okMessage - " . (new DateTime())->format('Y-m-d H:i:s'),
             "path"      => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
             "title"     => $this->articleEditor->getTitleForHTMLAttribute(),
             "strip"     => $this->twig->render('article/meta-strip.html.twig', $arrData),

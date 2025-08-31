@@ -24,9 +24,8 @@ class GoogleProgrammableSearchEngine
     {
         $url = static::ENDPOINT . '/customsearch/v1';
 
-        $cachedResponse =
-            $this->cache->get("{$url}_{$term}", function(ItemInterface $cacheItem)
-            use($url, $term) {
+        return
+            $this->cache->get("{$url}_{$term}", function(ItemInterface $cacheItem) use($url, $term) {
 
                 $cacheItem->expiresAfter(3600 * 48); // 2 days
                 $cacheItem->tag(["search"]);
@@ -57,14 +56,11 @@ class GoogleProgrammableSearchEngine
                             ]
                         ]);
 
-                    $arrResponse = $response->toArray();
-                    return $arrResponse;
+                    return $response->toArray();
 
                 } catch(Exception) {
                     return null;
                 }
             });
-
-        return $cachedResponse;
     }
 }
