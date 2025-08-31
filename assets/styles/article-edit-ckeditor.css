@@ -9,3 +9,7 @@
     border-radius: 0;
     padding: 6px 10px;
 }
+
+span.html-object-embed.ck-widget {
+    width: 100%;
+}
