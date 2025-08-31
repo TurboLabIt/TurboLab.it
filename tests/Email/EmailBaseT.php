@@ -5,7 +5,6 @@ use App\Service\Cms\Article;
 use App\Service\User;
 use App\Tests\BaseT;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
 
 
 abstract class EmailBaseT extends BaseT
@@ -13,7 +12,7 @@ abstract class EmailBaseT extends BaseT
     protected function expectArticleNotificationFrom(User $currentUser, TemplatedEmail $email) : static
     {
         $actualFrom = $email->getFrom();
-        $this->assertEquals(1, count($actualFrom));
+        $this->assertCount(1, $actualFrom);
         $actualFrom = reset($actualFrom);
 
         $this->assertEqualsIgnoringCase( $currentUser->getUsername(), $actualFrom->getName() );
@@ -30,7 +29,7 @@ abstract class EmailBaseT extends BaseT
 
         $arrActualRecipients = $email->getTo();
 
-        $this->assertEquals( count($arrExpectedRecipients), count($arrActualRecipients) );
+        $this->assertSameSize($arrExpectedRecipients, $arrActualRecipients);
         $numOk = 0;
 
         /** @var User $user */
@@ -39,8 +38,7 @@ abstract class EmailBaseT extends BaseT
             $userName   = $user->getUsername();
             $userEmail  = $user->getEmail();
 
-            /** @var Address $recipient */
-            foreach($arrActualRecipients as $key => $recipient) {
+            foreach($arrActualRecipients as $recipient) {
 
                 $actualName     = $recipient->getName();
                 $actualEmail    = $recipient->getAddress();
@@ -62,7 +60,7 @@ abstract class EmailBaseT extends BaseT
     protected function expectArticleNotificationCC(User $currentUser, TemplatedEmail $email) : static
     {
         $arrCC = $email->getCc();
-        $this->assertEquals( count($arrCC), 1 );
+        $this->assertCount(1, $arrCC);
         $ccAddress = reset($arrCC);
 
         $this->assertEqualsIgnoringCase( $currentUser->getUsername(), $ccAddress->getName() );
