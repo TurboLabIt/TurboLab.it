@@ -78,7 +78,7 @@ class ArticlePlanner
             ->save();
 
         $this->mailer
-            ->buildNewAuthorAddedToArticle($article, $this->factory->getCurrentUser() )
+            ->buildArticlePublished($article, $this->factory->getCurrentUser() )
             ->block(false)
             ->send();
 

@@ -2,51 +2,26 @@
 
 {% block body %}
 
-    <row>
-        <columns>
-            Ciao
-            {% for Recipient in Recipients %}
-                {{ Recipient.name|raw }}{% if not loop.last %}, {% endif %}
-            {% endfor %} 👋🏻
-        </columns>
-    </row>
+    {% include 'email/recipients-greetings.html.twig' %}
 
     <row>
         <columns>
-            Con la presente {% if Recipients|length == 1 %}ti{% else %}vi{% endif %} informo che ho appena <strong>pubblicato
-                il seguente articolo</strong>, del quale {% if Recipients|length == 1 %}sei autore{% else %}siete autori{% endif %}:
+            Con la presente {% if To|length == 1 %}ti{% else %}vi{% endif %} informo che ho appena <strong>pubblicato
+            il seguente articolo</strong>, del quale {% if To|length == 1 %}sei autore{% else %}siete autori{% endif %}:
         </columns>
     </row>
 
-    <row>
-        <columns>
-            📖 <a href="{{ Article.shortUrl|raw }}">{{ Article.title|raw }}</a>
-        </columns>
-    </row>
+    {% include 'email/article-link.html.twig' %}
 
-    <row>
-        <columns>
-            <p class="tli-alert-warning">
-                Per favore, non rispondere a questa email. Per qualsiasi domanda o considerazione ➡
-                <a href="{{ contactViaForumUrl }}">scrivi sul forum</a>
-            </p>
-        </columns>
-    </row>
+    {% include 'email/noreply-warning.html.twig' %}
 
     <row>
         <columns>
             L'articolo è già visibile pubblicamente, ma ora uscirà anche in homepage e sulle pagine <em>social</em> di TurboLab.it
-            a partire da
             <strong>{{ Article.publishedAt|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}</strong>.
         </columns>
     </row>
 
-    <row>
-        <columns>
-            --<br>
-            A presto,<br>
-            {{ UserWhoPublished.fullName|raw }}
-        </columns>
-    </row>
+    {% include 'email/user-who-acted-signature.html.twig' %}
 
 {% endblock %}

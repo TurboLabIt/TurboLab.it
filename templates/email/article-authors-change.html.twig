@@ -1,0 +1,46 @@
+{% extends 'email/base.html.twig' %}
+
+{% block body %}
+
+    {% include 'email/recipients-greetings.html.twig' %}
+
+    <row>
+        <columns>
+            Con la presente {% if To|length == 1 %}ti{% else %}vi{% endif %} informo che ho appena <strong>modificato gli autori
+            del seguente articolo</strong>:
+        </columns>
+    </row>
+
+    {% include 'email/article-link.html.twig' %}
+
+    {% include 'email/noreply-warning.html.twig' %}
+
+    {% if AuthorsAdded|length > 0 %}
+        <row>
+            <columns>
+                Autori aggiunti:
+                <ul>
+                    {% for Author in AuthorsAdded %}
+                        <li>{{ Author.username }}</li>
+                    {% endfor %}
+                </ul>
+            </columns>
+        </row>
+    {% endif %}
+
+    {% if AuthorsRemoved|length > 0 %}
+        <row>
+            <columns>
+                Autori rimossi:
+                <ul>
+                    {% for Author in AuthorsRemoved %}
+                        <li>{{ Author.username }}</li>
+                    {% endfor %}
+                </ul>
+            </columns>
+        </row>
+    {% endif %}
+
+    {% include 'email/user-who-acted-signature.html.twig' %}
+
+{% endblock %}

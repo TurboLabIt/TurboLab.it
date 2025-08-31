@@ -22,20 +22,72 @@ class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
     }
 
 
-    public function notifyNewAuthorAddedToArticle(Article $article, User $newAuthor, User $userWhoAdded) : static
+    public function buildArticleChangeAuthors(Article $article, User $userWhoDidIt, array $arrPreviousAuthors) : static
     {
+        $this->setFrom(null, $userWhoDidIt->getUsername() );
 
+        $arrTo = [];
+        $arrCurrentAuthors = $article->getAuthors();
+
+        $arrAuthorsAdded = [];
+        foreach($arrCurrentAuthors as $authorId => $author) {
+
+            if( $authorId != $userWhoDidIt->getId() ) {
+                $arrTo[$authorId] = $author;
+            }
+
+            if( array_key_exists($authorId, $arrPreviousAuthors) ) {
+                continue;
+            }
+
+            $arrAuthorsAdded[$authorId] = $author;
+        }
+
+        $arrAuthorsRemoved  = [];
+        foreach($arrPreviousAuthors as $authorId => $author) {
+
+            if( array_key_exists($authorId, $arrCurrentAuthors) ) {
+                continue;
+            }
+
+            if( $authorId != $userWhoDidIt->getId() ) {
+                $arrTo[$authorId] = $author;
+            }
+
+            $arrAuthorsRemoved[$authorId] = $author;
+        }
+
+        $this->addCc([[
+            "name"      => $userWhoDidIt->getUsername(),
+            "address"   => $userWhoDidIt->getEmail(),
+        ]]);
+
+
+        $arrTemplateParams = [
+            "AuthorsAdded"      => $arrAuthorsAdded,
+            "AuthorsRemoved"    => $arrAuthorsRemoved,
+            "Article"           => $article,
+            "UserWhoDidIt"      => $userWhoDidIt,
+            "contactViaForumUrl"=> $this->forumUrlGenerator->generateTopicNewUrlFromForumId(Forum::ID_TLI)
+        ];
+
+        return
+            $this
+                ->build(
+                    "Autori articolo modificati - " . $article->getTitle(),
+                    "email/article-authors-change.html.twig", $arrTemplateParams, $arrTo
+                );
     }
 
 
-    public function buildNewAuthorAddedToArticle(Article $article, User $userWhoPublished) : static
+    public function buildArticlePublished(Article $article, User $userWhoDidIt) : static
     {
-        $this->setFrom(null, $userWhoPublished->getFullName());
+        $this->setFrom(null, $userWhoDidIt->getUsername() );
 
         /** @var User $author */
         foreach($article->getAuthors() as $author) {
 
-            if( $author->getId() == $userWhoPublished->getId() ) {
+            if( $author->getId() == $userWhoDidIt->getId() ) {
                 continue;
             }
 
@@ -50,15 +102,14 @@ class Mailer extends \TurboLabIt\BaseCommand\Service\Mailer
         }
 
         $this->addCc([[
-            "name"      => $userWhoPublished->getUsername(),
-            "address"   => $userWhoPublished->getEmail(),
+            "name"      => $userWhoDidIt->getUsername(),
+            "address"   => $userWhoDidIt->getEmail(),
         ]]);
 
         $arrTemplateParams = [
-            "Recipients"            => $arrTo,
-            "Article"               => $article,
-            "UserWhoPublished"      => $userWhoPublished,
-            "contactViaForumUrl"    => $this->forumUrlGenerator->generateTopicNewUrlFromForumId(Forum::ID_TLI)
+            "Article"           => $article,
+            "UserWhoDidIt"      => $userWhoDidIt,
+            "contactViaForumUrl"=> $this->forumUrlGenerator->generateTopicNewUrlFromForumId(Forum::ID_TLI)
         ];
 
         return
