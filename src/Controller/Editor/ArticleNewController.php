@@ -41,7 +41,7 @@ class ArticleNewController extends ArticleEditBaseController
             }
         }
 
-        return $this->render("article/editor/$templateFilename.html.twig", [
+        return $this->renderUncached("article/editor/$templateFilename.html.twig", [
             'metaTitle'                     => 'Scrivi nuovo articolo',
             'metaCanonicalUrl'              => $this->generateUrl('app_article_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
             'activeMenu'                    => '',
