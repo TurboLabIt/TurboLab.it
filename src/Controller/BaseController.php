@@ -50,20 +50,6 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function renderUncached(string $view, array $parameters = [], ?Response $response = null) : Response
-    {
-        $response = parent::render($view, $parameters, $response);
-
-        // Set headers to prevent ANY caching of this page
-        $response->setPrivate();
-        $response->headers->addCacheControlDirective('no-cache');
-        $response->headers->addCacheControlDirective('no-store');
-        $response->headers->addCacheControlDirective('must-revalidate');
-
-        return $response;
-    }
-
-
     protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
     {
         $page = empty($page) ? 1 : $page;
