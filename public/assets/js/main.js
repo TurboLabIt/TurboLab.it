@@ -10,10 +10,6 @@
 
     jQuery(document).on('ready', function () {
 
-
-
-
-
         //===== Sticky
 
         jQuery(window).on('scroll', function (event) {
@@ -278,8 +274,8 @@
             slidesToShow: 2,
             slidesToScroll: 1,
             dots: false,
-            infinite: true,
-            autoplay: true,
+            infinite: false,
+            autoplay: false,
             autoplaySpeed: 3000,
             arrows: true,
             prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
@@ -322,8 +318,8 @@
             slidesToShow: 1,
             slidesToScroll: 1,
             dots: false,
-            infinite: true,
-            autoplay: true,
+            infinite: false,
+            autoplay: false,
             autoplaySpeed: 3000,
             arrows: true,
             prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
@@ -354,8 +350,8 @@
             slidesToShow: 2,
             slidesToScroll: 1,
             dots: false,
-            infinite: true,
-            autoplay: true,
+            infinite: false,
+            autoplay: false,
             autoplaySpeed: 3000,
             arrows: true,
             prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
