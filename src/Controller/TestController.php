@@ -48,4 +48,11 @@ class TestController extends BaseController
     {
         dd("OK");
     }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/new-home/', name: 'app_test_new-home', condition: "'%kernel.environment%' == 'dev'")]
+    public function newHome() : Response
+    {
+        return $this->render('test/new-home.html.twig');
+    }
 }
