@@ -13,31 +13,38 @@ abstract class BaseCmsService extends BaseServiceEntity
 
     public function loadBySlugDashId(string $slugDashId) : static
     {
-        return $this->internalLoadBySlugDashId($slugDashId, 'getOneById');
+        $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
+        return $this->internalLoadBy($entityId, 'getOneById');
     }
 
 
     public function loadBySlugDashIdComplete(string $slugDashId) : static
     {
-        return $this->internalLoadBySlugDashId($slugDashId, 'getOneByIdComplete');
+        $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
+        return $this->internalLoadBy($entityId, 'getOneByIdComplete');
     }
 
 
-    protected function internalLoadBySlugDashId(string $slugDashId, string $method) : static
+    public function loadByTitle(string $title) : static
     {
-        $entityId = substr($slugDashId, strrpos($slugDashId, '-') + 1);
+        return $this->internalLoadBy($title, 'getOneByTitle');
+    }
 
+
+    protected function internalLoadBy(string $valueToSearch, string $repositoryMethodName) : static
+    {
         $this->clear();
-        $entity = $this->getRepository()->$method($entityId);
+        $entity = $this->getRepository()->$repositoryMethodName($valueToSearch);
 
         if( empty($entity) ) {
 
             $exceptionClass = static::NOT_FOUND_EXCEPTION;
-            throw new $exceptionClass($entityId);
+            throw new $exceptionClass($valueToSearch);
         }
 
         return $this->setEntity($entity);
     }
+
 
     public function getUpdatedAt() : ?DateTime { return $this->entity->getUpdatedAt(); }
 }

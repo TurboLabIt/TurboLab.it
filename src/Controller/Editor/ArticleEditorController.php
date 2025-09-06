@@ -3,10 +3,12 @@ namespace App\Controller\Editor;
 
 use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticlePlanner;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -20,13 +22,31 @@ class ArticleEditorController extends ArticleEditBaseController
 
             foreach(['title', 'body'] as $param) {
 
-                $value  = $this->request->get($param);
+                $value = $this->request->get($param);
                 $method = "set" . ucfirst($param);
                 $this->articleEditor->$method($value);
             }
 
             $this->articleEditor->save();
             return $this->jsonOKResponse("Articolo salvato");
+
+        } catch(UniqueConstraintViolationException $ex) {
+
+            if ($ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false) {
+                throw $ex;
+            }
+
+            $title = $this->articleEditor->getTitle();
+            $originalArticleUrl = $this->article->loadByTitle($title)->getShortUrl();
+
+            return
+                $this->textErrorResponse(
+                    new ConflictHttpException(trim('
+                        Impossibile salvare:
+                        <a href="' . $originalArticleUrl . '"  target="_blank">esiste già un articolo con questo titolo</a>.
+                        Per favore, presta attenzione a non creare articoli duplicati.
+                    '))
+                );
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }

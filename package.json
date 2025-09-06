@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "@babel/core": ">=7.28.3",
+        "@babel/core": ">=7.28.4",
         "@babel/preset-env": ">=7.28.3",
         "@symfony/webpack-encore": ">=5.2.0",
         "core-js": ">=3.45.1",
@@ -19,11 +19,11 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "ckeditor5": ">=46.0.2",
+        "ckeditor5": ">=46.0.3",
         "file-loader": ">=6.2.0",
         "npm-check-updates": "^18.0.3",
         "raw-loader": ">=4.0.2",
-        "sass": ">=1.91.0",
+        "sass": ">=1.92.1",
         "sass-loader": ">=16.0"
     },
     "packageManager": "yarn@4.5.1"
