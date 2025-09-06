@@ -55,3 +55,6 @@
 .slick-arrow {
     padding: 0px;
 }
+
+.trending-news-slider .slick-list { margin: 0 -10px; }
+.trending-news-slider .slick-slide { margin: 0 10px; }
