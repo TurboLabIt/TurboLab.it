@@ -18,7 +18,6 @@ import {
     Heading,
     HeadingButtonsUI,
     ImageBlock,
-    ImageToolbar,
     Italic,
     Link,
     List,
@@ -74,7 +73,6 @@ const editorConfig = {
         Heading,
         HeadingButtonsUI,
         ImageBlock,
-        ImageToolbar,
         Italic,
         Link,
         List,
@@ -99,9 +97,6 @@ const editorConfig = {
                 'editor-container_include-fullscreen',
                 'main-container'
             )
-    },
-    image: {
-        toolbar: []
     },
     language: 'it',
     licenseKey: LICENSE_KEY,
