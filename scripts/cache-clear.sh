@@ -45,6 +45,9 @@ wsuSourceFrameworkScript cache-clear "$@"
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
 
 
+wsuSymfony console ForumIntegrationBuilder
+
+
 fxTitle "🧹 Deleting the forum cache folder..."
 rm -rf "${WEBROOT_DIR}forum/cache/production"
 
