@@ -1,0 +1,24 @@
+.spoiler_container {width: 100%;}
+
+.spoiler_button {
+    background: /* webpackIgnore: true */ url('/images/forum/buttons/spoiler.png') no-repeat left top;
+    display: block;
+    width: 96px;
+    height: 25px;
+    margin: 3px 0;
+    display: none;
+}
+
+.spoiler_button:hover {cursor: pointer;}
+
+.spoiler_content {
+    padding: 3px 0px 7px 0px;
+    display: none;
+    width: 100%;
+    border-bottom: 1px solid #888;
+    margin-bottom: 10px;
+}
+
+.spoiler_failsafe div div {display: none;}
+
+.spoiler_failsafe div:hover div {display: block;}

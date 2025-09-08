@@ -1,36 +1,20 @@
-<!-- START TurboLab.it integration 01-header.html.twig -->
 {# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md #}
 {# Ported from TLI1: https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/smarty/sashagrey/forum-integration_01-header.html #}
 
-<link rel="shortcut icon" href="{{ siteUrl }}favicon.ico" />
+<!-- START TurboLab.it integration 01-header.html.twig -->
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="preload" href="{{ asset('build/forum.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-<link rel="stylesheet" type="text/css" media="all" href="//cdn.turbolab.it/css/phrn.css">
 
 {# GDPR Clickio #}
 <script async src="//clickiocmp.com/t/consent_207914.js"></script>
 
-{# Visualizzazione logo custom #}
-<style>
-    .site_logo {
-        background-image: url("{{ asset('images/logo/turbolab.it.png') }}");
-        width: 416px;
-        height: 71px;
-        background-repeat: no-repeat;
-        background-position: 0% 0%;
-        background-size: 100%;
-        max-width: 100%;
-    }
-
-    {# Mostro il logo anche su mobile https://turbolab.it/forum/viewtopic.php?t=3263 #}
-    .logo { display: inline-block !important; }
-
-    {# Nascondo il nome del sito di fianco al logo #}
-    #site-description > h1, #site-description > p { display: none !important; }
-</style>
-
 
 <!-- IF !S_GROUP_8 && SCRIPT_NAME != "ucp" -->
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    {# Switched to Auto Ads (below)
+    {% include 'ads/adsense/header.html.twig' %}
+    #}
+    {% include 'ads/adsense/auto-ads.html.twig' %}
 <!-- ENDIF -->
 
 <!-- END TurboLab.it integration 01-header.html.twig -->

@@ -1,0 +1,51 @@
+{# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md #}
+{# Ported from TLI1: https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/smarty/sashagrey/forum-integration_99-footer.html #}
+
+<!-- START TurboLab.it integration 99-footer.html.twig -->
+
+<!-- IF !S_GROUP_8 && SCRIPT_NAME != "ucp" -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js" defer></script>
+<!-- ENDIF -->
+
+{# Link "Regolamento" in nav-bar #}
+<li id="link-regolamento" class="rightside" data-skip-responsive="true" style="display:none">
+    <a href="{{ siteUrl }}161" role="menuitem" style="font-weight:bold; color: red;"  title="Regolamento di questa community">
+        <i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i><span>REGOLAMENTO </span>
+    </a>
+</li>
+
+
+{# Condizione inserimento messaggi #}
+<div class="panel bg2" id="condizioni-inserimento-messaggi-forum" style="text-align: justify;">
+    <div class="inner">
+        Inserendo un messaggio, dichiari di aver letto e accettato il <a href="{{ siteUrl }}161">regolamento di partecipazione</a>.
+        Nello specifico, sei consapevole che ti stai assumendo personalmente la totale responsabilità delle tue affermazioni, anche in sede civile e/o penale,
+        manlevando i gestori di questo sito da ogni coinvolgimento e/o pretesa di rivalsa.
+        Dichiari inoltre di essere consapevole che il messaggio sarà visibile pubblicamente, accetti di diffonderlo con licenza
+        <a rel="license" href="//creativecommons.org/licenses/by-nc-sa/3.0/deed.it">CC BY-NC-SA 3.0</a> (con attribuzione a "TurboLab.it") e rinunci ad ogni forma di compensazione (economica o altro).
+        Rinunci inoltre esplicitamente a qualsiasi pretesa di <a href="{{ siteUrl }}618">cancellazione del messaggio</a>.
+    </div>
+</div>
+
+
+{# Bollino Creative Commons
+<div id="licenza-contenuti-forum" style="text-align:center">{include file="licenza-uso-bollino-cc.html"}</div>#}
+
+
+
+{# Userbar in alto
+<div id="userbar" style="margin-bottom: 4px; display: none;" class="userbar-stileForum">
+    <p style="text-align: center;"><img loading="lazy" src="{{ siteUrl }}images/loading.gif"></p>
+</div>
+
+<script>
+    $('#wrap').prepend($('#userbar'));
+    $('#userbar').css("display","block");
+</script>
+
+<script defer src="{{ siteUrl }}js/userbar-loader.js"></script>
+<link href="{{ siteUrl }}css/userbar.css" rel="stylesheet" type="text/css" media="all" />#}
+
+{{ encore_entry_script_tags('forum') }}
+
+<!-- END TurboLab.it integration 99-footer.html.twig -->

@@ -45,7 +45,10 @@ wsuSourceFrameworkScript cache-clear "$@"
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
 
 
-wsuSymfony console ForumIntegrationBuilder
+## this would destroy the integration if ran with TLI1 still live
+if [ "$APP_ENV" != "prod" ]; then
+  wsuSymfony console ForumIntegrationBuilder
+fi
 
 
 fxTitle "🧹 Deleting the forum cache folder..."

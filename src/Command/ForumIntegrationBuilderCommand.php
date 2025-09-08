@@ -39,17 +39,16 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
             //'<!-- ENDIF -->' . PHP_EOL . PHP_EOL . PHP_EOL
         ;
 
-
         $arrTpl = [
             "overall_header_head_append"                => "01-header",
-            //"overall_header_content_before"             => "03-overall-header",
+            "overall_header_content_before"             => "09-overall-header",
             ////"index_body_markforums_after"               => "05-listing",
             ////"viewforum_body_topic_row_before"           => "05-listing",
-            //"ucp_agreement_terms_before"                => "10-registrazione",
-            //"viewtopic_body_postrow_post_details_after" => "11-post-ads",
-            //"viewtopic_body_postrow_post_after"         => "15-post-adbot",
-            //"overall_footer_content_after"              => "90-overall-footer",
-            //"overall_footer_after"                      => "99-footer"
+            "ucp_agreement_terms_before"                => "registrazione",
+            "viewtopic_body_postrow_post_details_after" => "post-axx",
+            "viewtopic_body_postrow_post_after"         => "post-axxbot",
+            "overall_footer_content_after"              => "90-overall-footer",
+            "overall_footer_after"                      => "99-footer"
         ];
 
         foreach($arrTpl as  $destinationFile => $sourceFile){

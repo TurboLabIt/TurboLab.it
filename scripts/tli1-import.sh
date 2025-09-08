@@ -13,4 +13,5 @@ cd ${PROJECT_DIR}
 rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
 wsuSymfony console tli1 "$@"
 wsuSymfony console TagAggregator
-wsuSymfony console cache:clear
+
+bash "${SCRIPT_DIR}cache-clear.sh"
