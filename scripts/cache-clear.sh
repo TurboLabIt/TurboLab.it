@@ -38,7 +38,7 @@ if [ "$APP_ENV" = "dev" ]; then
   source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
 
-
+### SYMFONY console cache:clear ###
 wsuSourceFrameworkScript cache-clear "$@"
 
 
@@ -47,6 +47,9 @@ sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/De
 
 ## this would destroy the integration if ran with TLI1 still live
 if [ "$APP_ENV" != "prod" ]; then
+
+  chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
+  chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
   wsuSymfony console ForumIntegrationBuilder
 fi
 
