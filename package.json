@@ -21,7 +21,7 @@
     "dependencies": {
         "ckeditor5": ">=46.0.3",
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^18.0.3",
+        "npm-check-updates": "^18.1.0",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.92.1",
         "sass-loader": ">=16.0"
