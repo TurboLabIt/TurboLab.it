@@ -32,6 +32,8 @@ fxLink "${WEBROOT_DIR}images/logo/2013/turbolab.it-2013-finale-tiny.png" "${BRAN
 fxTitle "Forum own extensions link..."
 rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
 fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
+chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
+chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
 
 
 wsuMysql -e "
