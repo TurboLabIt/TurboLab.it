@@ -48,8 +48,13 @@ sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/De
 ## this would destroy the integration if ran with TLI1 still live
 if [ "$APP_ENV" != "prod" ]; then
 
+  fxTitle "Forum own extensions link..."
+  rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
+  fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
+
   chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
   chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
+
   wsuSymfony console ForumIntegrationBuilder
 fi
 
