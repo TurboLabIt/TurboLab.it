@@ -30,5 +30,5 @@ $(window).on('load', function() {
         //display warn
         $(TLI_HANDSTOP_SELECTOR).fadeIn(2000);
 
-    }, 2000);
+    }, 7000);
 });
