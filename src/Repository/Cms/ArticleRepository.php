@@ -718,7 +718,7 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findPastYearsTitled(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findPeriodicUpdateList(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
@@ -741,7 +741,7 @@ class ArticleRepository extends BaseRepository
             ->andWhere($orX)
             ->andWhere($query->expr()->notLike('t.title', $query->expr()->literal("%$currentYear%")))
             ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
-            ->andWhere('t.archived = false')
+            ->andWhere('t.excludedFromPeriodicUpdateList = false')
             ->orderBy('t.views', 'DESC');
 
         $query

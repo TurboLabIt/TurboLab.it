@@ -175,9 +175,9 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadPastYearsTitled(?int $page = 1) : static
+    public function loadPeriodicUpdateList(?int $page = 1) : static
     {
-        $arrArticles = $this->getRepository()->findPastYearsTitled($page);
+        $arrArticles = $this->getRepository()->findPeriodicUpdateList($page);
         return $this->setEntities($arrArticles);
     }
 

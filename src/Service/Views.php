@@ -26,7 +26,7 @@ class Views
         ],
         "annuali"    => [
             "title" => "Articoli annuali da aggiornare",
-            "fx"    => 'loadPastYearsTitled'
+            "fx"    => 'loadPeriodicUpdateList'
         ]
     ];
 
