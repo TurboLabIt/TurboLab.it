@@ -410,14 +410,14 @@ class TLI1ImporterCommand extends AbstractBaseCommand
             // Newsletters must be authored by "System" =>
             // getting it from 👀 https://turbolab.it/4181
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][4181];
-            $archived       = true;
+            $excludeFromPeriodicUpdateList       = true;
 
         } else {
 
             $spotlightId    = $arrArticle["spotlight"];
             $arrTli1Authors = $this->arrAuthorsByContributionType["contenuto"][$articleId] ?? [];
 
-            $archived =
+            $excludeFromPeriodicUpdateList =
                 stripos($title, 'Auguri di buone feste') !== false ||
                 stripos($title, 'Auguri e statistiche') !== false ||
                 stripos($title, 'La storia di Windows, ann') !== false ||
@@ -457,7 +457,7 @@ class TLI1ImporterCommand extends AbstractBaseCommand
                     ->setFormat($format)
                     ->setPublishingStatus($pubStatus)
                     ->setPublishedAt($publishedAt)
-                    ->setArchived($archived)
+                    ->excludeFromPeriodicUpdateList($excludeFromPeriodicUpdateList)
                     ->setShowAds($ads)
                     ->setCommentsTopic($commentsTopic)
                     //->setCommentTopicNeedsUpdate($commentTopicNeedsUpdate)

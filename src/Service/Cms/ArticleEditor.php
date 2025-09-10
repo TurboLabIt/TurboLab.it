@@ -75,6 +75,13 @@ class ArticleEditor extends Article
     }
 
 
+    public function excludeFromPeriodicUpdateList(bool $exclude = true) : static
+    {
+        $this->entity->excludeFromPeriodicUpdateList($exclude);
+        return $this;
+    }
+
+
     public function setCommentsTopic(Topic $topic) : static
     {
         $this->entity->setCommentsTopic( $topic->getEntity() );
@@ -299,9 +306,9 @@ class ArticleEditor extends Article
         if(
             stripos($title, 'Questa settimana su TLI') !== false ||
             stripos($title, 'Auguri di buone feste da TLI') !== false ||
-            stripos($title, 'La storia di Windows, anno') !== false
+            stripos($title, 'La storia di Windows, ann') !== false
         ) {
-            $this->setArchived(true);
+            $this->excludeFromPeriodicUpdateList();
         }
 
         if($persist) {

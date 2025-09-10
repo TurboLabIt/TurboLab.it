@@ -33,6 +33,9 @@ class Article extends BaseCmsEntity
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     protected bool $archived = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    protected bool $excludedFromPeriodicUpdateList = false;
+
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
     protected ?Image $spotlight = null;
 
@@ -74,9 +77,18 @@ class Article extends BaseCmsEntity
 
     public function isArchived() : bool { return $this->archived; }
 
-    public function setArchived(bool $archived) : static
+    public function setArchived(bool $archived = true) : static
     {
         $this->archived = $archived;
+        return $this;
+    }
+
+
+    public function isExcludedFromPeriodicUpdateList() : bool { return $this->excludedFromPeriodicUpdateList; }
+
+    public function excludeFromPeriodicUpdateList(bool $exclude = true) : static
+    {
+        $this->excludedFromPeriodicUpdateList = $exclude;
         return $this;
     }
 
