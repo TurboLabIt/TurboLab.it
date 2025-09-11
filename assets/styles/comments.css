@@ -1,3 +1,7 @@
+.tli-comment-reply {
+    margin-top: 15px;
+}
+
 .post-comments-list hr {
     margin-top: 0px;
 }
@@ -15,9 +19,28 @@
     position: revert;
 }
 
+
+.tli-comment-main-content .icon,
+.tli-comment-main-content .button .icon,
+.tli-comment-main-content blockquote cite:before,
+.tli-comment-main-content .uncited:before {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-size: 14px;
+    line-height: 1;
+    text-rendering: auto;
+}
+
+
 .tli-comment-main-content blockquote {
+    /* phpBB originals
     background-color: #EBEADD;
     border-color: #DBDBCE;
+     */
+    background-color: #F8F8F8;
     border: 1px solid transparent;
     font-size: 0.95em;
     margin: 1em 1px 1em 25px;
@@ -25,6 +48,69 @@
     padding: 5px;
 }
 
-.tli-comment-reply {
-    margin-top: 15px;
+
+.tli-comment-main-content .emoji {
+    min-height: 18px;
+    min-width: 18px;
+    height: 1em;
+    width: 1em;
+}
+
+
+.tli-comment-main-content ul, .tli-comment-main-content ol {
+    margin: 0.8em 0 0.9em 3em;
+}
+
+.tli-comment-main-content blockquote cite:before, .tli-comment-main-content .uncited:before {
+    content: '\f10d';
+    padding-right: 5px;
+}
+
+
+.tli-comment-main-content blockquote cite {
+    font-style: normal;
+    /*font-weight: bold;*/
+    display: block;
+    font-size: 0.9em;
+}
+
+
+.tli-comment-main-content blockquote cite > span {
+    float: right;
+    font-weight: normal;
+}
+
+
+.tli-comment-main-content .codebox {
+    /* phpBB originals
+    background-color: #FFFFFF;
+     */
+    background-color: #F8F8F8;
+    border-color: #C9D2D8;
+    border: 1px solid transparent;
+    font-size: 1em;
+    margin: 1em 0 1.2em 0;
+    word-wrap: normal;
+}
+
+.tli-comment-main-content .codebox p {
+    border-bottom: 1px solid;
+    border-bottom-color: #CCCCCC;
+    text-transform: uppercase;
+    margin-bottom: 0;
+    padding: 3px;
+    font-size: 0.8em !important;
+    font-weight: bold;
+    display: block;
+}
+
+.codebox code {
+    color: #2E8B57;
+    overflow: auto;
+    display: block;
+    height: auto;
+    max-height: 200px;
+    padding: 5px 3px;
+    font: 0.9em Monaco, "Andale Mono", "Courier New", Courier, monospace;
+    line-height: 1.3em;
 }

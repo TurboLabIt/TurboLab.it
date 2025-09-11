@@ -1,7 +1,8 @@
 //import $ from 'jquery';
 import 'jquery-is-in-viewport';
+import selectAndCopy from "./select-and-copy";'select-and-copy';
 
-jQuery('.post-comments-list').isInViewport(function (status) {
+$('.post-comments-list').isInViewport(function (status) {
 
     let isLoaded    = $(this).data('is-loaded');
     let url         = $(this).data('comments-loading-url');
@@ -20,6 +21,7 @@ jQuery('.post-comments-list').isInViewport(function (status) {
         dataType: 'html',
         success: function(data) {
             that.html(data);
+            $(".spoiler_button").css("display", "block");
         },
         error: function(jqXHR, textStatus, errorThrown) {
 
@@ -44,3 +46,11 @@ jQuery('.post-comments-list').isInViewport(function (status) {
         }
     });
 });
+
+
+// phpBB function call is hardcoded => this is a compat. layer
+window.selectCode = async function selectCode(target)
+{
+    let realTarget = $(target).closest('.codebox').find('code')[0];
+    selectAndCopy(realTarget);
+};
