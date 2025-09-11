@@ -207,11 +207,11 @@
             {% if Article.commentsTopic is not empty and Article.isListable %}
                 <div class="row mb-30">
                     <div class="col-lg-12">
-                        <div class="tli-article-box">
+                        <div id="tli-comments-box">
 
                             <h3 class="title">
                                 <i class="fa-solid fa-comments fa-lg"></i> Commenti
-                                <span>
+                                <span class="tli-forum-thread-link">
                                     <a href="{{ Article.commentsUrl }}">
                                         <i class="fa-solid fa-users"></i> Guarda la discussione sul forum
                                     </a>

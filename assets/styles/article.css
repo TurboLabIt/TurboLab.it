@@ -101,3 +101,10 @@
     color: black;
     margin-bottom: 5px;
 }
+
+
+#tli-comments-box .tli-forum-thread-link a {
+    color: rgba(23, 34, 43, .5);
+    font-size: 15px;
+    font-weight: 500;
+}
