@@ -114,3 +114,9 @@
     font: 0.9em Monaco, "Andale Mono", "Courier New", Courier, monospace;
     line-height: 1.3em;
 }
+
+
+.tli-comment-main-content a {
+    font-size: 20px !important;
+    line-height: 1.5;
+}
