@@ -94,7 +94,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -135,7 +135,7 @@
                                     <div class="gallery_item">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -206,7 +206,7 @@
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
@@ -230,8 +230,8 @@
                     {% for Article in MiddleSlideShow %}
                         <div class="col-lg-6">
                             <div class="single-play-post-item">
-                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.reg) }}"
-                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
+                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.reg) }}" loading="lazy"
+                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
@@ -331,8 +331,8 @@
                                     <div class="trending-news-item mb-30">
                                         <div class="trending-news-thumb">
                                             <a href="{{ Article.url }}">
-                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
+                                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"  loading="lazy"
+                                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                             </a>
                                         </div>
                                         <div class="trending-news-content">
@@ -377,8 +377,8 @@
                                         <div class="col-lg-6 col-md-6">
                                             <div class="business-post-thumb">
                                                 <a href="{{ Article.url }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
-                                                         class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
+                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}" loading="lazy"
+                                                         class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                                 </a>
                                             </div>
                                         </div>
@@ -458,8 +458,8 @@
                                         <div class="gallery_item gallery_item-style-2">
                                             <div class="gallery_item_thumb">
                                                 <a href="{{ Article.url }}">
-                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}"
-                                                         class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}" loading="lazy">
+                                                    <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
+                                                         class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
                                                 </a>
                                             </div>
                                             <div class="gallery_item_content">
