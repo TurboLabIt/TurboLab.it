@@ -18,6 +18,7 @@
     <section class="post-layout-1-area post-layout-3-area">
         <div class="container">
             <div class="row">
+
                 <div class="col-lg-12">
                     <div class="about-author-content">
                         <nav aria-label="breadcrumb">
@@ -201,19 +202,13 @@
                 {% endif %}
 
             </div>
-        </div>
-    </section>
-    <!-- ARTICLE bodyMainContent END -->
 
-    {% include 'parts/modal-ajax.html.twig' %}
+            <!-- ARTICLE comments START -->
+            {% if Article.commentsTopic is not empty and Article.isListable %}
+                <div class="row mb-30">
+                    <div class="col-lg-12">
+                        <div class="tli-article-box">
 
-    <!-- ARTICLE comments START -->
-    {% if Article.commentsTopic is not empty and Article.isListable %}
-        <section class="post-comments-area pt-20 pb-20">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 tli-article-box">
-                        <div class="section-title">
                             <h3 class="title">
                                 <i class="fa-solid fa-comments fa-lg"></i> Commenti
                                 <span>
@@ -222,30 +217,40 @@
                                     </a>
                                 </span>
                             </h3>
+
+                            {% if Article.commentsNum(false) > 0 %}
+
+                                <div class="post-comments-list" data-comments-loading-url="{{ commentsLoadingUrl }}"></div>
+                                <div>
+                                    <span>
+                                        <a href="{{ Article.commentsUrl }}">
+                                            <i class="fa-solid fa-users"></i> Guarda la discussione sul forum
+                                        </a>
+                                    </span>
+                                </div>
+                                <div class="post-load-btn">
+                                    <a class="main-btn" href="{{ Article.addNewCommentUrl }}">Aggiungi il tuo commento</a>
+                                </div>
+
+                            {% else %}
+
+                                <div class="tli-article-main-content">
+                                    <p>Nessun commento. <a href="{{ Article.addNewCommentUrl }}">Scrivi tu il primo!</a></p>
+                                </div>
+
+                            {% endif %}
+
                         </div>
-                        {% if Article.commentsNum(false) > 0 %}
-                            <div class="post-comments-list" data-comments-loading-url="{{ commentsLoadingUrl }}"></div>
-                            <div>
-                                <span>
-                                    <a href="{{ Article.commentsUrl }}">
-                                        <i class="fa-solid fa-users"></i> Guarda la discussione sul forum
-                                    </a>
-                                </span>
-                            </div>
-                            <div class="post-load-btn">
-                                <a class="main-btn" href="{{ Article.addNewCommentUrl }}">Aggiungi il tuo commento</a>
-                            </div>
-                        {% else %}
-                            <div class="tli-article-main-content">
-                                <p>Nessun commento. <a href="{{ Article.addNewCommentUrl }}">Scrivi tu il primo!</a></p>
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
-            </div>
-        </section>
-    {% endif %}
-    <!-- ARTICLE comments END -->
+            {% endif %}
+            <!-- ARTICLE comments END -->
+
+        </div>
+    </section>
+    <!-- ARTICLE bodyMainContent END -->
+
+    {% include 'parts/modal-ajax.html.twig' %}
 
 {% endblock %}
 
