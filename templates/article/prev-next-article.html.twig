@@ -9,7 +9,10 @@
                     {% block prevNextArticleNavText %}{% endblock %}
                 </span>
 
-                <img class="d-block mx-auto mb-3" src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                <img class="d-block mx-auto mb-3" loading="lazy"
+                     src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
+                     alt="{{ Article.titleForHTMLAttribute|raw }}">
+
                 <span class="fs-4 tli-prev-next-article-title">{{ Article.title|raw }}</span>
             </a>
 
