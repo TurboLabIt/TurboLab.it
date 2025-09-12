@@ -2,10 +2,11 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Tag as TagEntity;
+use App\Exception\TagNotFoundException;
 use App\Repository\Cms\TagRepository;
 use App\Service\Factory;
 use App\ServiceCollection\Cms\ArticleCollection;
-use App\Trait\ViewableServiceTrait;
+use App\Trait\VisitableServiceTrait;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -13,7 +14,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Tag extends BaseCmsService
 {
     const string ENTITY_CLASS           = TagEntity::class;
-    const string NOT_FOUND_EXCEPTION    = 'App\Exception\TagNotFoundException';
+    const string TLI_CLASS              = TagEntity::TLI_CLASS;
+    const string NOT_FOUND_EXCEPTION    = TagNotFoundException::class;
 
     const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/tag-642
     const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/tag-12600
@@ -50,7 +52,7 @@ class Tag extends BaseCmsService
     const int ID_CRYPTOCURRENCIES   = 4904;     // 👀 https://turbolab.it/tag-4904
     const int ID_ADBLOCK            = 8892;     // 👀 https://turbolab.it/tag-8892
 
-    use ViewableServiceTrait;
+    use VisitableServiceTrait;
 
     protected ?TagEntity $entity;
     protected ?ArticleCollection $articlesTagged    = null;

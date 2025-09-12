@@ -3,24 +3,26 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\File as FileEntity;
 use App\Exception\FileLogicException;
+use App\Exception\FileNotFoundException;
 use App\Repository\Cms\FileRepository;
 use App\Service\Factory;
-use App\Trait\ViewableServiceTrait;
+use App\Trait\VisitableServiceTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
 class File extends BaseCmsService
 {
-    const string ENTITY_CLASS          = FileEntity::class;
-    const string NOT_FOUND_EXCEPTION   = 'App\Exception\FileNotFoundException';
+    const string ENTITY_CLASS           = FileEntity::class;
+    const string TLI_CLASS              = FileEntity::TLI_CLASS;
+    const string NOT_FOUND_EXCEPTION    = FileNotFoundException::class;
 
     // 👀 https://turbolab.it/scarica/18
     const int ID_LOGO = 18;
 
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
-    use ViewableServiceTrait;
+    use VisitableServiceTrait;
 
     protected ProjectDir $projectDir;
     protected FileEntity $entity;

@@ -3,6 +3,7 @@ namespace App\Service\Cms;
 
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\ArticleTag;
+use App\Exception\ArticleNotFoundException;
 use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
@@ -13,7 +14,7 @@ use App\Trait\ArticleFormatsTrait;
 use App\Trait\AuthorableTrait;
 use App\Trait\CommentTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
-use App\Trait\ViewableServiceTrait;
+use App\Trait\VisitableServiceTrait;
 use DateTime;
 use DateTimeInterface;
 use IntlDateFormatter;
@@ -23,7 +24,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Article extends BaseCmsService
 {
     const string ENTITY_CLASS           = ArticleEntity::class;
-    const string NOT_FOUND_EXCEPTION    = 'App\Exception\ArticleNotFoundException';
+    const string TLI_CLASS              = ArticleEntity::TLI_CLASS;
+    const string NOT_FOUND_EXCEPTION    = ArticleNotFoundException::class;
 
     const int ID_FORUM_IMAGES       = 24;       // 👀 https://turbolab.it/24
     const int ID_HOW_TO_JOIN        = 28;       // 👀 https://turbolab.it/28
@@ -40,8 +42,7 @@ class Article extends BaseCmsService
     const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
-    use ViewableServiceTrait { countOneView as protected traitCountOneView; }
-    use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait;
+    use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait, VisitableServiceTrait;
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected ArticleEntity $entity;
@@ -87,8 +88,10 @@ class Article extends BaseCmsService
 
     public function setEntity(?ArticleEntity $entity = null) : static
     {
-        $this->localViewCount = $entity->getViews();
-        $this->entity = $entity;
+        $this->localViewCount   = $entity->getViews();
+        $this->entity           = $entity;
+        $this->isVisitable      = in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE);
+
         return $this;
     }
 
@@ -487,16 +490,6 @@ class Article extends BaseCmsService
 
     public function getSlug() : ?string { return $this->factory->getArticleUrlGenerator()->buildSlug($this); }
     //</editor-fold>
-
-
-    public function countOneView() : static
-    {
-        if( !$this->entity->publishingStatusCountOneView() ) {
-            return $this;
-        }
-
-        return $this->traitCountOneView();
-    }
 
 
     public function getFeedGuId() : string

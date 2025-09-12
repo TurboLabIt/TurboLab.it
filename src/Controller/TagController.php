@@ -87,16 +87,13 @@ class TagController extends BaseController
             return $this->redirect($lastPageUrl);
         }
 
-        // TODO handle visitor counter
-        $tag
-            ->setClientIpAddress( $this->request->getClientIp() )
-            ->countOneView();
-
         $metaTitle  = $tag->getTitleForHTMLAttribute() . ': articoli, guide e news';
         $metaTitle .= $page < 2 ? '' : " - pagina $page";
 
         return
             $this->twig->render('tag/index.html.twig', [
+                'cmsId'             => $tag->getId(),
+                'cmsType'           => $tag->getClass(),
                 'metaTitle'         => $metaTitle,
                 'metaDescription'   => $metaTitle,
                 'metaCanonicalUrl'  => $tag->getUrl($page),

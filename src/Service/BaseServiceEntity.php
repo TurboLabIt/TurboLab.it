@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 abstract class BaseServiceEntity
 {
     const ENTITY_CLASS          = null;
+    const string TLI_CLASS      = 'base';
     const NOT_FOUND_EXCEPTION   = NotFoundHttpException::class;
 
     protected EntityManagerInterface $em;
@@ -29,11 +30,16 @@ abstract class BaseServiceEntity
     public function load(int $id) : static
     {
         $this->clear();
+
+        $exceptionClass = static::NOT_FOUND_EXCEPTION;
+
+        if($id < 1) {
+            throw new $exceptionClass($id);
+        }
+
         $entity = $this->getRepository()->find($id);
 
         if( empty($entity) ) {
-
-            $exceptionClass = static::NOT_FOUND_EXCEPTION;
             throw new $exceptionClass($id);
         }
 
@@ -87,9 +93,9 @@ abstract class BaseServiceEntity
     }
 
 
-    public function getCacheKey() : string
-        { return strtolower( substr(strrchr(get_class($this), '\\'), 1) ) . "-" . $this->getId(); }
+    public function getClass() : string { return static::TLI_CLASS; }
 
+    public function getCacheKey() : string { return $this->getClass() . "-" . $this->getId(); }
 
     public function getTitleComparable() : string { return $this->entity->getTitleComparable(); }
 }

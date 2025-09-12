@@ -14,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 class Tag extends BaseCmsEntity
 {
+    const string TLI_CLASS = 'tag';
+
     use TitleableEntityTrait, AbstractableEntityTrait, RankableEntityTrait, ViewableEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist'])]

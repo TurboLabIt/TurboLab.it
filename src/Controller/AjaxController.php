@@ -1,16 +1,18 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\Visit;
 use App\Service\FrontendHelper;
 use App\Service\User;
 use http\Exception\InvalidArgumentException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
-class CacheHolePunchingController extends BaseController
+class AjaxController extends BaseController
 {
-    #[Route('/ajax/userbar', name: 'app_cache-hole-punching_userbar', methods: ['POST'])]
+    #[Route('/ajax/userbar', name: 'app_ajax_userbar', methods: ['POST'])]
     public function userbar(FrontendHelper $frontendHelper, User $user) : Response
     {
         $this->ajaxOnly();
@@ -35,9 +37,9 @@ class CacheHolePunchingController extends BaseController
 
             return $this->render('user/userbar-anonymous.html.twig', [
                 'FrontendHelper'=> $frontendHelper,
-                // the redirection works
+                // the redirect works
                 'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
-                // the redirection DOESN'T WORK :-(
+                // the redirect DOESN'T WORK :-(
                 'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
                 'newsletterUrl' => $newsletterUrl
             ]);
@@ -48,6 +50,28 @@ class CacheHolePunchingController extends BaseController
             'ucpUrl'        => $frontendHelper->getUcpUrl(),
             'newsletterUrl' => $newsletterUrl
         ]);
+    }
+
+
+    #[Route('/ajax/count-visit', name: 'app_ajax_count-visit', methods: ['POST'])]
+    public function countView(Visit $visit) : JsonResponse
+    {
+        $this->ajaxOnly();
+
+        if( !$visit->isCountable() ) {
+
+            return $this->json([
+                'views' => null,
+                'new'   => null,
+            ]);
+        }
+
+        $cmsId  = (int)$this->request->get('cmsId');
+        $cmsType= $this->request->get('cmsType');
+        $user   = $this->getCurrentUser();
+        $oCms   = $this->factory->createService($cmsType)->load($cmsId);
+
+        return $this->json( $visit->visit($oCms, $user) );
     }
 }
 

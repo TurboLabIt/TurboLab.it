@@ -76,11 +76,12 @@
 
 </head>
 
-<body class="home-1-bg">
+<body class="home-1-bg" data-tli-visit-url="{{ path('app_ajax_count-visit') }}"
+      data-tli-cms-type="{{ cmsType ?? null }}" data-tli-cms-id="{{ cmsId ?? null }}">
 
     {% block preloaderHtml %}<div class="preloader"><div><div class="nb-spinner"></div></div></div>{% endblock %}
 
-    <div id="tli-userbar-load-target" data-loading-url="{{ path('app_cache-hole-punching_userbar') }}">
+    <div id="tli-userbar-load-target" data-loading-url="{{ path('app_ajax_userbar') }}">
         <div class="container" style="padding: 10px">
             <div class="col-12">
                 <i class="fa-solid fa-spinner fa-spin-pulse" style="color: #000000;"></i>

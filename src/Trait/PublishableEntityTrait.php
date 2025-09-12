@@ -20,15 +20,6 @@ trait PublishableEntityTrait
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTimeInterface $publishedAt = null;
 
-
-    public function publishingStatusCountOneView() : bool
-    {
-        return
-            $this->publishingStatus > static::PUBLISHING_STATUS_DRAFT &&
-            $this->publishingStatus <= static::PUBLISHING_STATUS_PUBLISHED;
-    }
-
-
     public function getPublishingStatus() : int { return $this->publishingStatus; }
 
     public function setPublishingStatus(int $status) : static

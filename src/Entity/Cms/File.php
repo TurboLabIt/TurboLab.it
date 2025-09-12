@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File extends BaseCmsEntity
 {
+    const string TLI_CLASS = 'file';
+
     use TitleableEntityTrait, ViewableEntityTrait;
 
     #[ORM\Column(length: 15, nullable: true)]

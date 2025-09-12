@@ -30,6 +30,7 @@ use App\ServiceCollection\Cms\ImageCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\PhpBB\User as UserEntity;
@@ -285,4 +286,16 @@ class Factory
 
     public function getUserUrlGenerator() : UserUrlGenerator { return $this->userUrlGenerator; }
     //</editor-fold>
+
+
+    public function createService(string $cmsType, null|ArticleEntity|TagEntity|FileEntity $entity = null) : ArticleService|TagService|FileService
+    {
+        return
+            match($cmsType) {
+                ArticleEntity::class, ArticleEntity::TLI_CLASS  => $this->createArticle($entity),
+                TagEntity::class, TagEntity::TLI_CLASS          => $this->createTag($entity),
+                FileEntity::class, FileEntity::TLI_CLASS        => $this->createFile($entity),
+                default => throw new ServiceNotFoundException($cmsType)
+            };
+    }
 }

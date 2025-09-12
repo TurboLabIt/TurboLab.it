@@ -10,4 +10,5 @@ import './js/prevent-change-url'
 import './js/form-submit-to-path'
 
 import './styles/userbar.css';
-import './js/userbar'
+import './js/userbar';
+import './js/visit';

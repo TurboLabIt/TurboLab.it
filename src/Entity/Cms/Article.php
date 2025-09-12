@@ -21,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(name: 'title_fulltext_idx', columns: ['title'], flags: ['fulltext'])]
 class Article extends BaseCmsEntity
 {
+    const string TLI_CLASS = 'article';
+
     use
         AbstractableEntityTrait, AdsableEntityTrait, ArticleFormatsTrait,
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,

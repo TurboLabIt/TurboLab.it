@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Cms\Visit;
 use App\Service\Cms\File;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,13 +20,11 @@ class FileController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
-    public function index(int $fileId) : Response
+    public function index(int $fileId, Visit $visit) : Response
     {
         $file = $this->file->load($fileId);
 
-        $file
-            ->setClientIpAddress( $this->request->getClientIp() )
-            ->countOneView();
+        $visit->visit($file, $this->getCurrentUser());
 
         if( $file->isLocal() ) {
             return $this->xSendFile($file);
