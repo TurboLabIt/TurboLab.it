@@ -97,7 +97,7 @@ class Visit
             $oCms->countOneVisit();
 
             return
-                array_merge_recursive($arrDefaultResponse, [
+                array_merge($arrDefaultResponse, [
                     'views' => $oCms->getViews(false),
                     'new'   => 1,
                 ]);

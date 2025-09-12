@@ -1,6 +1,6 @@
 //import $ from 'jquery';
 import Odometer from 'odometer';
-import 'odometer/themes/odometer-theme-minimal.css';
+import 'odometer/themes/odometer-theme-default.css';
 
 
 let url     = $('body').data('tli-visit-url');
@@ -20,7 +20,7 @@ if( cmsType && cmsId ) {
                     el:  viewsTarget[0],
                     value: viewsTarget.data('value'),
                     format: '(.ddd)',
-                    theme: 'minimal'
+                    theme: 'default'
                 });
 
                 odometer.render();
@@ -36,7 +36,7 @@ if( cmsType && cmsId ) {
                     el:  commentsTarget[0],
                     value: commentsTarget.data('value'),
                     format: '(.ddd)',
-                    theme: 'minimal'
+                    theme: 'default'
                 });
 
                 odometer.render();
