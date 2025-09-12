@@ -53,8 +53,9 @@ class Visit
     public function visit(Article|Tag|File $oCms, null|User|UserEntity $user) : array
     {
         $arrDefaultResponse = [
-            'views' => $oCms->getViews(),
-            'new'   => 0,
+            'views'     => $oCms->getViews(false),
+            'comments'  => method_exists($oCms, 'getCommentsNum') ? $oCms->getCommentsNum(false) : null,
+            'new'       => 0,
         ];
 
         if( !$this->isCountable() || !$oCms->isVisitable() ) {
@@ -95,10 +96,11 @@ class Visit
 
             $oCms->countOneVisit();
 
-            return [
-                'views' => $oCms->getViews(),
-                'new'   => 1,
-            ];
+            return
+                array_merge_recursive($arrDefaultResponse, [
+                    'views' => $oCms->getViews(false),
+                    'new'   => 1,
+                ]);
         }
 
         return $arrDefaultResponse;

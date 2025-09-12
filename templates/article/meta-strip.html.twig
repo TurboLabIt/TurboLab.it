@@ -14,17 +14,16 @@
             {% if Article.commentsTopic is not empty %}
                 <li>
                     <a href="{{ Article.commentsUrl }}">
-                        <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                        {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                        <i class="fa-solid fa-comment"></i> Commenti:
+                        <span class="tli-comments-num-target" data-value="0"> <i class="fa-solid fa-calculator fa-fade"></i></span>
                     </a>
                 </li>
             {% endif %}
-            {% if Article.views(false) > 1 %}
-                <li><i class="fa-brands fa-readme"></i> {{ Article.views }} visualizzazioni</li>
-            {% endif %}
-        </ul>
 
-        <ul>
+            <li>
+                <i class="fa-brands fa-readme"></i> Letture:
+                <span class="tli-views-num-target" data-value="0"> <i class="fa-solid fa-calculator fa-fade"></i></span>
+            </li>
             <li>
                 <i class="fa-solid fa-pen-to-square"></i>
                 Aggiornato: {{ Article.updatedAt|friendlyDate }}
