@@ -67,3 +67,22 @@ $this->validateCsrfToken();
 ````html
 
 ````
+
+
+## Env check
+
+````php
+use EnvTrait;
+
+public function __construct(ParameterBagInterface $parameters)
+{
+    $this->parameters = $parameters;
+}
+
+public function something()
+{
+    if( $this->isDev() ) {
+      ...
+    }
+}
+...
