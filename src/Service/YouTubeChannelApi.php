@@ -67,6 +67,7 @@ class YouTubeChannelApi
             "part"          => "snippet",
             "channelId"     => $this->arrConfig["channelId"],
             "key"           => $this->arrConfig["apiKey"],
+            "type"          => "video",
             "maxResults"    => $results,
             "order"         => "date"
         ];
@@ -103,11 +104,6 @@ class YouTubeChannelApi
 
         $arrVideos = [];
         foreach($objResponse->items as $oneVideoItem) {
-
-            // this happens when the item is a playlist
-            if( empty($oneVideoItem->id->videoId) ) {
-                continue;
-            }
 
             $arrVideos[] = (object)[
                 "id"            => $oneVideoItem->id->videoId,
