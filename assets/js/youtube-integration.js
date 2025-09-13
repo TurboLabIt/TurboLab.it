@@ -1,8 +1,8 @@
-//import $ from 'jquery';
+//import $ from '$';
 
-jQuery('#tli-youtube-video-player iframe').on('load', function(){
+$('#tli-youtube-video-player iframe').on('load', function(){
 
-    let videoPlayer = jQuery(this);
+    let videoPlayer = $(this);
 
     let noAutoplay = videoPlayer.data('tli-autoplay');
     if( noAutoplay == 0 ) {
@@ -14,12 +14,12 @@ jQuery('#tli-youtube-video-player iframe').on('load', function(){
 });
 
 
-jQuery(document).on('click', '.tli-video-thumb', function(){
+$(document).on('click', '.tli-video-thumb', function(){
 
-    let clickedVideoEmbedUrl    = jQuery(this).data('embed-url');
-    let clickedVideoTitle       = jQuery(this).find('.title').html();
+    let clickedVideoEmbedUrl    = $(this).data('embed-url');
+    let clickedVideoTitle       = $(this).find('.title').html();
 
-    let videoPlayerContainer    = jQuery('#tli-youtube-video-player');
+    let videoPlayerContainer    = $('#tli-youtube-video-player');
     let videoPlayer             = videoPlayerContainer.find('iframe');
 
     videoPlayer.data('tli-autoplay', 1);
