@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Service\Cms\Visit;
 use App\Service\Cms\File;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -13,16 +12,10 @@ class FileController extends BaseController
     const string SECTION_SLUG = "scarica";
 
 
-    public function __construct(protected File $file, RequestStack $requestStack)
-    {
-        $this->request = $requestStack->getCurrentRequest();
-    }
-
-
     #[Route('/' . self::SECTION_SLUG . '/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
     public function index(int $fileId, Visit $visit) : Response
     {
-        $file = $this->file->load($fileId);
+        $file = $this->factory->createFile()->load($fileId);
 
         $visit->visit($file, $this->getCurrentUser());
 
