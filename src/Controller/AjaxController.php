@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Service\Cms\Visit;
-use App\Service\FrontendHelper;
+use App\Service\PhpBB\ForumUrlGenerator;
 use App\Service\User;
 use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,13 +14,14 @@ use Symfony\Contracts\Cache\ItemInterface;
 class AjaxController extends BaseController
 {
     #[Route('/ajax/userbar', name: 'app_ajax_userbar', methods: ['POST'])]
-    public function userbar(FrontendHelper $frontendHelper, User $user) : Response
+    public function userbar(User $user, ForumUrlGenerator $forumUrlGenerator) : Response
     {
         $this->ajaxOnly();
 
         $siteUrl = $this->request->getSchemeAndHttpHost();
         $siteUrl = rtrim($siteUrl, '/');
 
+        // $originUrl is no longer used below
         $originUrl = $this->request->get('originUrl') ?? $siteUrl;
         if( stripos($originUrl, $siteUrl) !== 0 ) {
             throw new InvalidArgumentException('Origin page is not valid');
@@ -34,21 +35,19 @@ class AjaxController extends BaseController
 
         if( empty($userEntity) ) {
 
-            $cacheKey = "userbar_anonymous_$originUrl";
-
             $html =
-                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($frontendHelper, $originUrl) {
+                $this->cache->get("userbar_anonymous", function(ItemInterface $cacheItem) use($forumUrlGenerator) {
 
-                    $cacheItem->expiresAfter(3600 * 24);
+                    $cacheItem->expiresAfter(3600 * 72);
 
                     return
                         $this->renderView('user/userbar-anonymous.html.twig', [
-                            'FrontendHelper'=> $frontendHelper,
-                            // the redirect works
-                            'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
-                            // the redirect DOESN'T WORK :-(
-                            'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
-                            'newsletterUrl' => $frontendHelper->getNewsletterHowToUrl()
+                            'forumUrl'      => $forumUrlGenerator->generateHomeUrl(),
+                            // the redirect (via parameter) would work
+                            'loginUrl'      => $forumUrlGenerator->generateLoginUrl(),
+                            // the redirect (via parameter) DOESN'T WORK
+                            'registerUrl'   => $forumUrlGenerator->generateRegisterUrl(),
+                            'newsletterUrl' => $this->frontendHelper->getNewsletterHowToUrl()
                         ]);
                 });
 
@@ -57,15 +56,15 @@ class AjaxController extends BaseController
             $cacheKey = "userbar_loggedin_" . $userEntity->getId();
 
             $html =
-                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($frontendHelper, $user, $userEntity) {
+                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($user, $userEntity) {
 
-                    $cacheItem->expiresAfter(3600 * 24);
+                    $cacheItem->expiresAfter(3600 * 72);
 
                     return
                         $this->renderView('user/userbar-logged.html.twig', [
                             'User'          => $user->setEntity($userEntity),
-                            'ucpUrl'        => $frontendHelper->getUcpUrl(),
-                            'newsletterUrl' => $frontendHelper->getNewsletterHowToUrl()
+                            'ucpUrl'        => $this->frontendHelper->getUcpUrl(),
+                            'newsletterUrl' => $this->frontendHelper->getNewsletterHowToUrl()
                         ]);
                 });
         }

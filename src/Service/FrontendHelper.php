@@ -18,12 +18,6 @@ class FrontendHelper
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔗 Newsletter, Feed, Social links ***">
-    public function getLoginUrl(?string $redirectToUrl = '') : string
-    {
-        return $this->factory->getForumUrlGenerator()->generateLoginUrl($redirectToUrl);
-    }
-
-
     public function getRegisterUrl(?string $redirectToUrl = '') : string
     {
         return $this->factory->getForumUrlGenerator()->generateRegisterUrl($redirectToUrl);
