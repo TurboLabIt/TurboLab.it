@@ -104,7 +104,7 @@ abstract class BaseController extends AbstractController
 
         $isCacheWarmer = !empty( $this->request->headers->get(static::CACHE_WARMER_HEADER) );
 
-        if( $isLocal && $isCacheWarmer) {
+        if( $isLocal && $isCacheWarmer ) {
             return true;
         }
 
