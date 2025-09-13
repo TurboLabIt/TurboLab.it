@@ -1,0 +1,85 @@
+<section class="video-news-area">
+    <div class="container custom-container">
+        <div class="video-news-box">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="video-news-post">
+                        <div class="section-title section-title-2">
+                            <h3 class="title">Video</h3>
+                        </div>
+                        <div class="video-news-post-item" id="tli-youtube-video-player">
+                            <div class="video-news-post-thumb">
+                                <iframe data-tli-autoplay="0"
+                                        width="100%" style="aspect-ratio: 16/9"
+                                        src="{{ Videos|first.embedUrl }}"
+                                        title="YouTube Video Player"
+                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                                </iframe>
+                            </div>
+                            <div class="video-news-post-content">
+                                <h3 class="title">{{ Videos|first.title|raw }}</h3>
+                                <div style="text-align: center; margin-top: 10px;">
+                                    <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">
+                                        <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24" height="24"
+                                             alt="YouTube" title="YouTube" loading="lazy">
+                                        ISCRIVITI AL NOSTRO CANALE YOUTUBE
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="populer-post">
+                        <div class="section-title">
+                            <h3 class="title">Altri video</h3>
+                        </div>
+                        <div class="trending-sidebar-slider">
+
+                            <!-- HOME PAGE video gallery (first slide) -->
+                            <div class="populer-post-slider">
+                                <div class="vstack gap-3">
+
+                                    {% for Video in Videos|slice(0, 5) %}
+                                        <div class="d-flex align-items-center gap-2 tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
+                                            <div class="tli-video-thumbnail-image-wrapper">
+                                                <div class="ratio ratio-16x9">
+                                                    <img src="{{ Video.thumbnails.medium.url }}" class="object-fit-cover rounded" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1 lh-sm">{{ Video.title|raw }}</h6>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+
+                            <!-- HOME PAGE video gallery second (slide) -->
+                            <div class="populer-post-slider">
+                                <div class="vstack gap-3">
+
+                                    {% for Video in Videos|slice(5) %}
+                                        <div class="d-flex align-items-center gap-2 tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
+                                            <div class="tli-video-thumbnail-image-wrapper">
+                                                <div class="ratio ratio-16x9">
+                                                    <img src="{{ Video.thumbnails.medium.url }}" class="object-fit-cover rounded" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1 lh-sm">{{ Video.title|raw }}</h6>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

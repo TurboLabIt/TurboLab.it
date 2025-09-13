@@ -31,7 +31,7 @@ class YouTubeChannelApi
     ) {}
 
 
-    public function getLatestVideos(int $results = 8) : array
+    public function getLatestVideos(int $results = 10) : array
     {
         $cacheKey = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
         return

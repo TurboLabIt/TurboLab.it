@@ -13,6 +13,7 @@
 
 
 {% block bodyMainContent %}
+
     <!-- HOME PAGE bodyMainContent START -->
 
     <section class="trending-news-area">
@@ -251,74 +252,9 @@
         </div>
     </section>
 
-    <section class="video-news-area">
-        <div class="container custom-container">
-            <div class="video-news-box">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="video-news-post">
-                            <div class="section-title section-title-2">
-                                <h3 class="title">Video</h3>
-                            </div>
-                            <div class="video-news-post-item" id="tli-youtube-video-player">
-                                <div class="video-news-post-thumb">
-                                    <iframe data-tli-autoplay="0"
-                                            width="100%" style="aspect-ratio: 16/9"
-                                            src="{{ Videos|first.embedUrl }}"
-                                            title="YouTube Video Player"
-                                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-                                    </iframe>
-                                </div>
-                                <div class="video-news-post-content">
-                                    <h3 class="title">{{ Videos|first.title|raw }}</h3>
-                                    <div style="text-align: center; margin-top: 10px;">
-                                        <a href="https://www.youtube.com/c/turbolabit?sub_confirmation=1" target="_blank">
-                                            <img src="{{ asset('images/social-icons/youtube.svg') }}" width="24" height="24"
-                                                 alt="YouTube" title="YouTube" loading="lazy">
-                                            ISCRIVITI AL NOSTRO CANALE YOUTUBE
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="populer-post">
-                            <div class="section-title">
-                                <h3 class="title">Altri video</h3>
-                            </div>
-                            <div class="trending-sidebar-slider">
-                                <div class="populer-post-slider">
-                                    {% for Video in Videos|slice(0, 4) %}
-                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
-                                            <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url }}" alt="Video" loading="lazy">
-                                            </div>
-                                            <div class="gallery_item_content">
-                                                <h4 class="title">{{ Video.title|raw }}</h4>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                                <div class="populer-post-slider">
-                                    {% for Video in Videos|slice(4) %}
-                                        <div class="gallery_item populer_item-style tli-video-thumb" data-embed-url="{{ Video.embedUrl }}">
-                                            <div class="gallery_item_thumb">
-                                                <img src="{{ Video.thumbnails.default.url }}" alt="Video" loading="lazy">
-                                            </div>
-                                            <div class="gallery_item_content">
-                                                <h4 class="title">{{ Video.title|raw }}</h4>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- HOME PAGE video player START -->
+    {% include 'home/video-player.html.twig' %}
+    <!-- HOME PAGE video player END -->
 
     <section class="all-post-area">
         <div class="container">
@@ -496,6 +432,7 @@
     </section>
 
     <!-- HOME PAGE bodyMainContent END -->
+
 {% endblock %}
 
 {% block javascripts %}

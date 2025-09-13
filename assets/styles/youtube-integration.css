@@ -1,0 +1,8 @@
+.tli-video-thumb {
+    cursor: pointer;
+}
+
+.tli-video-thumbnail-image-wrapper {
+    width: 120px;
+    flex-shrink: 0;
+}
