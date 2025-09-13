@@ -42,8 +42,9 @@ class AuthorContoller extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
+                    $authorCacheKey = $this->mainAuthor->getCacheKey();
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cacheItem->tag(["authors", $this->mainAuthor->getCacheKey()]);
+                    $cacheItem->tag(["authors", "app_author", $authorCacheKey, "{$authorCacheKey}_page_$page"]);
 
                 } else {
 

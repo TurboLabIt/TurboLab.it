@@ -41,8 +41,9 @@ class TagController extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
+                    $tagCacheKey = $this->mainTag->getCacheKey();
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cacheItem->tag(["tags", $this->mainTag->getCacheKey()]);
+                    $cacheItem->tag(["tags", "app_tag", $tagCacheKey, "{$tagCacheKey}_page_$page"]);
 
                 } else {
 
