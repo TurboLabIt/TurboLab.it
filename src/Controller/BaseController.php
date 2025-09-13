@@ -69,8 +69,7 @@ abstract class BaseController extends AbstractController
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $coldCacheStormBuster = 60 * rand(0, 10); // 0-5 minutes
-                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                     $cacheItem->tag( array_merge([$cacheKey], $arrCacheTags ) );
 
                 } else {
