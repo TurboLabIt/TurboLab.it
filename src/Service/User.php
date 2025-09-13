@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class User extends BaseServiceEntity
 {
     const string ENTITY_CLASS   = UserEntity::class;
+    const string TLI_CLASS      = UserEntity::TLI_CLASS;
     const NOT_FOUND_EXCEPTION   = UserNotFoundException::class;
 
     const int ID_DEFAULT_ADMIN  = UserEntity::ID_DEFAULT_ADMIN;

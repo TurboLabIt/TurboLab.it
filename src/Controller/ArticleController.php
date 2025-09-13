@@ -16,7 +16,7 @@ class ArticleController extends BaseController
     #[Route('/{tagSlugDashId<[^/]*-[1-9]+[0-9]*>}/{articleSlugDashId<[^/]*-[1-9]+[0-9]*>}', name: 'app_article')]
     public function index(string $tagSlugDashId, string $articleSlugDashId) : Response
     {
-        if( !$this->isCachable() ) {
+        if( !$this->isCachable(true) ) {
 
             $buildHtmlResult = $this->buildHtml($tagSlugDashId, $articleSlugDashId);
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
@@ -42,16 +42,6 @@ class ArticleController extends BaseController
             });
 
         return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-    }
-
-
-    protected function isCachable() : bool
-    {
-        if( !empty($this->getUser()) ) {
-            return false;
-        }
-
-        return parent::isCachable();
     }
 
 

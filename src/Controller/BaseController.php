@@ -85,14 +85,13 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function isCachable() : bool
+    protected function isCachable(bool $notIfLoggedIn = false) : bool
     {
         if( $this->cacheIsDisabled ) {
            return false;
         }
 
-        $isLogged = !empty($this->getUser() ?? null);
-        if($isLogged) {
+        if( $notIfLoggedIn && !empty($this->getUser()?->getId()) ) {
             return false;
         }
 

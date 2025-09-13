@@ -28,7 +28,7 @@ class AuthorContoller extends BaseController
     {
         $page = empty($page) ? 1 : $page;
 
-        if( !$this->isCachable() ) {
+        if( !$this->isCachable(true) ) {
 
             $buildHtmlResult = $this->buildHtml($usernameClean, $page);
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;

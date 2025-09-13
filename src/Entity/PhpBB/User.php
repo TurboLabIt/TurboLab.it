@@ -25,6 +25,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
 class User extends BaseEntity implements UserInterface
 {
+    const string TLI_CLASS      = 'user';
     const string ROLE_ADMIN     = 'ROLE_ADMIN';
     const string ROLE_EDITOR    = 'ROLE_EDITOR';
 
