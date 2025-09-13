@@ -9,11 +9,13 @@
                         </div>
                         <div class="video-news-post-item" id="tli-youtube-video-player">
                             <div class="video-news-post-thumb">
-                                <iframe data-tli-autoplay="0"
-                                        width="100%" style="aspect-ratio: 16/9"
-                                        src="{{ Videos|first.embedUrl }}"
-                                        title="YouTube Video Player"
-                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                                {# allow="autoplay" is required to autoplay **from thumbnails**, has no effect on page load #}
+                                {# this is the intended behaviour #}
+                                <iframe
+                                    width="100%" style="aspect-ratio: 16/9"
+                                    src="{{ Videos|first.embedUrl }}"
+                                    title="YouTube Video Player"
+                                    allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                                 </iframe>
                             </div>
                             <div class="video-news-post-content">
@@ -48,7 +50,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <h6 class="mb-1 lh-sm">{{ Video.title|raw }}</h6>
+                                                <h6 class="mb-1 lh-sm tli-video-thumb-title">{{ Video.title|raw }}</h6>
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -68,7 +70,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <h6 class="mb-1 lh-sm">{{ Video.title|raw }}</h6>
+                                                <h6 class="mb-1 lh-sm tli-video-thumb-title">{{ Video.title|raw }}</h6>
                                             </div>
                                         </div>
                                     {% endfor %}
