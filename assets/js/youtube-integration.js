@@ -1,4 +1,4 @@
-//import $ from '$';
+//import $ from 'jquery';
 
 $('#tli-youtube-video-player iframe').on('load', function(){
 
@@ -15,6 +15,8 @@ $('#tli-youtube-video-player iframe').on('load', function(){
 
 
 $(document).on('click', '.tli-video-thumb', function(){
+
+    $('#tli-youtube-video-player').get(0).scrollIntoView({behavior: 'smooth'});
 
     let clickedVideoEmbedUrl    = $(this).data('embed-url');
     let clickedVideoTitle       = $(this).find('.title').html();
