@@ -47,12 +47,12 @@ $this->validateCsrfToken();
 {% embed 'parts/alert-chalkboard.html.twig' %}
 
     {% block alertTitle %}
-        Tu, {{ CurrentUser.username|raw }}, puoi modificare questo articolo!
+       ....
     {% endblock %}
 
     {% block alertBodyStyle %}{% endblock %}
     {% block alertBody %}
-        <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
+        <div>...</div>
     {% endblock %}
 
 {% endembed %}
@@ -86,3 +86,22 @@ public function something()
     }
 }
 ...
+````
+
+
+## Cached response
+
+````php
+$html =
+    $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use(...) {
+
+        $cacheItem->expiresAfter(3600 * 24);
+
+        return
+            $this->renderView(..., [
+                ...
+            ]);
+    });
+
+return new Response($html);
+````
