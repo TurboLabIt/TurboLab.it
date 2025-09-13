@@ -38,7 +38,7 @@ class NewsController extends BaseController
             return $this->redirectToRoute("app_news", ["page" => $ex->getMaxPage()]);
         }
 
-        $metaTitle = 'Ultime notizie di tecnologia, sicurezza e truffe su Internet';
+        $metaTitle = 'Ultime notizie di tecnologia, programmi e sicurezza su Internet';
 
         if( empty($page) || $page < 2 ) {
 
