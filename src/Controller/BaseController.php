@@ -108,10 +108,6 @@ abstract class BaseController extends AbstractController
             return true;
         }
 
-        if($isLocal) {
-            return false;
-        }
-
         $currentEnv = $this->parameterBag->get("kernel.environment");
         if( in_array($currentEnv, ["dev", "test"]) ) {
             return false;
