@@ -8,6 +8,7 @@ fxHeader "🧹 ${SCRIPT_NAME}"
 rootCheck
 
 wsuSourceFrameworkScript cleaner
+wsuSymfony console cache:pool:clear cache.app
 
 source "${WEBSTACKUP_SCRIPT_DIR}frameworks/phpbb/cleaner.sh"
 
