@@ -88,8 +88,8 @@ class AjaxController extends BaseController
 
         $cmsId  = (int)$this->request->get('cmsId');
         $cmsType= $this->request->get('cmsType');
-        $user   = $this->getCurrentUser();
         $oCms   = $this->factory->createService($cmsType)->load($cmsId);
+        $user   = $this->getCurrentUserAsAuthor();
 
         return $this->json( $visit->visit($oCms, $user) );
     }

@@ -50,7 +50,7 @@ class Visit
     }
 
 
-    public function visit(Article|Tag|File $oCms, null|User|UserEntity $user) : array
+    public function visit(Article|Tag|File $oCms, ?User $user) : array
     {
         $arrDefaultResponse = [
             'views'     => $oCms->getViews(false),
@@ -60,11 +60,6 @@ class Visit
 
         if( !$this->isCountable() || !$oCms->isVisitable() ) {
             return $arrDefaultResponse;
-        }
-
-        //
-        if( $user instanceof UserEntity ) {
-            $user = $this->factory->createUser()->load( $user->getId() );
         }
 
         if( !empty($user) ) {

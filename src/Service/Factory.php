@@ -43,6 +43,7 @@ class Factory
     protected ?ImageService $defaultSpotlight;
     protected ?TagService $defaultTag;
     protected User $currentUser;
+    protected User $currentUserAsAuthor;
 
 
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
@@ -82,6 +83,32 @@ class Factory
 
         return $this->currentUser = $this->createUser($entity);
     }
+
+
+    public function getCurrentUserAsAuthor() : ?UserService
+    {
+        /**
+         * This method is needed to store a DB relation to the User entity (phpBB).
+         *
+         * if we use the getCurrentUser() output ==> $currentUser is unknown to Doctrine:
+         *
+         * A new entity was found through the relationship 'App\Entity\Cms\ArticleAuthor#user' that was not configured
+         *   to cascade persist operations for entity: App\Entity\PhpBB\User@--
+         */
+
+        if( !empty($this->currentUserAsAuthor) ) {
+            return $this->currentUserAsAuthor;
+        }
+
+        $currentUserId = $this->getCurrentUser()?->getId();
+
+        if( empty($currentUserId) ) {
+            return null;
+        }
+
+        return $this->currentUserAsAuthor = $this->createUser()->load($currentUserId);
+    }
+
 
     public function getViews() : Views { return (new Views($this, $this->urlGenerator)); }
 

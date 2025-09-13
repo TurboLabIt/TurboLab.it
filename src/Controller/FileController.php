@@ -17,7 +17,8 @@ class FileController extends BaseController
     {
         $file = $this->factory->createFile()->load($fileId);
 
-        $visit->visit($file, $this->getCurrentUser());
+        $user = $this->getCurrentUserAsAuthor();
+        $visit->visit($file, $user);
 
         if( $file->isLocal() ) {
             return $this->xSendFile($file);

@@ -44,10 +44,9 @@ abstract class BaseController extends AbstractController
     }
 
 
-    protected function getCurrentUser() : ?User
-    {
-        return $this->factory->getCurrentUser();
-    }
+    protected function getCurrentUser() : ?User { return $this->factory->getCurrentUser(); }
+
+    protected function getCurrentUserAsAuthor() : ?User { return $this->factory->getCurrentUserAsAuthor(); }
 
 
     protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
