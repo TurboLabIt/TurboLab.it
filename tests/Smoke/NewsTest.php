@@ -32,7 +32,7 @@ class NewsTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->tagTitleAsH1Checker($crawler, "Ultime notizie di tecnologia, sicurezza e truffe su Internet");
+        $this->tagTitleAsH1Checker($crawler, "Ultime notizie di tecnologia, programmi e sicurezza su Internet");
 
         // H2
         $crawler = $this->fetchDomNode($url, 'body');
