@@ -8,6 +8,7 @@ use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\ItemInterface;
 
 
 class AjaxController extends BaseController
@@ -29,27 +30,47 @@ class AjaxController extends BaseController
             $originUrl = '/';
         }
 
-        $newsletterUrl = $frontendHelper->getNewsletterHowToUrl();
-
         $userEntity = $this->getUser();
 
         if( empty($userEntity) ) {
 
-            return $this->render('user/userbar-anonymous.html.twig', [
-                'FrontendHelper'=> $frontendHelper,
-                // the redirect works
-                'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
-                // the redirect DOESN'T WORK :-(
-                'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
-                'newsletterUrl' => $newsletterUrl
-            ]);
+            $cacheKey = "userbar_anonymous_$originUrl";
+
+            $html =
+                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($frontendHelper, $originUrl) {
+
+                    $cacheItem->expiresAfter(3600 * 24);
+
+                    return
+                        $this->renderView('user/userbar-anonymous.html.twig', [
+                            'FrontendHelper'=> $frontendHelper,
+                            // the redirect works
+                            'loginUrl'      => $frontendHelper->getLoginUrl($originUrl),
+                            // the redirect DOESN'T WORK :-(
+                            'registerUrl'   => $frontendHelper->getRegisterUrl($originUrl),
+                            'newsletterUrl' => $frontendHelper->getNewsletterHowToUrl()
+                        ]);
+                });
+
+        } else {
+
+            $cacheKey = "userbar_loggedin_" . $userEntity->getId();
+
+            $html =
+                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($frontendHelper, $user, $userEntity) {
+
+                    $cacheItem->expiresAfter(3600 * 24);
+
+                    return
+                        $this->renderView('user/userbar-logged.html.twig', [
+                            'User'          => $user->setEntity($userEntity),
+                            'ucpUrl'        => $frontendHelper->getUcpUrl(),
+                            'newsletterUrl' => $frontendHelper->getNewsletterHowToUrl()
+                        ]);
+                });
         }
 
-        return $this->render('user/userbar-logged.html.twig', [
-            'User'          => $user->setEntity($userEntity),
-            'ucpUrl'        => $frontendHelper->getUcpUrl(),
-            'newsletterUrl' => $newsletterUrl
-        ]);
+        return new Response($html);
     }
 
 
