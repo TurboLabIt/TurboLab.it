@@ -40,7 +40,7 @@ class ArticleEditorController extends ArticleEditBaseController
             }
 
             $title = $this->articleEditor->getTitle();
-            $originalArticleUrl = $this->article->loadByTitle($title)->getShortUrl();
+            $originalArticleUrl = $this->factory->createArticle()->loadByTitle($title)->getShortUrl();
 
             return
                 $this->textErrorResponse(

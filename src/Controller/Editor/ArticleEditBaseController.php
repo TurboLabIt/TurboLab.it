@@ -13,14 +13,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Twig\Environment;
 
 
 abstract class ArticleEditBaseController extends BaseController
 {
     public function __construct(
-        protected Factory $factory,
-        protected ArticleEditor $articleEditor, protected Article $article, protected ArticleSentinel $sentinel,
+        protected Factory $factory, protected TagAwareCacheInterface $cache,
+        protected ArticleEditor $articleEditor, protected ArticleSentinel $sentinel,
         RequestStack $requestStack,
         protected FrontendHelper $frontendHelper, protected CsrfTokenManagerInterface $csrfTokenManager,
         protected Environment $twig
@@ -106,12 +107,12 @@ abstract class ArticleEditBaseController extends BaseController
         ) {
             $arrTagsToDelete = ['app_home_page_1', 'app_feed', 'app_news_page_1'];
 
-            $arrArticleTags = array_merge($arrPreviousTags ?? [], $this->article->getTags());
+            $arrArticleTags = array_merge($arrPreviousTags ?? [], $this->articleEditor->getTags());
             foreach($arrArticleTags as $tag) {
                 $arrTagsToDelete[] = $tag->getCacheKey() . '_page_1';
             }
 
-            $arrArticleAuthors = array_merge($arrPreviousAuthors ?? [], $this->article->getAuthors());
+            $arrArticleAuthors = array_merge($arrPreviousAuthors ?? [], $this->articleEditor->getAuthors());
             foreach($arrArticleAuthors ?? [] as $author) {
                 $arrTagsToDelete[] = $author->getCacheKey() . '_page_1';
             }
