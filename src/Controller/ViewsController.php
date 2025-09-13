@@ -30,17 +30,15 @@ class ViewsController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
-        $cacheKey = "views_{$slug}_$page";
-
         $buildHtmlResult =
-            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($slug, $arrViewRequested, $page, $cacheKey) {
+            $this->cache->get("views_$slug/$page", function(ItemInterface $cacheItem) use($slug, $arrViewRequested, $page) {
 
                 $buildHtmlResult = $this->buildHtml($slug, $arrViewRequested, $page);
 
                 if( is_string($buildHtmlResult) ) {
 
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cacheItem->tag([$cacheKey, 'views', "views_$slug"]);
+                    $cacheItem->tag(['views', 'app_views', "app_views_page_$page", "app_views_$slug", "app_views_{$slug}_page_$page"]);
 
                 } else {
 
