@@ -11,6 +11,7 @@ use App\Service\User;
 
 class AuthorContoller extends BaseController
 {
+    const int CACHE_DEFAULT_EXPIRY = 60 * 240; // 4 hours
     const string SECTION_SLUG = "utenti";
 
     protected User $mainAuthor;
@@ -41,8 +42,7 @@ class AuthorContoller extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $coldCacheStormBuster = 60 * rand(15, 30); // 30-90 minutes
-                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                     $cacheItem->tag(["authors", $this->mainAuthor->getCacheKey()]);
 
                 } else {

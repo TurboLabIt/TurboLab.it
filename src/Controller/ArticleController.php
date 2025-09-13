@@ -10,6 +10,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class ArticleController extends BaseController
 {
+    const int CACHE_DEFAULT_EXPIRY = 60 * 240; // 4 hours
     protected Article $mainArticle;
 
 
@@ -29,8 +30,7 @@ class ArticleController extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
-                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                     $cacheItem->tag(["articles", $this->mainArticle->getCacheKey()]);
 
                 } else {

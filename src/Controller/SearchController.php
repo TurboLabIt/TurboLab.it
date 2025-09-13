@@ -12,8 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class SearchController extends BaseController
 {
+    const int CACHE_DEFAULT_EXPIRY  = 60 * 90; // 90 minutes
     const string SECTION_SLUG       = "cerca";
-    const string NO_RESULTS_MESSAGE  = "Nessun risultato.";
+    const string NO_RESULTS_MESSAGE = "Nessun risultato.";
 
 
     #[Route('/' . self::SECTION_SLUG . '/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search')]
@@ -53,8 +54,7 @@ class SearchController extends BaseController
 
                 $buildHtmlResult = $this->buildHtml($searchEngine, $trimmedTermToSearch);
 
-                $coldCacheStormBuster = 60 * rand(120, 240); // 2-4 hours
-                $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                 $cacheItem->tag(["search"]);
 
                 return $buildHtmlResult;

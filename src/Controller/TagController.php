@@ -41,8 +41,7 @@ class TagController extends BaseController
 
                 if( is_string($buildHtmlResult) ) {
 
-                    $coldCacheStormBuster = 60 * rand(30, 90); // 30-90 minutes
-                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY + $coldCacheStormBuster);
+                    $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                     $cacheItem->tag(["tags", $this->mainTag->getCacheKey()]);
 
                 } else {

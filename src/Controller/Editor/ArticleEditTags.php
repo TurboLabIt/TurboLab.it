@@ -54,6 +54,7 @@ class ArticleEditTags extends ArticleEditBaseController
         try {
 
             $this->loadArticleEditor($articleId);
+            $arrPreviousTags = $this->articleEditor->getTags();
 
             $arrIdsAndTags = $this->request->get('tags') ?? [];
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
@@ -65,6 +66,8 @@ class ArticleEditTags extends ArticleEditBaseController
             $this->articleEditor->setTags($tags, $currentUserAsAuthor);
 
             $this->factory->getEntityManager()->flush();
+
+            $this->clearCachedArticle(null, $arrPreviousTags);
 
             return $this->jsonOKResponse("Tag salvati");
 

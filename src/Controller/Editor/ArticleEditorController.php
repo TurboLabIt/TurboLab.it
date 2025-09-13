@@ -28,6 +28,9 @@ class ArticleEditorController extends ArticleEditBaseController
             }
 
             $this->articleEditor->save();
+
+            $this->clearCachedArticle();
+
             return $this->jsonOKResponse("Articolo salvato");
 
         } catch(UniqueConstraintViolationException $ex) {
@@ -57,6 +60,7 @@ class ArticleEditorController extends ArticleEditBaseController
     {
         try {
             $this->loadArticleEditor($articleId);
+            $previousPublishedAt = $this->articleEditor->getPublishedAt();
 
             $publishingStatus = $this->request->get('status');
 
@@ -76,6 +80,8 @@ class ArticleEditorController extends ArticleEditBaseController
                     ->getMailer();
 
             $this->factory->getEntityManager()->flush();
+
+            $this->clearCachedArticle($previousPublishedAt);
 
             $jsonOkMessage = "Stato di pubblicazione modificato correttamente";
 

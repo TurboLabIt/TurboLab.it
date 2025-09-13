@@ -70,6 +70,8 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
             $this->factory->getEntityManager()->flush();
 
+            $this->clearCachedArticle(null, null, $arrPreviousAuthors);
+
             $jsonOkMessage = "Autori salvati";
 
             $mailer->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors);

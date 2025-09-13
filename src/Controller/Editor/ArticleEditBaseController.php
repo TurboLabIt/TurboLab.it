@@ -85,4 +85,40 @@ abstract class ArticleEditBaseController extends BaseController
             "tags"      => $this->twig->render('article/tags.html.twig',$arrData)
         ]);
     }
+
+
+    protected function clearCachedArticle(?DateTime $previousPublishedAt = null, ?array $arrPreviousTags = null, ?array $arrPreviousAuthors = null) : void
+    {
+        $publishedAt = $this->articleEditor->getPublishedAt();
+        $arrTagsToDelete = [];
+
+        if(
+            (
+                !empty($previousPublishedAt) &&
+                $previousPublishedAt >= (new DateTime())->modify('-30 days') &&
+                $previousPublishedAt <= (new DateTime())
+            ) ||
+            (
+                !empty($publishedAt) &&
+                $publishedAt >= (new DateTime())->modify('-30 days') &&
+                $publishedAt <= (new DateTime())
+            )
+        ) {
+            $arrTagsToDelete = ['app_home_page_1', 'app_feed', 'app_news_page_1'];
+
+            $arrArticleTags = array_merge($arrPreviousTags ?? [], $this->article->getTags());
+            foreach($arrArticleTags as $tag) {
+                $arrTagsToDelete[] = $tag->getCacheKey() . '_page_1';
+            }
+
+            $arrArticleAuthors = array_merge($arrPreviousAuthors ?? [], $this->article->getAuthors());
+            foreach($arrArticleAuthors ?? [] as $author) {
+                $arrTagsToDelete[] = $author->getCacheKey() . '_page_1';
+            }
+        }
+
+        $arrTagsToDelete = array_merge([$this->articleEditor->getCacheKey()], $arrTagsToDelete);
+
+        $this->cache->invalidateTags($arrTagsToDelete);
+    }
 }
