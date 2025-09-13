@@ -1,6 +1,10 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\Article;
+use App\Service\Factory;
+use DOMDocument;
+use DOMXPath;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +19,7 @@ use Twig\Environment;
 #[AsCommand(name: 'ForumIntegrationBuilder', description: 'Build the site-forum integration files')]
 class ForumIntegrationBuilderCommand extends AbstractBaseCommand
 {
-    public function __construct(protected ProjectDir $projectDir, protected Environment $twig)
+    public function __construct(protected ProjectDir $projectDir, protected Environment $twig, protected Factory $factory)
     {
         parent::__construct();
     }
@@ -44,19 +48,81 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
             "overall_header_content_before"             => "09-overall-header",
             ////"index_body_markforums_after"               => "05-listing",
             ////"viewforum_body_topic_row_before"           => "05-listing",
-            "ucp_agreement_terms_before"                => "registrazione",
+            "ucp_agreement_terms_before"                => [
+                'sourceTwig'    => "registrazione",
+                'params'        => $this->buildRegisterParams()
+            ],
             "viewtopic_body_postrow_post_details_after" => "post-axx",
             "viewtopic_body_postrow_post_after"         => "post-axxbot",
             "overall_footer_content_after"              => "90-overall-footer",
             "overall_footer_after"                      => "99-footer"
         ];
 
-        foreach($arrTpl as  $destinationFile => $sourceFile){
+        foreach($arrTpl as  $destinationFile => $sourceData){
 
-            $html = $generatedFileBanner . $this->twig->render("forum/$sourceFile.html.twig");
+            if( is_string($sourceData) ) {
+
+                $sourceTwig     = $sourceData;
+                $arrTwigParams  = [];
+
+            } else {
+
+                $sourceTwig     = $sourceData['sourceTwig'];
+                $arrTwigParams  = $sourceData['params'];
+            }
+
+            $html = $generatedFileBanner . $this->twig->render("forum/$sourceTwig.html.twig", $arrTwigParams);
             file_put_contents("$outputDir$destinationFile.html", $html);
         }
 
         return $this->endWithSuccess();
+    }
+
+
+    protected function buildRegisterParams() : array
+    {
+        $artRules   = $this->factory->createArticle()->load(Article::ID_FORUM_RULES);
+        $htmlRules  = $artRules->getBodyForDisplay();
+
+        //
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="utf-8" ?>' . $htmlRules, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $xpath = new DOMXPath($dom);
+        $paragraphs = $xpath->query('//p[img]');
+
+        foreach ($paragraphs as $p) {
+            // Get all img elements within this paragraph
+            $images = $xpath->query('.//img', $p);
+
+            // Move each image outside the paragraph (insert before the p tag)
+            foreach ($images as $img) {
+
+                $img->setAttribute('class', 'tli-register-rules-spotlight');
+                $p->parentNode->insertBefore($img, $p);
+            }
+
+            // Check if the paragraph is now empty (no text content and no child nodes)
+            $textContent = trim($p->textContent);
+            if (empty($textContent) && $p->childNodes->length === 0) {
+                // Remove the empty paragraph
+                $p->parentNode->removeChild($p);
+            }
+        }
+
+        $htmlRulesProcessed = $dom->saveHTML();
+        $htmlRulesProcessed = preg_replace('/^<\?xml encoding="utf-8" \?>\s*/', '', $htmlRulesProcessed);
+
+        $artPrivacyPolicy = $this->factory->createArticle()->load(Article::ID_PRIVACY_POLICY);
+
+        return [
+            'mainText' => $htmlRulesProcessed,
+            'PrivacyPolicy' => [
+                'url'   => $artPrivacyPolicy->getUrl(),
+                'title' => $artPrivacyPolicy->getTitle()
+            ],
+        ];
     }
 }

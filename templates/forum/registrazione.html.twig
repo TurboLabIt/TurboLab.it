@@ -2,5 +2,32 @@
 {# Ported from TLI1: https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/smarty/sashagrey/forum-integration_10-registrazione.html #}
 
 <!-- START TurboLab.it integration registrazione.html.twig -->
-<!-- TLI2: TODO -->
+
+<p id="tli-register-not-welcome">
+    A T T E N Z I O N E<br>
+    NON SEI (ANCORA) IL BENVENUTO
+</p>
+
+<div id="tli-register-rules-container">
+
+    <p>{{ intro|raw }}</p>
+    <hr class="tli-register-rules-clear">
+    <p>Ora che hai letto il regolamento...</p>
+
+</div>
+
+<p id="tli-register-welcome">
+    UNISCITI A NOI<br>
+    SEI IL BENVENUTO!
+</p>
+
+<p>Procedendo con l'iscrizione, dichiari di aver preso visione e di accettare in toto le clausole e le regole esposte in precedenza.</p>
+
+<p>
+    Procedendo con l'iscrizione, acconsenti al trattamento dei tuoi dati personali secondo le modalità indicate nel
+    documento <a href="{{ PrivacyPolicy.url }}">{{ PrivacyPolicy.title|raw }}</a>.
+</p>
+
+<h2 class="sitename-title">Condizioni d'uso del software "phpBB"</h2>
+
 <!-- END TurboLab.it integration registrazione.html.twig -->

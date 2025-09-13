@@ -32,6 +32,7 @@ class Article extends BaseCmsService
     const int ID_ABOUT_US           = 40;       // 👀 https://turbolab.it/40
     const int ID_HOW_TO_WRITE       = 46;       // 👀 https://turbolab.it/46
     const int ID_ISSUE_REPORT       = 49;       // 👀 https://turbolab.it/49
+    const int ID_FORUM_RULES        = 161;      // 👀 https://turbolab.it/161
     const int ID_PUBLISH_NEWS       = 222;      // 👀 https://turbolab.it/222
     const int ID_NEWSLETTER         = 402;      // 👀 https://turbolab.it/402
     const int ID_PRIVACY_POLICY     = 617;      // 👀 https://turbolab.it/617

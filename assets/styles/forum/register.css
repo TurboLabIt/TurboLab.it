@@ -1,0 +1,38 @@
+#tli-register-not-welcome {
+    text-align:center;
+    color:#FF5C04;
+    font-size:40px;
+    font-weight:bold;
+    margin-bottom: 0px;
+}
+
+#tli-register-rules-container p {
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size: medium;
+}
+
+#tli-register-rules-container h2 {
+    padding-top:10px;
+    font-size: x-large;
+}
+
+.tli-register-rules-spotlight {
+    width: 160px;
+    height: 160px;
+    float:left;
+    margin:5px;
+    padding:2px;
+    border:solid #CCCCCC 1px;
+}
+
+.tli-register-rules-clear {
+    clear:left;
+}
+
+#tli-register-welcome {
+    text-align:center;
+    color:#33CC33;
+    font-size:40px;
+    font-weight:bold;
+    margin-bottom: 0px;
+}
