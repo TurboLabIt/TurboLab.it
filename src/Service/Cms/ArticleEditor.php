@@ -235,6 +235,10 @@ class ArticleEditor extends Article
 
         foreach($arrTitleWordsCombined as $candidate) {
 
+            if( empty($candidate) || empty( trim($candidate) ) || mb_strlen($candidate) < 2 ) {
+                continue;
+            }
+
             $arrTagToAdd =
                 $tags->lookupSearchExtract(
                     $this->factory->createTagEditor()->setTitle($candidate),
