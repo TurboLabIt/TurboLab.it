@@ -4,6 +4,7 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "TLI1 downloader"
+fxCatastrophicError "TLI 2.0 is live - this script cannot run anymore"
 fxEnvNotProd
 
 ## 👇 this is the TLI1 remote path
