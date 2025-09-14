@@ -235,7 +235,10 @@
                             {% else %}
 
                                 <div class="tli-article-main-content">
-                                    <p>Nessun commento. <a href="{{ Article.addNewCommentUrl }}">Scrivi tu il primo!</a></p>
+                                    <p>Nessuno ha ancora commentato.</p>
+                                    <div class="post-load-btn">
+                                        <a class="main-btn" href="{{ Article.addNewCommentUrl }}">Scrivi tu il primo commento!</a>
+                                    </div>
                                 </div>
 
                             {% endif %}
