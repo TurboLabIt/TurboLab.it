@@ -199,6 +199,8 @@ class ServerInfo
         }
 
         $swap *= 1000;
+        $swap = round($swap, 2);
+
         return "$swap MB";
     }
 
