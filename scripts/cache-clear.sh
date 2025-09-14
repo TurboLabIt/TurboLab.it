@@ -41,9 +41,10 @@ wsuSourceFrameworkScript cache-clear "$@"
 fxTitle "Setting up the images cache folder..."
 sudo rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
 sudo mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
-sudo chown webstackup:www-data ${PROJECT_DIR}var/uploaded-assets/images/cache
-sudo chmod ug=rwX,o=rX ${PROJECT_DIR}var/uploaded-assets/images/cache
 
+fxTitle "Setting up the uploaded-assets folder..."
+sudo chown webstackup:www-data ${PROJECT_DIR}var/uploaded-assets -R
+sudo chmod ug=rwX,o=rX ${PROJECT_DIR}var/uploaded-assets -R
 
 fxTitle "Setting up HTMLpurifier cache folder..."
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
