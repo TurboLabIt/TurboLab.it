@@ -163,11 +163,6 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
         $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
 
-        // while TLI1 is still live, don't save the web article in prod
-        if( $this->isProd() ) {
-            $persistArticle = false;
-        }
-
         $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
 
         if($persistArticle) {
