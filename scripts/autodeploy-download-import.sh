@@ -2,36 +2,16 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Auto-deploy, download, import"
+fxEnvNotProd
 
-if [ "${APP_ENV}" == "prod" ]; then
+fxSshTestAccess root@turbolab.it
 
-  fxCatastrophicError "TLI 2.0 is live - this script cannot run anymore"
+if [ "${APP_ENV}" == "staging" ]; then
   bash "${SCRIPT_DIR}deploy.sh"
-  bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh"
-
-elif [ "${APP_ENV}" == "staging" ]; then
-
-  fxSshTestAccess root@turbolab.it
-  bash "${SCRIPT_DIR}deploy.sh"
-
-elif [ "${APP_ENV}" == "dev" ]; then
-
-  fxSshTestAccess root@turbolab.it
-
-else
-
-  fxCatastrophicError "Unhandled branch ##${APP_ENV}##"
 fi
 
-
-if [ "${APP_ENV}" != "prod" ]; then
-
-  bash "${SCRIPT_DIR}tli1-download.sh"
-  rm -rf ${PROJECT_DIR}backup/db-dumps/*.sql
-  bash "${SCRIPT_DIR}db-restore.sh"
-  bash "${SCRIPT_DIR}tli1-import.sh"
-fi
-
+bash "${SCRIPT_DIR}tli-download.sh"
+bash "${SCRIPT_DIR}tli-import.sh"
 
 if [ "${APP_ENV}" == "dev" ]; then
   bash "${SCRIPT_DIR}test-runner.sh"

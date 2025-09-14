@@ -1,8 +1,7 @@
 📂 The physical folder is located at [src/Forum/ext-turbolabit](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Forum/ext-turbolabit) and it's managed by Git.
 
-While TLI1 remains live on production, this folder is a mirror of the production directory,
-managed by [scripts/tli1-download.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/tli1-download.sh).
-
 🔗 A symlink, located at `public/forum/ext/turbolabit`, allows phpBB to load it.
 
-Such symlink is created by [scripts/cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh).
+Such symlink is created by [scripts/cache-clear-forum-only.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear-forum-only.sh).
+
+📚 [Complete doc](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md)
