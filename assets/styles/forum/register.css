@@ -3,7 +3,7 @@
     color:#FF5C04;
     font-size:40px;
     font-weight:bold;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
 }
 
 #tli-register-rules-container p {
@@ -12,8 +12,9 @@
 }
 
 #tli-register-rules-container h2 {
-    padding-top:10px;
+    padding-top: 30px;
     font-size: x-large;
+    clear: both;
 }
 
 .tli-register-rules-spotlight {
