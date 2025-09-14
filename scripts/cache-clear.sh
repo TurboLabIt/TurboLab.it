@@ -3,7 +3,7 @@
 
 source $(dirname $(readlink -f $0))/script_begin.sh
 
-if [ "$APP_ENV" = "dev" ]; then
+if [ "$APP_ENV" == "dev" ]; then
 
   fxHeader "Special DEV handling..."
 
@@ -26,11 +26,6 @@ if [ "$APP_ENV" = "dev" ]; then
   fxTitle "Removing yarn stuff..."
   rm -f ${PROJECT_DIR}yarn.lock
 
-  fxTitle "chown dev..."
-  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
-  sudo chmod ugo= "${PROJECT_DIR}" -R
-  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
-
   source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
 
@@ -49,5 +44,13 @@ sudo chmod ug=rwX,o=rX ${PROJECT_DIR}var -R
 fxTitle "Setting up HTMLpurifier cache folder..."
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
 
+
+if [ "$APP_ENV" == "dev" ]; then
+
+  fxTitle "chown dev..."
+  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
+  sudo chmod ugo= "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
+fi
 
 bash "${SCRIPT_DIR}cache-clear-forum-only.sh"
