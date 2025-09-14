@@ -28,7 +28,6 @@ if [ "$APP_ENV" = "dev" ]; then
 
   fxTitle "Clearing the built images cache..."
   rm -rf ${PROJECT_DIR}var/uploaded-assets/images/cache
-  mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
 
   fxTitle "chown dev..."
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
@@ -40,6 +39,10 @@ fi
 
 ### SYMFONY console cache:clear ###
 wsuSourceFrameworkScript cache-clear "$@"
+
+sudo mkdir -p ${PROJECT_DIR}var/uploaded-assets/images/cache
+sudo chown webstackup:www-data ${PROJECT_DIR}var/uploaded-assets/images/cache
+sudo chmod ug+rwX ${PROJECT_DIR}var/uploaded-assets/images/cache
 
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
 
