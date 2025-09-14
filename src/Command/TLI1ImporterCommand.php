@@ -102,6 +102,8 @@ class TLI1ImporterCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
+        $this->endWithError("TLI 2.0 is live - this script cannot run anymore");
+
         $this
             ->fxTitle("Connecting to TLI1 DB...")
             ->tli1DbConnect()

@@ -5,6 +5,7 @@ fxHeader "Auto-deploy, download, import"
 
 if [ "${APP_ENV}" == "prod" ]; then
 
+  fxCatastrophicError "TLI 2.0 is live - this script cannot run anymore"
   bash "${SCRIPT_DIR}deploy.sh"
   bash "${SCRIPT_DIR}tli1-tli2-hybrid-import.sh"
 

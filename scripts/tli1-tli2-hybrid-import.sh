@@ -3,6 +3,7 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 
 fxHeader "Copy data from TLI1 to TLI2 hybrid server"
+fxCatastrophicError "TLI 2.0 is live - this script cannot run anymore"
 fxEnvNotDev
 
 TLI1_SOURCE_DIR=/var/www/turbolab_it/website/www/
