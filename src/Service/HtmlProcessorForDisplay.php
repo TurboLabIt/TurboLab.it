@@ -208,9 +208,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
             $url = 'https://www.youtube-nocookie.com/embed/' . $videoCode . '?rel=0';
             $iframe->setAttribute('src', $url);
-            $iframe->setAttribute('frameborder', '0');
-            $iframe->setAttribute('width', '100%');
-            $iframe->setAttribute('style', 'aspect-ratio: 16/9');
+            $iframe->setAttribute('style', 'width:100%; aspect-ratio: 16/9');
             $iframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
             $iframe->setAttribute('allowfullscreen', 'allowfullscreen');
 
