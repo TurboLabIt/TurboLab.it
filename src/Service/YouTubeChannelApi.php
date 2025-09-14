@@ -37,7 +37,7 @@ class YouTubeChannelApi
         return
             $this->cache->get($cacheKey, function (ItemInterface $cacheItem) use($results, $cacheKey) {
 
-                $cacheLife = date('H:i') < '07:00' ? 3600 : (static::CACHE_MINUTES * 60);
+                $cacheLife = date('H:i') < '06:00' ? (3600 * 3) : (static::CACHE_MINUTES * 60);
 
                 try {
                     $response = $this->getLatestVideosUncached($results, $cacheKey);
