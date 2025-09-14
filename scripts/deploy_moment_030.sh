@@ -29,11 +29,6 @@ rm -rf "${BRAND_LINK_PATH}"
 fxLink "${WEBROOT_DIR}images/logo/2013/turbolab.it-2013-finale-tiny.png" "${BRAND_LINK_PATH}"
 
 
-fxTitle "Forum own extensions link..."
-rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
-fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
-
-
 wsuMysql -e "
   REVOKE ALL PRIVILEGES ON *.* FROM 'turbolab_it'@'localhost';
   GRANT ALL PRIVILEGES ON \`turbolab%\`.* TO 'turbolab_it'@'localhost';

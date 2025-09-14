@@ -41,8 +41,5 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every night: sitemap generator
 0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
 
-## every morning: deploy and import TLI1
-0 5 * * * root bash ${SCRIPT_DIR}autodeploy-download-import.sh > ${LOG_PATH}autodeploy-download-import.sh.log 2>&1
-
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

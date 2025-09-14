@@ -41,29 +41,6 @@ fi
 ### SYMFONY console cache:clear ###
 wsuSourceFrameworkScript cache-clear "$@"
 
-
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
 
-
-## this would destroy the integration if ran with TLI1 still live
-if [ "$APP_ENV" != "prod" ]; then
-
-  fxTitle "Forum own extensions link..."
-  rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
-  fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
-
-  sudo chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
-  sudo chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
-
-  wsuSymfony console ForumIntegrationBuilder
-fi
-
-
-fxTitle "🧹 Deleting the forum cache folder..."
-rm -rf "${WEBROOT_DIR}forum/cache/production"
-
-fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
-bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
-
-
-source "${SCRIPT_DIR}script_end.sh"
+bash "${SCRIPT_DIR}cache-clear-forum-only.sh"
