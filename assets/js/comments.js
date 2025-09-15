@@ -1,6 +1,6 @@
 //import $ from 'jquery';
 import 'jquery-is-in-viewport';
-import selectAndCopy from "./select-and-copy";'select-and-copy';
+import selectAndCopy from "./select-and-copy";
 
 $('.post-comments-list').isInViewport(function (status) {
 
