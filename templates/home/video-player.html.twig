@@ -13,9 +13,9 @@
                                 {# this is the intended behaviour #}
                                 <iframe
                                     width="100%" style="aspect-ratio: 16/9"
-                                    src="{{ Videos|first.embedUrl }}"
+                                    src="{{ Videos|first.embedUrl|replace({'&autoplay=1': ''}) }}"
                                     title="YouTube Video Player"
-                                    allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                                 </iframe>
                             </div>
                             <div class="video-news-post-content">

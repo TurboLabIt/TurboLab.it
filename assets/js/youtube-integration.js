@@ -2,12 +2,20 @@
 
 $(document).on('click', '.tli-video-thumb', function(){
 
-    let videoPlayer = $('#tli-youtube-video-player');
-    videoPlayer.get(0).scrollIntoView({behavior: 'smooth'});
+    let videoPlayerContainer = $('#tli-youtube-video-player');
+    videoPlayerContainer.get(0).scrollIntoView({behavior: 'smooth'});
+
+    let videoIframe = videoPlayerContainer.find('iframe');
+    let allows = videoIframe.attr('allow');
+
+    // Add autoplay if not already present
+    if( !allows.includes('autoplay') ) {
+        videoIframe.attr('allow', 'autoplay; ' + allows);
+    }
 
     let clickedVideoEmbedUrl    = $(this).data('embed-url');
     let clickedVideoTitle       = $(this).find('.tli-video-thumb-title').html();
 
-    videoPlayer.find('iframe').attr('src', clickedVideoEmbedUrl);
-    videoPlayer.find('.title').html(clickedVideoTitle);
+    videoIframe.attr('src', clickedVideoEmbedUrl);
+    videoPlayerContainer.find('.title').html(clickedVideoTitle);
 });
