@@ -30,11 +30,7 @@
     <link rel="search" type="application/opensearchdescription+xml" title="TurboLab.it" href="/open-search.xml">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://kit.fontawesome.com">
-    <link rel="preconnect" href="https://ajax.googleapis.com">
-    <link rel="preconnect" href="https://code.jquery.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://i.ytimg.com">
 
     <link rel="alternate" type="application/rss+xml" title="Feed" href="{% block metaFeedUrl %}{{ absolute_url(path('app_feed')) }}{% endblock %}">
 
@@ -425,7 +421,7 @@
         {{ encore_entry_script_tags('app') }}
 
         <script src='https://platform-api.sharethis.com/js/sharethis.js#property=59e0553a0ec52b001145b377&product=unknown'
-                async='async'></script>
+                defer></script>
 
     {% endblock %}
 
