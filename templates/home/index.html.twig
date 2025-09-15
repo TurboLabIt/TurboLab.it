@@ -31,7 +31,8 @@
                                     <div class="trending-news-thumb">
                                         <a href="{{ Article.url }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
-                                                 class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                 class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}"
+                                                 fetchpriority="high">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
