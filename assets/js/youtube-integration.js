@@ -10,7 +10,9 @@ $(document).on('click', '.tli-video-thumb', function(){
 
     // Add autoplay if not already present
     if( !allows.includes('autoplay') ) {
+
         videoIframe.attr('allow', 'autoplay; ' + allows);
+        videoIframe.attr('src', '');
     }
 
     let clickedVideoEmbedUrl    = $(this).data('embed-url');
