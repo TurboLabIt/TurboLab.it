@@ -2,6 +2,6 @@
 
 🔗 A symlink, located at `public/forum/ext/turbolabit`, allows phpBB to load it.
 
-Such symlink is created by [scripts/cache-clear-forum-only.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear-forum-only.sh).
+Such symlink is created by [scripts/phpbb-cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/phpbb-cache-clear.sh).
 
 📚 [Complete doc](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md)

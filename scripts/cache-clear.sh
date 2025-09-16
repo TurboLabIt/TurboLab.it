@@ -53,4 +53,4 @@ if [ "$APP_ENV" == "dev" ]; then
   sudo chmod ugo=rwX "${PROJECT_DIR}" -R
 fi
 
-bash "${SCRIPT_DIR}cache-clear-forum-only.sh"
+bash "${SCRIPT_DIR}phpbb-cache-clear.sh"
