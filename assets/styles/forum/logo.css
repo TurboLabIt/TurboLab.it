@@ -1,11 +1,11 @@
 .site_logo {
     background-image: /* webpackIgnore: true */ url("/images/logo/turbolab.it.png");
-    width: 400px;
-    height: 71px;
+    width: 340px;
     background-repeat: no-repeat;
     background-position: 0% 0%;
     background-size: 100%;
     max-width: 100%;
+    padding-bottom: 5px;
 }
 
 /* Mostro il logo anche su mobile https://turbolab.it/forum/viewtopic.php?t=3263 */
