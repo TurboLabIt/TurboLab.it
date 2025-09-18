@@ -24,6 +24,7 @@ if( !defined('THIS_SPECIAL_PAGE_PATH') ) {
 }
 
 $siteUrl = 'https://' . $_SERVER["SERVER_NAME"];
+$projectDir = realpath('../../') . '/';
 
 $requestUri = $_SERVER["REQUEST_URI"] ?? null;
 if( strpos($requestUri, THIS_SPECIAL_PAGE_PATH) !== 0 ) {
@@ -31,3 +32,5 @@ if( strpos($requestUri, THIS_SPECIAL_PAGE_PATH) !== 0 ) {
 }
 
 $txtPleaseReport = '🪲 Per favore, <a href="/forum/posting.php?mode=post&f=6">segnalaci subito il problema</a>, grazie!';
+
+const ID_USER_SYSTEM = 5103;

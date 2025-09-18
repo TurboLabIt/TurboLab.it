@@ -76,6 +76,11 @@ services:
             $arrConfig:
                 forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
 
+    App\Repository\PhpBB\PostRepository:
+        arguments:
+            $arrConfig:
+                forumDatabaseName: '%env(APP_FORUM_DB_NAME)%'
+
     App\Repository\PhpBB\UserRepository:
          arguments:
             $arrConfig:
@@ -86,3 +91,11 @@ services:
             $arrConfig:
                 apiKey: '%env(GOOGLE_SEARCH_ENGINE_API_KEY)%'
                 engineId: '%env(GOOGLE_SEARCH_ENGINE_CX)%'
+
+
+    App\Service\GitHub:
+        arguments:
+            $arrConfig:
+                github:
+                    path: '%env(GITHUB_PATH)%'
+                    token: '%env(GITHUB_ACCESS_TOKEN_ISSUES)%'

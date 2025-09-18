@@ -42,6 +42,13 @@ class ForumUrlGenerator
     }
 
 
+    public function generatePostViewUrl(Post $post, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    {
+        return
+            $this->generateHomeUrl($urlType) . 'viewtopic.php?p=' . $post->getId() . "#p" . $post->getId();
+    }
+
+
     public function generateCommentsAjaxLoadingUrl(Topic $topic, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         return

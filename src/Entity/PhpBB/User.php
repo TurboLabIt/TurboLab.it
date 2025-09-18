@@ -2,6 +2,7 @@
 namespace App\Entity\PhpBB;
 
 use App\Entity\BaseEntity;
+use App\Entity\Bug;
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleTag;
@@ -91,6 +92,12 @@ class User extends BaseEntity implements UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $articlesAttachedToFiles;
 
+    /**
+     * @var Collection<int, Bug>
+     */
+    #[ORM\OneToMany(targetEntity: Bug::class, mappedBy: 'user')]
+    private Collection $bugs;
+
 
     public function __construct()
     {
@@ -100,6 +107,7 @@ class User extends BaseEntity implements UserInterface
         $this->articlesTagged           = new ArrayCollection();
         $this->files                    = new ArrayCollection();
         $this->articlesAttachedToFiles  = new ArrayCollection();
+        $this->bugs = new ArrayCollection();
     }
 
 
@@ -438,6 +446,36 @@ class User extends BaseEntity implements UserInterface
             // set the owning side to null (unless already changed)
             if ($articleFile->getUser() === $this) {
                 $articleFile->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bug>
+     */
+    public function getBugs(): Collection
+    {
+        return $this->bugs;
+    }
+
+    public function addBug(Bug $bug): static
+    {
+        if (!$this->bugs->contains($bug)) {
+            $this->bugs->add($bug);
+            $bug->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBug(Bug $bug): static
+    {
+        if ($this->bugs->removeElement($bug)) {
+            // set the owning side to null (unless already changed)
+            if ($bug->getUser() === $this) {
+                $bug->setUser(null);
             }
         }
 

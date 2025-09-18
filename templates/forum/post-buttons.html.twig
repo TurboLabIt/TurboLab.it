@@ -1,0 +1,8 @@
+{% set tooltip = 'Crea nuova issue su GitHub per questo post' %}
+
+<li>
+    <a href="{{ path('app_forum_new_issue') }}" title="{{ tooltip }}" class="button button-icon-only tli-create-issue"
+       data-post-id="{postrow.POST_ID}" data-allow-duplicate="0">
+        <i class="icon fa-solid fa-bug" style="color: #04a202;"></i>
+    </a>
+</li>

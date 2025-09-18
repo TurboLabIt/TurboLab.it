@@ -113,97 +113,91 @@ class Topic extends BaseEntity
         return $this->firstPostId;
     }
 
-    public function setFirstPostId(int $firstPostId): static
+    public function setFirstPostId(int $firstPostId) : static
     {
         $this->firstPostId = $firstPostId;
         return $this;
     }
 
-    public function getLastPostId(): ?int
-    {
-        return $this->lastPostId;
-    }
 
-    public function setLastPostId(int $lastPostId): static
+    public function getLastPostId() : ?int { return $this->lastPostId; }
+
+    public function setLastPostId(int $lastPostId) : static
     {
         $this->lastPostId = $lastPostId;
         return $this;
     }
 
-    public function getLastPostTime(): ?int
-    {
-        return $this->lastPostTime;
-    }
 
-    public function setLastPostTime(int $lastPostTime): static
+    public function getLastPostTime() : ?int { return $this->lastPostTime; }
+
+    public function setLastPostTime(int $lastPostTime) : static
     {
         $this->lastPostTime = $lastPostTime;
         return $this;
     }
 
-    public function getLastPosterName(): ?string
+
+    public function getLastPosterName() : ?string
     {
         return $this->lastPosterName;
     }
 
-    public function setLastPosterName(string $lastPosterName): static
+    public function setLastPosterName(string $lastPosterName) : static
     {
         $this->lastPosterName = $lastPosterName;
         return $this;
     }
 
-    public function getLastPosterColor(): ?string
+    public function getLastPosterColor() : ?string
     {
         return $this->lastPosterColor;
     }
 
-    public function setLastPosterColor(string $lastPosterColor): static
+    public function setLastPosterColor(string $lastPosterColor) : static
     {
         $this->lastPosterColor = $lastPosterColor;
         return $this;
     }
 
-    public function getTime(): ?int
+    public function getTime() : ?int
     {
         return $this->time;
     }
 
-    public function setTime(int $time): static
+    public function setTime(int $time) : static
     {
         $this->time = $time;
         return $this;
     }
 
 
-    public function isvisibility(): ?int
-    {
-        return $this->visibility;
-    }
+    public function getVisibility() : ?int { return $this->visibility; }
 
-    public function setvisibility(int $visibility): static
+    public function setVisibility(int $visibility) : static
     {
         $this->visibility = $visibility;
         return $this;
     }
 
-    public function getDeleteTime(): ?int
+    public function getDeleteTime() : ?int
     {
         return $this->deleteTime;
     }
 
-    public function setDeleteTime(int $deleteTime): static
+    public function setDeleteTime(int $deleteTime) : static
     {
         $this->deleteTime = $deleteTime;
         return $this;
     }
 
 
-    public function getViews(): int
+    public function getViews() : int
     {
         return $this->views;
     }
 
-    public function setViews(int $views): static
+    public function setViews(int $views) : static
     {
         $this->views = $views;
         return $this;
@@ -212,12 +206,12 @@ class Topic extends BaseEntity
     /**
      * @return Collection<int, Article>
      */
-    public function getArticles(): Collection
+    public function getArticles() : Collection
     {
         return $this->articles;
     }
 
-    public function addArticle(Article $article): static
+    public function addArticle(Article $article) : static
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);
@@ -227,7 +221,7 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeArticle(Article $article) : static
     {
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)

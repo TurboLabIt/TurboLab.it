@@ -6,6 +6,7 @@ use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\PhpBB\Topic as TopicEntity;
+use App\Entity\PhpBB\Post as PostEntity;
 use App\Service\Cms\Article as ArticleService;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticleUrlGenerator;
@@ -21,9 +22,10 @@ use App\Service\Sentinel\ArticleSentinel;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\ServiceCollection\Cms\ImageEditorCollection;
 use App\ServiceCollection\Cms\TagEditorCollection;
-use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
+use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\Topic as TopicService;
+use App\Service\PhpBB\Post as PostService;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
@@ -280,7 +282,9 @@ class Factory
     public function getFileUrlGenerator() : FileUrlGenerator { return $this->fileUrlGenerator; }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** Topic ***">
+    //<editor-fold defaultstate="collapsed" desc="*** Forum ***">
+    public function getForumUrlGenerator() : ForumUrlGenerator { return $this->forumUrlGenerator; }
+
     public function createTopic(?TopicEntity $entity = null) : TopicService
     {
         $service = new TopicService($this);
@@ -294,8 +298,18 @@ class Factory
 
     public function createTopicCollection() : TopicCollection { return new TopicCollection($this); }
 
-    public function getForumUrlGenerator() : ForumUrlGenerator { return $this->forumUrlGenerator; }
+
+    public function createPost(?PostEntity $entity = null) : PostService
+    {
+        $service = new PostService($this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
     //</editor-fold>
+
 
     //<editor-fold defaultstate="collapsed" desc="*** User ***">
     public function createUser(?UserEntity $entity = null) : UserService
