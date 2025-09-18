@@ -81,10 +81,11 @@ class Issue
     {
         $bugByUser = $this->entityManager->getRepository(Bug::class)->getRecentByAuthor($author, $authorIpAddress);
 
-        if( count($bugByUser) > BugRepository::TIME_LIMIT_BUGS ) {
+        if( count($bugByUser) > BugRepository::TIME_LIMIT_BUGS_NUM ) {
 
-            throw new TooManyRequestsHttpException(3600 * BugRepository::TIME_LIMIT_HOURS,
-                "Stai aprendo troppe issue (tu, oppure qualcuno con il tuo stesso indirizzo IP)! Per favore, riprova più tardi."
+            throw new TooManyRequestsHttpException(60 * BugRepository::TIME_LIMIT_MINUTES,
+                "Stai aprendo troppe issue (tu, oppure qualcuno con il tuo stesso indirizzo IP)! " .
+                "Per favore, attendi " . BugRepository::TIME_LIMIT_MINUTES . " minuti e poi riprova. Grazie!"
             );
         }
 
@@ -102,7 +103,8 @@ class Issue
                 'body' => [
                     'issue-url'         => $bug->getRemoteUrl(),
                     'issue-remote-id'   => $bug->getRemoteId(),
-                    'post-id'           => $bug->getPost()->getId()
+                    'post-id'           => $bug->getPost()->getId(),
+                    'user-id'           => $bug->getUser()->getId()
                 ],
             ]);
 

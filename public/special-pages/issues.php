@@ -17,8 +17,9 @@ if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 $issueUrl       = $_POST['issue-url'] ?? null;
 $issueRemoteId  = $_POST['issue-remote-id'] ?? null;
 $postId         = $_POST['post-id'] ?? null;
+$userId         = $_POST['user-id'] ?? null;
 
-foreach([&$issueUrl, &$issueRemoteId, &$postId] as &$var) {
+foreach([&$issueUrl, &$issueRemoteId, &$postId, &$userId] as &$var) {
 
     $var = trim($var);
     if( empty($var) ) {
@@ -29,6 +30,11 @@ foreach([&$issueUrl, &$issueRemoteId, &$postId] as &$var) {
 $postId = (int)$postId;
 if( $postId < 1 ) {
     tliResponse('Invalid post ID', 400);
+}
+
+$userId = (int)$userId;
+if( $userId < 1 ) {
+    tliResponse('Invalid user ID', 400);
 }
 
 require './includes/10_phpbb_start.php';
@@ -99,7 +105,7 @@ $data = [
     'enable_indexing'   => true,
 
     'post_edit_reason'  => "Link to GitHub issue #$issueRemoteId",
-    'post_edit_user'    => ID_USER_SYSTEM
+    'post_edit_user'    => $userId
 ];
 
 $data['post_visibility'] = (int) $row['post_visibility'];
