@@ -12,16 +12,16 @@ use Doctrine\ORM\Mapping as ORM;
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
 class Forum extends BaseEntity
 {
-    const int ID_TLI            = 6;
+    const int ID_TLI        = 6;
+    const int ID_COMMENTS   = 26;
 
     /**
      *  4 : area staff
      * 25 : cestinate
      *  7 : area prove
      */
-    const array ID_OFFLIMITS    = [4, 25, 7];
+    const array ID_OFFLIMIT = [4, 25, 7];
 
-    const int ID_COMMENTS       = 26;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -37,7 +37,7 @@ $sqlSelectTopic = '
       topic_id          = ' . $topicId . ' AND
       topic_visibility  = ' . ITEM_APPROVED . ' AND
       topic_delete_time = 0 AND
-      forum_id          NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')
+      forum_id NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')
 ';
 
 $result     = $db->sql_query($sqlSelectTopic);

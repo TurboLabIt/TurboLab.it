@@ -17,8 +17,8 @@ class ForumRepository extends BasePhpBBRepository
     {
         return
             parent::getQueryBuilder()
-                ->andWhere('t.id NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')')
-                ->andWhere('t.parentId NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')')
+                ->andWhere('t.id NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')')
+                ->andWhere('t.parentId NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')')
                 ->andWhere('t.status = 0')
                 ->andWhere('t.type = 1')
                 ->andWhere('t.last_post_time > 0')

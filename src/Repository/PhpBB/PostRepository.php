@@ -16,7 +16,7 @@ class PostRepository extends BasePhpBBRepository
     {
         return
             parent::getQueryBuilder()
-                ->andWhere('t.forumId NOT IN (' . implode(',', Forum::ID_OFFLIMITS) . ')')
+                ->andWhere('t.forumId NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
                 ->orderBy('t.postTime', 'DESC');
