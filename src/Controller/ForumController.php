@@ -21,6 +21,8 @@ class ForumController extends BaseController
 
         try {
 
+            $this->loginRequired();
+
             $issue
                 ->rateLimiting($this->getCurrentUserAsAuthor(), $this->request->getClientIp() )
                 ->createFromForumPostId($postId, $this->getCurrentUserAsAuthor(), $this->request->getClientIp() );

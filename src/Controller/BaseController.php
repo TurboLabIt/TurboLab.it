@@ -48,6 +48,15 @@ abstract class BaseController extends AbstractController
 
     protected function getCurrentUserAsAuthor() : ?User { return $this->factory->getCurrentUserAsAuthor(); }
 
+    protected function loginRequired() : static
+    {
+        if( empty( $this->getCurrentUser() ) ) {
+            throw new AccessDeniedException("Per accedere a questa risorsa devi eseguire login");
+        }
+
+        return $this;
+    }
+
 
     protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
     {
