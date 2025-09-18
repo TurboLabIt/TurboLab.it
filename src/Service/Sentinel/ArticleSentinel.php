@@ -76,8 +76,6 @@ class ArticleSentinel extends BaseSentinel
     {
         $article = $article ?? $this->article;
 
-        $this->enforceLoggedUserOnly();
-
         if( empty( $this->canEdit($article) ) ) {
             throw new AccessDeniedException($errorMessage);
         }

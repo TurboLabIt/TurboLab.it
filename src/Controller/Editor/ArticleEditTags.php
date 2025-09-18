@@ -36,7 +36,7 @@ class ArticleEditTags extends ArticleEditBaseController
 
         try {
 
-            $this->sentinel->enforceLoggedUserOnly();
+            $this->loginRequired();
 
             $tag = $this->request->get('tag');
 

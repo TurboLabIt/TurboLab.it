@@ -36,7 +36,7 @@ class ArticleEditAuthors extends ArticleEditBaseController
 
         try {
 
-            $this->sentinel->enforceLoggedUserOnly();
+            $this->loginRequired();
 
             $username = $this->request->get('username');
 

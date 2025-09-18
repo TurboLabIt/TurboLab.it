@@ -35,7 +35,7 @@ abstract class ArticleEditBaseController extends BaseController
     {
         $this->ajaxOnly();
 
-        $this->sentinel->enforceLoggedUserOnly();
+        $this->loginRequired();
 
         $this->articleEditor->load($articleId);
 

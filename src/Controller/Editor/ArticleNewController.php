@@ -68,7 +68,7 @@ class ArticleNewController extends ArticleEditBaseController
     #[Route('/scrivi/salva',  name: 'app_article_new_submit', methods: ['POST'])]
     public function submit() : Response
     {
-        $this->sentinel->enforceLoggedUserOnly();
+        $this->loginRequired();
 
         //$this->validateCsrfToken();
 
