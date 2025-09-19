@@ -2,7 +2,7 @@
 
 <!-- DEFINE $TLI_ISSUE_FORUMS = {{ openSquareBraket }}{{ forumIdTLI }}, {{ forumIdComments }}{{ closeSquareBraket}} -->
 
-<!-- IF S_USER_LOGGED_IN and FORUM_ID in $TLI_ISSUE_FORUMS -->
+<!-- IF S_USER_LOGGED_IN and FORUM_ID in $TLI_ISSUE_FORUMS and not (FORUM_ID == {{ forumIdComments }} and postrow.S_FIRST_ROW) -->
     <li>
         <a href="#" title="{{ tooltip }}"
            class="button button-icon-only tli-open-issue-modal tli-bug-button-{postrow.POST_ID}"
