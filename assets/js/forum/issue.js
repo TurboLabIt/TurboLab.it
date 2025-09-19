@@ -30,8 +30,7 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
     ISSUE_MODAL.addClass(IN_PROGRESS_CLASS);
 
-    let submitters = ISSUE_MODAL.find('.button-container');
-    submitters.fadeOut(FADE_SPEED);
+    let submitters = ISSUE_MODAL.find('.button-container input[type=button]').prop('disabled', true);
 
     let loaderinoHtml = ISSUE_MODAL.find('.tli-loaderino-container').html();
 
@@ -66,7 +65,7 @@ $(document).on('click', '.tli-create-issue',  function(event) {
         .fail( function(jqXHR, responseText) {
 
             responseTarget.html(jqXHR.responseText).addClass("alert-danger");
-            submitters.fadeIn(FADE_SPEED);
+            submitters.prop('disabled', false);
         })
 
         .always(function(){
