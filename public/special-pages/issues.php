@@ -6,12 +6,13 @@ clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/Tur
 const THIS_SPECIAL_PAGE_PATH = "/issue-add-to-post/";
 require './includes/00_begin.php';
 
+
 if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1'])  ) {
-    tliResponse('Questa pagina è disponibile solo da localhost', 403);
+    tliHtmlResponse('Questa pagina è disponibile solo da localhost', 403);
 }
 
 if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
-    tliResponse('This page requires the POST method', 405);
+    tliHtmlResponse('This page requires the POST method', 405);
 }
 
 $issueUrl       = $_POST['issue-url'] ?? null;
@@ -23,18 +24,18 @@ foreach([&$issueUrl, &$issueRemoteId, &$postId, &$userId] as &$var) {
 
     $var = trim($var);
     if( empty($var) ) {
-        tliResponse('Invalid parameter', 400);
+        tliHtmlResponse('Invalid parameter', 400);
     }
 }
 
 $postId = (int)$postId;
 if( $postId < 1 ) {
-    tliResponse('Invalid post ID', 400);
+    tliHtmlResponse('Invalid post ID', 400);
 }
 
 $userId = (int)$userId;
-if( $userId < 1 ) {
-    tliResponse('Invalid user ID', 400);
+if($userId < 1 ) {
+    tliHtmlResponse('Invalid user ID', 400);
 }
 
 require './includes/10_phpbb_start.php';
@@ -47,21 +48,21 @@ $sqlSelect = 'SELECT * FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $postId;
 $result = $db->sql_query($sqlSelect);
 $row = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
-if(!$row) { tliResponse('Post not found', 404); }
+if(!$row) { tliHtmlResponse('Post not found', 404); }
 
 
 $sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $row['topic_id'] . ' AND forum_id = ' . (int)$row['forum_id'];
 $result = $db->sql_query($sqlSelect);
 $topic = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
-if(!$topic) { tliResponse('Topic not found', 404); }
+if(!$topic) { tliHtmlResponse('Topic not found', 404); }
 
 
 $sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$row['forum_id'];
 $result = $db->sql_query($sql);
 $forum = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
-if(!$forum) { tliResponse('Forum not found', 404); }
+if(!$forum) { tliHtmlResponse('Forum not found', 404); }
 
 
 // get current message as raw BBCode

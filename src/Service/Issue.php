@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -59,7 +60,7 @@ class Issue
     {
         $bugByUser = $this->entityManager->getRepository(Bug::class)->getRecentByAuthor($author, $authorIpAddress);
 
-        if( count($bugByUser) > BugRepository::TIME_LIMIT_BUGS_NUM ) {
+        if( count($bugByUser) >= BugRepository::TIME_LIMIT_BUGS_NUM ) {
 
             $lastIssueDate = end($bugByUser)->getCreatedAt();
             $lastIssueDate->modify('+' . BugRepository::TIME_LIMIT_MINUTES . ' minutes');
@@ -138,8 +139,35 @@ class Issue
                 ],
             ]);
 
-        $statusCode = $response->getStatusCode();
-        return $response->getContent();
+        try {
+
+            $text = $response->getContent();
+            return $text;
+
+        } catch(\Exception $ex) {
+
+            $statusCode = $response->getStatusCode();
+
+            $htmlResponse   = $response->getContent(false);
+            $jsonResponse   = json_decode($htmlResponse, true);
+            $errorMessage   = empty($jsonResponse->message) ? $htmlResponse : $jsonResponse->message;
+
+            if( !empty($errorMessage) ) {
+                $errorMessage .= " 🦠 ";
+            }
+
+            $errorMessage .= $ex->getMessage();
+
+            $errorMessage = trim('
+                L\'issue è stata creata
+                <a href="https://github.com/TurboLabIt/TurboLab.it/issues" target="_blank">su GitHub</a> (grazie!),
+                ma si è verificato un errore durante l\'aggiornamento del post qui sul forum.<br><br>
+                Per favore, apri una nuova discussione per segnalare questo nuovo problema. Grazie (di nuovo)!<br><br>
+                Dettagli dell\'errore: ' . $errorMessage
+            );
+
+            throw new HttpException($statusCode, $errorMessage);
+        }
     }
 
 

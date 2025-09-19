@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Repository\Cms\VisitRepository;
 use App\Service\Issue;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +30,7 @@ class ForumController extends BaseController
                     ->rateLimiting($author, $this->request->getClientIp() )
                     ->createFromForumPostId($postId, $author, $this->request->getClientIp() );
 
-            $response = $issue->updatePost($newBug);
+            $issue->updatePost($newBug);
 
         } catch(Exception $ex) {
 
