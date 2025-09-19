@@ -20,12 +20,14 @@ class ForumController extends BaseController
         $postId = (int)$this->request->get('postId');
 
         try {
-
             $this->loginRequired();
 
-            $issue
-                ->rateLimiting($this->getCurrentUserAsAuthor(), $this->request->getClientIp() )
-                ->createFromForumPostId($postId, $this->getCurrentUserAsAuthor(), $this->request->getClientIp() );
+            $newBug =
+                $issue
+                    ->rateLimiting($this->getCurrentUserAsAuthor(), $this->request->getClientIp() )
+                    ->createFromForumPostId($postId, $this->getCurrentUserAsAuthor(), $this->request->getClientIp() );
+
+            $response = $issue->updatePost($newBug);
 
         } catch(Exception $ex) {
 

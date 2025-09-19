@@ -1,9 +1,12 @@
 {% set tooltip = 'Crea nuova issue su GitHub per questo post' %}
 
-<!-- IF S_USER_LOGGED_IN -->
+<!-- DEFINE $TLI_ISSUE_FORUMS = {{ openSquareBraket }}{{ forumIdTLI }}, {{ forumIdComments }}{{ closeSquareBraket}} -->
+
+<!-- IF S_USER_LOGGED_IN and FORUM_ID in $TLI_ISSUE_FORUMS -->
     <li>
-        <a href="{{ path('app_forum_new_issue') }}" title="{{ tooltip }}" class="button button-icon-only tli-create-issue"
-           data-post-id="{postrow.POST_ID}" data-allow-duplicate="0">
+        <a href="#" title="{{ tooltip }}"
+           class="button button-icon-only tli-open-issue-modal tli-bug-button-{postrow.POST_ID}"
+           data-post-id="{postrow.POST_ID}">
             <i class="icon fa-solid fa-bug" style="color: #04a202;"></i>
         </a>
     </li>

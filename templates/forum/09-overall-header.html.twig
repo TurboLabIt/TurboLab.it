@@ -10,4 +10,31 @@
     {% include 'ads/handstop.html.twig' %}
 <!-- ENDIF -->
 
+
+<!-- DEFINE $TLI_ISSUE_FORUMS = {{ openSquareBraket }}{{ forumIdTLI }}, {{ forumIdComments }}{{ closeSquareBraket}} -->
+
+<!-- IF S_USER_LOGGED_IN and FORUM_ID in $TLI_ISSUE_FORUMS -->
+    <div id="tli-darken"></div>
+    <div id="tli-issue-modal" class="phpbb_alert">
+        <a href="#" class="alert_close">×</a>
+        <h3 class="alert_title">Creazione issue GitHub</h3>
+        <p>Stai per creare una nuova issue su GitHub.</p>
+        <p>
+            Per favore, (ri)leggi sempre
+            <strong>📚 <a href="{{ ArticleIssueGuide.url }}" target="_blank">La guida</a></strong>
+            prima di procedere.
+        </p>
+        <div class="button-container">
+            <input type="button" class="button1 tli-create-issue" value="OK"
+                   data-url="{{ path('app_forum_new_issue') }}" data-post-id="" />
+            <input type="button" class="button2" value="Annulla" />
+        </div>
+        <div class="tli-loaderino-container collapse">
+            Creazione nuova issue in corso. Attendi...
+            <i class="tli-loaderino fa fa-spinner fa-spin"></i>
+        </div>
+        <div class="tli-response-target collapse"></div>
+    </div>
+<!-- ENDIF -->
+
 <!-- END TurboLab.it integration 09-overall-header.html.twig -->

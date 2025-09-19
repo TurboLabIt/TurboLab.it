@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use App\Entity\PhpBB\Forum;
 use App\Service\Cms\Article;
 use App\Service\Factory;
 use DOMDocument;
@@ -42,14 +43,20 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
 
         $arrTpl = [
             "overall_header_head_append"                => "01-header",
-            "overall_header_content_before"             => "09-overall-header",
+            "overall_header_content_before"             => [
+                'sourceTwig'    => '09-overall-header',
+                'params'        => $this->buildHeaderParams()
+            ],
             ////"index_body_markforums_after"               => "05-listing",
             ////"viewforum_body_topic_row_before"           => "05-listing",
             "ucp_agreement_terms_before"                => [
                 'sourceTwig'    => "registrazione",
                 'params'        => $this->buildRegisterParams()
             ],
-            "viewtopic_body_post_buttons_after"         => "post-buttons",
+            "viewtopic_body_post_buttons_after"         => [
+                'sourceTwig'    => "post-buttons",
+                'params'        => $this->buildPostButtonsParams()
+            ],
             "viewtopic_body_postrow_post_details_after" => "post-axx",
             "viewtopic_body_postrow_post_after"         => "post-axxbot",
             "overall_footer_content_after"              => "90-overall-footer",
@@ -74,6 +81,25 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
         }
 
         return $this->endWithSuccess();
+    }
+
+
+    protected function getBaseParams() : array
+    {
+        return [
+            'openSquareBraket'  => '[',
+            'closeSquareBraket' => ']',
+            'forumIdTLI'        => Forum::ID_TLI,
+            'forumIdComments'   => Forum::ID_COMMENTS
+        ];
+    }
+
+
+    protected function buildHeaderParams() : array
+    {
+        return array_merge($this->getBaseParams(), [
+            'ArticleIssueGuide' => $this->factory->createArticle()->load(Article::ID_ISSUE_REPORT)
+        ]);
     }
 
 
@@ -115,12 +141,19 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
 
         $artPrivacyPolicy = $this->factory->createArticle()->load(Article::ID_PRIVACY_POLICY);
 
-        return [
+        return array_merge($this->getBaseParams(), [
             'mainText' => $htmlRulesProcessed,
             'PrivacyPolicy' => [
                 'url'   => $artPrivacyPolicy->getUrl(),
                 'title' => $artPrivacyPolicy->getTitle()
             ],
-        ];
+        ]);
+    }
+
+
+    protected function buildPostButtonsParams() : array
+    {
+        return array_merge($this->getBaseParams(), [
+        ]);
     }
 }

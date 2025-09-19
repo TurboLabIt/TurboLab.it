@@ -71,8 +71,6 @@ class Issue
         $this->entityManager->persist($bug);
         $this->entityManager->flush();
 
-        $response = $this->updatePost($bug);
-
         return $bug;
     }
 
@@ -93,7 +91,7 @@ class Issue
     }
 
 
-    protected function updatePost(Bug $bug) : string
+    public function updatePost(Bug $bug) : string
     {
         $endpointUrl = $this->urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'issue-add-to-post/';
         $response =

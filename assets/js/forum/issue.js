@@ -1,55 +1,74 @@
 //import $ from 'jquery';
-const TLI_BUG_GUIDE_READ_COOKIE_NAME = 'tli-bug-guide-read';
-const TLI_BUG_GUIDE_ID = '49';
+const FADE_SPEED        = 300;
+const ISSUE_MODAL       = $('#tli-issue-modal');
+const IN_PROGRESS_CLASS = 'tli-issue-action-running';
 
 
-$(document).on('click', '.tli-create-issue',  function(event) {
+$(document).on('click', '.tli-open-issue-modal',  function(event) {
 
     event.preventDefault();
 
-    let bugButton = $(this);
-
-    if( bugButton.hasClass('tli-action-running') ) {
+    if( ISSUE_MODAL.hasClass(IN_PROGRESS_CLASS) ) {
 
         alert("Creazione issue in corso. Potrai crearne un'altra fra poco");
         return false;
     }
 
-    if( Cookies.get(TLI_BUG_GUIDE_READ_COOKIE_NAME) != 1 ) {
+    $('#tli-darken').fadeIn(FADE_SPEED);
+    $('#tli-issue-modal').fadeIn(FADE_SPEED);
 
-        Cookies.set(TLI_BUG_GUIDE_READ_COOKIE_NAME, '1', {expires: 30, path: '/', sameSite: 'lax', secure: true});
-        window.open('/' + TLI_BUG_GUIDE_ID, '_blank');
-        return false;
-    }
+    let postId = $(this).data('post-id');
+    ISSUE_MODAL.find('.tli-create-issue').data('post-id', postId);
+});
 
-    if( !confirm(
-            "Stai per creare una nuova issue su GitHub.\n\nPer favore, (ri)leggi sempre " +
-            "📚 https://turbolab.it/" + TLI_BUG_GUIDE_ID + " prima di procedere"
-        )
-    ) {
-        return false;
-    }
 
-    bugButton.addClass("tli-action-running");
+$(document).on('click', '.tli-create-issue',  function(event) {
+
+    let clickedButton = $(this);
+
+    event.preventDefault();
+
+    ISSUE_MODAL.addClass(IN_PROGRESS_CLASS);
+
+    let submitters = ISSUE_MODAL.find('.button-container');
+    submitters.fadeOut(FADE_SPEED);
+
+    let loaderinoHtml   = ISSUE_MODAL.find('.tli-loaderino-container').html();
+    let responseTarget  = ISSUE_MODAL.find('.tli-response-target');
+    responseTarget.removeClass().addClass('alert alert-warning').append(loaderinoHtml);
+
+    let postId      = clickedButton.data('post-id');
+    let bugButton   = $('.tli-bug-button-' + postId);
 
     let bugIcon = bugButton.find('i');
     bugIcon.addClass("fa-spin");
 
-    $.post(bugButton.attr('href'), bugButton.data())
+    $.post(clickedButton.data('url'), {postId : postId})
 
         .done( function(response) {
 
-            alert("OK, grazie per il tuo contributo! La pagina verrà ora ricaricata per mostrarti il link alla issue che hai appena creato");
+            responseTarget.html("OK").removeClass().addClass("alert-success");
             window.location = response;
         })
 
         .fail( function(jqXHR, responseText) {
-            alert(jqXHR.responseText);
+
+            responseTarget.html(jqXHR.responseText).removeClass().addClass("alert-danger");
+            submitters.fadeIn(FADE_SPEED);
         })
 
         .always(function(){
 
+            responseTarget.addClass('alert');
             bugIcon.removeClass("fa-spin");
-            bugButton.removeClass('tli-action-running')
+            bugButton.removeClass('tli-action-running');
         });
+});
+
+
+$(document).on('click', '#tli-issue-modal .alert_close, #tli-issue-modal .button2',  function(event) {
+
+    event.preventDefault();
+    $('#tli-issue-modal').fadeOut(FADE_SPEED);
+    $('#tli-darken').fadeOut(FADE_SPEED);
 });
