@@ -73,7 +73,7 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
             responseTarget.removeClass('alert-warning');
             bugIcon.removeClass("fa-spin");
-            bugButton.removeClass('tli-action-running');
+            ISSUE_MODAL.removeClass(IN_PROGRESS_CLASS);
         });
 });
 
