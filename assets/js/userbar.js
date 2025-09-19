@@ -30,15 +30,7 @@ jQuery(document).on('submit', 'form.tli-user-login', function(event) {
 
         .fail( function(response) {
 
-            try {
-                let jsonObject = JSON.parse(response.responseText);
-                responseTarget.html(jsonObject.message);
-
-            } catch (error) {
-
-                responseTarget.html(response);
-            }
-
+            responseTarget.html(response);
             responseTarget.show();
             loaderino.hide();
         });

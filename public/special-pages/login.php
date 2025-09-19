@@ -26,7 +26,7 @@ foreach (["username", "password"] as $field) {
 
     $fieldValue = trim($fieldValue);
     if( empty($fieldValue) ) {
-        tliResponse("Per eseguire login devi fornire username e password", 400);
+        tliHtmlResponse("Per eseguire login devi fornire username e password", 400);
     }
 
     // declare+assign $username and $password
@@ -63,12 +63,12 @@ $forumResendActivationUrl   = $siteUrl . "/forum/ucp.php?mode=resend_act";
 
 match( $result["status"] ?? null ) {
 
-    LOGIN_ERROR_USERNAME    => tliResponse('Username non trovato 😓 Sei sicuro di esserti già <a href="' . $forumRegisterUrl . '">iscritto</a>?', 401),
-    LOGIN_ERROR_PASSWORD    => tliResponse('Password errata 🦖 Assicurati di averla scritta correttamente, poi riprova! Oppure: <a href="' . $forumForgotPasswordUrl . '">hai dimenticato la password?</a>', 403),
-    LOGIN_ERROR_ACTIVE      => tliResponse('Questo account non è attivo 📧 Puoi <a href="' . $forumResendActivationUrl . '">richiedere l\'attivazione qui</a>', 401),
-    LOGIN_ERROR_ATTEMPTS    => tliResponse('Hai eseguito troppi tentativi 🛑 <a href="' . $forumLoginUrl . '">Ora puoi solo eseguire login tramite il forum</a>', 429),
-    LOGIN_SUCCESS           => tliResponse("Bentornato " . strip_tags($username) . " 😊!", 200),
+    LOGIN_ERROR_USERNAME    => tliHtmlResponse('Username non trovato 😓 Sei sicuro di esserti già <a href="' . $forumRegisterUrl . '">iscritto</a>?', 401),
+    LOGIN_ERROR_PASSWORD    => tliHtmlResponse('Password errata 🦖 Assicurati di averla scritta correttamente, poi riprova! Oppure: <a href="' . $forumForgotPasswordUrl . '">hai dimenticato la password?</a>', 403),
+    LOGIN_ERROR_ACTIVE      => tliHtmlResponse('Questo account non è attivo 📧 Puoi <a href="' . $forumResendActivationUrl . '">richiedere l\'attivazione qui</a>', 401),
+    LOGIN_ERROR_ATTEMPTS    => tliHtmlResponse('Hai eseguito troppi tentativi 🛑 <a href="' . $forumLoginUrl . '">Ora puoi solo eseguire login tramite il forum</a>', 429),
+    LOGIN_SUCCESS           => tliHtmlResponse("Bentornato " . strip_tags($username) . " 😊!", 200),
     default                 => null
 };
 
-tliResponse('Errore sul server (è colpa nostra, non tua) 🐙 Per favore, <a href="' . $forumLoginUrl . '">esegui login dal forum</a>', 500);
+tliHtmlResponse('Errore sul server (è colpa nostra, non tua) 🐙 Per favore, <a href="' . $forumLoginUrl . '">esegui login dal forum</a>', 500);
