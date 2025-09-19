@@ -33,9 +33,13 @@ $(document).on('click', '.tli-create-issue',  function(event) {
     let submitters = ISSUE_MODAL.find('.button-container');
     submitters.fadeOut(FADE_SPEED);
 
-    let loaderinoHtml   = ISSUE_MODAL.find('.tli-loaderino-container').html();
-    let responseTarget  = ISSUE_MODAL.find('.tli-response-target');
-    responseTarget.removeClass().addClass('alert alert-warning').append(loaderinoHtml);
+    let loaderinoHtml = ISSUE_MODAL.find('.tli-loaderino-container').html();
+
+    let responseTarget =
+        ISSUE_MODAL.find('.tli-response-target')
+            .removeClass('collapse alert-success alert-danger')
+            .addClass('alert-warning')
+            .html(loaderinoHtml);
 
     let postId      = clickedButton.data('post-id');
     let bugButton   = $('.tli-bug-button-' + postId);
@@ -47,7 +51,7 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
         .done( function(response) {
 
-            responseTarget.html("OK!").removeClass().addClass("alert-success");
+            responseTarget.html("OK!").addClass("alert-success");
 
             if (window.location.href == response) {
 
@@ -61,13 +65,13 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
         .fail( function(jqXHR, responseText) {
 
-            responseTarget.html(jqXHR.responseText).removeClass().addClass("alert-danger");
+            responseTarget.html(jqXHR.responseText).addClass("alert-danger");
             submitters.fadeIn(FADE_SPEED);
         })
 
         .always(function(){
 
-            responseTarget.addClass('alert');
+            responseTarget.removeClass('alert-warning');
             bugIcon.removeClass("fa-spin");
             bugButton.removeClass('tli-action-running');
         });

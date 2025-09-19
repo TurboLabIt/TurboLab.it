@@ -31,8 +31,7 @@
 }
 
 #tli-issue-modal .alert_close {
-    float: right;
-    margin: -7px -7px 0 0;
+    margin: -14px -7px 0 0;
     text-decoration: none;
     font-weight: bold;
     font-size: 18px;
