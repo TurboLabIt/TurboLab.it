@@ -61,9 +61,11 @@ class Issue
 
         if( count($bugByUser) > BugRepository::TIME_LIMIT_BUGS_NUM ) {
 
+            $lastIssueDate = end($bugByUser)->getCreatedAt();
+            $lastIssueDate->modify('+' . BugRepository::TIME_LIMIT_MINUTES . ' minutes');
             throw new TooManyRequestsHttpException(60 * BugRepository::TIME_LIMIT_MINUTES,
                 "Stai aprendo troppe issue (tu, oppure qualcuno con il tuo stesso indirizzo IP)! " .
-                "Per favore, attendi " . BugRepository::TIME_LIMIT_MINUTES . " minuti e poi riprova. Grazie!"
+                "Per favore, riprova dopo le ore " . $lastIssueDate->format('H:i:s') . ". Grazie!"
             );
         }
 
