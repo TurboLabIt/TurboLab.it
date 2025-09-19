@@ -47,8 +47,16 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
         .done( function(response) {
 
-            responseTarget.html("OK").removeClass().addClass("alert-success");
-            window.location = response;
+            responseTarget.html("OK!").removeClass().addClass("alert-success");
+
+            if (window.location.href == response) {
+
+                window.location.reload();
+
+            } else {
+
+                window.location.href = response;
+            }
         })
 
         .fail( function(jqXHR, responseText) {

@@ -7,6 +7,7 @@ use App\Entity\Cms\File;
 use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
+use DateTime;
 
 
 class VisitRepository extends BaseRepository
@@ -61,7 +62,7 @@ class VisitRepository extends BaseRepository
 
         return
             $this->createVisit($userEntity, $entity, $ipAddress)
-                ->setUpdatedAt(new \DateTime());
+                ->setUpdatedAt(new DateTime());
     }
 
 
@@ -79,5 +80,24 @@ class VisitRepository extends BaseRepository
         };
 
         return $visitEntity;
+    }
+
+
+    public function getByContentAndUser(?User $userEntity, Article|Tag|File $entity, ?DateTime $onlyIfAfter = null) : ?Visit
+    {
+        $qb =
+            $this->createQueryBuilder('t', 't.id')
+                ->andWhere('t.' . $entity->getClass() . '= :entity')
+                    ->setParameter('entity', $entity)
+                ->andWhere('t.user = :user')
+                    ->setParameter('user', $userEntity);
+
+        if( !empty($onlyIfAfter) ) {
+
+            $qb->andWhere('t.updatedAt >= :dateLimit')
+                ->setParameter('dateLimit', $onlyIfAfter);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

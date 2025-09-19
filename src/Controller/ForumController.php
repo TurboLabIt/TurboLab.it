@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Repository\Cms\VisitRepository;
 use App\Service\Issue;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +23,13 @@ class ForumController extends BaseController
         try {
             $this->loginRequired();
 
+            $author = $this->getCurrentUserAsAuthor();
+
             $newBug =
                 $issue
-                    ->rateLimiting($this->getCurrentUserAsAuthor(), $this->request->getClientIp() )
-                    ->createFromForumPostId($postId, $this->getCurrentUserAsAuthor(), $this->request->getClientIp() );
+                    ->readGuideRequired($author)
+                    ->rateLimiting($author, $this->request->getClientIp() )
+                    ->createFromForumPostId($postId, $author, $this->request->getClientIp() );
 
             $response = $issue->updatePost($newBug);
 
