@@ -33,20 +33,12 @@ class Visit
 
     public function isCountable() : bool
     {
-        $countableIpAddress =
-            filter_var(
-                $this->request->getClientIp(), FILTER_VALIDATE_IP,
-                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-            );
+        $ipAddress = $this->request->getClientIp();
 
-        if(
-            ( empty($countableIpAddress) || (new CrawlerDetect())->isCrawler() ) &&
-            !$this->isDevOrTest()
-        ) {
-            return false;
-        }
-
-        return true;
+        return
+            !empty($ipAddress) &&
+            $ipAddress != '127.0.0.1' &&
+            !(new CrawlerDetect())->isCrawler();
     }
 
 
