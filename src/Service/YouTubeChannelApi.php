@@ -32,7 +32,7 @@ class YouTubeChannelApi
     public function __construct(
         protected array $arrConfig, protected HttpClientInterface $httpClient,
         protected TagAwareCacheInterface $cache, protected ProjectDir $projectDir,
-        ParameterBagInterface $parameters
+        protected ParameterBagInterface $parameters
     ) {}
 
 
