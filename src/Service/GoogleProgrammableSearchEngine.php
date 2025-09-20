@@ -7,7 +7,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 /**
+ * 📚 https://console.cloud.google.com/apis/api/customsearch.googleapis.com/metrics?invt=AbeCrw&project=tli2-search-1736167497152
  * 📚 https://programmablesearchengine.google.com/controlpanel/overview?cx=c8985352856be0e00
+ *
+ * Custom Search JSON API provides 100 search queries per day for free
  */
 class GoogleProgrammableSearchEngine
 {
