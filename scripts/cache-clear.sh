@@ -25,6 +25,8 @@ if [ "$APP_ENV" == "dev" ]; then
   fxTitle "Removing yarn stuff..."
   rm -f ${PROJECT_DIR}yarn.lock
 
+  source "${WEBSTACKUP_SCRIPT_DIR}account/bashrc-dev-patch.sh"
+
   source ${SCRIPT_DIR}deploy_moment_030.sh
 fi
 
