@@ -5,11 +5,13 @@ use App\Exception\YouTubeException;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
+use TurboLabIt\BaseCommand\Traits\EnvTrait;
 
 
 /**
@@ -21,19 +23,31 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
  */
 class YouTubeChannelApi
 {
-    const int CACHE_MINUTES     = 14;
+    const int CACHE_MINUTES     = 17;
     const string API_ENDPOINT   = "https://youtube.googleapis.com/youtube/v3/";
+
+    use EnvTrait;
 
 
     public function __construct(
         protected array $arrConfig, protected HttpClientInterface $httpClient,
-        protected TagAwareCacheInterface $cache, protected ProjectDir $projectDir
+        protected TagAwareCacheInterface $cache, protected ProjectDir $projectDir,
+        ParameterBagInterface $parameters
     ) {}
 
 
     public function getLatestVideos(int $results = 10) : array
     {
         $cacheKey = "youtube_latest-videos_" . $this->arrConfig["channelId"]  ."_" . $results;
+
+        if( $this->isNotProd() ) {
+
+            $storedResponse = $this->getStoredResponse($cacheKey, 48);
+            if( !empty($storedResponse) ) {
+                return $storedResponse;
+            }
+        }
+
         return
             $this->cache->get($cacheKey, function (ItemInterface $cacheItem) use($results, $cacheKey) {
 
@@ -131,7 +145,7 @@ class YouTubeChannelApi
     }
 
 
-    protected function getStoredResponse(string $storeFileName) : ?array
+    protected function getStoredResponse(string $storeFileName, ?int $maxHoursLife = null) : ?array
     {
         $fullFileName = $this->projectDir->getVarDirFromFilePath("$storeFileName.json");
 
@@ -139,9 +153,19 @@ class YouTubeChannelApi
             return null;
         }
 
+        if( !empty($maxHoursLife) ) {
+
+            $fileTimeModification = filemtime($fullFileName);
+            $ageInSeconds = time() - $fileTimeModification;
+
+            if ($ageInSeconds > $maxHoursLife * 3600) { // 5 hours in seconds
+                return null;
+            }
+        }
+
         $txtJsonResponse = file_get_contents($fullFileName);
 
-        if( empty($fullFileName) ) {
+        if( empty($txtJsonResponse) ) {
             return null;
         }
 
