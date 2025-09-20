@@ -8,7 +8,7 @@ if [[ $- == *i* && -n "$SSH_CONNECTION" ]]; then
         # very dark red
         fxSetBackgroundColor "#F2F2F2" "#240000"
         ;;
-      next)
+      next-tli)
         # very dark orange
         fxSetBackgroundColor "#F2F2F2" "#241600"
         ;;
