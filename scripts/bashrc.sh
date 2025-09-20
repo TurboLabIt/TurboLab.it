@@ -6,7 +6,7 @@ if [[ $- == *i* && -n "$SSH_CONNECTION" ]]; then
     source "/usr/local/turbolab.it/bash-fx/scripts/colors.sh"
 
     case "$(hostname -s)" in
-      turbolab.it)
+      thundercracker)
         # very dark red
         fxSetBackgroundColor "#F2F2F2" "#240000"
         ;;
