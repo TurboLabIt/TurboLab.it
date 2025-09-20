@@ -141,8 +141,7 @@ class Issue
 
         try {
 
-            $text = $response->getContent();
-            return $text;
+            return $response->getContent();
 
         } catch(\Exception $ex) {
 

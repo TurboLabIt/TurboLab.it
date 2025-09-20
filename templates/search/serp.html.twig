@@ -48,9 +48,15 @@
 
                         <div class="post-text mt-30">
 
-                            <p><small><i class="fa-solid fa-circle-info"></i> Risultati forniti da Google</small></p>
+                            {% if not googleError %}
+                                <p><small><i class="fa-solid fa-circle-info"></i> Risultati forniti da Google</small></p>
+                            {% endif %}
 
-                            {% if GoogleResults.items ?? null is not empty %}
+                            {% if googleError %}
+
+                                {# do nothing, show an error below our local results #}
+
+                            {% elseif GoogleResults.items ?? null is not empty %}
 
                                 {% for Item in GoogleResults.items %}
 
@@ -68,7 +74,11 @@
                             {% endif %}
 
 
-                            <hr>
+                            {% if not googleError %}
+                                <hr>
+                            {% endif %}
+
+
                             <p><small><i class="fa-solid fa-circle-info"></i> Articoli che contengono le parole cercate nel titolo</small></p>
 
                             {% if LocalResults is not empty %}
@@ -84,6 +94,11 @@
 
                                 <p>{{ noResultsMessage }}</p>
 
+                            {% endif %}
+
+
+                            {% if googleError %}
+                                <div class="alert alert-danger">{{ googleError|raw }}</div>
                             {% endif %}
 
                             <p>

@@ -66,6 +66,15 @@ class SearchController extends BaseController
 
     protected function buildHtml(GoogleProgrammableSearchEngine $searchEngine, string $termToSearch) : string|Response
     {
+        try {
+
+            $googleResults = $searchEngine->query($termToSearch);
+
+        } catch(\Exception $ex) {
+
+            $googleError = $ex->getMessage();
+        }
+
         return
             $this->twig->render('search/serp.html.twig', [
                 'metaTitle'         => "Risultati della ricerca per: $termToSearch",
@@ -74,7 +83,8 @@ class SearchController extends BaseController
                 'FrontendHelper'    => $this->frontendHelper,
                 'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()->getItems(4),
                 'termToSearch'      => $termToSearch,
-                'GoogleResults'     => $searchEngine->query($termToSearch),
+                'GoogleResults'     => $googleResults ?? null,
+                'googleError'       => $googleError ?? null,
                 'LocalResults'      => $this->factory->createArticleCollection()->loadSerp($termToSearch),
                 'noResultsMessage'  => static::NO_RESULTS_MESSAGE
             ]);

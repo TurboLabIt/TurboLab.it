@@ -1,8 +1,7 @@
 <?php
 namespace App\Service;
 
-use Exception;
-use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -24,43 +23,48 @@ class GoogleProgrammableSearchEngine
     {
         $url = static::ENDPOINT . '/customsearch/v1';
 
-        return
-            $this->cache->get("{$url}_$term", function(ItemInterface $cacheItem) use($url, $term) {
+        $arrExcludeSlugs = [
+            '/utenti/*', '/ajax/*', '/editor/*', '/feed/*', '/scarica/*', '/home/*', '/immagini/*', '/calendario/*',
+            '/news/*', '/newsletter/*', '/viste/*', '/forum/*', '/newsletter-turbolab.it-1349/*'
+        ];
 
-                $cacheItem->expiresAfter(3600 * 48); // 2 days
-                $cacheItem->tag(["search"]);
+        $hqExcludeString = '';
+        foreach($arrExcludeSlugs as $excludePattern) {
+            $hqExcludeString .= "-site:turbolab.it$excludePattern ";
+        }
 
-                $arrExcludeSlugs = [
-                    '/utenti/*', '/ajax/*', '/editor/*', '/feed/*', '/scarica/*', '/home/*', '/immagini/*', '/calendario/*',
-                    '/news/*', '/newsletter/*', '/viste/*', '/forum/*', '/newsletter-turbolab.it-1349/*'
-                ];
+        $response =
+            $this->httpClient->request('GET', $url, [
+                'query' => [
+                    'key'   => $this->arrConfig['apiKey'],
+                    'cx'    => $this->arrConfig['engineId'],
+                    'gl'    => 'it',
+                    'hl'    => 'it',
+                    'lr'    => 'lang_it',
+                    // https://gemini.google.com/app/6a08800bf7117e69
+                    'hq'    => trim($hqExcludeString),
+                    'num'   => 10, // max 10,
+                    'q'     => trim($term)
+                ]
+            ]);
 
-                $hqExcludeString = '';
-                foreach($arrExcludeSlugs as $excludePattern) {
-                    $hqExcludeString .= "-site:turbolab.it$excludePattern ";
-                }
 
-                try {
-                    $response =
-                        $this->httpClient->request('GET', $url, [
-                            'query' => [
-                                'key'   => $this->arrConfig['apiKey'],
-                                'cx'    => $this->arrConfig['engineId'],
-                                'gl'    => 'it',
-                                'hl'    => 'it',
-                                'lr'    => 'lang_it',
-                                // https://gemini.google.com/app/6a08800bf7117e69
-                                'hq'    => trim($hqExcludeString),
-                                'num'   => 10, // max 10,
-                                'q'     => trim($term)
-                            ]
-                        ]);
+        try {
 
-                    return $response->toArray();
+            return $response->toArray();
 
-                } catch(Exception) {
-                    return null;
-                }
-            });
+        } catch(\Exception $ex) {
+
+            $statusCode = $response->getStatusCode();
+            $arrResponse = $response->toArray(false);
+
+            $errorMessage = trim('
+                Si è verificato un errore con i risultati di ricerca forniti da Google.
+                Per favore, apri una nuova discussione sul nostro forum per segnalare il problema.<br><br>
+                Dettagli dell\'errore: 🦠 ' . ($arrResponse["error"]["message"] ?? 'Nessuno')
+            );
+
+            throw new HttpException($statusCode, $errorMessage);
+        }
     }
 }
