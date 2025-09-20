@@ -6,6 +6,9 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
+/**
+ * 📚 https://programmablesearchengine.google.com/controlpanel/overview?cx=c8985352856be0e00
+ */
 class GoogleProgrammableSearchEngine
 {
     const string ENDPOINT       ='https://customsearch.googleapis.com';

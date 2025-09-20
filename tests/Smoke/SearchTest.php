@@ -8,6 +8,7 @@ use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +37,7 @@ class SearchTest extends BaseT
         yield from [
             //['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
             ['/cerca/windows su usb', 'installare Windows 11 o Windows 10 su chiavetta USB'],
-            //['/cerca/siti torrent', 'Siti BitTorrent italiani']
+            ['/cerca/siti torrent', 'Siti BitTorrent italiani']
         ];
     }
 
@@ -45,6 +46,7 @@ class SearchTest extends BaseT
     public function testSearch(string $urlToFetch, string $mustContain)
     {
         $crawler = $this->fetchDomNode($urlToFetch);
+        $this->assertNoGoogleError($crawler);
 
         foreach(['.google-result' => 5, '.local-result' => 0] as $container => $minResults) {
 
@@ -64,6 +66,13 @@ class SearchTest extends BaseT
 
         $html = $crawler->html();
         $this->assertStringNotContainsString(SearchController::NO_RESULTS_MESSAGE, $html, "Failing URL: $urlToFetch");
+    }
+
+
+    protected function assertNoGoogleError(Crawler $crawler)
+    {
+        $results = $crawler->filter('.alert-danger');
+        $this->assertEquals(0, $results->count(), 'Google is returning an error!');
     }
 
 
