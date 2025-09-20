@@ -17,21 +17,41 @@ jQuery(document).on('submit', 'form.tli-user-login', function(event) {
     event.preventDefault();
 
     let responseTarget = jQuery(this).find('.tli-login-response');
-    responseTarget.html('');
+    responseTarget
+        .removeClass('alert-danger')
+        .addClass("collapse")
+        .html('');
 
     let loaderino = jQuery(this).find('.tli-loaderino');
-    loaderino.show();
+    loaderino.removeClass('collapse');
 
     $.post( jQuery(this).attr('action'), jQuery(this).serialize() )
 
         .done( function(response) {
+
+            responseTarget
+                .removeClass('collapse')
+                .addClass('alert-success')
+                .html(response || 'OK!')
+                .show();
+
             location.reload(true);
         })
 
         .fail( function(response) {
 
-            responseTarget.html(response);
-            responseTarget.show();
-            loaderino.hide();
-        });
+            let fallbackMessage =
+                '🛑 Si è verificato un errore critico. Per favore, ' +
+                '<a href="/forum">esegui login tramite il forum</a>';
+
+            responseTarget
+                .removeClass('collapse')
+                .addClass('alert-danger')
+                .html(response.responseText || fallbackMessage)
+                .show();
+        })
+
+        .always(function(){
+            loaderino.addClass('collapse');
+        })
 });
