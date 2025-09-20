@@ -3,6 +3,8 @@
 # background color per-host
 if [[ $- == *i* && -n "$SSH_CONNECTION" ]]; then
 
+    source "/usr/local/turbolab.it/bash-fx/scripts/colors.sh"
+
     case "$(hostname -s)" in
       turbolab.it)
         # very dark red
