@@ -25,7 +25,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
             $tliPurifierConfig = \HTMLPurifier_Config::createDefault();
             $tliPurifierConfig->set('Core.Encoding', 'UTF-8');
-            $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,strike,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
+            $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,s,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
 
             // When enabled, HTML Purifier will treat any elements that contain only non-breaking spaces as well as
             //   regular whitespace as empty, and remove them when %AutoForamt.RemoveEmpty is enabled.
