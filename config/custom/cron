@@ -38,6 +38,9 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## mid-night and mid-day: run the cleaner (also: clear "controller" (app) cache only)
 1 0,12 * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
 
+## every night: total meilisearch reindex
+0 2 * * * root bash ${SCRIPT_DIR}reindex.sh >> ${LOG_PATH}reindex.sh.log 2>&1
+
 ## every night: sitemap generator
 0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
 

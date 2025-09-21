@@ -4,7 +4,7 @@
 
     {{ parent() }}
     <link rel="preload" href="{{ asset('build/search.css') }}"
-        as="style" onload="this.onload=null;this.rel='stylesheet'">
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
 
 {% endblock %}
 
@@ -12,112 +12,35 @@
 {% block bodyMainContent %}
 
     <!-- SERP bodyMainContent START -->
-    <section class="post-layout-1-area post-layout-3-area">
-        <div class="container">
-
-            <div class="row">
-
-                <div class="col-lg-12">
-                    <div class="about-author-content">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
-                                <li class="breadcrumb-item">Risultati della ricerca</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-
-                <article class="col-lg-8">
-
-                    <div class="post-layout-top-content post-layout-top-content-3">
-
-                        <div class="post-content">
-                            <h1 class="title">{{ metaTitle|raw }}</h1>
-                        </div>
-
-                        <form action="{{ path('app_search') }}" class="submit-to-path" method="GET">
-                            <div class="form-group">
-                                <input type="text" class="form-control submit-to-path" name="query" required
-                                       value="{{ (termToSearch ?? null)|raw }}" style="margin-bottom: 7px;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa-solid fa-magnifying-glass"></i> Cerca su TurboLab.it
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="post-text mt-30">
-
-                            {% if not googleError %}
-                                <p><small><i class="fa-solid fa-circle-info"></i> Risultati forniti da Google</small></p>
-                            {% endif %}
-
-                            {% if googleError %}
-
-                                {# do nothing, show an error below our local results #}
-
-                            {% elseif GoogleResults.items ?? null is not empty %}
-
-                                {% for Item in GoogleResults.items %}
-
-                                    <div class="serp-result google-result">
-                                        <h4><a href="{{ Item.link }}">{{ Item.htmlTitle|replace({'[TurboLab.it]': ''})|raw }}</a></h4>
-                                        <p><a href="{{ Item.link }}">{{ Item.htmlSnippet|raw }}</a></p>
-                                    </div>
-
-                                {% endfor %}
-
-                            {% else %}
-
-                                <p>{{ noResultsMessage }}</p>
-
-                            {% endif %}
-
-
-                            {% if not googleError %}
-                                <hr>
-                            {% endif %}
-
-
-                            <p><small><i class="fa-solid fa-circle-info"></i> Articoli che contengono le parole cercate nel titolo</small></p>
-
-                            {% if LocalResults is not empty %}
-
-                                {% for Article in LocalResults %}
-                                    <div class="serp-result local-result">
-                                        <h4><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
-                                        <p><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
-                                    </div>
-                                {% endfor %}
-
-                            {% else %}
-
-                                <p>{{ noResultsMessage }}</p>
-
-                            {% endif %}
-
-
-                            {% if googleError %}
-                                <div class="alert alert-danger">{{ googleError|raw }}</div>
-                            {% endif %}
-
-                            <p>
-                                <i class="fa-solid fa-lightbulb fa-fade" style="color: #FFD43B;"></i>
-                                Non hai trovato quello che cerchi? Prova a effettuare una nuova ricerca usando
-                                altre parole oppure <a href="/forum">chiedi sul forum</a>.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-                {% include 'parts/column-articles.html.twig' %}
-
+    <div class="search-header">
+        <div id="tli-search-container" class="container" data-url="{{ path('app_search') }}">
+            <h1 class="title">{{ metaTitle|raw }}</h1>
+            <div class="input-group">
+                <input type="text" id="tli-search-input" class="form-control form-control-lg" placeholder="windows 11 usb"
+                       value="{{ (termToSearch ?? null)|raw }}" required minlength="3">
+                <button class="btn btn-light btn-lg" type="button" id="tli-search-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </button>
             </div>
+            <div id="tli-search-too-short-error" class="ml-5 mt-2">Digita almeno 3 caratteri, poi premi &quot;Invio&quot;</div>
         </div>
-    </section>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <i class="tli-loaderino fa-solid fa-spinner fa-spin-pulse fa-2xl mb-5 collapse"></i>
+
+        <div id="tli-search-results" data-url="{{ path('app_search_ajax') }}"></div>
+
+        <div id="tli-search-closing-message" class="article-abstract mb-3 collapse">
+            <i class="fa-solid fa-lightbulb fa-fade" style="color: #FFD43B;"></i>
+            Non trovi quello che cerchi? Prova a effettuare una nuova ricerca usando
+            altre parole oppure <a href="/forum">chiedi sul forum</a>.
+        </div>
+    </div>
     <!-- SERP bodyMainContent END -->
 
 {% endblock %}

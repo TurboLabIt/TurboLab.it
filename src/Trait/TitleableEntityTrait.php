@@ -3,6 +3,7 @@ namespace App\Trait;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 
@@ -14,6 +15,7 @@ trait TitleableEntityTrait
     #[NotBlank]
     protected ?string $title = null;
 
+    #[Groups(['searchable'])]
     public function getTitle() : ?string { return $this->title; }
 
 

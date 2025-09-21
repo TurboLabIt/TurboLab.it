@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Service\GoogleProgrammableSearchEngine;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,11 +13,10 @@ class SearchController extends BaseController
 {
     const int CACHE_DEFAULT_EXPIRY  = 60 * 90; // 90 minutes
     const string SECTION_SLUG       = "cerca";
-    const string NO_RESULTS_MESSAGE = "Nessun risultato.";
 
 
     #[Route('/' . self::SECTION_SLUG . '/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search')]
-    public function search(GoogleProgrammableSearchEngine $searchEngine, string $termToSearch = '') : Response
+    public function search(string $termToSearch = '') : Response
     {
         // legacy redirect
         $legacyQueryStringParam = $this->request->get('query') ?? '';
@@ -28,65 +26,58 @@ class SearchController extends BaseController
             return $this->redirectToRoute('app_search', ['termToSearch' => $legacyQueryStringParam], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $trimmedTermToSearch = trim($termToSearch);
-        $trimmedTermToSearch = strip_tags($trimmedTermToSearch);
-        $trimmedTermToSearch = trim($trimmedTermToSearch);
-        $trimmedTermToSearch = htmlspecialchars($trimmedTermToSearch);
+        $cleanTermToSearch = htmlspecialchars($termToSearch, ENT_QUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED | ENT_HTML5, 'UTF-8');
 
-        if( empty($trimmedTermToSearch) ) {
-            return $this->redirectToRoute('app_home', [],Response::HTTP_MOVED_PERMANENTLY);
+        return
+            $this->render('search/serp.html.twig', [
+                'metaTitle'         => empty($cleanTermToSearch) ? "Cerca su TurboLab.it" : "Risultati della ricerca per: $cleanTermToSearch",
+                'metaRobots'        => 'noindex,follow',
+                'activeMenu'        => null,
+                'FrontendHelper'    => $this->frontendHelper,
+                'termToSearch'      => $cleanTermToSearch,
+            ]);
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/ajax/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax', priority: 1)]
+    public function performSearch(string $termToSearch = '') : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            if( !$this->isCachable() ) {
+
+                $buildHtmlResult = $this->buildHtml($termToSearch);
+
+            } else {
+
+                $buildHtmlResult =
+                    $this->cache->get("search_$termToSearch", function(ItemInterface $cacheItem) use($termToSearch) {
+
+                        $buildHtmlResult = $this->buildHtml($termToSearch);
+
+                        $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                        $cacheItem->tag(["search"]);
+
+                        return $buildHtmlResult;
+                    });
+            }
+
+        } catch(\Exception $ex) {
+
+            return $this->textErrorResponse($ex);
         }
-
-        /*if( $termToSearch != $trimmedTermToSearch ){
-            return $this->redirectToRoute('app_search', ['termToSearch' => $trimmedTermToSearch], Response::HTTP_MOVED_PERMANENTLY);
-        }*/
-
-
-        if( !$this->isCachable() ) {
-
-            $buildHtmlResult = $this->buildHtml($searchEngine, $trimmedTermToSearch);
-            return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-        }
-
-        $buildHtmlResult =
-            $this->cache->get("search_$trimmedTermToSearch", function(ItemInterface $cacheItem)
-            use($searchEngine, $trimmedTermToSearch) {
-
-                $buildHtmlResult = $this->buildHtml($searchEngine, $trimmedTermToSearch);
-
-                $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                $cacheItem->tag(["search"]);
-
-                return $buildHtmlResult;
-            });
 
         return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
     }
 
 
-    protected function buildHtml(GoogleProgrammableSearchEngine $searchEngine, string $termToSearch) : string|Response
+    protected function buildHtml(string $termToSearch) : string|Response
     {
-        try {
-
-            $googleResults = $searchEngine->query($termToSearch);
-
-        } catch(\Exception $ex) {
-
-            $googleError = $ex->getMessage();
-        }
-
         return
-            $this->twig->render('search/serp.html.twig', [
-                'metaTitle'         => "Risultati della ricerca per: $termToSearch",
-                'metaRobots'        => 'noindex,nofollow',
-                'activeMenu'        => null,
-                'FrontendHelper'    => $this->frontendHelper,
-                'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()->getItems(4),
-                'termToSearch'      => $termToSearch,
-                'GoogleResults'     => $googleResults ?? null,
-                'googleError'       => $googleError ?? null,
-                'LocalResults'      => $this->factory->createArticleCollection()->loadSerp($termToSearch),
-                'noResultsMessage'  => static::NO_RESULTS_MESSAGE
+            $this->twig->render('search/results.html.twig', [
+                'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch)
             ]);
     }
 }

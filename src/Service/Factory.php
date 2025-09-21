@@ -31,6 +31,7 @@ use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Meilisearch\Bundle\SearchService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -51,6 +52,7 @@ class Factory
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir, protected Security $security,
+        protected SearchService $searchService,
 
         protected StopWords $stopWords,
         protected UrlGeneratorInterface $urlGenerator,
@@ -145,7 +147,7 @@ class Factory
 
     public function getArticleUrlGenerator() : ArticleUrlGenerator { return $this->articleUrlGenerator; }
 
-    public function createArticleCollection() : ArticleCollection { return new ArticleCollection($this); }
+    public function createArticleCollection() : ArticleCollection { return new ArticleCollection($this, $this->searchService); }
 
     public function createArticleAuthorCollection(null|UserEntity|UserService $author) : ArticleAuthorCollection
     {

@@ -151,25 +151,10 @@
                                         </ul>
                                     </li>
 
-                                    <li class="has-sub">
-                                        <a class="{{ activeMenu == 'cerca' ? 'active' : '' }} disabled-link" href="#">
-                                            <i class="fa-solid fa-magnifying-glass" style="color: #e66100;"></i>
-                                            Cerca <i class="fa-solid fa-angle-down"></i>
+                                    <li>
+                                        <a class="{{ activeMenu == 'cerca' ? 'active disabled-link' : '' }} " href="{{ path('app_search') }}">
+                                            <i class="fa-solid fa-magnifying-glass" style="color: #e66100;"></i> Cerca
                                         </a>
-                                        <ul id="tli-nav-search">
-                                            <li>
-                                                <form action="{{ path('app_search') }}" class="submit-to-path" method="GET">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control submit-to-path" name="query" required
-                                                               placeholder="windows su usb" value="{{ (termToSearch ?? null)|raw }}"
-                                                               maxlength="255" style="margin-bottom: 7px;">
-                                                        <button type="submit" class="btn btn-primary">
-                                                            <i class="fa-solid fa-magnifying-glass"></i> Cerca su TurboLab.it
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </li>
-                                        </ul>
                                     </li>
 
                                     <li>

@@ -364,7 +364,7 @@ class ArticleRepository extends BaseRepository
             SELECT id FROM " . $this->getTableName() . "
             WHERE
               published_at BETWEEN DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() AND
-              title NOT LIKE 'Questa settimana su TLI%'
+              title NOT LIKE '" . Newsletter::TITLE . "%'
             ";
 
         foreach(Newsletter::FORBIDDEN_WORDS as $word) {
@@ -662,6 +662,7 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    #[\Deprecated(message: "No longer in use - https://github.com/TurboLabIt/TurboLab.it/issues/73")]
     public function getSerp(string $termToSearch) : array
     {
         $termToSearch   = preg_replace('/[^a-z0-9_ ]/i', '', $termToSearch);

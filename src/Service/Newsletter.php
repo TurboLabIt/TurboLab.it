@@ -26,6 +26,7 @@ use Twig\Environment;
 class Newsletter extends Mailer
 {
     const array FORBIDDEN_WORDS = ['example.com', 'casino', 'casinò', 'scommesse', 'betting'];
+    const string TITLE = "Questa settimana su TLI";
 
     protected string $newsletterOnSiteUrl;
     protected string $privacyUrl;
@@ -61,7 +62,7 @@ class Newsletter extends Mailer
                 (new DateTime())->modify('+1 day'), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
             );
 
-        $this->newsletterName = "Questa settimana su TLI ($newsletterDate)";
+        $this->newsletterName = static::TITLE . " ($newsletterDate)";
 
         parent::__construct(
             array_replace_recursive($arrConfig, $arrExtraConfig),

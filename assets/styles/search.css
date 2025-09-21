@@ -1,7 +1,39 @@
-.serp-result h4 {
-    margin-bottom: 0px;
+.search-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    color: #333;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef;
 }
 
-.serp-result h4:hover {
-    color: rgba(13,110,253,1);
+.article-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+}
+
+.article-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.article-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    .article-image {
+        width: 200px;
+        height: 150px;
+    }
+}
+
+.article-abstract {
+    color: #000;
+    font-size: 20px;
+    line-height: 1.5;
+    margin-top: 0.5rem;
 }

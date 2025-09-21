@@ -14,5 +14,6 @@ trait PublishingStatusesTrait
 
     const array PUBLISHING_STATUSES_AUTHOR_SETTABLE = [0, 3];
     const array PUBLISHING_STATUSES_LISTABLE        = [0, 3, 5];
+    const array PUBLISHING_STATUSES_INDEXABLE       = [0, 3, 5];
     const array PUBLISHING_STATUSES_VISIBLE         = [3, 5];
 }

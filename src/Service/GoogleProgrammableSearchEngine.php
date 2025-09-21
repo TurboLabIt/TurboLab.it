@@ -12,9 +12,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *
  * Custom Search JSON API provides 100 search queries per day for free
  */
+#[\Deprecated(message: "No longer in use - https://github.com/TurboLabIt/TurboLab.it/issues/73")]
 class GoogleProgrammableSearchEngine
 {
-    const string ENDPOINT       ='https://customsearch.googleapis.com';
+    const string ENDPOINT       = 'https://customsearch.googleapis.com';
     const string SITE_RESULTS   = 'website';
     const string FORUM_RESULTS  = 'forum';
 

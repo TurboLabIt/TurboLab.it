@@ -18,4 +18,5 @@ return [
     TurboLabIt\MessengersBundle\TurboLabItMessengersBundle::class => ['all' => true],
     TurboLabIt\PaginatorBundle\TurboLabItPaginatorBundle::class => ['all' => true],
     TurboLabIt\ServiceEntityPlusBundle\TurboLabItServiceEntityPlusBundle::class => ['all' => true],
+    Meilisearch\Bundle\MeilisearchBundle::class => ['all' => true],
 ];

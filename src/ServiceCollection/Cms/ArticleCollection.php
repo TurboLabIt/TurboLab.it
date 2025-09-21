@@ -1,15 +1,24 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
+use App\Serializer\ArticleSearchNormalizer;
 use App\Service\Cms\Article;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
+use App\Service\Factory;
 use DateInvalidOperationException;
 use DateTime;
+use Meilisearch\Bundle\SearchService;
 
 
 class ArticleCollection extends BaseArticleCollection
 {
+    public function __construct(Factory $factory, protected SearchService $searchService)
+    {
+        parent::__construct($factory);
+    }
+
+
     public function loadAllPublished() : static
     {
         $arrArticles = $this->getRepository()->findAllPublished();
@@ -169,8 +178,22 @@ class ArticleCollection extends BaseArticleCollection
 
     public function loadSerp(string $termToSearch) : static
     {
-        $termToSearchNoStopWords = $this->factory->getStopWords()->removeFromSting($termToSearch);
-        $arrArticles = $this->getRepository()->getSerp($termToSearchNoStopWords);
+        $termToSearchNormalized     = ArticleSearchNormalizer::normalizeForIndexing($termToSearch);
+        $termToSearchNoStopWords    = $this->factory->getStopWords()->removeFromSting($termToSearchNormalized);
+
+        $arrArticles =
+            $this->searchService->search(
+                $this->factory->getEntityManager(), static::ENTITY_CLASS, $termToSearchNoStopWords
+            );
+
+        // we could setEntities($arrArticles) directly...
+        // ... but then there would be no tags loaded => n+1 queries to generate the URLs
+        $arrIds = [];
+        foreach($arrArticles as $article) {
+            $arrIds[] = $article->getId();
+        }
+
+        $arrArticles = $this->getRepository()->getByIdComplete($arrIds);
         return $this->setEntities($arrArticles);
     }
 

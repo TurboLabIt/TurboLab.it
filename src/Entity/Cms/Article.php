@@ -1,7 +1,9 @@
 <?php
 namespace App\Entity\Cms;
 
+use App\Service\Cms\Tag as TagService;
 use App\Repository\Cms\ArticleRepository;
+use App\Service\Newsletter;
 use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;
 use App\Trait\ArticleFormatsTrait;
@@ -101,6 +103,33 @@ class Article extends BaseCmsEntity
     {
         $this->spotlight = $spotlight;
         return $this;
+    }
+
+
+    public function isNewsletter() : bool { return stripos($this->getTitle(), Newsletter::TITLE) !== false; }
+
+
+    public function isIndexable() : bool
+    {
+        if(
+            !in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_INDEXABLE) ||
+            $this->isNewsletter()
+        ) {
+            return false;
+        }
+
+        $tags = $this->getTags();
+        foreach($tags as $junction) {
+
+            if(
+                $junction->getTag()->getId() == TagService::ID_SPONSOR &&
+                $this->getFormat() == static::FORMAT_NEWS
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
