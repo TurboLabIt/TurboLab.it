@@ -32,10 +32,7 @@ Al lancio di TLI 2.0, eravamo partiti con [Programmable Search Engine](https://p
 di Google, modalità "Programmatic Access" (Custom Search JSON API),
 integrato tramite [Service/GoogleProgrammableSearchEngine.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/GoogleProgrammableSearchEngine.php).
 
-La ricerca ha però smesso di funzionare praticamente subito (#73) a causa del superamento della quota
-
-![image](https://i.postimg.cc/FsDbHCPt/sshot-1758487506.png)
-
-[Il problema è che](https://developers.google.com/custom-search/v1/overview):
+La ricerca ha però smesso di funzionare praticamente subito ([🪲 #73](https://github.com/TurboLabIt/TurboLab.it/issues/73))
+a causa del superamento della quota. [Il problema è che](https://developers.google.com/custom-search/v1/overview):
 
 > Custom Search JSON API provides 100 search queries per day for free. If you need more, you may sign up for billing in the API Console. Additional requests cost $5 per 1000 queries, up to 10k queries per day.
