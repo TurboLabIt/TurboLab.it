@@ -3,10 +3,10 @@
     <div class="card article-card">
         <div class="card-body">
             <div class="row g-3">
-                {% if Article.spotlightUrl('min') is not empty %}
+                {% if Article.spotlightUrl('med') is not empty %}
                     <div class="col-12 col-md-auto order-md-2">
                         <a href="{{ Article.url }}">
-                            <img src="{{ Article.spotlightUrl('min') }}"
+                            <img src="{{ Article.spotlightUrl('med') }}"
                                  alt="Copertina" class="article-image rounded" loading="lazy">
                         </a>
                     </div>
