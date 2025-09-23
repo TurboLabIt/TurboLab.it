@@ -6,6 +6,7 @@ use App\Repository\PhpBB\ForumRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
+use TurboLabIt\BaseCommand\Traits\EnvTrait;
 
 
 class ServerInfo
@@ -17,6 +18,7 @@ class ServerInfo
     protected ?array $arrRamInfo    = null;
     protected ?array $arrPhpBBInfo  = null;
 
+    use EnvTrait;
 
     public function __construct(
         protected ProjectDir $projectDir, protected EntityManagerInterface $em,
@@ -42,7 +44,7 @@ class ServerInfo
             'Capacità disco'                => $this->getDiskCapacity(),
             'Spazio su disco disp.'         => $this->getDiskFreeSpace(),
             'Versione sito (git commit)'    => $this->getGitCommit(),
-            'Ambiente'                      => $this->parameters->get("kernel.environment"),
+            'Ambiente'                      => $this->getEnv(),
             'Versione phpBB'                => $this->getPhpBBVersion(),
             'Versione Tapatalk'             => $this->getTapatalkVersion(),
         ];

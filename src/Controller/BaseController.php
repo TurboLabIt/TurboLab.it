@@ -13,12 +13,12 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use TurboLabIt\BaseCommand\Traits\EnvTrait;
 use Twig\Environment;
 
 
@@ -32,11 +32,12 @@ abstract class BaseController extends AbstractController
     protected bool $cacheIsDisabled = false;
     protected Request $request;
 
+    use EnvTrait;
 
     public function __construct(
         protected Factory $factory, protected Paginator $paginator,
         RequestStack $requestStack, protected TagAwareCacheInterface $cache,
-        protected ParameterBagInterface $parameterBag, protected FrontendHelper $frontendHelper,
+        protected FrontendHelper $frontendHelper,
         protected Environment $twig, protected CsrfTokenManagerInterface $csrfTokenManager
     )
     {
@@ -114,8 +115,7 @@ abstract class BaseController extends AbstractController
             return true;
         }
 
-        $currentEnv = $this->parameterBag->get("kernel.environment");
-        if( in_array($currentEnv, ["dev", "test"]) ) {
+        if( $this->isDevOrTest() ) {
             return false;
         }
 
@@ -133,6 +133,21 @@ abstract class BaseController extends AbstractController
 
     protected function ajaxOnly() : void
     {
+        if( $this->isDevOrTest() ) {
+            return;
+        }
+
+
+        $authHeader = $this->request->headers->get('Authorization');
+        if(
+            $authHeader && str_starts_with($authHeader, 'Basic ') &&
+            $this->request->getUser() === $this->getParameter('bypass_ajax_only_check_token') &&
+            $this->request->getPassword() === $this->getParameter('bypass_ajax_only_check_token')
+        ) {
+            return;
+        }
+
+
         if( !$this->request->isXmlHttpRequest() ) {
             throw new BadRequestException('This page can only be requested via AJAX');
         }

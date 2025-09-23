@@ -13,17 +13,21 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TurboLabIt\BaseCommand\Service\BashFx;
+use TurboLabIt\BaseCommand\Traits\EnvTrait;
 
 
 class CacheWarmer implements CacheWarmerInterface
 {
     const string CLI_COMMAND_NAME = "🔥 TLI Cache Warming";
+
     protected ?BashFx $bashFx = null;
     protected array $arrRequestedUrls = [];
 
+    use EnvTrait;
+
 
     public function __construct(
-        protected ParameterBagInterface $parameterBag, protected TagAwareCacheInterface $cachePool,
+        protected ParameterBagInterface $parameters, protected TagAwareCacheInterface $cachePool,
         protected UrlGeneratorInterface $urlGenerator, protected HttpClientInterface $httpClient,
         protected TagCollection $tagCollection, protected ArticleCollection $articleCollection,
     ) {}
@@ -37,10 +41,9 @@ class CacheWarmer implements CacheWarmerInterface
             $this->bashFx->setIo( new ArgvInput(), new ConsoleOutput());
         }
 
-        $currentEnv = $this->parameterBag->get("kernel.environment");
-        if( in_array($currentEnv, ["dev"]) ) {
+        if( $this->isDev() ) {
 
-            $this->bashFx?->fxOK(static::CLI_COMMAND_NAME . " skipped on $currentEnv");
+            $this->bashFx?->fxOK(static::CLI_COMMAND_NAME . " skipped in ##" . $this->getEnv() . "##");
             return [];
         }
 

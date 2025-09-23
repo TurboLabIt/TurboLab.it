@@ -2,14 +2,12 @@
 namespace App\Controller;
 
 use App\Exception\UserNotFoundException;
-use App\Service\Cms\Article;
 use App\Service\Cms\UrlGenerator;
 use App\Service\FrontendHelper;
 use App\Service\Newsletter as NewsletterService;
 use App\Service\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -48,9 +46,7 @@ class NewsletterController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/anteprima', name: 'app_newsletter_preview')]
-    public function preview(
-        NewsletterService $newsletter, User $currentUser, ParameterBagInterface $parameters
-    ) : Response
+    public function preview(NewsletterService $newsletter, User $currentUser) : Response
     {
         $countArticles =
             $newsletter
@@ -58,12 +54,12 @@ class NewsletterController extends BaseController
                 ->loadRecipients()
                 ->countArticles();
 
-        if( $countArticles == 0 && $parameters->get('kernel.environment') != 'prod' ) {
+        if( $countArticles == 0 && $this->isNotProd() ) {
             $newsletter->loadTestArticles();
         }
 
         $countTopics = $newsletter->countTopics();
-        if( $countTopics == 0 && $parameters->get('kernel.environment') != 'prod' ) {
+        if( $countTopics == 0 && $this->isNotProd() ) {
             $newsletter->loadTestTopics();
         }
 
