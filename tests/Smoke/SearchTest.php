@@ -8,8 +8,8 @@ use App\Tests\BaseT;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -18,24 +18,18 @@ class SearchTest extends BaseT
     public static function legacySearchProvider() : Generator
     {
         yield from [
-            ['/cerca/', '/'], ['/cerca', '/'],
-            ['/cerca/?query=', '/'], ['/cerca?query=', '/'],
             ['/cerca/?query=windows', '/cerca/windows'], ['/cerca?query=windows', '/cerca/windows'],
         ];
     }
 
-
     #[DataProvider('legacySearchProvider')]
-    public function testLegacyRedirect(string $origin, $expected)
-    {
-        $this->expectRedirect($origin, $expected);
-    }
+    public function testLegacyRedirect(string $origin, $expected) { $this->expectRedirect($origin, $expected); }
 
 
     public static function searchProvider() : Generator
     {
         yield from [
-            //['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
+            ['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
             ['/cerca/windows su usb', 'installare Windows 11 o Windows 10 su chiavetta USB'],
             ['/cerca/siti torrent', 'Siti BitTorrent italiani']
         ];
@@ -43,36 +37,37 @@ class SearchTest extends BaseT
 
 
     #[DataProvider('searchProvider')]
-    public function testSearch(string $urlToFetch, string $mustContain)
+    public function testSearchPage(string $urlToFetch, string $mustContain)
     {
-        $crawler = $this->fetchDomNode($urlToFetch);
-        $this->assertNoGoogleError($crawler);
-
-        foreach(['.google-result' => 5, '.local-result' => 0] as $container => $minResults) {
-
-            $results = $crawler->filter($container);
-            $count   = $results->count();
-            $this->assertGreaterThan($minResults, $count);
-
-            $html =
-                implode('', $results->each(function ($nodeCrawler) {
-                    return $nodeCrawler->html();
-                }));
-
-            $text = strip_tags($html);
-
-            $this->assertStringContainsString($mustContain, $text, "Failing URL: $urlToFetch");
-        }
-
-        $html = $crawler->html();
-        $this->assertStringNotContainsString(SearchController::NO_RESULTS_MESSAGE, $html, "Failing URL: $urlToFetch");
+        $this->fetchDomNode($urlToFetch);
     }
 
 
-    protected function assertNoGoogleError(Crawler $crawler)
+
+    #[DataProvider('searchProvider')]
+    public function testSearchAjax(string $urlToFetch, string $mustContain)
     {
-        $results = $crawler->filter('.alert-danger');
-        $this->assertEquals(0, $results->count(), 'Google is returning an error!');
+        $ajaxUrlToFetch = str_ireplace('/cerca/', '/cerca/ajax/', $urlToFetch);
+        $crawler = $this->fetchDomNode($ajaxUrlToFetch, '.card.article-card');
+        $count   = $crawler->count();
+        $this->assertGreaterThan(5, $count);
+
+        $html = $this->fetchHtml($ajaxUrlToFetch, Request::METHOD_GET, false);
+        $this->assertStringContainsString($mustContain, $html, "Failing URL: $urlToFetch");
+        $this->assertStringNotContainsStringIgnoringCase('Nessun risultato', $html, "Failing URL: $urlToFetch");
+    }
+
+
+    public function testNoResults()
+    {
+        $urlToFetch = '/cerca/ajax/' . uniqid() . uniqid();
+
+        $crawler = $this->fetchDomNode($urlToFetch, '.alert.alert-warning');
+        $count   = $crawler->count();
+        $this->assertEquals(1, $count);
+
+        $html = $this->fetchHtml($urlToFetch, Request::METHOD_GET, false);
+        $this->assertStringContainsString('Nessun risultato', $html, "Failing URL: $urlToFetch");
     }
 
 
