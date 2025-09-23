@@ -73,3 +73,13 @@ Utilizzando Visual Studio Code è necessario mantenere commentata la riga `#Remo
 [📚 Guida Xdebug con phpStorm](https://turbolab.it/3275) | [📚 Troubleshooting](https://turbolab.it/3274)
 
 Utilizzando phpStorm è necessario de-commentare la riga `RemoteForward 9003 localhost:9003` presente nella config SSH indicata sopra.
+
+
+## Link vendor/turbolab.it
+
+Per utilizzare la cartella separata con i package su PC dev Windows:
+
+````shell
+sudo rmdir /s /q "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit"
+sudo mklink /D "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit" D:\Dev\Webdev\symfony-vendor-turbolabit-link
+````
