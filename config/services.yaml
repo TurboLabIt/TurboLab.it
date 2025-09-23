@@ -12,6 +12,7 @@ parameters:
             address: '%env(APP_EMAIL)%'
         subject:
             tag: '[TLI]'
+    bypass_ajax_only_check_token: '%env(BYPASS_AJAX_ONLY_CHECK_TOKEN)%'
 
 services:
     # default configuration for services in *this* file
