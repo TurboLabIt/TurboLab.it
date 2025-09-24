@@ -6,7 +6,8 @@
             {% if Tag.id is not empty %}
 
                 <a href="{{ Tag.url }}" {% block linkTargetBlank %}target="_blank"{% endblock %}>
-                    <i class="{{ Tag.fontAwesomeIcon|first }}"></i> {{ Tag.navTitle|raw }}
+                    {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
+                    {{ Tag.navTitle|raw }}
                 </a>
 
             {% else %}

@@ -187,7 +187,7 @@ class Tag extends BaseCmsService
         ];
 
         $id = $this->getId();
-        return $arrMap[$id] ?? ["fa fa-" . $this->getSlug()];
+        return $arrMap[$id] ?? [];
     }
 
 
