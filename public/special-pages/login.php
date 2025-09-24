@@ -57,9 +57,9 @@ if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
 }
 
 
-$forumLoginUrl              = $siteUrl . "/forum/ucp.php?mode=login";
-$forumRegisterUrl           = $siteUrl . "/forum/ucp.php?mode=register";
-$forumResendActivationUrl   = $siteUrl . "/forum/ucp.php?mode=resend_act";
+$forumLoginUrl              = TLI_SITE_URL . "/forum/ucp.php?mode=login";
+$forumRegisterUrl           = TLI_SITE_URL . "/forum/ucp.php?mode=register";
+$forumResendActivationUrl   = TLI_SITE_URL . "/forum/ucp.php?mode=resend_act";
 
 match( $result["status"] ?? null ) {
 
