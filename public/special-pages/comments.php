@@ -129,9 +129,9 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
             $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
         );
 
-    $arrPost["tli_text"] = str_replace(
-        '<img class="smilies" src="./../../../../public/forum/images/smilies/',
-        '<img class="smilies" src="/forum/images/smilies/', $arrPost["tli_text"]
+    $arrPost["tli_text"] = str_ireplace(
+        '../../public/forum/../images',
+        '/forum/images', $arrPost["tli_text"]
     );
 ?>
 
