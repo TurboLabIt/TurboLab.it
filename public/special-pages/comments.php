@@ -9,27 +9,30 @@
  * 200: OK
  */
 
-use App\Entity\PhpBB\Forum;
-use App\Service\PhpBB\ForumUrlGenerator;
+define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
+$txtPleaseReport = $db = null;
 
 
-require '../../src/Service/PhpBB/ForumUrlGenerator.php';
-const THIS_SPECIAL_PAGE_PATH = "/" . ForumUrlGenerator::AJAX_LOADING_PATH;
-require './includes/00_begin.php';
+require TLI_PROJECT_DIR . 'src/Service/PhpBB/ForumUrlGenerator.php';
+const THIS_SPECIAL_PAGE_PATH = "/" . App\Service\PhpBB\ForumUrlGenerator::AJAX_LOADING_PATH;
+require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
+
 
 $topicId = $_GET['id'] ?? '';
 if( preg_match('/^[1-9]+[0-9]*$/', $topicId) !== 1 ) {
     tliHtmlResponse('Formato input errato', 400);
 }
 
-require '../../src/Entity/BaseEntity.php';
-require '../../src/Entity/PhpBB/Forum.php';
-$commentsForumId = Forum::ID_COMMENTS;
+require TLI_PROJECT_DIR . 'src/Entity/BaseEntity.php';
+require TLI_PROJECT_DIR . 'src/Entity/PhpBB/Forum.php';
+
+$commentsForumId = App\Entity\PhpBB\Forum::ID_COMMENTS;
 if( preg_match('/^[1-9]+[0-9]*$/', $commentsForumId) !== 1 ) {
     tliHtmlResponse("Errore accesso forum commenti. $txtPleaseReport", 500);
 }
 
-require './includes/10_phpbb_start.php';
+
+require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 
 $sqlSelectTopic = '
     SELECT * FROM ' . TOPICS_TABLE . ' AS topics
@@ -37,7 +40,7 @@ $sqlSelectTopic = '
       topic_id          = ' . $topicId . ' AND
       topic_visibility  = ' . ITEM_APPROVED . ' AND
       topic_delete_time = 0 AND
-      forum_id NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')
+      forum_id NOT IN (' . implode(',', App\Entity\PhpBB\Forum::ID_OFFLIMIT) . ')
 ';
 
 $result     = $db->sql_query($sqlSelectTopic);
@@ -130,8 +133,8 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
         );
 
     $arrPost["tli_text"] = str_ireplace(
-        '../../public/forum/../images',
-        '/forum/images', $arrPost["tli_text"]
+        './../',
+        '/forum/', $arrPost["tli_text"]
     );
 ?>
 

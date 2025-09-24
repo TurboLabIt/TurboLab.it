@@ -3,8 +3,12 @@
 clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/TurboLab.it/issues/3" -F "issue-remote-id=3" -F "post-id=103083" https://turbolab.it/issue-add-to-post/
  */
 
+define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
+$phpbb_root_path = $phpEx = $db = null;
+
+
 const THIS_SPECIAL_PAGE_PATH = "/issue-add-to-post/";
-require './includes/00_begin.php';
+require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
 if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1'])  ) {
@@ -14,6 +18,7 @@ if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1'])  ) {
 if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     tliHtmlResponse('This page requires the POST method', 405);
 }
+
 
 $issueUrl       = $_POST['issue-url'] ?? null;
 $issueRemoteId  = $_POST['issue-remote-id'] ?? null;
@@ -38,20 +43,19 @@ if($userId < 1 ) {
     tliHtmlResponse('Invalid user ID', 400);
 }
 
-require './includes/10_phpbb_start.php';
+
+require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 require($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
-//require($phpbb_root_path . 'includes/functions_content.' . $phpEx);
 
 
 $sqlSelect = 'SELECT * FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $postId;
-
 $result = $db->sql_query($sqlSelect);
 $row = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
 if(!$row) { tliHtmlResponse('Post not found', 404); }
 
 
-$sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $row['topic_id'] . ' AND forum_id = ' . (int)$row['forum_id'];
+$sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$row['topic_id'] . ' AND forum_id = ' . (int)$row['forum_id'];
 $result = $db->sql_query($sqlSelect);
 $topic = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
@@ -83,7 +87,7 @@ $data = [
     'topic_posts_unapproved'    => (int)$topic['topic_posts_unapproved'],
     'topic_posts_softdeleted'   => (int)$topic['topic_posts_softdeleted'],
     'topic_first_post_id'       => (int)$topic['topic_first_post_id'],
-    'topic_last_post_id'        => (int) $topic['topic_last_post_id'],
+    'topic_last_post_id'        => (int)$topic['topic_last_post_id'],
 
     'forum_name'    => $forum['forum_name'],
     'post_subject'  => $row['post_subject'],
@@ -117,5 +121,5 @@ if (defined('ITEM_APPROVED') && (int)$row['post_visibility'] === ITEM_APPROVED) 
 $arrPoll = [];
 submit_post('edit', $row['post_subject'],  $row['post_username'], POST_NORMAL, $arrPoll, $data);
 
-$postUrl = "$siteUrl/forum/viewtopic.php?p=$postId#p$postId";
+$postUrl = TLI_SITE_URL . "forum/viewtopic.php?p=$postId#p$postId";
 tliHtmlResponse("🚀 Post $postUrl updated with link to $issueUrl", 200);

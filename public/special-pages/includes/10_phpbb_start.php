@@ -1,7 +1,8 @@
 <?php
 // 📚 https://www.phpbb.com/support/docs/en/3.0/kb/article/phpbb3-cross-site-sessions-integration/
 define('IN_PHPBB', true);
-$phpbb_root_path = '../../public/forum/';
+chdir(TLI_PROJECT_DIR . "public/forum/");
+$phpbb_root_path = './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 
 require($phpbb_root_path . 'common.' . $phpEx);

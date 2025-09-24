@@ -1,4 +1,6 @@
 <?php
+define('TLI_SITE_URL', 'https://' . $_SERVER["SERVER_NAME"]);
+
 header('Content-Type: text/plain; charset=utf-8');
 
 set_exception_handler(function(Throwable $exception) {
@@ -55,14 +57,9 @@ if( !defined('THIS_SPECIAL_PAGE_PATH') ) {
     tliHtmlResponse('Special page path is undefined', 500);
 }
 
-$siteUrl = 'https://' . $_SERVER["SERVER_NAME"];
-$projectDir = realpath('../../') . '/';
-
 $requestUri = $_SERVER["REQUEST_URI"] ?? null;
 if( strpos($requestUri, THIS_SPECIAL_PAGE_PATH) !== 0 ) {
-    tliHtmlResponse("L'URL di questa pagina è " . $siteUrl . THIS_SPECIAL_PAGE_PATH, 400);
+    tliHtmlResponse("L'URL di questa pagina è " . TLI_SITE_URL . THIS_SPECIAL_PAGE_PATH, 400);
 }
 
 $txtPleaseReport = '🪲 Per favore, <a href="/forum/posting.php?mode=post&f=6">segnalaci subito il problema</a>, grazie!';
-
-const ID_USER_SYSTEM = 5103;

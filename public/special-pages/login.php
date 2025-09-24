@@ -11,13 +11,14 @@
  * 429: too many retries
  * 200: OK
  */
-const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
-require './includes/00_begin.php';
 
-/*$devCredentialsFilePath = '../../backup/dev-credentials.php';
-if( stripos($siteUrl, 'https://dev') === 0 && file_exists($devCredentialsFilePath) ) {
-    include($devCredentialsFilePath);
-}*/
+define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
+$txtPleaseReport = $db = null;
+
+
+const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
+require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
+
 
 foreach (["username", "password"] as $field) {
 
@@ -36,7 +37,7 @@ foreach (["username", "password"] as $field) {
 $rememberMe = !empty($_POST['remember-me']);
 unset($_POST['remember-me']);
 
-require './includes/10_phpbb_start.php';
+require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 
 // from: public/forum/phpbb/auth/auth.php
 // sign: function login($username, $password, $autologin = false, $viewonline = 1, $admin = 0)
@@ -44,8 +45,8 @@ $result = $auth->login($username, $password, $rememberMe);
 
 if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
 
-    require_once '../../vendor/turbolabit/php-encryptor/src/Encryptor.php';
-    require_once 'includes/phpBBCookies.php';
+    require_once TLI_PROJECT_DIR . 'vendor/turbolabit/php-encryptor/src/Encryptor.php';
+    require_once TLI_PROJECT_DIR . 'special-pages/includes/phpBBCookies.php';
 
     (new phpBBCookies())
         ->setNoRememberMeCookie([
