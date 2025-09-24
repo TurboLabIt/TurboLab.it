@@ -62,8 +62,9 @@
 }
 
 .tli-comment-main-content blockquote cite:before, .tli-comment-main-content .uncited:before {
-    content: '\f10d';
-    padding-right: 5px;
+    content: '❝';
+    padding-right: 2px;
+    font-size: 22px;
 }
 
 
