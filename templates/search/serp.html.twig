@@ -47,12 +47,7 @@
 
 {% block javascripts %}
 
-    <script src="/assets/js/stellarnav.min.js"></script>
-    <script src="/assets/js/main.js"></script>
-
-    <script src="https://kit.fontawesome.com/efe2621351.js" crossorigin="anonymous"></script>
-
-    {{ encore_entry_script_tags('app') }}
+    {{ parent() }}
     {{ encore_entry_script_tags('search') }}
 
 {% endblock %}
