@@ -12,7 +12,7 @@ require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
 if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1'])  ) {
-    tliHtmlResponse('Questa pagina è disponibile solo da localhost', 403);
+    tliHtmlResponse('This page is for internal use only', 403);
 }
 
 if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
