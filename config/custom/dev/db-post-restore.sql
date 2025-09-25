@@ -12,3 +12,6 @@ UPDATE phpbb_config SET config_value = 'dev0.turbolab.it' WHERE config_name = 's
 UPDATE phpbb_config SET config_value = 'https://dev0.turbolab.it' WHERE config_value = 'https://turbolab.it';
 TRUNCATE phpbb_sessions_keys;
 TRUNCATE phpbb_sessions;
+#TRUNCATE phpbb_search_wordlist;
+#TRUNCATE phpbb_search_wordmatch;
+#TRUNCATE phpbb_search_results;
