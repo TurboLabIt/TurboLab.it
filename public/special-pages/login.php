@@ -46,7 +46,7 @@ $result = $auth->login($username, $password, $rememberMe);
 if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
 
     require_once TLI_PROJECT_DIR . 'vendor/turbolabit/php-encryptor/src/Encryptor.php';
-    require_once TLI_PROJECT_DIR . 'special-pages/includes/phpBBCookies.php';
+    require_once TLI_PROJECT_DIR . 'public/special-pages/includes/phpBBCookies.php';
 
     (new phpBBCookies())
         ->setNoRememberMeCookie([
