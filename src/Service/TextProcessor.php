@@ -52,7 +52,6 @@ class TextProcessor
     }
 
 
-
     public function processTli1BodyForStorage(string $body) : string
     {
         $processing = $this->cleanTextBeforeStorage($body);
