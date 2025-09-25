@@ -1,4 +1,4 @@
-![Logo TurboLab.it](https://turbolab.it/images/accentbox/logo.png)
+![Logo TurboLab.it](https://turbolab.it/images/logo/turbolab.it.png)
 
 Questo repository (link breve: https://turbolab.it/codice ) contiene il codice sorgente del sito [TurboLab.it](https://turbolab.it).
 
