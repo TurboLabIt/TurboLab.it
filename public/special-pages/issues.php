@@ -43,10 +43,7 @@ if($userId < 1 ) {
     tliHtmlResponse('Invalid user ID', 400);
 }
 
-
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
-require($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
-
 
 $sqlSelect = 'SELECT * FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $postId;
 $result = $db->sql_query($sqlSelect);
@@ -82,8 +79,8 @@ decode_message($message, $post['bbcode_uid']);
 $message .= "\n\n[b]🪲 [url=$issueUrl]Issue #$issueRemoteId su GitHub[/url][/b]";
 
 // re-prepare for storage
-$uid = $bitfield = $options = '';
-generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
+$message_parser = new parse_message($message);
+$message_parser->parse(true, true, true);
 
 $data = [
     'post_id'   => (int)$post['post_id'],
@@ -108,11 +105,11 @@ $data = [
     'post_edit_locked'  => (int)($post['post_edit_locked'] ?? 0),
 
     // message + parsing info (fixes: message_md5)
-    'message'           => $message,
-    'message_md5'       => md5($message),
-    'bbcode_uid'        => $uid,
-    'bbcode_bitfield'   => $bitfield,
-    'bbcode_options'    => $options,
+    'message'           => $message_parser->message,
+    'message_md5'       => md5($message_parser->message),
+    'bbcode_uid'        => $message_parser->bbcode_uid,
+    'bbcode_bitfield'   => $message_parser->bbcode_bitfield,
+    'bbcode_options'    => 7, // bbcode + smilies + urls all enabled
     'enable_bbcode'     => true,
     'enable_smilies'    => true,
     'enable_urls'       => true,

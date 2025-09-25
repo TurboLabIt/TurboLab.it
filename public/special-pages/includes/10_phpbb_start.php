@@ -7,6 +7,8 @@ $phpEx = substr(strrchr(__FILE__, '.'), 1);
 
 require($phpbb_root_path . 'common.' . $phpEx);
 require($phpbb_root_path . 'includes/functions_user.' . $phpEx);
+require($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
+require($phpbb_root_path . 'includes/message_parser.' . $phpEx);
 
 $user->session_begin();
 $auth->acl($user->data);
