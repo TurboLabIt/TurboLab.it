@@ -103,7 +103,12 @@ class User extends BaseServiceEntity
     public function getAvatarUrl() : ?string
     {
         if( $this->entity->getAvatarType() == 'avatar.driver.gravatar' ) {
-            return 'https://secure.gravatar.com/avatar/' . md5( $this->getEmail() ) . '?s=128';
+
+            $gravatarEmail  = $this->entity->getAvatarFile() ?? $this->getEmail();
+            $gravatarEmail  = mb_strtolower(trim($gravatarEmail));
+            $hash           = hash('sha256', $gravatarEmail);
+
+            return "https://gravatar.com/avatar/$hash?s=128&r=pg&d=identicon";
         }
 
         $avatarFile = $this->entity->getAvatarFile();
