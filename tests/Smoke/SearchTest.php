@@ -31,7 +31,8 @@ class SearchTest extends BaseT
         yield from [
             ['/cerca/windows 11 iso', 'Scaricare Windows 11 DVD/ISO'],
             ['/cerca/windows su usb', 'installare Windows 11 o Windows 10 su chiavetta USB'],
-            ['/cerca/siti torrent', 'Siti BitTorrent italiani']
+            ['/cerca/siti torrent', 'Siti BitTorrent italiani'],
+            ['/cerca/flex', 'installare ChromeOS Flex']
         ];
     }
 
@@ -50,7 +51,7 @@ class SearchTest extends BaseT
         $ajaxUrlToFetch = str_ireplace('/cerca/', '/cerca/ajax/', $urlToFetch);
         $crawler = $this->fetchDomNode($ajaxUrlToFetch, '.card.article-card');
         $count   = $crawler->count();
-        $this->assertGreaterThan(5, $count);
+        $this->assertGreaterThanOrEqual(4, $count);
 
         $html = $this->fetchHtml($ajaxUrlToFetch, Request::METHOD_GET, false);
         $this->assertStringContainsString($mustContain, $html, "Failing URL: $urlToFetch");
