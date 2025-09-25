@@ -32,8 +32,8 @@ Se invece vuoi **segnalare un problema** con il sito, segui questa procedura:
 
 ## Priorità e specifiche di progetto
 
-1. **🔥 Il codice deve essere facile da mantenere** - non ci interessa che "non ci siano errori". Ci interessa che sia sempre FACILE CORREGGERLI ed aggiungere nuove funzionalità in modo facile e piacevole, senza forzature o riscritture
-1. **✍️ Agevolare il lavoro agli autori** - adottiamo ogni accortezza, idea e scorciatoria permetta di inserire articoli in modo efficiente, comodo e piacevole.  Ricordiamo che, per rendere accessibile l'editor a tutti ed impedire agli autori di impiegare layout "fantasiosi", l'editor consente di usare solo h1, p, e pochi altri tag
+1. **🔥 Il codice deve essere facile da mantenere** - non ci interessa che "non ci siano errori". Ci interessa che sia sempre FACILE CORREGGERLI e aggiungere nuove funzionalità in modo facile e piacevole, senza forzature o riscritture
+1. **✍️ Agevolare il lavoro agli autori** - adottiamo ogni accortezza, idea e scorciatoria permetta di inserire articoli in modo efficiente, comodo e piacevole.  Ricordiamo che, per rendere accessibile l'editor a tutti e impedire agli autori di impiegare layout "fantasiosi", l'editor consente di usare solo h1, p, e pochi altri tag
 1. 🔎 Ottimizzare la SEO - l'87.85% del traffico arriva dai motori di ricerca
 1. 🤖 Automatizzare al massimo - abbiamo tutti poco tempo da dedicare al progetto, quindi tutto quello che può essere automatizzato deve esserlo
 1. 👓 Garantire una buona leggibilità - gli articoli sono mediamente lunghi o molto-lunghi. Usiamo font grandi, alto contrasto, spaziature efficaci per renderli piacevoli da leggere
