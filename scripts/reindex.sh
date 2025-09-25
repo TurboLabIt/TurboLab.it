@@ -15,6 +15,9 @@ wsuSymfony console meili:clear
 fxTitle "Importing..."
 wsuSymfony console meili:import
 
+fxTitle "Clear the search cache items..."
+wsuSymfony console cache:pool:invalidate-tags search --pool=cache.app
+
 #curl -X POST 'http://127.0.0.1:7700/indexes/app_tli_articles/search' -H 'Content-Type: application/json' -H 'Authorization: Bearer aSampleMasterKey' --data-binary '{ "q": "windows" }'
 
 source ${SCRIPT_DIR}/script_end.sh
