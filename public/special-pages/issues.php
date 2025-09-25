@@ -1,6 +1,6 @@
 <?php
 /*
-clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/TurboLab.it/issues/3" -F "issue-remote-id=3" -F "post-id=103083" https://turbolab.it/issue-add-to-post/
+clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/TurboLab.it/issues/00-test" -F "issue-remote-id=00-test" -F "post-id=XXXXXX" -F "user-id=5103" https://XXXX.turbolab.it/issue-add-to-post/
  */
 
 define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
@@ -27,7 +27,7 @@ $userId         = $_POST['user-id'] ?? null;
 
 foreach([&$issueUrl, &$issueRemoteId, &$postId, &$userId] as &$var) {
 
-    $var = trim($var);
+    $var = trim($var ?? '');
     if( empty($var) ) {
         tliHtmlResponse('Invalid parameter', 400);
     }
@@ -50,28 +50,35 @@ require($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
 
 $sqlSelect = 'SELECT * FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $postId;
 $result = $db->sql_query($sqlSelect);
-$row = $db->sql_fetchrow($result);
+$post = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
-if(!$row) { tliHtmlResponse('Post not found', 404); }
+if(!$post) { tliHtmlResponse('Post not found', 404); }
 
 
-$sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$row['topic_id'] . ' AND forum_id = ' . (int)$row['forum_id'];
+$sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$post['topic_id'] . ' AND forum_id = ' . (int)$post['forum_id'];
 $result = $db->sql_query($sqlSelect);
 $topic = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
 if(!$topic) { tliHtmlResponse('Topic not found', 404); }
 
 
-$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$row['forum_id'];
+$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$post['forum_id'];
 $result = $db->sql_query($sql);
 $forum = $db->sql_fetchrow($result);
 $db->sql_freeresult($result);
 if(!$forum) { tliHtmlResponse('Forum not found', 404); }
 
 
+$sql = 'SELECT username FROM ' . USERS_TABLE  . ' WHERE user_id  = ' . (int)$post['poster_id'];
+$result = $db->sql_query($sql);
+$postAuthor = $db->sql_fetchrow($result);
+$db->sql_freeresult($result);
+if(!$postAuthor) { tliHtmlResponse('User not found', 404); }
+
+
 // get current message as raw BBCode
-$message = $row['post_text'];
-decode_message($message, $row['bbcode_uid']);
+$message = $post['post_text'];
+decode_message($message, $post['bbcode_uid']);
 $message .= "\n\n[b]🪲 [url=$issueUrl]Issue #$issueRemoteId su GitHub[/url][/b]";
 
 // re-prepare for storage
@@ -79,10 +86,11 @@ $uid = $bitfield = $options = '';
 generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
 
 $data = [
-    'post_id'   => (int)$row['post_id'],
-    'topic_id'  => (int)$row['topic_id'],
-    'forum_id'  => (int)$row['forum_id'],
+    'post_id'   => (int)$post['post_id'],
+    'topic_id'  => (int)$post['topic_id'],
+    'forum_id'  => (int)$post['forum_id'],
 
+    'topic_title'               => $topic['topic_title'],
     'topic_posts_approved'      => (int)$topic['topic_posts_approved'],
     'topic_posts_unapproved'    => (int)$topic['topic_posts_unapproved'],
     'topic_posts_softdeleted'   => (int)$topic['topic_posts_softdeleted'],
@@ -90,15 +98,16 @@ $data = [
     'topic_last_post_id'        => (int)$topic['topic_last_post_id'],
 
     'forum_name'    => $forum['forum_name'],
-    'post_subject'  => $row['post_subject'],
+    'post_subject'  => $post['post_subject'],
 
-    'poster_id'         => (int)$row['poster_id'],
-    'icon_id'           => (int)($row['icon_id'] ?? 0),
-    'enable_sig'        => (bool)($row['enable_sig'] ?? false),
-    'post_edit_locked'  => (int)($row['post_edit_locked'] ?? 0),
+    'poster_id'         => (int)$post['poster_id'],
+    'post_username'     => '',
+
+    'icon_id'           => (int)($post['icon_id'] ?? 0),
+    'enable_sig'        => (bool)($post['enable_sig'] ?? false),
+    'post_edit_locked'  => (int)($post['post_edit_locked'] ?? 0),
 
     // message + parsing info (fixes: message_md5)
-    'topic_title'       => $row['post_subject'],
     'message'           => $message,
     'message_md5'       => md5($message),
     'bbcode_uid'        => $uid,
@@ -113,13 +122,13 @@ $data = [
     'post_edit_user'    => $userId
 ];
 
-$data['post_visibility'] = (int) $row['post_visibility'];
-if (defined('ITEM_APPROVED') && (int)$row['post_visibility'] === ITEM_APPROVED) {
+$data['post_visibility'] = (int)$post['post_visibility'];
+if( defined('ITEM_APPROVED') && (int)$post['post_visibility'] === ITEM_APPROVED ) {
     $data['force_approved_state'] = true;
 }
 
 $arrPoll = [];
-submit_post('edit', $row['post_subject'],  $row['post_username'], POST_NORMAL, $arrPoll, $data);
+submit_post('edit', $post['post_subject'],  $postAuthor['username'] ?? '', POST_NORMAL, $arrPoll, $data);
 
-$postUrl = TLI_SITE_URL . "forum/viewtopic.php?p=$postId#p$postId";
+$postUrl = TLI_SITE_URL . "/forum/viewtopic.php?p=$postId#p$postId";
 tliHtmlResponse("🚀 Post $postUrl updated with link to $issueUrl", 200);
