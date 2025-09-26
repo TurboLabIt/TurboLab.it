@@ -79,7 +79,7 @@ class ArticleEditorController extends ArticleEditBaseController
                     ->setPublishingStatus($this->articleEditor, $publishingStatus, $publishUrgently)
                     ->getMailer();
 
-            $this->factory->getEntityManager()->flush();
+            $this->articleEditor->save();
 
             $this->clearCachedArticle($previousPublishedAt);
 

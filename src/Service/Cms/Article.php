@@ -91,7 +91,6 @@ class Article extends BaseCmsService
     {
         $this->localViewCount   = $entity->getViews();
         $this->entity           = $entity;
-        $this->isVisitable      = in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE);
 
         return $this;
     }
@@ -100,6 +99,8 @@ class Article extends BaseCmsService
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
+    public function isVisitable() : bool { return in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE); }
+
     public function getPublishingStatus() : int { return $this->entity->getPublishingStatus(); }
 
     public function isListable() : bool { return $this->factory->createArticleSentinel($this)->canList(); }
@@ -156,7 +157,9 @@ class Article extends BaseCmsService
 
         return null;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Format ***">
     public function isNews() : bool { return $this->entity->getFormat() == static::FORMAT_NEWS; }
 
     public function getFormat() : string { return $this->entity->getFormat(); }
@@ -522,5 +525,5 @@ class Article extends BaseCmsService
     }
 
 
-    public function getMetaRobots() : string { return $this->isPublished() ? 'index,follow' : 'index,nofollow'; }
+    public function getMetaRobots() : string { return $this->isPublished() ? 'index,follow' : 'noindex,nofollow'; }
 }

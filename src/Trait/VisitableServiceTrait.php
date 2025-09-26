@@ -4,11 +4,9 @@ namespace App\Trait;
 
 trait VisitableServiceTrait
 {
-    protected int $localViewCount   = 0;
-    protected bool $isVisitable     = true;
+    protected int $localViewCount = 0;
 
-
-    public function isVisitable() : bool { return $this->isVisitable; }
+    public function isVisitable() : bool { return true; }
 
     public function countOneVisit() : static
     {

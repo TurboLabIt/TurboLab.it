@@ -29,9 +29,7 @@ class ArticleSentinel extends BaseSentinel
     public function canView(?Article $article = null) : bool
     {
         $article = $article ?? $this->article;
-        return
-            in_array($article->getPublishingStatus(), Article::PUBLISHING_STATUSES_VISIBLE) ||
-            $this->canEdit($article);
+        return $article->isVisitable() || $this->canEdit($article);
     }
 
 

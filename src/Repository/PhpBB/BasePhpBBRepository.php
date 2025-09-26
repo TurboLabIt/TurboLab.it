@@ -14,7 +14,7 @@ abstract class BasePhpBBRepository extends BaseRepository
         { parent::__construct($registry); }
 
 
-    protected function getPhpBBTableName(?string $tableName = null) : string
+    protected function getPhpBBTableName(?string $tableName = null, bool $asAlias = true) : string
     {
         if( empty($tableName) ) {
 
@@ -30,7 +30,13 @@ abstract class BasePhpBBRepository extends BaseRepository
         }
 
         $dbName     = $this->arrConfig["forumDatabaseName"];
+        $dbDotTable = "$dbName.$tableName";
+
+        if( !$asAlias ) {
+            return $dbDotTable;
+        }
+
         $tableAlias = substr($tableName, strlen(static::TABLE_PREFIX));
-        return "$dbName.$tableName AS `$tableAlias`";
+        return "$dbDotTable AS `$tableAlias`";
     }
 }

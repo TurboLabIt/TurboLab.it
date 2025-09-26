@@ -6,9 +6,10 @@ use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\Image as ImageEntity;
-use App\Exception\ArticleUpdateException;
+use App\Entity\PhpBB\Forum;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
+use App\Entity\PhpBB\Topic as TopicEntity;
 use App\Service\TextProcessor;
 use App\Service\User;
 use DateTimeInterface;
@@ -298,9 +299,36 @@ class ArticleEditor extends Article
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 💬 Comments topic ***">
+    public function createCommentsTopic() : static
+    {
+        if( !$this->isVisitable() ) {
+            return $this;
+        }
+
+        $commentTopic = $this->getCommentsTopic();
+
+        if( !empty($commentTopic)) {
+            return $this;
+        }
+
+        $newTopicEntity =
+            $this->factory->getEntityManager()->getRepository(TopicEntity::class)
+                ->insertNewRow('---', Forum::ID_COMMENTS);
+
+        $this->entity->setCommentsTopic($newTopicEntity);
+
+        $this->commentsTopic = $this->factory->createTopic($newTopicEntity);
+
+        return $this;
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
     public function save(bool $persist = true) : static
     {
+        $this->createCommentsTopic();
+
         if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
             $this->entity->setCommentTopicNeedsUpdate(static::COMMENT_TOPIC_UPDATE_YES);
         }

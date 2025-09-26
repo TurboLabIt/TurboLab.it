@@ -15,6 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
 class Topic extends BaseEntity
 {
+    // forum/includes/constants.php
+    const int ITEM_APPROVED = 1; // has been approved, and has not been soft deleted
+
     use ViewableEntityTrait;
 
     #[ORM\Id]
@@ -26,7 +29,7 @@ class Topic extends BaseEntity
     protected ?string $title = null;
 
     #[ORM\Column(name: "topic_posts_approved", options: ['unsigned' => true])]
-    protected ?int $postNum = null;
+    protected int $postNum = 0;
 
     #[ORM\Column(options: ['unsigned' => true])]
     protected ?int $forumId = null;
@@ -70,15 +73,11 @@ class Topic extends BaseEntity
         $this->articles = new ArrayCollection();
     }
 
-    public function getId() : ?int
-    {
-        return $this->id;
-    }
 
-    public function getTitle() : ?string
-    {
-        return $this->title;
-    }
+    public function getId() : ?int { return $this->id; }
+
+
+    public function getTitle() : ?string { return $this->title; }
 
     public function setTitle(string $title) : static
     {
@@ -86,10 +85,8 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getPostNum() : ?int
-    {
-        return $this->postNum;
-    }
+
+    public function getPostNum() : int { return $this->postNum; }
 
     public function setPostNum(int $postNum) : static
     {
@@ -97,10 +94,8 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getForumId() : ?int
-    {
-        return $this->forumId;
-    }
+
+    public function getForumId() : ?int { return $this->forumId; }
 
     public function setForumId(int $forumId) : static
     {
@@ -108,10 +103,8 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getFirstPostId() : ?int
-    {
-        return $this->firstPostId;
-    }
+
+    public function getFirstPostId() : ?int { return $this->firstPostId; }
 
     public function setFirstPostId(int $firstPostId) : static
     {
@@ -138,10 +131,7 @@ class Topic extends BaseEntity
     }
 
 
-    public function getLastPosterName() : ?string
-    {
-        return $this->lastPosterName;
-    }
+    public function getLastPosterName() : ?string { return $this->lastPosterName; }
 
     public function setLastPosterName(string $lastPosterName) : static
     {
@@ -149,10 +139,8 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getLastPosterColor() : ?string
-    {
-        return $this->lastPosterColor;
-    }
+
+    public function getLastPosterColor() : ?string { return $this->lastPosterColor; }
 
     public function setLastPosterColor(string $lastPosterColor) : static
     {
@@ -160,10 +148,7 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getTime() : ?int
-    {
-        return $this->time;
-    }
+    public function getTime() : ?int { return $this->time; }
 
     public function setTime(int $time) : static
     {
@@ -180,10 +165,8 @@ class Topic extends BaseEntity
         return $this;
     }
 
-    public function getDeleteTime() : ?int
-    {
-        return $this->deleteTime;
-    }
+
+    public function getDeleteTime() : ?int { return $this->deleteTime; }
 
     public function setDeleteTime(int $deleteTime) : static
     {
@@ -192,10 +175,7 @@ class Topic extends BaseEntity
     }
 
 
-    public function getViews() : int
-    {
-        return $this->views;
-    }
+    public function getViews() : int { return $this->views; }
 
     public function setViews(int $views) : static
     {
@@ -203,13 +183,11 @@ class Topic extends BaseEntity
         return $this;
     }
 
+
     /**
      * @return Collection<int, Article>
      */
-    public function getArticles() : Collection
-    {
-        return $this->articles;
-    }
+    public function getArticles() : Collection { return $this->articles; }
 
     public function addArticle(Article $article) : static
     {
