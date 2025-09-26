@@ -23,8 +23,6 @@ if( preg_match('/^[1-9]+[0-9]*$/', $topicId) !== 1 ) {
     tliHtmlResponse('Formato input errato', 400);
 }
 
-require TLI_PROJECT_DIR . 'src/Entity/BaseEntity.php';
-require TLI_PROJECT_DIR . 'src/Entity/PhpBB/Forum.php';
 
 $commentsForumId = App\Entity\PhpBB\Forum::ID_COMMENTS;
 if( preg_match('/^[1-9]+[0-9]*$/', $commentsForumId) !== 1 ) {
