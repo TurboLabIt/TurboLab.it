@@ -63,3 +63,6 @@ if( strpos($requestUri, THIS_SPECIAL_PAGE_PATH) !== 0 ) {
 }
 
 $txtPleaseReport = '🪲 Per favore, <a href="/forum/posting.php?mode=post&f=6">segnalaci subito il problema</a>, grazie!';
+
+require TLI_PROJECT_DIR . 'src/Entity/BaseEntity.php';
+require TLI_PROJECT_DIR . 'src/Entity/PhpBB/Forum.php';

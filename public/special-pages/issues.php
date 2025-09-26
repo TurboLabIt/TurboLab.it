@@ -4,7 +4,7 @@ clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/Tur
  */
 
 define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
-$phpbb_root_path = $phpEx = $db = null;
+$db = null;
 
 
 const THIS_SPECIAL_PAGE_PATH = "/issue-add-to-post/";
@@ -33,10 +33,6 @@ foreach([&$issueUrl, &$issueRemoteId, &$postId, &$userId] as &$var) {
     }
 }
 
-$postId = (int)$postId;
-if( $postId < 1 ) {
-    tliHtmlResponse('Invalid post ID', 400);
-}
 
 $userId = (int)$userId;
 if($userId < 1 ) {
@@ -45,32 +41,11 @@ if($userId < 1 ) {
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 
-$sqlSelect = 'SELECT * FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $postId;
-$result = $db->sql_query($sqlSelect);
-$post = $db->sql_fetchrow($result);
-$db->sql_freeresult($result);
-if(!$post) { tliHtmlResponse('Post not found', 404); }
 
-
-$sqlSelect = 'SELECT * FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$post['topic_id'] . ' AND forum_id = ' . (int)$post['forum_id'];
-$result = $db->sql_query($sqlSelect);
-$topic = $db->sql_fetchrow($result);
-$db->sql_freeresult($result);
-if(!$topic) { tliHtmlResponse('Topic not found', 404); }
-
-
-$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$post['forum_id'];
-$result = $db->sql_query($sql);
-$forum = $db->sql_fetchrow($result);
-$db->sql_freeresult($result);
-if(!$forum) { tliHtmlResponse('Forum not found', 404); }
-
-
-$sql = 'SELECT username FROM ' . USERS_TABLE  . ' WHERE user_id  = ' . (int)$post['poster_id'];
-$result = $db->sql_query($sql);
-$postAuthor = $db->sql_fetchrow($result);
-$db->sql_freeresult($result);
-if(!$postAuthor) { tliHtmlResponse('User not found', 404); }
+$post       = tliGetPostById($postId);
+$topic      = tliGetTopicById($post['topic_id']);
+$forum      = tliGetForumById($post['forum_id']);
+$postAuthor = tliGetUserById($post['poster_id']);
 
 
 // get current message as raw BBCode
