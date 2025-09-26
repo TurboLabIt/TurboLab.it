@@ -26,6 +26,7 @@ class ArticleUploadImages extends ArticleEditBaseController
 
             $this->articleEditor->addImages($images, $currentUserAsAuthor);
 
+            // there is no need to save() the article here: it could just lose UI sync
             $this->factory->getEntityManager()->flush();
 
             return $this->render('article/editor/images.html.twig', [
