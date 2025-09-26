@@ -66,9 +66,9 @@ class ArticleEditAuthors extends ArticleEditBaseController
             $authors = $this->factory->createUserCollection()->load($arrAuthorIds);
 
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
-            $this->articleEditor->setAuthors($authors, $currentUserAsAuthor);
-
-            $this->factory->getEntityManager()->flush();
+            $this->articleEditor
+                ->setAuthors($authors, $currentUserAsAuthor)
+                ->save();
 
             $this->clearCachedArticle(null, null, $arrPreviousAuthors);
 

@@ -63,9 +63,9 @@ class ArticleEditTags extends ArticleEditBaseController
                 $this->factory->createTagEditorCollection()
                     ->setFromIdsAndTags($arrIdsAndTags, $currentUserAsAuthor);
 
-            $this->articleEditor->setTags($tags, $currentUserAsAuthor);
-
-            $this->factory->getEntityManager()->flush();
+            $this->articleEditor
+                ->setTags($tags, $currentUserAsAuthor)
+                ->save();
 
             $this->clearCachedArticle(null, $arrPreviousTags);
 
