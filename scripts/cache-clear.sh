@@ -11,8 +11,11 @@ if [ "$APP_ENV" == "dev" ]; then
   fxLink ${PROJECT_DIR}config/custom/zzmysqldump.conf /etc/turbolab.it/zzmysqldump.profile.turbolab.it.conf
   sudo cp ${PROJECT_DIR}config/custom/mysql-custom.conf /etc/mysql/mysql.conf.d/95-turbolab.it.cnf
 
-  fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
-  fxLink ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/cli/conf.d/90-turbolab.it.ini
+  sudo rm -rf /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
+  sudo cp ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
+  sudo sed -i 's/display_errors = off/display_errors = on/; s/display_startup_errors = off/display_startup_errors = on/' /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
+
+  fxLink /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini /etc/php/${PHP_VER}/cli/conf.d/90-turbolab.it.ini
   fxLink ${PROJECT_DIR}config/custom/php-custom-cli.ini /etc/php/${PHP_VER}/cli/conf.d/95-turbolab.it-cli.ini
   sudo rm -f /etc/php/${PHP_VER}/fpm/conf.d/30-webstackup-opcache.ini
 
