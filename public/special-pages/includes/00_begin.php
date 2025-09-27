@@ -66,3 +66,4 @@ $txtPleaseReport = '🪲 Per favore, <a href="/forum/posting.php?mode=post&f=6">
 
 require TLI_PROJECT_DIR . 'src/Entity/BaseEntity.php';
 require TLI_PROJECT_DIR . 'src/Entity/PhpBB/Forum.php';
+require TLI_PROJECT_DIR . 'src/Service/HtmlProcessorBase.php';
