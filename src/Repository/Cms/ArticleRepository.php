@@ -765,4 +765,16 @@ class ArticleRepository extends BaseRepository
                 ->getQuery()
                 ->getResult();
     }
+
+
+    public function findCommentsTopicNeedsUpdate() : array
+    {
+        return
+            $this->createQueryBuilder('t', 't.id')
+                ->andWhere('t.publishingStatus IN(:visitableStatuses)')
+                    ->setParameter('visitableStatuses', Article::PUBLISHING_STATUSES_VISIBLE)
+                ->andWhere('t.commentsTopic IS NOT NULL')
+                ->andWhere('t.commentsTopicNeedsUpdate = ' . Article::COMMENTS_TOPIC_NEEDS_UPDATE_YES)
+            ->getQuery()->getResult();
+    }
 }

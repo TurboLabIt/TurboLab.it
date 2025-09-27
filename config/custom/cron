@@ -29,6 +29,9 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every minute: phpBB cron job
 * * * * * root bash ${SCRIPT_DIR}phpbb-cli.sh cron:run >> ${LOG_PATH}phpbb-cli.sh.log 2>&1
 
+## every minute: update the opening post in each article's comment topic
+* * * * * root bash ${SCRIPT_DIR}update-comment-topics.sh >> ${LOG_PATH}update-comment-topics.sh.log 2>&1
+
 ## every xx minutes, during day-time: TLI Cache Warmer
 */6 7-23 * * * webstackup cd "${PROJECT_DIR}" && symfony console cache:warmup >> ${LOG_PATH}cache-warmup.log 2>&1
 
