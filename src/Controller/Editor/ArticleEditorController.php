@@ -29,10 +29,13 @@ class ArticleEditorController extends ArticleEditBaseController
 
             $this->articleEditor->save();
 
+            $jsonOkMessage = "Articolo salvato";
+
             return
                 $this
                     ->clearCachedArticle()
-                    ->jsonOKResponse("Articolo salvato");
+                    ->createCommentsTopicPlaceholder($jsonOkMessage)
+                    ->jsonOKResponse($jsonOkMessage);
 
         } catch(UniqueConstraintViolationException $ex) {
 
