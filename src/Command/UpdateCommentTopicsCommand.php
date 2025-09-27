@@ -1,11 +1,13 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\Article;
+use App\Service\Entity\Article as ArticleEntity;
 use App\Service\Cms\ArticleEditor;
-use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleEditorCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +30,8 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
 
     public function __construct(
         protected ArticleEditorCollection $articles, protected HttpClientInterface $httpClient,
-        /*protected Factory $factory, */protected UrlGeneratorInterface $urlGenerator, protected Environment $twig
+        protected UrlGeneratorInterface $urlGenerator, protected Environment $twig,
+        protected EntityManagerInterface $entityManager
     )
     {
         parent::__construct();
@@ -104,6 +107,8 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
 
             $message = $response->getContent();
             $arrResult[] = '✅';
+            $article->setCommentsTopicNeedsUpdate(Article::COMMENTS_TOPIC_NEEDS_UPDATE_NO);
+            $this->entityManager->flush();
 
         } catch(\Exception $ex) {
 
