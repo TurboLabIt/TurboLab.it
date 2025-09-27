@@ -12,8 +12,8 @@ Gli unici caratteri da trasformare in entity, **quando sono parte del contenuto 
 
 Questo è il set minimo: se non vengono trasformati in entity, il parser non è poi in grado di capire se costituiscano istruzioni di markup oppure testo. Ad esempio:
 
-- `<strong>` oppure `1 < 3 > 2`
 - `il simbolo di minore in HTML si scrive &lt;` oppure `Barnes & Noble`
+- `<strong>` oppure `1 < 3 > 2`
 
 `"` (`&quot;`) e `'` (`&apos;`) devono essere trasformate in entity SOLO quando sono contenuto editoriale e dobbiamo stamparli all'interno di un attributo HTML. Questo, generalmente, avviene solo in visualizzazione: a database, generalmente, queste entity non devono figurare.
 
@@ -50,7 +50,7 @@ Come mostrare un "messaggio" con 'JS' - <script>alert("bòòm");</script>
 
 La strategia prevede di:
 
-1. decodificare le entity in caratteri - non strettamente necessario in inserimento (lo è in modifica), ma gestisce comunque la circostanza in cui l'autore scriva volontariamente e letteralmente `per&ograve;`
+1. decodificare le entity in caratteri - non strettamente necessario in inserimento (lo è in modifica, v. seguito), ma gestisce comunque la circostanza in cui l'autore scriva volontariamente e letteralmente `per&ograve;`
 2. salvare il testo a database as-is, inclusi eventuali tag `<script>`
 3. in visualizzazione, per il tag `<title>` oppure `<h1>`: trasformare le entity minime (`&`, `&lt;`, `&gt;`)
 4. in visualizzazione, per i tag come `<meta ... content="<title>"`: trasformare le entity minime, più `&quot;` e `&apos;`
