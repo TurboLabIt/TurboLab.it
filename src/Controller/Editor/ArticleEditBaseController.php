@@ -88,10 +88,10 @@ abstract class ArticleEditBaseController extends BaseController
     }
 
 
-    protected function clearCachedArticle(?DateTime $previousPublishedAt = null, ?array $arrPreviousTags = null, ?array $arrPreviousAuthors = null) : void
+    protected function clearCachedArticle(?DateTime $previousPublishedAt = null, ?array $arrPreviousTags = null, ?array $arrPreviousAuthors = null) : static
     {
-        $publishedAt = $this->articleEditor->getPublishedAt();
-        $arrTagsToDelete = [];
+        $publishedAt        = $this->articleEditor->getPublishedAt();
+        $arrTagsToDelete    = [];
 
         if(
             (
@@ -121,5 +121,7 @@ abstract class ArticleEditBaseController extends BaseController
         $arrTagsToDelete = array_merge([$this->articleEditor->getCacheKey(), 'app_views_page_1'], $arrTagsToDelete);
 
         $this->cache->invalidateTags($arrTagsToDelete);
+
+        return $this;
     }
 }

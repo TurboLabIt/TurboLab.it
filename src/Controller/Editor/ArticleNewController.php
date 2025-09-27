@@ -21,17 +21,16 @@ class ArticleNewController extends ArticleEditBaseController
 
         if( empty($currentUser) ) {
 
-            $templateFilename = 'new-logged-out';
-            $arrSideArticlesSlices = null;
+            $templateFilename       = 'new-logged-out';
+            $arrSideArticlesSlices  = null;
 
         } else {
 
-            $templateFilename = 'new';
+            $templateFilename   = 'new';
+            $sideArticles       = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
 
-            $sideArticles = $this->factory->createArticleCollection()->loadLatestUpdatedListable();
-
-            $numArticlesPerSlide = 7;
-            $numSlides = ceil( $sideArticles->count() / $numArticlesPerSlide );
+            $numArticlesPerSlide= 7;
+            $numSlides          = ceil( $sideArticles->count() / $numArticlesPerSlide );
 
             $arrSideArticlesSlices  = [];
             for($i = 0; $i < $numSlides; $i++) {

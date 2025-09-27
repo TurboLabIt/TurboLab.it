@@ -14,10 +14,10 @@ class ArticleUploadImages extends ArticleEditBaseController
     public function upload(int $articleId) : JsonResponse|Response
     {
         try {
-
             $this->loadArticleEditor($articleId);
 
             $uploadedImages = $this->request->files->get('images', []);
+
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $images =
@@ -26,7 +26,7 @@ class ArticleUploadImages extends ArticleEditBaseController
 
             $this->articleEditor->addImages($images, $currentUserAsAuthor);
 
-            // there is no need to save() the article here: it could just lose UI sync
+            // there is no need to save() the article here
             $this->factory->getEntityManager()->flush();
 
             return $this->render('article/editor/images.html.twig', [

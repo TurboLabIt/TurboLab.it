@@ -14,7 +14,6 @@ class ArticleEditTags extends ArticleEditBaseController
     public function getTagsModal(int $articleId) : Response
     {
         try {
-
             $this->loadArticleEditor($articleId);
 
             return $this->json([
@@ -35,7 +34,6 @@ class ArticleEditTags extends ArticleEditBaseController
         $this->ajaxOnly();
 
         try {
-
             $this->loginRequired();
 
             $tag = $this->request->get('tag');
@@ -52,11 +50,11 @@ class ArticleEditTags extends ArticleEditBaseController
     public function setTags(int $articleId) : JsonResponse|Response
     {
         try {
-
             $this->loadArticleEditor($articleId);
-            $arrPreviousTags = $this->articleEditor->getTags();
 
-            $arrIdsAndTags = $this->request->get('tags') ?? [];
+            $arrPreviousTags    = $this->articleEditor->getTags();
+            $arrIdsAndTags      = $this->request->get('tags') ?? [];
+
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $tags =
@@ -67,9 +65,10 @@ class ArticleEditTags extends ArticleEditBaseController
                 ->setTags($tags, $currentUserAsAuthor)
                 ->save();
 
-            $this->clearCachedArticle(null, $arrPreviousTags);
-
-            return $this->jsonOKResponse("Tag salvati");
+            return
+                $this
+                    ->clearCachedArticle(null, $arrPreviousTags)
+                    ->jsonOKResponse("Tag salvati");
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }

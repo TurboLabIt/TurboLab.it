@@ -35,12 +35,10 @@ class ArticleEditAuthors extends ArticleEditBaseController
         $this->ajaxOnly();
 
         try {
-
             $this->loginRequired();
 
-            $username = $this->request->get('username');
-
-            $authors = $this->factory->createUserCollection();
+            $username   = $this->request->get('username');
+            $authors    = $this->factory->createUserCollection();
 
             empty($username) ? $authors->loadLatestAuthors() : $authors->loadBySearchUsername($username);
 
@@ -56,28 +54,25 @@ class ArticleEditAuthors extends ArticleEditBaseController
     public function setAuthors(int $articleId, Mailer $mailer) : JsonResponse|Response
     {
         try {
-
             $this->loadArticleEditor($articleId);
 
             $arrPreviousAuthors = $this->articleEditor->getAuthors();
-
-            $arrAuthorIds = $this->request->get('authors') ?? [];
-
-            $authors = $this->factory->createUserCollection()->load($arrAuthorIds);
+            $arrAuthorIds       = $this->request->get('authors') ?? [];
+            $authors            = $this->factory->createUserCollection()->load($arrAuthorIds);
 
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
+
             $this->articleEditor
                 ->setAuthors($authors, $currentUserAsAuthor)
                 ->save();
 
-            $this->clearCachedArticle(null, null, $arrPreviousAuthors);
+            $mailer->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors);
 
             $jsonOkMessage = "Autori salvati";
 
-            $mailer->buildArticleChangeAuthors($this->articleEditor, $currentUserAsAuthor, $arrPreviousAuthors);
-
             return
                 $this
+                    ->clearCachedArticle(null, null, $arrPreviousAuthors)
                     ->handleNotification($mailer, $jsonOkMessage)
                     ->jsonOKResponse($jsonOkMessage);
 
