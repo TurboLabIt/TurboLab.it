@@ -104,9 +104,9 @@ class ArticleEditor extends Article
     }
 
 
-    public function setCommentTopicNeedsUpdate(int $status) : static
+    public function setCommentsTopicNeedsUpdate(int $status) : static
     {
-        $this->entity->setCommentTopicNeedsUpdate($status);
+        $this->entity->setCommentsTopicNeedsUpdate($status);
         return $this;
     }
     //</editor-fold>
@@ -300,39 +300,30 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 💬 Comments topic ***">
-    public function createCommentsTopic() : static
+    public function createCommentsTopicPlaceholder() : static
     {
-        if( !$this->isVisitable() ) {
-            return $this;
-        }
-
-        $commentTopic = $this->getCommentsTopic();
-
-        if( !empty($commentTopic)) {
+        if( !$this->isVisitable() || !empty( $this->getCommentsTopic() ) ) {
             return $this;
         }
 
         $newTopicEntity =
             $this->factory->getEntityManager()->getRepository(TopicEntity::class)
-                ->insertNewRow('---', Forum::ID_COMMENTS);
+                ->insertNewRow(
+                    Topic::buildCommentsTitle( $this->getTitle(), $this->getId()),
+                    'Post in preparazione...'
+                    , Forum::ID_COMMENTS);
 
-        $this->entity->setCommentsTopic($newTopicEntity);
-
-        $this->commentsTopic = $this->factory->createTopic($newTopicEntity);
-
-        return $this;
+        $commentsTopic = $this->factory->createTopic($newTopicEntity);
+        return $this->setCommentsTopic($commentsTopic);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
     public function save(bool $persist = true) : static
     {
-        $this->createCommentsTopic();
-
-        if( $this->entity->getCommentTopicNeedsUpdate() != static::COMMENT_TOPIC_UPDATE_NEVER ) {
-            $this->entity->setCommentTopicNeedsUpdate(static::COMMENT_TOPIC_UPDATE_YES);
+        if( $this->entity->getCommentsTopicNeedsUpdate() != static::COMMENTS_TOPIC_NEEDS_UPDATE_NEVER ) {
+            $this->entity->setCommentsTopicNeedsUpdate(static::COMMENTS_TOPIC_NEEDS_UPDATE_YES);
         }
-
 
         $title = $this->getTitle();
         if(

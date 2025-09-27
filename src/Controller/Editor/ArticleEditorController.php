@@ -29,9 +29,10 @@ class ArticleEditorController extends ArticleEditBaseController
 
             $this->articleEditor->save();
 
-            $this->clearCachedArticle();
-
-            return $this->jsonOKResponse("Articolo salvato");
+            return
+                $this
+                    ->clearCachedArticle()
+                    ->jsonOKResponse("Articolo salvato");
 
         } catch(UniqueConstraintViolationException $ex) {
 
@@ -39,7 +40,7 @@ class ArticleEditorController extends ArticleEditBaseController
                 throw $ex;
             }
 
-            $title = $this->articleEditor->getTitle();
+            $title              = $this->articleEditor->getTitle();
             $originalArticleUrl = $this->factory->createArticle()->loadByTitle($title)->getShortUrl();
 
             return
@@ -60,9 +61,9 @@ class ArticleEditorController extends ArticleEditBaseController
     {
         try {
             $this->loadArticleEditor($articleId);
-            $previousPublishedAt = $this->articleEditor->getPublishedAt();
 
-            $publishingStatus = $this->request->get('status');
+            $previousPublishedAt    = $this->articleEditor->getPublishedAt();
+            $publishingStatus       = $this->request->get('status');
 
             if( $publishingStatus == ArticleEditor::PUBLISHING_ACTION_PUBLISH_URGENTLY ) {
 
@@ -81,15 +82,33 @@ class ArticleEditorController extends ArticleEditBaseController
 
             $this->articleEditor->save();
 
-            $this->clearCachedArticle($previousPublishedAt);
-
             $jsonOkMessage = "Stato di pubblicazione modificato correttamente";
 
             return
                 $this
+                    ->clearCachedArticle($previousPublishedAt)
                     ->handleNotification($mailer, $jsonOkMessage)
+                    ->createCommentsTopicPlaceholder($jsonOkMessage)
                     ->jsonOKResponse($jsonOkMessage);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    protected function createCommentsTopicPlaceholder(string $jsonOkMessage) : static
+    {
+        try {
+            $this->articleEditor
+                ->createCommentsTopicPlaceholder()
+                ->save();
+
+        } catch(Exception $ex) {
+
+            throw new Exception($jsonOkMessage .
+                ". Si è però verificato un errore durante la creazione del topic dei commenti: " . $ex->getMessage()
+            );
+        }
+
+        return $this;
     }
 }

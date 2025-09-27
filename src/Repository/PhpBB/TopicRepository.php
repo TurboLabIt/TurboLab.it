@@ -3,7 +3,9 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
 use App\Entity\PhpBB\Topic;
+use App\Service\HtmlProcessorBase;
 use App\Service\Newsletter;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 use http\Exception\InvalidArgumentException;
 
@@ -109,88 +111,128 @@ class TopicRepository extends BasePhpBBRepository
     }
 
 
-    public function insertNewRow(string $title, int $forumId) : Topic
+    public function insertNewRow(string $title, string $plainTextBody, int $forumId) : Topic
     {
         if( $forumId <= 0 ) {
             throw new InvalidArgumentException('Invalid forum ID');
         }
 
-        // 👇🏻 the most aggressive version I can think of!
-        $titleNormalized = html_entity_decode($title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $titleNormalized = trim($titleNormalized);
+        $titleNormalized = HtmlProcessorBase::decode($title);
         // phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
         $titleForPhpBB = htmlentities($titleNormalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        $sqlInsert = "
-            START TRANSACTION;
+        $connection = $this->getEntityManager()->getConnection();
 
-            INSERT INTO " . $this->getPhpBBTableName('topics', false) . " SET
-                forum_id                = :forumId,
-                topic_title             = :title,
-                topic_last_post_subject = :title,
+        try {
 
-                topic_poster            = :posterUserId,
-                topic_first_poster_name = :posterUserName,
-                topic_last_poster_id    = :posterUserId,
-                topic_last_poster_name  = :posterUserName,
+            $newTopicId =
+                $connection->transactional(function(Connection $connection) use ($titleForPhpBB, $plainTextBody, $forumId) {
 
-                topic_last_post_time    = UNIX_TIMESTAMP(),
-                topic_time              = UNIX_TIMESTAMP(),
-                topic_visibility        = :visibility;
+                    $sqlInsertTopic = "
+                        INSERT INTO " . $this->getPhpBBTableName('topics', false) . " SET
+                            forum_id                = :forumId,
+                            topic_title             = :title,
+                            topic_last_post_subject = :title,
 
-            SET @newTopicId = LAST_INSERT_ID();
+                            topic_poster            = :posterUserId,
+                            topic_first_poster_name = :posterUserName,
+                            topic_last_poster_id    = :posterUserId,
+                            topic_last_poster_name  = :posterUserName,
 
-            INSERT INTO " . $this->getPhpBBTableName('posts', false) . " SET
-                topic_id            = @newTopicId,
-                forum_id            = :forumId,
-                post_subject        = :title,
+                            topic_last_post_time    = UNIX_TIMESTAMP(),
+                            topic_time              = UNIX_TIMESTAMP(),
+                            topic_visibility        = :visibility
+                    ";
 
-                poster_id           = :posterUserId,
-                post_username       = :posterUserName,
-                poster_ip           = '127.0.0.1',
-                post_time           = UNIX_TIMESTAMP(),
+                    $connection->executeQuery($sqlInsertTopic, [
+                        'forumId'           => $forumId,
+                        'title'             => $titleForPhpBB,
 
-                post_text           = :title,
-                bbcode_bitfield     = '',
-                bbcode_uid          = '',
-                post_visibility     = :visibility,
-                enable_bbcode       = 1,
-                enable_smilies      = 1,
-                enable_magic_url    = 1;
+                        'posterUserId'      => 1,
+                        'posterUserName'    => 'TurboLab.it',
 
-            SET @newPostId = LAST_INSERT_ID();
+                        'visibility'        => Topic::ITEM_APPROVED
+                    ]);
 
-            UPDATE " . $this->getPhpBBTableName('topics', false) . " SET
-                topic_first_post_id = @newPostId,
-                topic_last_post_id  = @newPostId
+                    $newTopicId = $connection->lastInsertId();
 
-            WHERE topic_id = @newTopicId;
 
-            UPDATE " . $this->getPhpBBTableName('forums', false) . " SET
-                forum_posts_approved    = forum_posts_approved + 1,
-                forum_topics_approved   = forum_topics_approved + 1,
-                forum_last_post_id      = @newPostId,
-                forum_last_poster_id    = :posterUserId,
-                forum_last_post_subject = :title,
-                forum_last_post_time    = UNIX_TIMESTAMP(),
-                forum_last_poster_name  = :posterUserName
-            WHERE forum_id = :forumId;
+                    $sqlInsertPost = "
+                        INSERT INTO " . $this->getPhpBBTableName('posts', false) . " SET
+                            topic_id            = :topicId,
+                            forum_id            = :forumId,
+                            post_subject        = :title,
 
-            COMMIT;
-        ";
+                            poster_id           = :posterUserId,
+                            post_username       = :posterUserName,
+                            poster_ip           = '127.0.0.1',
+                            post_time           = UNIX_TIMESTAMP(),
 
-        $arrParams = [
-            'forumId'           => $forumId,
-            'title'             => $titleForPhpBB,
-            'posterUserId'      => 1,
-            'posterUserName'    => 'TurboLab.it',
-            'visibility'        => Topic::ITEM_APPROVED
-        ];
+                            post_text           = :body,
+                            bbcode_bitfield     = '',
+                            bbcode_uid          = '',
+                            post_visibility     = :visibility,
+                            enable_bbcode       = 1,
+                            enable_smilies      = 1,
+                            enable_magic_url    = 1
+                    ";
 
-        $this->sqlQueryExecute($sqlInsert, $arrParams);
+                    $connection->executeQuery($sqlInsertPost, [
+                        'topicId'           => $newTopicId,
+                        'forumId'           => $forumId,
+                        'title'             => $titleForPhpBB,
 
-        $topicId = $this->sqlQueryExecute('SELECT @newTopicId AS topic_id')->fetchOne();
+                        'posterUserId'      => 1,
+                        'posterUserName'    => 'TurboLab.it',
 
-        return $this->getOneById($topicId);
+                        'body'              => trim(strip_tags($plainTextBody)),
+                        'visibility'        => Topic::ITEM_APPROVED
+                    ]);
+
+                    $postId = $connection->lastInsertId();
+
+
+                    $sqlUpdateTopic = "
+                        UPDATE " . $this->getPhpBBTableName('topics', false) . " SET
+                            topic_first_post_id     = :postId,
+                            topic_last_post_id      = :postId,
+                            topic_posts_approved    = 1
+                        WHERE topic_id = :topicId
+                    ";
+
+                    $connection->executeQuery($sqlUpdateTopic, [
+                        'postId'    => $postId,
+                        'topicId'   => $newTopicId
+                    ]);
+
+
+                    $sqlUpdateForum = "
+                        UPDATE " . $this->getPhpBBTableName('forums', false) . " SET
+                            forum_posts_approved    = forum_posts_approved + 1,
+                            forum_topics_approved   = forum_topics_approved + 1,
+                            forum_last_post_id      = :postId,
+                            forum_last_poster_id    = :posterUserId,
+                            forum_last_post_subject = :title,
+                            forum_last_post_time    = UNIX_TIMESTAMP(),
+                            forum_last_poster_name  = :posterUserName
+                        WHERE forum_id = :forumId
+                    ";
+
+                $connection->executeQuery($sqlUpdateForum, [
+                    'postId'            => $postId,
+                    'posterUserId'      => 1,
+                    'title'             => $titleForPhpBB,
+                    'posterUserName'    => 'TurboLab.it',
+                    'forumId'           => $forumId,
+                ]);
+
+                return $newTopicId;
+            });
+
+        } catch(\Exception $ex) {
+            throw $ex;
+        }
+
+        return $this->getOneById($newTopicId);
     }
 }

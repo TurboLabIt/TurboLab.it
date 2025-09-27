@@ -16,7 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Topic extends BaseEntity
 {
     // forum/includes/constants.php
-    const int ITEM_APPROVED = 1; // has been approved, and has not been soft deleted
+    const int ITEM_APPROVED     = 1; // has been approved, and has not been soft deleted
+    const int TITLE_MAX_LENGTH  = 512;
 
     use ViewableEntityTrait;
 
@@ -25,7 +26,7 @@ class Topic extends BaseEntity
     #[ORM\Column(name: "topic_id", options: ['unsigned' => true])]
     protected ?int $id = null;
 
-    #[ORM\Column(name: "topic_title", length: 512)]
+    #[ORM\Column(name: "topic_title", length: self::TITLE_MAX_LENGTH)]
     protected ?string $title = null;
 
     #[ORM\Column(name: "topic_posts_approved", options: ['unsigned' => true])]
