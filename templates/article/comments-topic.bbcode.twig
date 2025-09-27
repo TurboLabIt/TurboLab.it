@@ -4,7 +4,7 @@
     [url={{ Article.url }}][img]{{ Article.spotlightUrl('med') }}[/img][/url]
 {% endif %}
 
-{{ Article.abstract }} [[url={{ Article.url }}]continua..[/url]]
+{{ Article.abstract|striptags }} [[url={{ Article.url }}]continua..[/url]]
 
 ---
 
