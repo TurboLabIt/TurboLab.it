@@ -3,7 +3,7 @@
 clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/TurboLab.it/issues/00-test" -F "issue-remote-id=00-test" -F "post-id=XXXXXX" -F "user-id=5103" https://XXXX.turbolab.it/issue-add-to-post/
  */
 
-define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
+const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
 $db = null;
 
 

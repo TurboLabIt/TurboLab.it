@@ -12,7 +12,7 @@
  * 200: OK
  */
 
-define('TLI_PROJECT_DIR', '/var/www/turbolab.it/');
+const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
 $txtPleaseReport = $db = null;
 
 
