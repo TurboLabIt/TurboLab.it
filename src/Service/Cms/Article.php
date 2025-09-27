@@ -8,6 +8,7 @@ use App\Repository\Cms\ArticleRepository;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\Tag as TagService;
 use App\Service\Factory;
+use App\Service\HtmlProcessorBase;
 use App\Service\HtmlProcessorForDisplay;
 use App\Service\PhpBB\Topic;
 use App\Trait\ArticleFormatsTrait;
@@ -435,7 +436,7 @@ class Article extends BaseCmsService
     {
         $processing = $this->getAbstract();
         $processing = strip_tags($processing);
-        $processing = html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $processing = HtmlProcessorBase::decode($processing);
         return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 

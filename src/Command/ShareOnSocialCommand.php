@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Service\Cms\Image;
 use App\Service\Cms\Article;
+use App\Service\HtmlProcessorBase;
 use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
 use DateTime;
@@ -248,7 +249,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
     protected function shareOnAll(array $arrParams) : static
     {
-        $title  = html_entity_decode($arrParams["title"], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $title  = HtmlProcessorBase::decode($arrParams["title"]);
         $url    = $arrParams["url"];
         $emoji  = $arrParams["emoji"];
 

@@ -2,6 +2,7 @@
 namespace App\Serializer;
 
 use App\Entity\Cms\Article as ArticleEntity;
+use App\Service\HtmlProcessorBase;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -44,10 +45,6 @@ class ArticleSearchNormalizer implements NormalizerInterface
         }
 
         $normalized = strip_tags($text);
-
-        // 👇🏻 the most aggressive version I can think of!
-        $normalized = html_entity_decode($normalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-        return trim($normalized);
+        return HtmlProcessorBase::decode($normalized);
     }
 }

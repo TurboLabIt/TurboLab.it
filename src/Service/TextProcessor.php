@@ -22,7 +22,7 @@ class TextProcessor
         $processing = $this->cleanTextBeforeStorage($title);
 
         // convert back as many &entities; as possible into their corresponding chars
-        return html_entity_decode($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return HtmlProcessorBase::decode($processing);
     }
 
 

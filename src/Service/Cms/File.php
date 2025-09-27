@@ -6,6 +6,7 @@ use App\Exception\FileLogicException;
 use App\Exception\FileNotFoundException;
 use App\Repository\Cms\FileRepository;
 use App\Service\Factory;
+use App\Service\HtmlProcessorBase;
 use App\Trait\VisitableServiceTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -179,7 +180,7 @@ class File extends BaseCmsService
             throw new FileLogicException("Cannot get the name of a File without format");
         }
 
-        $fileTitle = html_entity_decode($fileTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $fileTitle = HtmlProcessorBase::decode($fileTitle);
 
         // Remove anything which isn't a word, whitespace, number or any of the following caracters -_~,;[]().
         $fileName = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", ' ', $fileTitle);

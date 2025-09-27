@@ -93,7 +93,7 @@ class Issue
 
         $this->post->setEntity($postEntity);
 
-        $issueTitle = trim(html_entity_decode($this->post->getTitle(), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $issueTitle = HtmlProcessorBase::decode( $this->post->getTitle() );
 
         // remove "Re: " (reply) from the beginning of the title
         $issueTitle = trim(preg_replace('/^re:\s*/i', '', $issueTitle));

@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Service\HtmlProcessorBase;
 use App\Service\StopWords;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -36,7 +37,7 @@ class UrlGenerator
     public function slugify(?string $text) : string
     {
         $slug   = strip_tags($text);
-        $slug   = html_entity_decode($slug, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $slug   = HtmlProcessorBase::decode($slug);
 
         // special handling
         $arrSpecials = [

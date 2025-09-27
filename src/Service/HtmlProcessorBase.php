@@ -11,6 +11,16 @@ abstract class HtmlProcessorBase
     public function __construct(protected Factory $factory) {}
 
 
+    public static function decode(?string $text) : ?string
+    {
+        if( empty($text) ) { return $text; }
+
+        // the most aggressive version I can concoct
+        $cleanText = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return trim($cleanText);
+    }
+
+
     public function getLegacyEntities() : array
     {
         $arrAllEntities = get_html_translation_table(HTML_ENTITIES);

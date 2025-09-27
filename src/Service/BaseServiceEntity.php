@@ -88,7 +88,7 @@ abstract class BaseServiceEntity
             return $html;
         }
 
-        $processing = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $processing = HtmlProcessorBase::decode($html);
         return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 

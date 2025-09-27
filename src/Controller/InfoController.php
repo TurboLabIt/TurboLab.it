@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Service\Cms\Article;
+use App\Service\HtmlProcessorBase;
 use App\Service\ServerInfo;
 use DateTime;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -88,7 +89,7 @@ class InfoController extends BaseController
 
             $arrResponseData[] = [
                 // html_entity_decode is DANGEROUS! But here it's safe+needed, bc $this->json() re-encodes
-                'title' => html_entity_decode($article->getTitle()),
+                'title' => HtmlProcessorBase::decode( $article->getTitle() ),
                 'url'   => $article->getUrl(),
                 'start' => $article->getPublishedAt()->format('Y-m-d H:i'),
                 'color' => $article->isNews() ? 'green' : 'blue'
