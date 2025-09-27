@@ -8,7 +8,7 @@ use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\BodyableEntityTrait;
-use App\Trait\CommentTopicableEntityTrait;
+use App\Trait\CommentsTopicableEntityTrait;
 use App\Trait\PublishableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
@@ -28,7 +28,7 @@ class Article extends BaseCmsEntity
     use
         AbstractableEntityTrait, AdsableEntityTrait, ArticleFormatsTrait,
         BodyableEntityTrait, PublishableEntityTrait, TitleableEntityTrait,
-        ViewableEntityTrait, CommentTopicableEntityTrait;
+        ViewableEntityTrait, CommentsTopicableEntityTrait;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true])]
     #[Assert\Choice(choices: [self::FORMAT_ARTICLE, self::FORMAT_NEWS], message: 'Invalid Article format')]

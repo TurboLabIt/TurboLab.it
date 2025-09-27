@@ -13,7 +13,7 @@ use App\Service\HtmlProcessorForDisplay;
 use App\Service\PhpBB\Topic;
 use App\Trait\ArticleFormatsTrait;
 use App\Trait\AuthorableTrait;
-use App\Trait\CommentTopicStatusesTrait;
+use App\Trait\CommentsTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
 use App\Trait\VisitableServiceTrait;
 use DateTime;
@@ -44,7 +44,7 @@ class Article extends BaseCmsService
     const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
 
-    use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentTopicStatusesTrait, VisitableServiceTrait;
+    use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentsTopicStatusesTrait, VisitableServiceTrait;
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected ArticleEntity $entity;
