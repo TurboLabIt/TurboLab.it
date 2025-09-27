@@ -1,7 +1,9 @@
 <?php
 namespace App\Command;
 
+use App\Service\Cms\ArticleEditor;
 use App\Service\Factory;
+use App\Service\PhpBB\Topic;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleEditorCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -56,7 +58,7 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
 
         $this->fxTitle("📊 Results");
         (new Table($output))
-            ->setHeaders(['Result', 'URL', 'Message'])
+            ->setHeaders(['Done', 'Art. ID', 'URL', 'Message'])
             ->setRows($this->arrResults)
             ->render();
 
@@ -66,19 +68,35 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
     }
 
 
-    protected function processOneArticle($id, $article) : static
+    protected function processOneArticle($key, ArticleEditor $article) : static
     {
         $arrResult = [];
+
+        $authors            = $article->getAuthors();
+        $firstAuthor        = reset($authors);
+        $arrOtherAuthorIds  = [];
+
+        foreach($authors as $author) {
+
+            $authorId = $author->getId();
+
+            if( $authorId == $firstAuthor->getId() ) {
+                continue;
+            }
+
+            $arrOtherAuthorIds[] = $authorId;
+        }
 
         $response =
             $this->httpClient->request(Request::METHOD_POST, $this->endpoint, [
                 'verify_peer' => false,
                 'verify_host' => false,
                 'body' => [
-                    'post-title'    => $article->getTitle(),
-                    'post-body'     => $this->twig->render('article/comments-topic.bbcode.twig', ['Article' => $article]),
-                    'author-id'     => User::ID_SYSTEM,
-                    'topic-id'      => $article->getCommentsTopic()->getId()
+                    'post-title'        => Topic::buildCommentsTitle($article->getTitle(), null),
+                    'post-body'         => $this->twig->render('article/comments-topic.bbcode.twig', ['Article' => $article]),
+                    'author-id'         => empty($firstAuthor) ? User::ID_SYSTEM : $firstAuthor->getId(),
+                    'other-author-ids'  => $arrOtherAuthorIds,
+                    'topic-id'          => $article->getCommentsTopic()->getId()
                 ],
             ]);
 
@@ -98,6 +116,7 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
             $message .= $ex->getMessage();
         }
 
+        $arrResult[] = $article->getId();
         $arrResult[] = $article->getShortUrl();
         $arrResult[] = $message;
 

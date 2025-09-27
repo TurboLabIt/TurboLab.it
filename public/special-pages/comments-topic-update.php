@@ -85,6 +85,9 @@ $data = [
 
     'force_approved_state'  => true,
     'force_visibility'      => true,
+
+    'notify'        => true,
+    'notify_set'    => false,
 ];
 
 $userBackup = $user;
