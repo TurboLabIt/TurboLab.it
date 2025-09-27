@@ -5,6 +5,7 @@ use App\Entity\PhpBB\Topic as TopicEntity;
 use App\Repository\PhpBB\TopicRepository;
 use App\Service\BaseServiceEntity;
 use App\Service\Factory;
+use App\Service\HtmlProcessorBase;
 use DateTime;
 use DateTimeZone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -15,7 +16,8 @@ class Topic extends BaseServiceEntity
     const string ENTITY_CLASS = TopicEntity::class;
 
     // 👀 https://turbolab.it/forum/viewtopic.php?t=2676
-    const int ID_NEWSLETTER_COMMENTS = 2676;
+    const int ID_NEWSLETTER_COMMENTS    = 2676;
+    const int TITLE_MAX_LENGTH_FRONTEND = 120;
 
     protected ?TopicEntity $entity;
 
@@ -29,6 +31,29 @@ class Topic extends BaseServiceEntity
         return $this->getEntity()->getTitle();
     }
 
+
+    public static function buildCommentsTitle(string $title, ?int $id = null) : string
+    {
+        $title = HtmlProcessorBase::decode($title);
+        $titleLength = mb_strlen($title);
+
+        $maxTitleLength = static::TITLE_MAX_LENGTH_FRONTEND - 20;
+        $maxTitleLength -= empty($id) ? 0 : (strlen((string)$id) + 3);
+
+        $processedTitle =
+            $titleLength < ($maxTitleLength+3) ? $title
+                : (substr($title, 0, $titleLength - $maxTitleLength - 3) . '...');
+
+        $postTitle = "Commenti a \"$processedTitle\"";
+
+        if( !empty($id) ) {
+            $postTitle .= " (#$id)";
+        }
+
+        // phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
+        $postTitle = htmlspecialchars($postTitle, ENT_QUOTES, 'UTF-8');
+        return trim($postTitle);
+    }
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Database ORM entity ***">
@@ -65,6 +90,7 @@ class Topic extends BaseServiceEntity
         $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
         return $oDateTime;
     }
+
 
     public function getFirstPostId() : ?int { return $this->entity->getFirstPostId(); }
 
