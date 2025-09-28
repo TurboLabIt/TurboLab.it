@@ -21,3 +21,18 @@ Il comando `ForumIntegrationBuilder` provvede dunque a:
 2. salvare l'output renderizzato nella cartella non-versionata del modulo
 
 Versione comando su TLI1 (closed source): [forum-integration/forum_integration.php](https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/public/forum-integration/forum_integration.php)
+
+
+## Commenti
+
+Vedi: [Commenti agli articoli](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/comments.md)
+
+
+## Login
+
+Vedi: [Gestione utenti](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/users.md)
+
+
+## Issue su GitHub
+
+Vedi: [Integrazione issue GitHub](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/bug.md)

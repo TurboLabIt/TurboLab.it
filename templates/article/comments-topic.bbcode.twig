@@ -1,10 +1,10 @@
-[size=150][url={{ Article.url }}]{{ Article.title }}[/url][/size]
+[size=150][url={{ Article.url }}]{{ Article.title|raw }}[/url][/size]
 
 {% if Article.spotlight is not empty %}
-    [url={{ Article.url }}][img]{{ Article.spotlightUrl('med') }}[/img][/url]
+    [url={{ Article.url }}][img]{{ Article.spotlightUrl('reg') }}[/img][/url]
 {% endif %}
 
-{{ Article.abstract|striptags }} [[url={{ Article.url }}]continua..[/url]]
+{{ Article.abstract|striptags|raw }} [[url={{ Article.url }}]continua..[/url]]
 
 ---
 

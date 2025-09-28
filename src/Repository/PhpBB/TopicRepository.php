@@ -210,11 +210,7 @@ class TopicRepository extends BasePhpBBRepository
                         UPDATE " . $this->getPhpBBTableName('forums', false) . " SET
                             forum_posts_approved    = forum_posts_approved + 1,
                             forum_topics_approved   = forum_topics_approved + 1,
-                            forum_last_post_id      = :postId,
-                            forum_last_poster_id    = :posterUserId,
-                            forum_last_post_subject = :title,
-                            forum_last_post_time    = UNIX_TIMESTAMP(),
-                            forum_last_poster_name  = :posterUserName
+                            forum_last_post_time    = UNIX_TIMESTAMP()
                         WHERE forum_id = :forumId
                     ";
 

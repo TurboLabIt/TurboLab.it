@@ -46,7 +46,6 @@ $post       = tliGetPostById($topic['topic_first_post_id']);
 $forum      = tliGetForumById($topic['forum_id']);
 $postAuthor = tliGetUserById($authorId);
 
-
 $data = [
     'post_id'   => $post['post_id'],
     'topic_id'  => $topic['topic_id'],
@@ -96,13 +95,43 @@ $user->data = array_merge($user->data, $postAuthor);
 $auth->acl($user->data);
 $user->ip = '0.0.0.0';
 
-
 $arrPoll = [];
 $result = submit_post('edit', $titleForPhpBB,  $postAuthor['username'] ?? '', POST_NORMAL, $arrPoll, $data);
 
-
 $user = $userBackup;
 $auth = $authBackup;
+
+
+// submit_post can't update all the fields => manual fixup via SQL is required
+if( $topic['topic_last_poster_id'] == 1 ) {
+
+    $lastPosterId       = $postAuthor["user_id"];
+    $lastPosterName     = $postAuthor["username"];
+    $lastPosterColour   = $postAuthor["user_colour"];
+
+} else {
+
+    $lastPosterId       = $topic['topic_last_poster_id'];
+    $lastPosterName     = $topic['topic_last_poster_name'];
+    $lastPosterColour   = $topic['topic_last_poster_colour'];
+}
+
+$arrTopicUpdateParams = [
+    'topic_poster'              => $postAuthor['user_id'],
+    'topic_first_poster_colour' => $postAuthor['user_colour'],
+
+    'topic_last_poster_id'      => $lastPosterId,
+    'topic_last_poster_name'    => $lastPosterName,
+    'topic_last_poster_colour'  => $lastPosterColour
+];
+
+$sqlTopicUpdate =
+    'UPDATE ' . TOPICS_TABLE . ' SET ' .
+        $db->sql_build_array('UPDATE', $arrTopicUpdateParams) .
+    ' WHERE topic_id = ' . $topic['topic_id'];
+
+$db->sql_query($sqlTopicUpdate);
+
 
 $postUrl = TLI_SITE_URL . "/forum/" . str_ireplace(['../', './'], '', $result);
 tliHtmlResponse($postUrl, 200);
