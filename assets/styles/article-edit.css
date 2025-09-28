@@ -64,3 +64,15 @@
     max-height: 100vh;
     z-index: 10;
 }
+
+#tli-images-gallery .col {
+    margin-bottom: 10px;
+}
+
+#tli-images-gallery .ratio-1x1 {
+    margin-bottom: 6px;
+}
+
+#tli-images-gallery .tli-image-title {
+    font-size: large;
+}

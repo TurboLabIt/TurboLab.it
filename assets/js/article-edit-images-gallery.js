@@ -106,3 +106,31 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
  * ------------------
  * moved to assets/js/article-edit-ckeditor.js
  */
+
+
+$(document).on('click', '#tli-images-gallery .tli-delete-image', function(e) {
+
+    e.preventDefault();
+    if( !confirm('Sicuro?') ) {
+        return false;
+    }
+
+    $(this).closest('.col').fadeOut();
+
+    let galleryItemContainer = $(this).closest('.col');
+    let deleteUrl = galleryItemContainer.find('[data-delete-url]').data('delete-url');
+
+    $.ajax({
+        url: deleteUrl,
+        type: 'DELETE',
+        error: function(jqXHR, textStatus, errorThrown) {
+
+            let errorMessage = jqXHR.responseText ?? null;
+            if( errorMessage && errorMessage != '' ) {
+
+                alert(errorMessage);
+                return false;
+            }
+        }
+    });
+});

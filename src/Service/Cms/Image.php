@@ -6,6 +6,7 @@ use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
 use App\Repository\Cms\ImageRepository;
 use App\Service\Factory;
+use App\Trait\AuthorableTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
@@ -85,7 +86,9 @@ class Image extends BaseCmsService
     protected ImageEntity $entity;
     protected static ?string $buildFileExtension    = null;
     protected ?string $lastBuiltImageMimeType       = null;
-    protected int $tempOrder = 1;
+    protected int $tempOrder                        = 1;
+
+    use AuthorableTrait;
 
 
     public function __construct(protected Factory $factory)

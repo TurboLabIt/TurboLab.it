@@ -41,6 +41,7 @@ class Article extends BaseCmsEntity
     protected bool $excludedFromPeriodicUpdateList = false;
 
     #[ORM\ManyToOne(inversedBy: 'spotlightForArticles')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?Image $spotlight = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

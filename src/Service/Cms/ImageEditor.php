@@ -16,6 +16,7 @@ class ImageEditor extends Image
 
     protected UploadedFile $file;
 
+
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
     {
         parent::__construct($factory);
@@ -54,14 +55,6 @@ class ImageEditor extends Image
     }
 
 
-    public function rehash() : static
-    {
-        $hash = hash_file('md5', $this->getOriginalFilePath() );
-        $this->entity->setHash($hash);
-        return $this;
-    }
-
-
     public function addAuthor(User $author) : static
     {
         $this->entity->addAuthor(
@@ -70,5 +63,31 @@ class ImageEditor extends Image
         );
 
         return $this;
+    }
+
+
+    public function delete(bool $persist = true) : void
+    {
+        foreach(static::SIZES as $size) {
+
+            $filePath = $this->getBuiltFilePath($size, false);
+            if( file_exists($filePath) ) {
+                unlink($filePath);
+            }
+        }
+
+
+        $filePath = $this->getOriginalFilePath();
+        unlink($filePath);
+
+
+        $em = $this->factory->getEntityManager();
+        $em->remove($this->entity);
+
+        if($persist) {
+            $em->flush();
+        }
+
+        $this->clear();
     }
 }

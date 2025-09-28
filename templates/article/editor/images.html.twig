@@ -2,8 +2,11 @@
     <div class="col">
         <div class="ratio ratio-1x1 {% block imageBorder %}border border-2 border-success{% endblock %}">
             <img src="{{ Image.url(ImageSizes.reg) }}" loading="lazy" class="img-fluid object-fit-cover"
-                 alt="{{ Image.title }}" title="{{ Image.title }}">
+                 alt="{{ Image.title }}" title="{{ Image.title }}"
+                 data-delete-url="{{ path('app_article_edit_images-delete', {'articleId': Article.id, 'imageId': Image.id}) }}">
         </div>
-        <span>{{ Image.title }}</span>
+        <span class="tli-image-title">
+            {{ Image.title }} <i class="fa-solid fa-trash-can tli-delete-image" style="color: #b0b0b0;"></i>
+        </span>
     </div>
 {% endfor %}
