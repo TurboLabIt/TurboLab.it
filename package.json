@@ -22,7 +22,7 @@
         "jquery-is-in-viewport": ">=1.0.5",
         "odometer": "^0.4.8",
         "raw-loader": ">=4.0.2",
-        "sass": ">=1.93.1",
+        "sass": ">=1.93.2",
         "sass-loader": ">=16.0"
     },
     "packageManager": "yarn@4.5.1"
