@@ -116,25 +116,23 @@ const editorConfig = {
 };
 
 
-let ckeditorBodySelector = '.ck.ck-editor__main [contenteditable="true"]';
-
-$(document).on('click', ckeditorBodySelector, function () {
-    $(this).attr('data-tli-editable-id', 'body');
-});
-
-
-$(document).on('blur', ckeditorBodySelector, function () {
-    $(this).attr('data-tli-editable-id', 'body');
-});
-
-
 ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig)
     .then(editor => {
 
-        $('#tli-article-body').removeAttr('data-tli-editable-id');
+        // add the "data-tli-editable-id=body" attribute to CKEditor own div
+        const addAttribute = () => {
+            const editableElement = editor.editing.view.getDomRoot();
+            if (editableElement && editableElement.getAttribute('data-tli-editable-id') !== 'body') {
+                editableElement.setAttribute('data-tli-editable-id', 'body');
+            }
+        };
 
-        let ckeditorBody = $(ckeditorBodySelector);
-        ckeditorBody.attr('data-tli-editable-id', 'body');
+        addAttribute();
+
+        // Re-add after each render
+        editor.editing.view.on('render', () => {
+            addAttribute();
+        });
 
         ArticleContentEditable.cacheTextHashForComparison();
 
@@ -144,12 +142,10 @@ ClassicEditor.create(document.querySelector('#tli-article-body'), editorConfig)
         }, 300);
 
         editor.model.document.on('change:data', () => {
-
-            ckeditorBody.attr('data-tli-editable-id', 'body');
             debouncedShowWarning();
         });
 
-        // Title
+        // Title button
         const titleButtonView = editor.ui.view.toolbar.items.find(
             item => item.label === 'Titolo'
         );
