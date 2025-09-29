@@ -29,12 +29,6 @@ foreach([&$postTitle, &$postBody, &$authorId, &$topicId] as &$var) {
     }
 }
 
-$titleNormalized = App\Service\HtmlProcessorBase::decode($postTitle);
-unset($postTitle);
-// phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
-$titleForPhpBB= htmlspecialchars($titleNormalized);
-
-
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 
 // prepare for storage
@@ -51,7 +45,7 @@ $data = [
     'topic_id'  => $topic['topic_id'],
     'forum_id'  => (int)$post['forum_id'],
 
-    'topic_title'               => $titleForPhpBB,
+    'topic_title'               => $postTitle,
     'topic_posts_approved'      => (int)$topic['topic_posts_approved'],
     'topic_posts_unapproved'    => (int)$topic['topic_posts_unapproved'],
     'topic_posts_softdeleted'   => (int)$topic['topic_posts_softdeleted'],
@@ -59,7 +53,7 @@ $data = [
     'topic_last_post_id'        => (int)$topic['topic_last_post_id'],
 
     'forum_name'    => $forum['forum_name'],
-    'post_subject'  => $titleForPhpBB,
+    'post_subject'  => $postTitle,
 
     'poster_id'         => (int)$authorId,
     'post_username'     => '',
@@ -96,7 +90,7 @@ $auth->acl($user->data);
 $user->ip = '0.0.0.0';
 
 $arrPoll = [];
-$result = submit_post('edit', $titleForPhpBB,  $postAuthor['username'] ?? '', POST_NORMAL, $arrPoll, $data);
+$result = submit_post('edit', $postTitle,  $postAuthor['username'] ?? '', POST_NORMAL, $arrPoll, $data);
 
 $user = $userBackup;
 $auth = $authBackup;
