@@ -21,11 +21,12 @@ export default ArticleContentEditable;
 
 // --------------- //
 
+
 function cacheTextHashForComparison()
 {
-    jQuery('[data-tli-editable-id]').each(function() {
+    $('[data-tli-editable-id]').each(function() {
 
-        let editableId = jQuery(this).data('tli-editable-id');
+        let editableId = $(this).data('tli-editable-id');
         window[editableId] = fastHash16ElementHtml(this);
     });
 }
@@ -34,10 +35,10 @@ function cacheTextHashForComparison()
 function showWarningIfChanged()
 {
     let differenceFound = false;
-    jQuery('[data-tli-editable-id]').each(function() {
+    $('[data-tli-editable-id]').each(function() {
 
         let fastHashedHtml = fastHash16ElementHtml(this);
-        let editableId = jQuery(this).data('tli-editable-id');
+        let editableId = $(this).data('tli-editable-id');
 
         if( fastHashedHtml != window[editableId] ) {
 
@@ -55,15 +56,16 @@ function showWarningIfChanged()
 
 function clearCacheTextHashForComparison()
 {
-    jQuery('[data-tli-editable-id]').each(function() {
+    $('[data-tli-editable-id]').each(function() {
 
-        let editableId = jQuery(this).data('tli-editable-id');
+        let editableId = $(this).data('tli-editable-id');
         window[editableId] = null;
     });
 }
 
 
-jQuery(document).on('input', 'h1[data-tli-editable-id]', debounce(function() {
+$(document).on('input', 'h1[data-tli-editable-id]', debounce(function() {
+
     showWarningIfChanged();
 }, 300));
 
@@ -80,16 +82,16 @@ function saveArticle(title, body, token)
         articleSaveRequest.abort();
     }
 
-    let article = jQuery('article');
+    let article = $('article');
     let endpoint= article.attr('data-save-url');
     let payload = {
-        "title" : title ?? jQuery('[data-tli-editable-id=title]').html(),
-        "body"  : body ?? jQuery('[data-tli-editable-id=body]').html(),
+        "title" : title ?? $('[data-tli-editable-id=title]').html(),
+        "body"  : body ?? $('[data-tli-editable-id=body]').html(),
         "token" : token ?? null
     };
 
     articleSaveRequest =
-        jQuery.post(endpoint, payload, function(json) {
+        $.post(endpoint, payload, function(json) {
 
             StatusBar.setSavedIfNotFurtherEdited(json.message);
             ArticleMeta.update(json);
@@ -106,7 +108,7 @@ function saveArticle(title, body, token)
 }
 
 
-jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  function(event) {
+$(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  function(event) {
 
     event.preventDefault();
     //saveArticle();
@@ -114,8 +116,7 @@ jQuery(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  func
 });
 
 
-
-jQuery(document).on('keydown', function(event) {
+$(document).on('keydown', function(event) {
 
     // CTRL+S or Command+S (Mac)
     if( (event.ctrlKey || event.metaKey) && (event.key === 's' || event.key === 'S') ) {
