@@ -38,11 +38,11 @@ class Topic extends BaseServiceEntity
         $titleLength = mb_strlen($title);
 
         $maxTitleLength = static::TITLE_MAX_LENGTH_FRONTEND - 20;
-        $maxTitleLength -= empty($id) ? 0 : (strlen((string)$id) + 3);
+        $maxTitleLength -= empty($id) ? 0 : ( mb_strlen(" (#$id)") );
 
         $processedTitle =
-            $titleLength < ($maxTitleLength+3) ? $title
-                : (substr($title, 0, $titleLength - $maxTitleLength - 3) . '...');
+            $titleLength <= ($maxTitleLength+3) ? $title
+                : (mb_substr($title, 0, $maxTitleLength - 3) . '...');
 
         $postTitle = "Commenti a \"$processedTitle\"";
 
