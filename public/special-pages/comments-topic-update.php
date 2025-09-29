@@ -32,7 +32,7 @@ foreach([&$postTitle, &$postBody, &$authorId, &$topicId] as &$var) {
 $titleNormalized = App\Service\HtmlProcessorBase::decode($postTitle);
 unset($postTitle);
 // phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
-$titleForPhpBB = htmlentities($titleNormalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+$titleForPhpBB= htmlspecialchars($titleNormalized);
 
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';

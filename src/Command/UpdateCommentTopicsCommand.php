@@ -95,7 +95,7 @@ class UpdateCommentTopicsCommand extends AbstractBaseCommand
                 'verify_peer' => false,
                 'verify_host' => false,
                 'body' => [
-                    'post-title'        => Topic::buildCommentsTitle($article->getTitle(), null),
+                    'post-title'        => Topic::buildCommentsTitle( $article->getTitle() ),
                     'post-body'         => $this->twig->render('article/comments-topic.bbcode.twig', ['Article' => $article]),
                     'author-id'         => empty($firstAuthor) ? User::ID_SYSTEM : $firstAuthor->getId(),
                     'other-author-ids'  => $arrOtherAuthorIds,
