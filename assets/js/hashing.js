@@ -8,9 +8,9 @@ export function fastHash16(str)
 }
 
 
-export function fastHash16ElementHtml(element)
+export function fastHash16ElementHtml(text)
 {
-    let value = $(element).html().replace(/&nbsp;/g, ' ').trim();
+    let value = text.replace(/&nbsp;/g, ' ').trim();
 
     if( value == '' ) {
         return '';

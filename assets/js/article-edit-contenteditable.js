@@ -21,34 +21,40 @@ export default ArticleContentEditable;
 
 // --------------- //
 
+const TITLE_FIELD = $('[data-tli-editable-id="title"]');
+
 
 function cacheTextHashForComparison()
 {
-    $('[data-tli-editable-id]').each(function() {
+    let editableId      = TITLE_FIELD.data('tli-editable-id');
+    window[editableId]  = fastHash16ElementHtml( TITLE_FIELD.val() );
 
-        let editableId = $(this).data('tli-editable-id');
-        window[editableId] = fastHash16ElementHtml(this);
-    });
+    let bodyField       = $('[data-tli-editable-id="body"]');
+    editableId          = bodyField.data('tli-editable-id');
+    window[editableId]  = fastHash16ElementHtml( bodyField.html() );
 }
 
 
 function showWarningIfChanged()
 {
-    let differenceFound = false;
-    $('[data-tli-editable-id]').each(function() {
+    let fastHashedHtml  = fastHash16ElementHtml( TITLE_FIELD.val() );
+    let editableId      = TITLE_FIELD.data('tli-editable-id');
+    let differenceFound = fastHashedHtml != window[editableId];
 
-        let fastHashedHtml = fastHash16ElementHtml(this);
-        let editableId = $(this).data('tli-editable-id');
+    if( !differenceFound ) {
 
-        if( fastHashedHtml != window[editableId] ) {
+        let bodyField   = $('[data-tli-editable-id="body"]');
+        fastHashedHtml  = fastHash16ElementHtml( bodyField.html() );
+        editableId      = bodyField.data('tli-editable-id');
+        differenceFound = fastHashedHtml != window[editableId];
+    }
 
-            StatusBar.setUnsaved();
-            differenceFound = true;
-            return false;
-        }
-    });
+    if(differenceFound) {
 
-    if (!differenceFound) {
+        StatusBar.setUnsaved();
+
+    } else {
+
         StatusBar.hide();
     }
 }
@@ -56,18 +62,48 @@ function showWarningIfChanged()
 
 function clearCacheTextHashForComparison()
 {
-    $('[data-tli-editable-id]').each(function() {
+    let editableId      = TITLE_FIELD.data('tli-editable-id');
+    window[editableId]  = null;
 
-        let editableId = $(this).data('tli-editable-id');
-        window[editableId] = null;
-    });
+    let bodyField       = $('[data-tli-editable-id="body"]');
+    editableId          = bodyField.data('tli-editable-id');
+    window[editableId]  = null
 }
 
 
-$(document).on('input', 'h1[data-tli-editable-id]', debounce(function() {
+// title auto-sizing
+TITLE_FIELD.css({
 
+    height: TITLE_FIELD[0].scrollHeight + "px",
+    overflowY: "hidden"
+});
+
+$(document).on('input', '[data-tli-editable-id="title"]', function() {
+
+    // remove <new-line> and double spaces
+    const cursorPosition = this.selectionStart;
+    const originalLength = this.value.length;
+
+    const newValue = this.value.replace(/\s+/g, ' ');
+
+    if (this.value !== newValue) {
+        this.value = newValue;
+        // Adjust cursor position
+        const newLength = this.value.length;
+        const diff = originalLength - newLength;
+        this.selectionStart = this.selectionEnd = Math.max(0, cursorPosition - diff);
+    }
+
+    // auto-height
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+
+});
+
+
+$(document).on('input', '[data-tli-editable-id="title"]', debounce(function() {
     showWarningIfChanged();
-}, 300));
+}, 350));
 
 
 var articleSaveRequest = null;
@@ -85,8 +121,8 @@ function saveArticle(title, body, token)
     let article = $('article');
     let endpoint= article.attr('data-save-url');
     let payload = {
-        "title" : title ?? $('[data-tli-editable-id=title]').html(),
-        "body"  : body ?? $('[data-tli-editable-id=body]').html(),
+        "title" : title ?? $('[data-tli-editable-id="title"]').val(),
+        "body"  : body ?? $('[data-tli-editable-id="body"]').html(),
         "token" : token ?? null
     };
 
@@ -111,7 +147,6 @@ function saveArticle(title, body, token)
 $(document).on('click', '.tli-warning-unsaved,.tli-action-try-again',  function(event) {
 
     event.preventDefault();
-    //saveArticle();
     $('#tli-ckeditor-save').trigger('click');
 });
 
