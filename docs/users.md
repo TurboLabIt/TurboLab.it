@@ -82,15 +82,16 @@ Se NON è presente il cookie `_k` ➡ viene letto il cookie `tli-login-no-rememb
 
 Le query sono in [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/UserRepository.php). Se viene trovato un match, la funzione istanza e ritorna un oggetto [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/User.php) e l'utente viene autenticato.
 
-⚠️ La limitazione di questo approccio è che, se l'utente esegue login da phpBB senza spuntare "Ricordami", non viene impostato né il cookie `_k`, né il cookie `tli-login-no-remember-me-workaround` ➡ Il sito non ha informazioni sufficienti per verificare le credenziali e istanziare la sessione utente ➡ L'utente risulta loggato su phpBB, ma non sul sito.
+⚠️⚠️⚠️️ La limitazione è che, se l'utente esegue login da phpBB senza spuntare "Ricordami", non viene impostato né il cookie `_k`, né il cookie `tli-login-no-remember-me-workaround` ➡ Il sito non ha informazioni sufficienti per verificare le credenziali e istanziare la sessione utente ➡ **L'utente risulta loggato su phpBB, ma non sul sito** ([🪲 #90](https://github.com/TurboLabIt/TurboLab.it/issues/90), [🪲 #88](https://github.com/TurboLabIt/TurboLab.it/issues/88)).
 
 Per gestire questa limitazione, si potrebbe fare affidamento sui soli cookie `_sid` e `_u`, senza bisogno di `_k`? No, perché il primo è *leaky* (l'URL di logout, ad esempio, è `ucp.php?mode=logout&sid=39...83`, e i link interni, a volte, vengono mostrati come `viewforum.php?f=6&sid=49...50`) e il secondo [è pubblico](https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=2). phpBB lo fa, mitigando il problema con check aggiuntivi su IP di provenienza del client e user-agent, ma è una soluzione poco robusta.
 
-La limitazione è comunque accettabile alla luce del fatto che:
+Manteniamo dunque questa limitazione, alla luce del fatto che:
 
 - la issue non è bloccante (basta eseguire login di nuovo al sito una sola volta per essere loggati)
-- consigliavamo già prima di attivare sempre "Ricordami" per evitare disconnessioni durante la navigazione
-- l'estensione [Remember me checked by default](https://www.phpbb.com/customise/db/extension/remember_me/) sarebbe stata installata comunque
+- **consigliavamo già prima di attivare sempre "Ricordami" per evitare disconnessioni durante la navigazione**
+
+Per incoraggiare gli utenti a spuntare l'opzione "Remember me", [la casella è ora spuntata di default](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/forum/remember-me-checker.js).
 
 
 ## Logout
