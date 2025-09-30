@@ -491,6 +491,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere("t.title NOT LIKE  'Questa settimana su TLI%'")
                 ->andWhere('commentsTopic.postNum > 1')
                 ->orderBy('commentsTopic.postNum', 'DESC');
 
