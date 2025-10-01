@@ -16,9 +16,11 @@ if [ "$APP_ENV" = "prod" ]; then
 
   EMOJI=rocket
   ZZ_CMD_SUFFIX=1
+  SITE_URL=https://turbolab.it
 
 elif [ "$APP_ENV" = "staging" ]; then
 
   EMOJI=cat
   ZZ_CMD_SUFFIX=0
+  SITE_URL=https://next.turbolab.it
 fi
