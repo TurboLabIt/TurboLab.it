@@ -1,4 +1,6 @@
 .tli-comment-reply {
+    width: fit-content;
+    border-top: lightgrey dashed 1px;
     margin-top: 15px;
 }
 
@@ -9,10 +11,25 @@
 .tli-comment-main-content {
     font-size: 20px;
     line-height: 1.5;
+    color: black;
 }
 
 .post-comments-list .post-comments-item .post {
     border-bottom: none;
+}
+
+.post-comments-list .post-comments-item .post {
+    border-bottom: none;
+}
+
+.post-comments-list .post-comments-item .post h5.title {
+    font-size: 14px;
+    color: grey;
+}
+
+.post-comments-list .post-comments-item .post h5 img {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .post-comments-list .post-comments-item .post a {

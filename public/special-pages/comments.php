@@ -125,6 +125,9 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
         empty( $arrPost['tli_rank']['rank_image'] )
             ? '' : '<img src="/forum/images/ranks/' . $arrPost['tli_rank']['rank_image'] . '" class="">';
 
+    $postDateTime = DateTime::createFromFormat('U', $arrPost['post_time']);
+    $arrPost['tli_date'] = (new App\Twig\TliRuntime())->friendlyDate($postDateTime);
+
     $arrPost["tli_text"] =
         generate_text_for_display(
             $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
@@ -139,7 +142,8 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
     <div class="post-comments-item">
         <div class="post">
             <h5 class="title" <?php echo $arrPost["tli_username_style"] ?>>
-                <span><?php echo $arrPost["username"] ?></span> &nbsp; <?php echo $arrPost["tli_rank_image"] ?>
+                <span><?php echo $arrPost["username"] ?></span> <?php echo $arrPost["tli_rank_image"] ?>
+                <span class="tli-comment-date"><i class="fa-solid fa-calendar"></i> <?php echo $arrPost["tli_date"] ?></span>
             </h5>
             <div class="tli-comment-main-content"><?php echo $arrPost["tli_text"] ?></div>
             <div class="tli-comment-reply">
