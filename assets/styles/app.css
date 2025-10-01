@@ -8,6 +8,8 @@ body {
 
 .logo img {
     all: revert;
+    width: 360px;
+    height: 62px;
 }
 
 ::placeholder {
