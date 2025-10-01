@@ -26,15 +26,3 @@
 [img]https://turbolab.it/images/logo/icon.png[/img]
 ````
 
-
-## Icona TTTT (192 pixel)
-
-![Icona TurboLab.it](https://turbolab.it/images/logo/icon-192px.png)
-
-````
-![Icona TurboLab.it](https://turbolab.it/images/logo/icon-192px.png)
-````
-
-````
-[img]https://turbolab.it/images/logo/icon-192px.png[/img]
-````
