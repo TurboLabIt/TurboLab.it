@@ -6,7 +6,7 @@ body {
     padding-bottom: 0px;
 }
 
-.logo img {
+.logo img, .footer-logo img {
     all: revert;
     width: 360px;
     height: 62px;
