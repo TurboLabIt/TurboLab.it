@@ -30,4 +30,16 @@ class InfoController extends BaseController
     {
         return new Response("Pagina in aggiornamento", Response::HTTP_SERVICE_UNAVAILABLE);
     }
+
+
+    #[Route('/manifest.json', name: 'app_manifest')]
+    public function manifest() : Response
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+
+        return
+            $this->render('info/manifest.json.twig', [
+            ], $response);
+    }
 }

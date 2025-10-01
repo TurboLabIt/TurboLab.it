@@ -7,6 +7,7 @@ twig:
         siteDomain: '%env(APP_SITE_DOMAIN)%'
         siteUrl: '%env(APP_SITE_URL)%'
         siteName: '%env(APP_SITE_NAME)%'
+        siteHeadline: '%env(APP_HEADLINE)%'
         metaTitle: '%env(APP_HEADLINE)%'
         metaTitleSuffix: '%env(APP_META_TITLE_SUFFIX)%'
         metaDescription: '%env(APP_DESCRIPTION)%'
