@@ -20,9 +20,8 @@ $(document).on('click', '.tli-publishing-status-ready', (event) => {
         return false;
     }
 
-    $('.ck.ck-editor button.ck-button').filter(function() {
-            return /pronto.*finito/i.test($(this).text());
-        }).trigger('click');
+    // ✅ Pronto e finito (visibile al pubblico)
+    setPublishingStatus(3);
 })
 
 
