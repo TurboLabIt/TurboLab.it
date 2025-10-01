@@ -6,7 +6,7 @@
 ![Logo TurboLab.it](https://turbolab.it/images/logo/turbolab.it.png)
 
 ````
-![Logo TurboLab.it](https://turbolab.it/images/logo/turbolab.it.png)
+![Logo di TurboLab.it](https://turbolab.it/images/logo/turbolab.it.png)
 ````
 
 ````
@@ -16,7 +16,7 @@
 
 ## Icona TTTT
 
-![Icona TurboLab.it](https://turbolab.it/images/logo/icon.png)
+![Icona di TurboLab.it](https://turbolab.it/images/logo/icon.png)
 
 ````
 ![Icona TurboLab.it](https://turbolab.it/images/logo/icon.png)
