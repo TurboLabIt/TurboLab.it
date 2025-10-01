@@ -16,14 +16,6 @@ ln -s "${PROJECT_DIR}var/uploaded-assets/images/cache" "${WEBROOT_DIR}immagini"
 
 
 fxTitle "Linking branding images..."
-BRAND_LINK_PATH=${WEBROOT_DIR}images/logo/apple-touch-icon.png
-rm -rf "${BRAND_LINK_PATH}"
-fxLink "${WEBROOT_DIR}images/logo/2013/ttt-tiny.png" "${BRAND_LINK_PATH}"
-
-BRAND_LINK_PATH=${WEBROOT_DIR}images/logo/favicon.ico
-rm -rf "${BRAND_LINK_PATH}"
-fxLink "${WEBROOT_DIR}images/logo/2013/favicon.ico" "${BRAND_LINK_PATH}"
-
 BRAND_LINK_PATH=${WEBROOT_DIR}images/logo/turbolab.it.png
 rm -rf "${BRAND_LINK_PATH}"
 fxLink "${WEBROOT_DIR}images/logo/2013/turbolab.it-2013-finale-tiny.png" "${BRAND_LINK_PATH}"
