@@ -2,6 +2,14 @@ body {
     background-color: lightgray;
 }
 
+.header-area .header-centerbar {
+    padding-bottom: 0px;
+}
+
+.logo img {
+    all: revert;
+}
+
 ::placeholder {
     opacity: 0.3 !important;
 }
