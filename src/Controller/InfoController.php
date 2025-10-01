@@ -37,9 +37,6 @@ class InfoController extends BaseController
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
-
-        return
-            $this->render('info/manifest.json.twig', [
-            ], $response);
+        return $this->render('info/manifest.json.twig', [], $response);
     }
 }
