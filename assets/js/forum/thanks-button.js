@@ -1,9 +1,12 @@
 //import $ from 'jquery';
-const FADE_SPEED = 300;
 
 $(document).on('click', '.tli-additional-thanks-button',  function(event) {
 
     event.preventDefault();
-    $(this).fadeOut(FADE_SPEED);
     $(this).closest('.inner').find('a[data-ajax="handle_thanks"]').trigger('click');
+});
+
+
+$(document).on('click', 'a[data-ajax="handle_thanks"]',  function(event) {
+    $(this).closest('.inner').find('.tli-additional-thanks-button').fadeOut(300);
 });
