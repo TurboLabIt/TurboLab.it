@@ -7,4 +7,3 @@ $(document).on('click', '.tli-additional-thanks-button',  function(event) {
     $(this).fadeOut(FADE_SPEED);
     $(this).closest('.inner').find('a[data-ajax="handle_thanks"]').trigger('click');
 });
-
