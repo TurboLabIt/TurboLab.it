@@ -1,0 +1,15 @@
+{% verbatim %}
+{# The if condition is copy-pasted form https://github.com/rxu/thanks_for_posts/blob/develop-3.3.x/styles/prosilver/template/event/viewtopic_body_post_buttons_after.html #}
+{% if  not postrow.S_FIRST_POST_ONLY or postrow.S_ONLY_TOPICSTART %}
+    {% if not postrow.S_GLOBAL_POST_THANKS and not postrow.S_POST_ANONYMOUS and S_FORUM_THANKS and S_USER_LOGGED_IN and not postrow.S_IS_OWN_POST and (not postrow.S_ALREADY_THANKED or postrow.S_REMOVE_THANKS) %}
+
+        {% if not postrow.THANKED %}
+            <a href="#" class="button tli-additional-thanks-button" title="Ringrazia l'autore di questo post: {{ postrow.POST_AUTHOR }}">
+                <i class="icon fa-thumbs-o-up fa-fw"></i>
+                <span>Grazie!</span>
+            </a>
+        {% endif %}
+
+    {% endif %}
+{% endif %}
+{% endverbatim %}
