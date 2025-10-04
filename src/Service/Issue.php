@@ -10,6 +10,7 @@ use App\Service\Cms\Article;
 use App\Service\PhpBB\Post;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -18,18 +19,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use TurboLabIt\BaseCommand\Traits\EnvTrait;
 
 
 class Issue
 {
     const int READ_GUIDE_AGAIN_AFTER_DAYS = 14;
 
+    use EnvTrait;
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected Post $post, protected GitHub $github,
         protected HttpClientInterface $httpClient, protected UrlGeneratorInterface $urlGenerator,
-        protected Article $article
+        protected Article $article, protected ParameterBagInterface $parameters,
     ) {}
 
 
@@ -60,7 +63,7 @@ class Issue
     {
         $bugByUser = $this->entityManager->getRepository(Bug::class)->getRecentByAuthor($author, $authorIpAddress);
 
-        if( count($bugByUser) >= BugRepository::TIME_LIMIT_BUGS_NUM ) {
+        if( $this->isProd() && count($bugByUser) >= BugRepository::TIME_LIMIT_BUGS_NUM ) {
 
             $lastIssueDate = end($bugByUser)->getCreatedAt();
             $lastIssueDate->modify('+' . BugRepository::TIME_LIMIT_MINUTES . ' minutes');
