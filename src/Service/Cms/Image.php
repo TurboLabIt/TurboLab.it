@@ -23,13 +23,13 @@ class Image extends BaseCmsService
     const string ENTITY_CLASS          = ImageEntity::class;
     const string NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
 
-    const int ID_404                    = 24297;    // 👀 https://turbolab.it/immagini/24297/med
-    const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/med
+    const int ID_404                    = 26661;    // 👀 https://turbolab.it/immagini/26661/reg
+    const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/reg
     const array IDS_NEWSLETTER_SPOTLIGHT = [
         // uploaded here: https://turbolab.it/179
-        25141,  // 👀 https://turbolab.it/immagini/25141/med
-        25142,  // 👀 https://turbolab.it/immagini/25142/med
-        25143,  // 👀 https://turbolab.it/immagini/25143/med
+        25141,  // 👀 https://turbolab.it/immagini/25141/reg
+        25142,  // 👀 https://turbolab.it/immagini/25142/reg
+        25143,  // 👀 https://turbolab.it/immagini/25143/reg
     ];
 
     const bool BUILD_CACHE_ENABLED      = true;
