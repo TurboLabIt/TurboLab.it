@@ -20,7 +20,8 @@ class ImageCollection extends BaseServiceEntityCollection
         $entity =
             (new ImageEntity())
                 ->setId(Image::ID_404)
-                ->setFormat(ImageEntity::FORMAT_PNG);
+                ->setFormat(ImageEntity::FORMAT_PNG)
+                ->setWatermarkPosition(ImageEntity::WATERMARK_DISABLED);
 
         return $this->createService($entity);
     }
