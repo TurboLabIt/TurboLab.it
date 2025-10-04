@@ -1,0 +1,29 @@
+#tli-link-article-modal {
+    width: auto;
+    max-height: 90vh;
+}
+
+#tli-link-article-search-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+/* Search input */
+#tli-search-input {
+    flex: 1;
+    height: 32px;
+    padding: 6px;
+}
+
+/* Search button */
+#tli-search-button {
+    min-width: 50px;
+    padding: 6px 12px;
+}
+
+/* Search results - scrollable area */
+#tli-search-results {
+    overflow-y: auto;
+    max-height: 720px;
+}

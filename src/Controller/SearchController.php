@@ -39,7 +39,7 @@ class SearchController extends BaseController
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/ajax/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax', priority: 1)]
+    #[Route('/' . self::SECTION_SLUG . '/ajax/serp/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax', priority: 1)]
     public function performSearch(string $termToSearch = '') : Response
     {
         $this->ajaxOnly();
@@ -48,14 +48,14 @@ class SearchController extends BaseController
 
             if( !$this->isCachable() ) {
 
-                $buildHtmlResult = $this->buildHtml($termToSearch);
+                $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results.html.twig');
 
             } else {
 
                 $buildHtmlResult =
                     $this->cache->get("search_$termToSearch", function(ItemInterface $cacheItem) use($termToSearch) {
 
-                        $buildHtmlResult = $this->buildHtml($termToSearch);
+                        $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results.html.twig');
 
                         $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
                         $cacheItem->tag(["search"]);
@@ -73,11 +73,45 @@ class SearchController extends BaseController
     }
 
 
-    protected function buildHtml(string $termToSearch) : string|Response
+    protected function buildHtml(string $termToSearch, string $twigTemplatePath) : string|Response
     {
         return
-            $this->twig->render('search/results.html.twig', [
+            $this->twig->render($twigTemplatePath, [
                 'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch)
             ]);
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/ajax/forum/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax_forum', priority: 1)]
+    public function performSearchForForum(string $termToSearch = '') : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            if( !$this->isCachable() ) {
+
+                $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
+
+            } else {
+
+                $buildHtmlResult =
+                    $this->cache->get("search_$termToSearch", function(ItemInterface $cacheItem) use($termToSearch) {
+
+                        $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
+
+                        $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
+                        $cacheItem->tag(["search"]);
+
+                        return $buildHtmlResult;
+                    });
+            }
+
+        } catch(\Exception $ex) {
+
+            return $this->textErrorResponse($ex);
+        }
+
+        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
     }
 }

@@ -1,0 +1,24 @@
+{% for Article in LocalResults %}
+
+    <div>
+        <h3>
+            <a href="{{ Article.url }}" target="_blank">{{ Article.titleWithFreshUpdatedAt|raw }}</a>
+        </h3>
+        <div class="mb-2">{{ Article.abstract|raw }}</div>
+        <div class="mb-2">
+            <a href="#" class="tli-link-article-bbcode" data-bbcode="[url={{ Article.shortUrl|raw }}]{{ Article.title|raw }}[/url]">
+                <strong style="color: tomato">Inserisci tag URL+titolo</strong>
+            </a> |
+            <a href="#" class="tli-link-article-bbcode" data-bbcode="{{ Article.shortUrl|raw }}">
+                <strong style="color: tomato">Inserisci solo URL</strong>
+            </a>
+        </div>
+    </div>
+
+{% else %}
+
+    <div class="article-abstract">
+        <p class="alert alert-warning"> 🪹 Nessun risultato.</p>
+    </div>
+
+{% endfor  %}

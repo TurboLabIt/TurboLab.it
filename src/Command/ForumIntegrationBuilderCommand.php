@@ -58,9 +58,10 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
                 'params'        => $this->buildPostButtonsParams()
             ],
             "viewtopic_body_postrow_post_details_after" => "post-axx",
-            "viewtopic_body_postrow_back2top_prepend"    => "thanks-button",
+            "viewtopic_body_postrow_back2top_prepend"   => "thanks-button",
             //"viewtopic_body_postrow_post_after"         => "post-axxbot",
-            "posting_editor_message_before"             => [
+            "posting_editor_buttons_custom_tags_before" => "link-article",
+            "posting_editor_message_before" => [
                 'sourceTwig'    => "posting_editor_message_before",
                 'params'        => [ "Article" => $this->factory->createArticle()->load(Article::ID_FORUM_IMAGES)]
             ],

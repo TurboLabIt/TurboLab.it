@@ -10,14 +10,16 @@
     {% include 'ads/handstop.html.twig' %}
 <!-- ENDIF -->
 
+<div id="tli-darken"></div>
 
 <!-- DEFINE $TLI_ISSUE_FORUMS = {{ openSquareBraket }}{{ forumIdTLI }}, {{ forumIdComments }}{{ closeSquareBraket}} -->
-
 <!-- IF S_USER_LOGGED_IN and FORUM_ID in $TLI_ISSUE_FORUMS -->
-    <div id="tli-darken"></div>
-    <div id="tli-issue-modal" class="phpbb_alert">
+    <div id="tli-issue-modal" class="tli-forum-modal phpbb_alert">
         <a href="#" class="alert_close">×</a>
-        <h3 class="alert_title">Creazione issue GitHub</h3>
+        <h3 class="alert_title">
+            <i class="icon fa-solid fa-bug" style="color: #04a202;"></i>
+            Creazione issue GitHub
+        </h3>
         <p>Stai per creare una nuova issue su GitHub.</p>
         <p>
             Per favore, (ri)leggi sempre
@@ -35,6 +37,31 @@
         </div>
         <div class="tli-response-target collapse alert"></div>
     </div>
+<!-- ENDIF -->
+
+
+<!-- IF S_USER_LOGGED_IN -->
+<div id="tli-link-article-modal" class="tli-forum-modal phpbb_alert">
+    <a href="#" class="alert_close">×</a>
+    <h3 class="alert_title">
+        <img src="/favicon.ico" class="tli-post-formatting-button-icon" alt="Inserisci link ad articolo di TurboLab.it">
+        Ricerca articoli
+    </h3>
+    <p>Cerca e inserisci il collegamento a un articolo pubblicato da TurboLab.it</p>
+
+    <div id="tli-link-article-search-container">
+        <input type="text" id="tli-search-input" class="inputbox" minlength="3" placeholder="windows 11 usb">
+        <button type="button" id="tli-search-button" class="button button-secondary" title="Cerca">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+
+    <div id="tli-search-too-short-error" class="ml-5 mt-2">Digita almeno 3 caratteri, poi premi &quot;Invio&quot;</div>
+
+    <i class="tli-loaderino fa fa-spinner fa-spin collapse"></i>
+    <div id="tli-search-results" data-url="{{ path('app_search_ajax_forum') }}"></div>
+
+</div>
 <!-- ENDIF -->
 
 <!-- END TurboLab.it integration 09-overall-header.html.twig -->

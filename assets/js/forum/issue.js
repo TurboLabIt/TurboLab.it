@@ -15,7 +15,8 @@ $(document).on('click', '.tli-open-issue-modal',  function(event) {
     }
 
     $('#tli-darken').fadeIn(FADE_SPEED);
-    $('#tli-issue-modal').fadeIn(FADE_SPEED);
+    ISSUE_MODAL.fadeIn(FADE_SPEED);
+    $('body').addClass('tli-prevent-scrolling');
 
     let postId = $(this).data('post-id');
     ISSUE_MODAL.find('.tli-create-issue').data('post-id', postId);
@@ -52,12 +53,16 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 
             responseTarget.html("OK!").addClass("alert-success");
 
-            if (window.location.href == response) {
+            // Compare URLs without the hash
+            const currentBase = window.location.href.split('#')[0];
+            const targetBase = response.split('#')[0];
 
-                window.location.reload();
-
+            if (currentBase === targetBase) {
+                // Same page (with or without hash) - force reload
+                window.location.replace(response);
+                window.location.reload(true);
             } else {
-
+                // Different page - normal navigation
                 window.location.href = response;
             }
         })
@@ -77,9 +82,6 @@ $(document).on('click', '.tli-create-issue',  function(event) {
 });
 
 
-$(document).on('click', '#tli-issue-modal .alert_close, #tli-issue-modal .button2',  function(event) {
-
-    event.preventDefault();
-    $('#tli-issue-modal').fadeOut(FADE_SPEED);
-    $('#tli-darken').fadeOut(FADE_SPEED);
+$(document).on('click', '#tli-issue-modal .button2',  function(event) {
+    $(this).closest('.tli-forum-modal').find('.alert_close').trigger('click');
 });
