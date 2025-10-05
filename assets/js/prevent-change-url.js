@@ -1,6 +1,6 @@
 //import $ from 'jquery';
 
-jQuery(document).on('click', '.prevent-change-url', function() {
+$(document).on('click', '.prevent-change-url', function() {
 
     let originalUrl = window.location.href;
     setTimeout(function() {
@@ -9,7 +9,7 @@ jQuery(document).on('click', '.prevent-change-url', function() {
 });
 
 
-jQuery(document).on('click', 'a.disabled-link', function(event) {
+$(document).on('click', 'a.disabled-link', function(event) {
 
     event.preventDefault();
     return false;
