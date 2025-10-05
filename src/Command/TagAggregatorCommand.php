@@ -19,7 +19,7 @@ class TagAggregatorCommand extends AbstractBaseCommand
         'windows8' => Tag::ID_WINDOWS, 'windows80' => Tag::ID_WINDOWS, 'windows81' => Tag::ID_WINDOWS,
         'windows10' => Tag::ID_WINDOWS, 'windows11' => Tag::ID_WINDOWS, 'windows12' => Tag::ID_WINDOWS,
         //
-        'blockchain' => Tag::ID_CRYPTOCURRENCIES, 'bitcoin' => Tag::ID_CRYPTOCURRENCIES,
+        'blockchain' => Tag::ID_CRYPTOCURRENCIES,
         //
         'virus' => Tag::ID_ANTIVIRUS_MALWARE, 'malware' => Tag::ID_ANTIVIRUS_MALWARE, 'antivirusantimalware' => Tag::ID_ANTIVIRUS_MALWARE,
         'ransomware' => Tag::ID_ANTIVIRUS_MALWARE, 'adware' => Tag::ID_ANTIVIRUS_MALWARE,
