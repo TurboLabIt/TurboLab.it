@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Tag as TagEntity;
+use App\Entity\Cms\TagBadge;
 use App\Exception\TagNotFoundException;
 use App\Repository\Cms\TagRepository;
 use App\Service\Factory;
@@ -44,6 +45,7 @@ class Tag extends BaseCmsService
     const int ID_VIRTUALIZATION     = 535;      // 👀 https://turbolab.it/tag-535
     const int ID_STORAGE            = 570;      // 👀 https://turbolab.it/tag-570
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/tag-640
+    const int ID_DATA_RECOVERY      = 819;      // 👀 https://turbolab.it/tag-819
     const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/tag-897
     const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/tag-1224
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/tag-2914
@@ -57,6 +59,7 @@ class Tag extends BaseCmsService
     protected ?TagEntity $entity;
     protected ?ArticleCollection $articlesTagged    = null;
     protected ?Article $firstArticle                = null;
+    protected ?array $arrBadges                     = null;
 
 
     public function __construct(protected Factory $factory) { $this->clear(); }
@@ -220,6 +223,28 @@ class Tag extends BaseCmsService
         }
 
         return $firstArticle->getSpotlightOrDefaultUrl($size);
+    }
+
+
+    public function getBadges() : array
+    {
+        if( is_array($this->arrBadges) ) {
+            return $this->arrBadges;
+        }
+
+        $this->arrBadges = [];
+
+        $junctions = $this->entity->getBadges();
+
+        /** @var TagBadge $junction */
+        foreach($junctions as $junction) {
+
+            $badge  = $junction->getBadge();
+            $badeId = (string)$badge->getId();
+            $this->arrBadges[$badeId] = $badge;
+        }
+
+        return $this->arrBadges;
     }
 
 

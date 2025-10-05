@@ -56,6 +56,7 @@ class Article extends BaseCmsService
     protected ?Topic $commentsTopic         = null;
     protected ?string $articleBodyForDisplay = null;
     protected array $arrPrevNextArticles    = [];
+    protected ?array $arrBadges             = null;
     //</editor-fold>
 
     public function __construct(protected Factory $factory) { $this->clear(); }
@@ -494,6 +495,29 @@ class Article extends BaseCmsService
     }
 
     public function getSlug() : ?string { return $this->factory->getArticleUrlGenerator()->buildSlug($this); }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 📛 Badges ***">
+    public function getBadges() : array
+    {
+        if( is_array($this->arrBadges) ) {
+            return $this->arrBadges;
+        }
+
+        $this->arrBadges = [];
+
+        $tags = $this->getTags();
+
+        /** @var Tag $tag */
+        foreach($tags as $tag) {
+
+            $arrBadges = $tag->getBadges();
+            $this->arrBadges = array_merge($this->arrBadges, $arrBadges);
+        }
+
+        return $this->arrBadges;
+    }
     //</editor-fold>
 
 

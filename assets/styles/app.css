@@ -103,3 +103,5 @@ div.stellarnav.mobile.active ul {
 .tli-social-icons .icon-wrapper {
     max-width: 64px;
 }
+
+.tli-contains-chevron .chevron.tli-chevron-rotated { transform: rotate(180deg); }

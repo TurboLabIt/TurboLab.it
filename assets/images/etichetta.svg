@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" viewBox="0 0 221.97 400.83" version="1.1">
+  <defs id="defs4">
+    <linearGradient id="linearGradient5463" y2="-148.74" gradientUnits="userSpaceOnUse" x2="232.4" gradientTransform="matrix(.92279 0 0 .92279 -1571.7 121.45)" y1="-148.74" x1="90.309">
+      <stop id="stop5457" stop-color="#8d7250" offset="0"/>
+      <stop id="stop5459" stop-color="#342a1a" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient5471" y2="266.43" gradientUnits="userSpaceOnUse" x2="567.86" y1="266.43" x1="345">
+      <stop id="stop5467" stop-color="#dadada" offset="0"/>
+      <stop id="stop5475" stop-color="#919191" offset=".5"/>
+      <stop id="stop5469" stop-color="#707070" offset="1"/>
+    </linearGradient>
+    <radialGradient id="radialGradient5489" fx="180.85" fy="-13.622" gradientUnits="userSpaceOnUse" cy="36.813" cx="224.29" gradientTransform="matrix(1.5874 -.090305 .074416 1.3513 -1723.5 125.93)" r="90.706">
+      <stop id="stop4301" stop-color="#c9e400" offset="0"/>
+      <stop id="stop4303" stop-color="#e77800" offset="1"/>
+    </radialGradient>
+    <linearGradient id="linearGradient3912" y2="-233.91" gradientUnits="userSpaceOnUse" x2="-315.34" gradientTransform="matrix(.92279 0 0 .92279 -990.06 371.27)" y1="-233.91" x1="-496.76">
+      <stop id="stop5526" stop-color="#dadada" offset="0"/>
+      <stop id="stop5530" stop-color="#a1a1a1" offset="1"/>
+    </linearGradient>
+  </defs>
+  <g id="layer1" transform="translate(1494.5 104.2)">
+    <path id="path3130" d="m-1448.5 281.16h167.41v-216.38l-61.179-35.087h-45.718l-60.463 34.676z" fill="url(#linearGradient3912)"/>
+    <path id="path5453" fill="url(#radialGradient5489)" d="m-1445.2 278.19h160.81v-211.27l-58.77-34.259h-43.918l-58.082 33.857z"/>
+    <path id="path5418-8" d="m567.86 266.43a111.43 111.43 0 1 1 -222.86 0 111.43 111.43 0 1 1 222.86 0z" fill="url(#linearGradient5471)" transform="matrix(.15380 0 0 .15380 -1435.1 23.223)"/>
+    <path id="path5420-6" d="m567.86 266.43a111.43 111.43 0 1 1 -222.86 0 111.43 111.43 0 1 1 222.86 0z" stroke-opacity=".18227" transform="matrix(.11239 0 0 .11239 -1416.2 34.255)" stroke="#000" stroke-width="16.421" fill="#fff"/>
+    <path id="path5422-1" stroke-linejoin="round" d="m-1368.9 55.132c1.7937 2.6068 1.9343-2.1793 1.7402-3.3184-10.779-63.278-37.781-61.861-82.452-75.675-22.76-7.0384-44.901-30.236-29.103-52.589 17.124-23.417 48.676-1.9633 65.009 11.404 24.849 20.337 41.895 54.077 53.764 117.73 0.098 0.52473 0.3354 1.9511 0 2.7058-0.2878 0.65328-1.0853 0.80324-1.7664-0.57064" stroke="url(#linearGradient5463)" stroke-linecap="round" stroke-width="3.6912" fill="none"/>
+    <path id="path5424-9" stroke-linejoin="round" d="m-1377.9 29.695c-0.2688-4.3329 2.2642-7.2321 8.3356-8.3854 5.246-0.99648 14.897 6.1818 14.436 8.3005" stroke="#311f13" stroke-width="3.6912" fill="none"/>
+    <text id="text3080-3" font-size="33.359px" line-height="125%" xml:space="preserve" style="word-spacing:0px;letter-spacing:0px;text-anchor:middle;text-align:center" transform="matrix(1.3703 0 0 1.3703 -143.71 -24.141)" font-family="Comfortaa" fill="#ffffff">
+      <textPath id="textPath4007" xlink:href="#path4005" startOffset="50%">Choose your Licence!</textPath>
+    </text>
+    <path id="path4005" fill="none" d="m180.99-353.62c181.95 77.222 360.41 102.08 529.07-20.041"/>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Vertical Tag</dc:title>
+        <dc:date>2013-05-14T19:55:27</dc:date>
+        <dc:description>Simple vertical tag with a small hole and a small cordon.</dc:description>
+        <dc:source>http://openclipart.org/detail/178124/vertical-tag-by-tatica-178124</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>tatica</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>orange</rdf:li>
+            <rdf:li>tag</rdf:li>
+            <rdf:li>vertical</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -3,7 +3,6 @@ namespace App\Tests\Smoke;
 
 use App\Command\TagAggregatorCommand;
 use App\Service\Cms\Tag;
-use App\ServiceCollection\Cms\TagCollection;
 use App\Tests\BaseT;
 use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;

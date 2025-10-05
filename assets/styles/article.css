@@ -1,3 +1,18 @@
+.tli-badge {
+    border: 1px solid #d3d3d3;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.tli-badge:hover {
+    background-color: #f8f9fa;
+}
+
+.tli-badge img {
+    width: 48px !important;
+}
+
 .tli-article-main-content {
     padding-top: 15px !important;
     padding-bottom: 15px !important;
