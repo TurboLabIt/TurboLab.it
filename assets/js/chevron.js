@@ -8,3 +8,8 @@ $(document).on('show.bs.collapse', '.tli-contains-chevron', function() {
 $(document).on('hide.bs.collapse', '.tli-contains-chevron', function() {
     $(this).find('.chevron').removeClass('tli-chevron-rotated');
 });
+
+
+$(document).on('click', '.tli-chevron-expanded-text', function(event) {
+    event.stopPropagation();
+});

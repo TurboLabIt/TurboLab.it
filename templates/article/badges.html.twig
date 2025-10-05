@@ -1,7 +1,7 @@
 {% for Badge in Article.Badges %}
 
-    <div class="tli-badge w-100 p-3 mb-10 tli-contains-chevron" data-bs-toggle="collapse" data-bs-target="#tli-badge-{{ Badge.id }}-text" aria-expanded="false">
-        <div class="d-flex align-items-center justify-content-between">
+    <div class="tli-badge w-100 p-3 mb-10 tli-contains-chevron">
+        <div class="d-flex align-items-center justify-content-between" data-bs-toggle="collapse" data-bs-target="#tli-badge-{{ Badge.id }}-text" aria-expanded="false">
             <img src="{{ asset('build/images/' ~ Badge.imageUrl) }}" width="48" alt="Badge" class="me-3">
             <div class="flex-grow-1 text-center d-flex align-items-center justify-content-center">
                 <span class="fw-light text-secondary">{{ Badge.abstract|raw }}</span>
@@ -10,7 +10,7 @@
             <div style="width: 48px;"></div> <!-- Spacer for symmetry -->
         </div>
 
-        <div class="collapse mt-3" id="tli-badge-{{ Badge.id }}-text">
+        <div class="collapse mt-3 tli-chevron-expanded-text" id="tli-badge-{{ Badge.id }}-text">
             <hr class="my-2">
             <p class="text-muted mb-0">{{ Badge.body|raw }}</p>
         </div>
