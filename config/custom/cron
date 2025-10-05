@@ -38,6 +38,9 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every hour: dump server configuration for the info page
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
 
+## every night: tag aggregator
+30 23 * * * root bash ${SCRIPT_DIR}tag-aggregator.sh >> ${LOG_PATH}tag-aggregator.sh.log 2>&1
+
 ## mid-night and mid-day: run the cleaner (also: clear "controller" (app) cache only)
 1 0,12 * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
 
@@ -45,7 +48,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 0 2 * * * root bash ${SCRIPT_DIR}reindex.sh >> ${LOG_PATH}reindex.sh.log 2>&1
 
 ## every night: sitemap generator
-0 2 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
+0 3 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

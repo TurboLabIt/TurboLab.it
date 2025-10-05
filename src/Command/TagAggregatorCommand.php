@@ -44,7 +44,9 @@ class TagAggregatorCommand extends AbstractBaseCommand
         //
         'bloccapubblicitadblock' => Tag::ID_ADBLOCK,
         //
-        'connettoreusb' => Tag::ID_USB, 'usb3' => Tag::ID_USB, 'usbconnector' => Tag::ID_USB
+        'connettoreusb' => Tag::ID_USB, 'usb3' => Tag::ID_USB, 'usbconnector' => Tag::ID_USB,
+        //
+        'recuperofile' => Tag::ID_DATA_RECOVERY
     ];
 
 
