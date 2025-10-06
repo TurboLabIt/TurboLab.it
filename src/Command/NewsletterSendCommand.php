@@ -214,7 +214,12 @@ class NewsletterSendCommand extends AbstractBaseCommand
     protected function sendOne(int $key, User $user) : void
     {
         if( $this->getCliOption(static::CLI_OPT_USE_LOCAL_SMTP) ) {
+
             $this->newsletter->useLocalSmtpOnce();
+
+        } else {
+
+            $this->newsletter->switchTransportOnce('newsletter');
         }
 
         $this->newsletter
