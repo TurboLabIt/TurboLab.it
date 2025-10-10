@@ -3,8 +3,9 @@
         "@babel/core": ">=7.28.4",
         "@babel/preset-env": ">=7.28.3",
         "@symfony/webpack-encore": ">=5.2.0",
+        "critical": "^7.2.1",
         "npm-check-updates": "^19.0.0",
-        "webpack": ">=5.102.0",
+        "webpack": ">=5.102.1",
         "webpack-cli": "6.0.1",
         "webpack-notifier": ">=1.15.0"
     },

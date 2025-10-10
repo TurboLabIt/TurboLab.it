@@ -3,8 +3,10 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    <link rel="preload" href="{{ asset('build/article.css') }}"
-        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {{ encore_entry_link_tags('article') }}
+
+    {# <link rel="preload" href="{{ asset('build/article.css') }}"
+        as="style" onload="this.onload=null;this.rel='stylesheet'"> #}
 
     {% if Article.isEditable %}
         <link rel="stylesheet" href="{{ asset('build/article-edit.css') }}">
@@ -15,7 +17,7 @@
 
 {% block bodyMainContent %}
     <!-- ARTICLE bodyMainContent START -->
-    <section class="post-layout-1-area post-layout-3-area">
+    <section class="post-layout-1-area">
         <div class="container">
             <div class="row">
 
