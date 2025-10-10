@@ -9,7 +9,8 @@
         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
             <a href="{{ Author.url }}">
                 {% if Author.avatarUrl is not empty %}
-                    <img src="{{ Author.avatarUrl }}" width="128" alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+                    <img src="{{ Author.avatarUrl }}" width="128" loading="lazy"
+                         alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
                 {% else %}
                     <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
                 {% endif %}
