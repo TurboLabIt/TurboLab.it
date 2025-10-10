@@ -1850,7 +1850,7 @@ p {
           width: 110px; } }
       .trending-social ul li a i {
         position: absolute;
-        list-style-type: 0;
+        list-style-type: none;
         left: 12px;
         top: 50%;
         transform: translateY(-50%);
@@ -2101,7 +2101,7 @@ p {
     .trending-business-post .trending-business-items .populer_item-style .gallery_item_content .title a:hover {
       color: #FF5555; }
     .trending-business-post .trending-business-items .populer_item-style:last-child {
-      padding-bottom: 1;
+      padding-bottom: 1px;
       margin-bottom: 0;
       border-bottom: 0; }
 
@@ -3279,7 +3279,7 @@ p {
           background: #334D82; }
         .post-contact ul li a i {
           position: absolute;
-          list-style-type: 0;
+          list-style-type: none;
           left: 10px;
           top: 50%;
           transform: translateY(-50%);
@@ -4634,7 +4634,7 @@ p {
           background: #334D82; }
         .widget-social .post-contact ul li a i {
           position: absolute;
-          list-style-type: 0;
+          list-style-type: none;
           left: 10px;
           top: 50%;
           transform: translateY(-50%);
