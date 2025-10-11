@@ -3,8 +3,7 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    <link rel="preload" href="{{ asset('build/article.css') }}"
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {{ inline_css('build/article.css') }}
 
 {% endblock %}
 

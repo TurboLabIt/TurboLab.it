@@ -3,8 +3,10 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    <link rel="preload" href="{{ asset('build/search.css') }}"
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {{ inline_css('build/search.css') }}
+
+    {#<link rel="preload" href="{{ asset('build/search.css') }}"
+          as="style" onload="this.onload=null;this.rel='stylesheet'">#}
 
 {% endblock %}
 
