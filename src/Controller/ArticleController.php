@@ -101,4 +101,13 @@ class ArticleController extends BaseController
         $article = $this->factory->createArticle()->load($id);
         return $this->redirect($article->getUrl(), Response::HTTP_MOVED_PERMANENTLY);
     }
+
+
+    #[Route('/commenti/{articleId<[1-9]+[0-9]*>}', name: 'app_article_comments_legacy')]
+    public function legacyCommentsUrl(int $articleId) : Response
+    {
+        $article = $this->factory->createArticle()->load($articleId);
+        return $this->redirect($article->getCommentsUrl(), Response::HTTP_MOVED_PERMANENTLY);
+    }
+
 }
