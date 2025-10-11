@@ -1,3 +1,4 @@
+import './styles/newspark/preloader.css';
 import './styles/newspark/stellarnav.css';
 import './styles/newspark/default.css';
 import './styles/newspark/style.css';

@@ -3,7 +3,7 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    {{ encore_entry_link_tags('article') }}
+    {{ inline_css('build/article.css') }}
 
     {# <link rel="preload" href="{{ asset('build/article.css') }}"
         as="style" onload="this.onload=null;this.rel='stylesheet'"> #}
