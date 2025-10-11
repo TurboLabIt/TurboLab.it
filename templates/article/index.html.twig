@@ -53,7 +53,7 @@
 
                     <div class="post-layout-top-content post-layout-top-content-3 tli-article-main-content">
 
-                        <div class="post-content">
+                        <div class="post-content mb-20">
 
                             {% if Article.isEditable %}
 
@@ -87,7 +87,7 @@
                         </div>
 
                         {% if Article.isPublished %}
-                            <div class="sharethis-inline-share-buttons mt-30"></div>
+                            <div class="sharethis-inline-share-buttons mb-20"></div>
                         {% endif %}
 
 
@@ -95,9 +95,9 @@
 
                         {% if Article.isReadable and Article.Files is not empty %}
 
-                            <div class="container mt-20">
+                            <div class="container">
                                 {% for File in Article.Files %}
-                                    <div class="d-flex align-items-start mt-20 tli-file-download">
+                                    <div class="d-flex align-items-start mb-20 tli-file-download">
                                         <span class="d-flex align-items-center">
 
                                             <a href="{{ File.url }}" target="_blank">
@@ -139,7 +139,7 @@
                             {% include 'article/editor/toolbar-icons.html.twig' %}
 
                             <div id="tli-article-body"
-                                 class="post-text mt-30 tli-article-body {% if Article.isEditable %}form-control{% endif %}"
+                                 class="post-text mb-20 tli-article-body {% if Article.isEditable %}form-control{% endif %}"
                                  {% if Article.isEditable %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
@@ -154,7 +154,7 @@
                                     Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
                                 </h4>
 
-                                <div class="sharethis-inline-share-buttons"></div>
+                                <div class="sharethis-inline-share-buttons mb-20"></div>
 
                             {% endif %}
 

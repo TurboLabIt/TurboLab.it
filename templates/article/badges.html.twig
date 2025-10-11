@@ -1,6 +1,6 @@
 {% for Badge in Article.Badges %}
 
-    <div class="tli-badge w-100 p-3 mb-10 tli-contains-chevron">
+    <div class="tli-badge w-100 p-3 mb-20 tli-contains-chevron">
         <div class="d-flex align-items-center justify-content-between" data-bs-toggle="collapse" data-bs-target="#tli-badge-{{ Badge.id }}-text" aria-expanded="false">
             <img src="{{ asset('build/images/' ~ Badge.imageUrl) }}" width="48" height="48" alt="Badge" class="me-3">
             <div class="flex-grow-1 text-center d-flex align-items-center justify-content-center">
