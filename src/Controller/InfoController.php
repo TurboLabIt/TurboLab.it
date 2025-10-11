@@ -5,6 +5,7 @@ use App\Service\Cms\Article;
 use App\Service\ServerInfo;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\ItemInterface;
 
 
 class InfoController extends BaseController
@@ -35,8 +36,15 @@ class InfoController extends BaseController
     #[Route('/manifest.json', name: 'app_manifest')]
     public function manifest() : Response
     {
-        $response = new Response();
+        $buildHtmlResult =
+            $this->cache->get("manifest.json", function(ItemInterface $cacheItem) {
+
+                $cacheItem->expiresAfter(3600 * 24 * 90);
+                return $this->twig->render('info/manifest.json.twig');
+            });
+
+        $response = new Response($buildHtmlResult);
         $response->headers->set('Content-Type', 'application/json');
-        return $this->render('info/manifest.json.twig', [], $response);
+        return $response;
     }
 }
