@@ -1,15 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-
-    {{ parent() }}
-    {{ inline_css('build/calendar.css') }}
-
-    {#<link rel="preload" href="{{ asset('build/calendar.css') }}"
-        as="style" onload="this.onload=null;this.rel='stylesheet'">#}
-
-{% endblock %}
-
 {% block bodyMainContent %}
     <!-- ARCHIVE bodyMainContent START -->
 
