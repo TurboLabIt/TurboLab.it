@@ -23,8 +23,8 @@ Il flusso è il seguente:
 3. tramite PHP, il server processa il file originale e ne deriva molteplici copie, ognuna con un set di dimensioni diverse (elencate in [Service/Image::SIZE_DIMENSIONS](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php))
 4. le copie elaborate vengono ri-compresse nel miglior formato grafico disponibile | attualmente: **AVIF**, che offre una compressione superiore ed [è supportato](https://caniuse.com/avif) da tutti i browser web moderni
 5. viene applicato il *watermark* (il cui percorso è impostato in [Service/Image::WATERMARK_FILEPATH](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php))
-5. i file così elaborati sono salvati in una cache su disco
-6. ricevuta la richiesta di un file-immagine da parte di un client, il server web eroga direttamente il file generato ai passi precedenti, leggendolo dalla cache e senza più bisogno di attivare l'interprete PHP
+6. i file così elaborati sono salvati in una cache su disco
+7. ricevuta la richiesta di un file-immagine da parte di un client, il server web eroga direttamente il file generato ai passi precedenti, leggendolo dalla cache e senza più bisogno di attivare l'interprete PHP
 
 Il processo di elaborazione dell'immagine via PHP, ovvero il flusso che termina con il salvataggio dell'immagine modificata nella cache sul disco, avviene dunque solo la prima volta che viene richiesta una determinata immagine (dall'autore stesso, presumibilmente). Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php).
 
