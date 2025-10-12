@@ -51,6 +51,4 @@ Le immagini caricate dagli utenti sono invece ospitate esternamente: [vedi #13](
 
 ## 📸 Immagini degli articoli
 
-**Screenshot, foto e altre grafiche caricate dagli autori negli articoli** | 🖼 [Immagini a campione qui](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-sample.md)
-
 🔗 Vedi: [Gestione delle immagini caricate negli articoli](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images-articles.md)
