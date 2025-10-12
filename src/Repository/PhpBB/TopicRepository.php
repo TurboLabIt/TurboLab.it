@@ -3,7 +3,6 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
 use App\Entity\PhpBB\Topic;
-use App\Service\HtmlProcessorBase;
 use App\Service\Newsletter;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
@@ -117,9 +116,7 @@ class TopicRepository extends BasePhpBBRepository
             throw new InvalidArgumentException('Invalid forum ID');
         }
 
-        $titleNormalized = HtmlProcessorBase::decode($title);
-        // phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
-        $titleForPhpBB = htmlentities($titleNormalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $titleForPhpBB = \App\Service\PhpBB\Topic::encodeTextAsTitle($title);
 
         $connection = $this->getEntityManager()->getConnection();
 

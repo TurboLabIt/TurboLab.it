@@ -90,12 +90,15 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
             $arrOtherAuthorIds[] = $authorId;
         }
 
+        $topicTitle = Topic::buildCommentsTitle( $article->getTitle() );
+        $topicTitleEncoded = Topic::encodeTextAsTitle($topicTitle);
+
         $response =
             $this->httpClient->request(Request::METHOD_POST, $this->endpoint, [
                 'verify_peer' => false,
                 'verify_host' => false,
                 'body' => [
-                    'post-title'        => Topic::buildCommentsTitle( $article->getTitle() ),
+                    'post-title'        => $topicTitleEncoded,
                     'post-body'         => $this->twig->render('article/comments-topic.bbcode.twig', ['Article' => $article]),
                     'author-id'         => empty($firstAuthor) ? User::ID_SYSTEM : $firstAuthor->getId(),
                     'other-author-ids'  => $arrOtherAuthorIds,

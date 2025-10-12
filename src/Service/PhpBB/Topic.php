@@ -50,9 +50,21 @@ class Topic extends BaseServiceEntity
             $postTitle .= " (#$id)";
         }
 
+        return $postTitle;
+    }
+
+
+    public static function encodeTextAsTitle(string $postTitle) : string
+    {
+        $postTitleDecoded = HtmlProcessorBase::decode($postTitle);
+
         // phpBB come salva l'HTML a database? https://turbolab.it/forum/viewtopic.php?t=13553
-        $postTitle = htmlspecialchars($postTitle, ENT_QUOTES, 'UTF-8');
-        return trim($postTitle);
+        $postTitleEncoded = htmlspecialchars($postTitleDecoded, ENT_QUOTES, 'UTF-8');
+
+        // encode emojis and 4-byte characters to HTML entities
+        $postTitleEncoded = mb_encode_numericentity($postTitleEncoded, [0x10000, 0x10FFFF, 0, 0xFFFFFF], 'UTF-8');
+
+        return trim($postTitleEncoded);
     }
 
 

@@ -309,7 +309,7 @@ class ArticleEditor extends Article
         $newTopicEntity =
             $this->factory->getEntityManager()->getRepository(TopicEntity::class)
                 ->insertNewRow(
-                    Topic::buildCommentsTitle( $this->getTitle(), $this->getId()),
+                    Topic::buildCommentsTitle( $this->getTitle(), $this->getId() ),
                     'Post in preparazione...'
                     , Forum::ID_COMMENTS);
 
