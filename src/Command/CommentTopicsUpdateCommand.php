@@ -22,8 +22,8 @@ use Twig\Environment;
 /**
  * 📚
  */
-#[AsCommand(name: 'UpdateCommentTopics', description: 'Update the opening post in each article\'s comment topic')]
-class UpdateCommentTopicsCommand extends AbstractBaseCommand
+#[AsCommand(name: 'CommentTopicsUpdate', description: 'Update the opening post in each article\'s comment topic')]
+class CommentTopicsUpdateCommand extends AbstractBaseCommand
 {
     protected string $endpoint;
     protected array $arrResults = [];
