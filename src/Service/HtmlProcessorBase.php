@@ -65,7 +65,7 @@ abstract class HtmlProcessorBase
     }
 
 
-    protected function parseHTML(string $text) : DOMDocument|bool
+    public function parseHTML(string $text) : DOMDocument|bool
     {
         $domDoc = new DOMDocument();
 

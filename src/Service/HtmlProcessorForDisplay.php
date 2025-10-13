@@ -11,6 +11,10 @@ use DOMXPath;
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 class HtmlProcessorForDisplay extends HtmlProcessorBase
 {
+    const string REGEX_IMAGE_PLACEHOLDER    = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
+    const string REGEX_IMAGE_SHORTURL       = '/(?<=(\/immagini\/))[1-9]+[0-9]*(?=(\/))/';
+
+
     public function processArticleBody(Article $article) : string
     {
         $text = $article->getBody();
@@ -39,8 +43,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
     protected function imagesFromPlaceholderToUrl(DOMDocument $domDoc, Article $article) : static
     {
-        $imgRegEx       = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
-        $arrImgNodes    = $this->extractNodes($domDoc, 'img', 'src', $imgRegEx);
+        $arrImgNodes = $this->extractNodes($domDoc, 'img', 'src', static::REGEX_IMAGE_PLACEHOLDER);
 
         $imageCollection = $this->factory->createImageCollection();
         $imageCollection->load( array_keys($arrImgNodes) );
@@ -177,7 +180,6 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
-
     protected function YouTubeIframesFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $regex = '/^==###youtube::code::([a-z0-9-_]+)###==$/i';
@@ -222,7 +224,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
-    protected function extractNodes(DOMDocument $domDoc, $tagName, $attributeToCheck, $attributeRegEx)
+    public function extractNodes(DOMDocument $domDoc, $tagName, $attributeToCheck, $attributeRegEx) : array
     {
         $arrNodes = $domDoc->getElementsByTagName($tagName);
         $arrMatchingNodes = [];
