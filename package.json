@@ -3,8 +3,14 @@
         "@babel/core": ">=7.28.4",
         "@babel/preset-env": ">=7.28.3",
         "@symfony/webpack-encore": ">=5.2.0",
-        "critical": "^7.2.1",
-        "npm-check-updates": "^19.0.0",
+        "ckeditor5": ">=47.0.0",
+        "file-loader": ">=6.2.0",
+        "jquery-is-in-viewport": ">=1.0.5",
+        "npm-check-updates": "^19.1.0",
+        "odometer": "^0.4.8",
+        "raw-loader": ">=4.0.2",
+        "sass": ">=1.93.2",
+        "sass-loader": ">=16.0",
         "webpack": ">=5.102.1",
         "webpack-cli": "6.0.1",
         "webpack-notifier": ">=1.15.0"
@@ -16,15 +22,6 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
-    },
-    "dependencies": {
-        "ckeditor5": ">=47.0.0",
-        "file-loader": ">=6.2.0",
-        "jquery-is-in-viewport": ">=1.0.5",
-        "odometer": "^0.4.8",
-        "raw-loader": ">=4.0.2",
-        "sass": ">=1.93.2",
-        "sass-loader": ">=16.0"
     },
     "packageManager": "yarn@4.5.1"
 }
