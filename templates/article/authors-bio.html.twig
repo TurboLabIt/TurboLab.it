@@ -23,8 +23,8 @@
                 <a href="{{ Author.url }}">{{ Author.fullName|raw }}</a><br>
                 <span class="tli-author-articles-counter">
                     <a href="{{ Author.url }}">
-                        <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }}
-                        {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
+                        <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesPublishedNum }}
+                        {% if Author.articlesPublishedNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
                     </a>
                 </span>
             </p>

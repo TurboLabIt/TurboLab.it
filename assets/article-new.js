@@ -1,3 +1,5 @@
+import './styles/article-new.css';
+
 //import $ from 'jquery';
 import './js/slider';
 import './styles/slider-custom-arrows.css';

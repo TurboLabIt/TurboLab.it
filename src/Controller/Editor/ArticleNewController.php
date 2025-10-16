@@ -47,6 +47,7 @@ class ArticleNewController extends ArticleEditBaseController
             'FrontendHelper'                => $this->frontendHelper,
             'ArticleHowTo'                  => $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE),
             'currentUserUrl'                => $currentUser?->getUrl(),
+            'currentUserArticlesNum'        => $currentUser?->getArticlesNum(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
             'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),

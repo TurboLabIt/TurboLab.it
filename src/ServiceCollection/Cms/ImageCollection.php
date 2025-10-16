@@ -35,6 +35,13 @@ class ImageCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadOrphans() : static
+    {
+        $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->getOrphans();
+        return $this->setEntities($arrEntities);
+    }
+
+
     public function createService(?ImageEntity $entity = null) : ImageService
     {
         return $this->factory->createImage($entity);

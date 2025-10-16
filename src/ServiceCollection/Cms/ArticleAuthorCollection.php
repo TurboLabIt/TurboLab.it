@@ -17,6 +17,13 @@ class ArticleAuthorCollection extends BaseArticleCollection
     }
 
 
+    public function countByArticleStatus(?int $publishingStatus = null) : int
+    {
+        $userEntity = $this->author->getEntity();
+        return $this->getRepository()->countByAuthor($userEntity, $publishingStatus);
+    }
+
+
     public function loadDrafts() : static
     {
         $userEntity = $this->author->getEntity();

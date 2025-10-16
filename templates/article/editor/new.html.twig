@@ -27,7 +27,7 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
                                 <li class="breadcrumb-item">
-                                    <i class="fa-solid fa-pen"></i>&nbsp;Nuovo articolo
+                                    <i class="fa-solid fa-pen"></i> Nuovo articolo
                                 </li>
                             </ol>
                         </nav>
@@ -250,6 +250,16 @@
                                         Questi articoli non sono più visibili dal pubblico, e potrebbero essere eliminati.
                                         Ti raccomandiamo di farne una copia sul tuo PC, se desideri conservarli.
                                     </p>
+
+                                {% endif %}
+
+
+                                {% if currentUserArticlesNum > 0 %}
+
+                                    <h2>Altre risorse per gli autori</h2>
+                                    <ul>
+                                        <li><i class="fa-solid fa-images"></i> <a href="{{ path('app_image_orphans') }}">Immagini orfane</a></li>
+                                    </ul>
 
                                 {% endif %}
 

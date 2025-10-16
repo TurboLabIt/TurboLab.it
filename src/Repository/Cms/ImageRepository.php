@@ -22,4 +22,15 @@ class ImageRepository extends BaseRepository
                     ->setParameter('hashes', $arrHashes)
                 ->getQuery()->getResult();
     }
+
+
+    public function getOrphans() : array
+    {
+        return
+            $this->getQueryBuilder()
+                ->leftJoin('t.articles', 'junction')
+                ->where('junction.id IS NULL')
+                ->orderBy('t.updatedAt', 'ASC')
+                ->getQuery()->getResult();
+    }
 }

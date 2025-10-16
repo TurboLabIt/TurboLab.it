@@ -165,6 +165,33 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function countByAuthor(User $author, ?int $publishingStatus = null) : int
+    {
+        if( empty($status) ) {
+
+            return
+                $this->countFromSqlQuery(
+                    "SELECT COUNT(DISTINCT article_id) FROM article_author WHERE user_id = :authorId",
+                    [ "authorId" => $author->getId() ]
+                );
+        }
+
+        return
+            $this->countFromSqlQuery("
+                SELECT COUNT(DISTINCT article_id.article_author) FROM article_author
+                INNER JOIN article ON article_author.article_id = article.id
+                WHERE
+                    user_id = :authorId AND
+                    publishing_status = :publishingStatus
+                ",
+                [
+                    "authorId"          => $author->getId(),
+                    "publishingStatus"  => $publishingStatus
+                ]
+            );
+    }
+
+
     public function findByAuthor(User $author, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         // we need to extract "having at least this author" first

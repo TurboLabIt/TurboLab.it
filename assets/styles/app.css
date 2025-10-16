@@ -2,6 +2,12 @@ body {
     background-color: lightgray;
 }
 
+.tli-readable-text {
+    font-size: 20px;
+    line-height: 1.5;
+    color: black;
+}
+
 .header-area .header-centerbar {
     padding-bottom: 0px;
 }

@@ -27,7 +27,7 @@
                     {% if Author.isSystem %}
                         🤖 Bot ufficiale di TurboLab.it
                     {% else %}
-                        {{ Author.articlesNum }} {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
+                        {{ Author.articlesPublishedNum }} {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %}
                     {% endif %}
                 </small>
             </a>

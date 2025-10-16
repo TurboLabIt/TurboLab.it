@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
 use App\Service\Cms\Image;
+use App\Service\FrontendHelper;
 use App\ServiceCollection\Cms\ImageCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -112,6 +113,22 @@ class ImageController extends BaseController
     public function legacyNoFolderMod(string $size, string $slugDashId) : Response
     {
         return $this->redirectToRealImage($size, $slugDashId);
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/orfane', name: 'app_image_orphans')]
+    public function orphans(ImageCollection $images, FrontendHelper $frontendHelper) : Response
+    {
+        $count = $images->loadOrphans()->count();
+        $count = number_format($count, 0, ',', '.');
+
+        return $this->render('image/orphans.html.twig', [
+            'metaTitle'         => 'Immagini orfane',
+            'activeMenu'        => null,
+            'FrontendHelper'    => $frontendHelper,
+            'Images'            => $images,
+            'num'               => $count,
+        ]);
     }
 
 

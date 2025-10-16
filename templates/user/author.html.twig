@@ -23,7 +23,7 @@
 
 {% block beforeArticleList %}
 
-    {% if Author.articlesNum > 0 %}
+    {% if Author.articlesPublishedNum > 0 %}
 
         <div class="container">
 
@@ -40,8 +40,8 @@
                         <p class="tli-author-bio-name">
                             <span>{{ Author.fullName|raw }}</span><br>
                             <span class="tli-author-articles-counter">
-                                <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesNum }}
-                                {% if Author.articlesNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} &nbsp;
+                                <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesPublishedNum }}
+                                {% if Author.articlesPublishedNum == 1 %}articolo pubblicato{% else %}articoli pubblicati{% endif %} &nbsp;
                                 <a href="{{ Author.forumUrl }}">
                                     <i class="fa-solid fa-id-badge"></i> ID: {{ Author.id }}
                                 </a>

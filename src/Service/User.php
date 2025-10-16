@@ -26,7 +26,8 @@ class User extends BaseServiceEntity
     protected ?UserEntity $entity           = null;
     protected ?array $arrAdditionalFields   = null;
     protected ?int $articlesNum             = null;
-    protected array $arrArticlesCollections  = [];
+    protected ?int $articlesPublishedNum    = null;
+    protected array $arrArticlesCollections = [];
 
 
     public function __construct(protected Factory $factory) { $this->clear(); }
@@ -147,6 +148,37 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">
+    public function getArticlesNum(bool $formatted = true) : int|string
+    {
+        if( $this->articlesNum === null ) {
+            $this->articlesNum = $this->factory->createArticleAuthorCollection($this)->countByArticleStatus();
+        }
+
+        if( !$formatted ) {
+            return $this->articlesNum;
+        }
+
+        return number_format($this->articlesNum, 0, null, ".");
+    }
+
+
+    public function getArticlesPublishedNum(bool $formatted = true) : int|string
+    {
+        if( $this->articlesPublishedNum === null ) {
+
+            $this->articlesPublishedNum =
+                $this->factory->createArticleAuthorCollection($this)
+                    ->countByArticleStatus(Article::PUBLISHING_STATUS_PUBLISHED);
+        }
+
+        if( !$formatted ) {
+            return $this->articlesPublishedNum;
+        }
+
+        return number_format($this->articlesPublishedNum, 0, null, ".");
+    }
+
+
     public function getArticlesDraft() : BaseArticleCollection
     {
         if( array_key_exists(Article::PUBLISHING_STATUS_DRAFT, $this->arrArticlesCollections) ) {
@@ -183,7 +215,6 @@ class User extends BaseServiceEntity
     }
 
 
-
     public function getArticlesLatestPublished() : BaseArticleCollection
     {
         if( array_key_exists('latest-published', $this->arrArticlesCollections) ) {
@@ -193,18 +224,6 @@ class User extends BaseServiceEntity
         return
             $this->arrArticlesCollections['latest-published'] =
                 $this->factory->createArticleAuthorCollection($this)->loadLatestPublished();
-    }
-
-
-    public function getArticlesNum(bool $formatted = true) : int|string
-    {
-        $num = $this->articlesNum = $this->articlesNum ?? $this->getArticlesPublished()->countTotalBeforePagination();
-
-        if( !$formatted ) {
-            return $num;
-        }
-
-        return number_format($num, 0, null, ".");
     }
 
 
