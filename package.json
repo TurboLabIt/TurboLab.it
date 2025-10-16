@@ -6,7 +6,7 @@
         "ckeditor5": ">=47.0.0",
         "file-loader": ">=6.2.0",
         "jquery-is-in-viewport": ">=1.0.5",
-        "npm-check-updates": "^19.1.0",
+        "npm-check-updates": "^19.1.1",
         "odometer": "^0.4.8",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.93.2",
