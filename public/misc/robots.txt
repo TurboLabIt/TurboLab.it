@@ -5,6 +5,7 @@ Disallow: /ajax/*
 Disallow: /editor/*
 Disallow: /forum/memberlist.php
 Disallow: /forum/thankslist
+Disallow: /forum/feed/*
 
 User-agent: PetalBot
 Disallow: /
