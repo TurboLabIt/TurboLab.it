@@ -33,4 +33,10 @@ class ImageRepository extends BaseRepository
                 ->orderBy('t.updatedAt', 'ASC')
                 ->getQuery()->getResult();
     }
+
+
+    public function getToDelete() : array
+    {
+        return [];
+    }
 }
