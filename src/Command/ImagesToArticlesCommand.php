@@ -23,7 +23,7 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
  */
 #[AsCommand(
     name: 'ImagesToArticles',
-    description: 'Attach (via ArticleImage junction) each image to the article(s) using it, remove the unused junctions'
+    description: 'Attach (via ArticleImage junction) each image to the article(s) using it, remove unused junctions'
 )]
 class ImagesToArticlesCommand extends AbstractBaseCommand
 {
