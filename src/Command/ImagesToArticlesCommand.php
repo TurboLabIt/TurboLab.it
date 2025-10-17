@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Entity\Cms\ArticleImage;
 use App\Repository\Cms\ArticleImageRepository;
+use App\Repository\Cms\ImageRepository;
 use App\Service\Cms\Article;
 use App\Service\Cms\Image;
 use App\Service\Entity\Article as ArticleEntity;
@@ -207,7 +208,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
         }
 
 
-        $dateCutoff = (new DateTime())->modify('-9 months');
+        $dateCutoff = (new DateTime())->modify('-' . ImageRepository::ORPHANS_AFTER_MONTHS . ' months');
         if( $junction->getUpdatedAt() > $dateCutoff ||  $article->getUpdatedAt() > $dateCutoff ) {
 
             // don't delete "too new" assoc
