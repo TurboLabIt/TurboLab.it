@@ -26,12 +26,6 @@ class TagCollection extends BaseServiceEntityCollection
     const array EXCLUDE_FROM_SUGGESTIONS = [TagService::ID_NEWSLETTER_TLI];
 
 
-    public function getRepository() : TagRepository
-    {
-        return $this->factory->getEntityManager()->getRepository(static::ENTITY_CLASS);
-    }
-
-
     public function loadCategories() : static
     {
         return $this->load( array_merge_recursive(static::TOP_CATEGORIES, static::NAV_OTHER_CATEGORIES) );
@@ -163,8 +157,7 @@ class TagCollection extends BaseServiceEntityCollection
     }
 
 
-    public function createService(?TagEntity $entity = null) : TagService
-    {
-        return $this->factory->createTag($entity);
-    }
+    public function getRepository() : TagRepository { return $this->em->getRepository(static::ENTITY_CLASS); }
+
+    public function createService(?TagEntity $entity = null) : TagService { return $this->factory->createTag($entity); }
 }

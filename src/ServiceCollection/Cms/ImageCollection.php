@@ -10,11 +10,8 @@ use App\ServiceCollection\BaseServiceEntityCollection;
 /**
  * @link https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images.md
  */
-class ImageCollection extends BaseServiceEntityCollection
+class ImageCollection extends BaseImageCollection
 {
-    const string ENTITY_CLASS = ImageService::ENTITY_CLASS;
-
-
     public function get404() : ImageService
     {
         $entity =
@@ -39,11 +36,5 @@ class ImageCollection extends BaseServiceEntityCollection
     {
         $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->getOrphans();
         return $this->setEntities($arrEntities);
-    }
-
-
-    public function createService(?ImageEntity $entity = null) : ImageService
-    {
-        return $this->factory->createImage($entity);
     }
 }

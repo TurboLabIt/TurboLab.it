@@ -6,7 +6,7 @@ use App\Service\Cms\ImageEditor;
 use App\Service\User;
 
 
-class ImageEditorCollection extends ImageCollection
+class ImageEditorCollection extends BaseImageCollection
 {
     public function setFromUpload(?array $arrUpload, User $author) : static
     {
@@ -62,8 +62,12 @@ class ImageEditorCollection extends ImageCollection
     }
 
 
-    public function createService(?ImageEntity $entity = null) : ImageEditor
+    public function loadToDelete() : static
     {
-        return $this->factory->createImageEditor($entity);
+        $arrImages = $this->getRepository()->getToDelete();
+        return $this->setEntities($arrImages);
     }
+
+
+    public function createService(?ImageEntity $entity = null) : ImageEditor { return $this->factory->createImageEditor($entity); }
 }
