@@ -3,7 +3,7 @@
         "@babel/core": ">=7.28.4",
         "@babel/preset-env": ">=7.28.3",
         "@symfony/webpack-encore": ">=5.2.0",
-        "ckeditor5": ">=47.0.0",
+        "ckeditor5": ">=47.1.0",
         "file-loader": ">=6.2.0",
         "jquery-is-in-viewport": ">=1.0.5",
         "npm-check-updates": "^19.1.1",
