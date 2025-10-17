@@ -79,3 +79,17 @@ X-Sendfile viene attivato SOLO quando il file-immagine è stato processato da PH
 ## Esempi di immagini
 
 🖼 [Immagini a campione qui](https://turbolab.it/1939)
+
+
+## Cancellazione delle immagini
+
+Le immagini possono essere eliminate istantaneamente cliccando sull'icona 🗑️, visualizzata sotto ogni immagine.
+
+In alternativa, la gestione delle immagini caricate negli articoli viene svolta automaticamente da
+[images-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/images-maintenance.sh) (eseguito tramite [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron)) tramite due comandi.
+
+[ImagesToArticlesCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ImagesToArticlesCommand.php): scansiona il testo di ogni articolo, rileva quali immagini sono mostrate nel corpo dell'articolo e crea la relazione *articolo-immagine*. Questo fa sì che l'immagine sia mostrata (anche) nella gallery di quell'articolo. Se un'immagine precedentemente mostrata nell'articolo non viene più utilizzata, la stessa procedura elimina la relazione *articolo-immagine* dopo qualche mese dall'ultima modifica.
+
+Le immagini non-relazionate ad alcun articolo sono chiamate "orfane" e mostrate in [immagini/orfane](https://turbolab.it/immagini/orfane). La pagina è linkata in [/scrivi](https://turbolab.it/scrivi).
+
+[ImagesDeleteCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ImagesDeleteCommand.php): elimina fisicamente il file di tutte le immagini orfane dopo qualche mese che sono divenute tali.
