@@ -51,7 +51,7 @@ export default class TliYoutube extends Plugin {
         });
     }
 
-    // Allow <iframe> (and needed attributes) if GeneralHtmlSupport is present.
+    // Allow <iframe> if GeneralHtmlSupport is present.
     afterInit() {
         const editor = this.editor;
 
@@ -63,14 +63,7 @@ export default class TliYoutube extends Plugin {
         dataFilter.allowElement('iframe');
         dataFilter.allowAttributes({
             name: 'iframe',
-            attributes: {
-                src: true,
-                frameborder: true,
-                width: true,
-                height: true,
-                allow: true,
-                allowfullscreen: true
-            }
+            attributes: true
         });
     }
 }

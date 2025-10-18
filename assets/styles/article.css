@@ -71,6 +71,12 @@
     color: blue;
 }
 
+#tli-article-body iframe, .ck.ck-content.ck-editor__editable iframe {
+    width:100%;
+    aspect-ratio: 16/9
+}
+
+
 .tli-prev-next-article {
     min-height: 350px;
 }
