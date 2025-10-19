@@ -264,7 +264,7 @@ class Factory
 
     public function createImageCollection() : ImageCollection { return new ImageCollection($this); }
 
-    public function createImageEditorCollection() : ImageCollection { return new ImageEditorCollection($this); }
+    public function createImageEditorCollection() : ImageEditorCollection { return new ImageEditorCollection($this); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** File ***">
