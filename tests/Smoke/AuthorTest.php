@@ -47,14 +47,16 @@ class AuthorTest extends BaseT
                 [
                     "id"            => 2,
                     "authorName"    => "Zane (Gianluigi Zanettini)",
-                    "totalPageNum"  => static::USER_ZANE_TOTAL_PAGES
+                    "totalPageNum"  => static::USER_ZANE_TOTAL_PAGES,
+                    // /forum/download/file.php?avatar=
+                    "avatarUrl"     => 'https://gravatar.com/avatar/c881a95deb9db1a4e71e87caa2156ed2b9bddc393c08f8da924ce1145ef3f3a7?s=128&amp;r=pg&amp;d=identicon'
                 ]
             ];
     }
 
 
     #[DataProvider('authorsToTestThoroughlyProvider')]
-    public function testSpecialAuthors(int $id, string $authorName, int $totalPageNum)
+    public function testSpecialAuthors(int $id, string $authorName, int $totalPageNum, string $avatarUrl)
     {
         $author     = static::getUser($id);
         $url        = $author->getUrl();
@@ -76,7 +78,7 @@ class AuthorTest extends BaseT
         $this->assertNotEmpty($authorBioBox);
         $bioBoxHtml = $authorBioBox->html();
         $this->assertNotEmpty($bioBoxHtml);
-        $this->assertStringContainsString('<img src="/forum/download/file.php?avatar=', $bioBoxHtml);
+        $this->assertStringContainsString('<img src="' . $avatarUrl . '"', $bioBoxHtml);
         $this->assertNotEmpty( $authorBioBox->filter('.tli-author-bio-name') );
         $this->assertNotEmpty( $authorBioBox->filter('.tli-author-articles-counter') );
 
@@ -148,9 +150,7 @@ class AuthorTest extends BaseT
         $url = $author->getUrl();
         $assertFailureMessage = "Failing URL: $url";
 
-        $authorNameInUrl = urlencode($author->getUsernameClean());
-        // fix different output between urlencode and UrlGeneratorInterface->generate()
-        $authorNameInUrl = str_ireplace(['%3B'], [';'], $authorNameInUrl);
+        $authorNameInUrl = rawurlencode($author->getUsernameClean());
 
         $this->assertStringEndsWith($authorNameInUrl, $url, $assertFailureMessage);
 

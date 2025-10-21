@@ -48,7 +48,7 @@ class SearchTest extends BaseT
     #[DataProvider('searchProvider')]
     public function testSearchAjax(string $urlToFetch, string $mustContain)
     {
-        $ajaxUrlToFetch = str_ireplace('/cerca/', '/cerca/ajax/', $urlToFetch);
+        $ajaxUrlToFetch = str_ireplace('/cerca/', '/cerca/ajax/serp/', $urlToFetch);
         $crawler = $this->fetchDomNode($ajaxUrlToFetch, '.card.article-card');
         $count   = $crawler->count();
         $this->assertGreaterThanOrEqual(4, $count);
@@ -61,7 +61,7 @@ class SearchTest extends BaseT
 
     public function testNoResults()
     {
-        $urlToFetch = '/cerca/ajax/' . uniqid() . uniqid();
+        $urlToFetch = '/cerca/ajax/serp/' . uniqid() . uniqid();
 
         $crawler = $this->fetchDomNode($urlToFetch, '.alert.alert-warning');
         $count   = $crawler->count();

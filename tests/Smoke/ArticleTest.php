@@ -44,17 +44,10 @@ class ArticleTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         // H1
-        $this->articleTitleAsH1Checker($article, $crawler, 'Come svolgere test automatici su TurboLab.it (verifica dell\'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" \'single quoted\' \ / | » fine');
+        $this->articleTitleAsH1Checker($article, $crawler, static::ARTICLE_QUALITY_TEST_OUTPUT_TITLE);
 
-        // H2
+
         $crawler = $this->fetchDomNode($url, 'article');
-        $H2s = $crawler->filter('h2');
-        $countH2 = $H2s->count();
-        $this->assertGreaterThan(3, $countH2);
-
-        // intro paragraph
-        $firstPContent = $crawler->filter('p')->first()->html();
-        $this->assertStringContainsString('Questo è un articolo <em>di prova</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
         // header (comments, updated, publishing status, authors)
         $articleMetaDataAsLi = $crawler->filter('.categories-share')->filter('li');
@@ -75,15 +68,25 @@ class ArticleTest extends BaseT
 
         $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
 
-        $articleBodyCrawler = $crawler->filter('#tli-article-body');
+
+        $crawler = $this->fetchDomNode($url, '#tli-article-body');
+
+        // H2
+        $H2s = $crawler->filter('h2');
+        $countH2 = $H2s->count();
+        $this->assertEquals(8, $countH2);
+
+        // intro paragraph
+        $firstPContent = $crawler->filter('p')->first()->html();
+        $this->assertStringContainsString('Questo è un articolo <em>di prova 🧪</em>, utilizzato dai <strong>test automatici</strong>', $firstPContent);
 
         // first <li>s of the article (body content)
-        $summaryLi = $articleBodyCrawler->filter('ul')->first()->filter('li');
+        $summaryLi = $crawler->filter('ul')->first()->filter('li');
         $arrUnmatchedUlContent = [
             'video da YouTube', 'formattazione',
             'link ad altri articoli', 'link a pagine di tag', 'link a file',
             'link alle pagine degli autori', 'caratteri "delicati"',
-            'tutte le immagini'
+            'emoji: 🫩🫆🪾🫜🪉🪏🫟'
         ];
 
         foreach($summaryLi as $li) {
@@ -103,7 +106,7 @@ class ArticleTest extends BaseT
         $this->assertEmpty($arrUnmatchedUlContent, 'Not found element(s): ' . implode('##', $arrUnmatchedUlContent) );
 
         // YouTube
-        $iframes = $articleBodyCrawler->filter('iframe');
+        $iframes = $crawler->filter('iframe');
         $countYouTubeIframe = 0;
         foreach($iframes as $iframe) {
 
@@ -112,15 +115,15 @@ class ArticleTest extends BaseT
                 $countYouTubeIframe++;
             }
 
-            $width = $iframe->getAttribute("width");
-            $this->assertEquals('100%', $width, "Wrong YouTube width!");
+            $width = $iframe->getAttribute("allowfullscreen");
+            $this->assertEquals('allowfullscreen', $width, "YouTube embed: missing attrib \"allowfullscreen\"");
         }
 
         $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
 
         // formatting styles
-        $formattingStylesOl = $articleBodyCrawler->filter('ol')->first()->filter('li');
-        $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 'code', 4 => 'ins'];
+        $formattingStylesOl = $crawler->filter('ol')->first()->filter('li');
+        $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 's', 4 => 'code',  5 => 'ins'];
         foreach($arrExpectedNodes as $index => $expectedTagName) {
 
             $nodeTagName = $formattingStylesOl->getNode($index - 1)->firstChild->tagName;
@@ -128,7 +131,7 @@ class ArticleTest extends BaseT
         }
 
         //
-        $this->internalLinksChecker($articleBodyCrawler);
+        $this->internalLinksChecker($crawler);
 
         // fragile chars
         $fragileCharsH2Text = 'Caratteri "delicati"';
@@ -144,7 +147,7 @@ class ArticleTest extends BaseT
         $this->assertEquals('@ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine', $fragileCharsActualValue);
 
         //
-        $this->internalImagesChecker($articleBodyCrawler);
+        $this->internalImagesChecker($crawler);
     }
 
 

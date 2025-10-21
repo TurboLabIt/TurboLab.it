@@ -27,25 +27,25 @@ class ArticleEditorTest extends BaseT
                     'input-body'            => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un “messaggio” con ‘JS’ – <script>alert("bòòm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
+                    'title-stored'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - <script>alert("bòòm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
+                    'title-output'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
                         END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
+                    'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
+                    'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-body-db'        => <<<'END_OF_TEXTBLOCK'
+                    'body-stored'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-body-page'      => <<<'END_OF_TEXTBLOCK'
+                    'body-output'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-spotlight-id'   => null
+                    'spotlight-id'          => null
                 ]
             ],
             [
@@ -57,25 +57,25 @@ class ArticleEditorTest extends BaseT
                     'input-body'            => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un “messaggio&rdquo; con &lsquo;JS’ – <script>alert("b&ograve;òm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
+                    'title-stored'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - <script>alert("bòòm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
+                    'title-output'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
                         END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
+                    'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
+                    'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-body-db'        => <<<'END_OF_TEXTBLOCK'
+                    'body-stored'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-body-page'      => <<<'END_OF_TEXTBLOCK'
+                    'body-output'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-spotlight-id'   => null
+                    'spotlight-id'          => null
                 ]
             ],
             [
@@ -87,25 +87,25 @@ class ArticleEditorTest extends BaseT
                     'input-body'            => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - <script>alert("bòòm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
+                    'title-stored'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - <script>alert("bòòm");</script>
                         END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
+                    'title-output'          => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
                         END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
+                    'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
+                    'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Come mostrare un "messaggio" con 'JS' -
                         END_OF_TEXTBLOCK,
-                    'output-body-db'        => <<<'END_OF_TEXTBLOCK'
+                    'body-stored'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-body-page'      => <<<'END_OF_TEXTBLOCK'
+                    'body-output'           => <<<'END_OF_TEXTBLOCK'
                         <p>Come mostrare un "messaggio" con 'JS' - </p>
                         END_OF_TEXTBLOCK,
-                    'output-spotlight-id'   => null
+                    'spotlight-id'          => null
                 ]
             ],
             [
@@ -115,73 +115,41 @@ class ArticleEditorTest extends BaseT
                         O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11
                         END_OF_TEXTBLOCK,
                     'input-body'            => static::getTestAssetContent('oo-body-input-from-browser.html'),
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
+                    'title-stored'          => <<<'END_OF_TEXTBLOCK'
                         O&O AppBuster rimuove e reinstalla le app da Windows 10 e 11
                         END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
+                    'title-output'          => <<<'END_OF_TEXTBLOCK'
                         O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11
                         END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
+                    'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
                         Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&amp;O AppBuster.
                         END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
+                    'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&amp;O AppBuster.
                         END_OF_TEXTBLOCK,
-                    'output-body-db'        => static::getTestAssetContent('oo-body-input-stored.html'),
-                    'output-body-page'      => static::getTestAssetContent('oo-body-output.html'),
-                    'output-spotlight-id'   => 22106
+                    'body-stored'           => static::getTestAssetContent('oo-body-input-stored.html'),
+                    'body-output'           => static::getTestAssetContent('oo-body-output.html'),
+                    'spotlight-id'          => 22106
                 ]
             ],
             [
                 [
                     'test-id'               => 'test-eee',
-                    'input-title'           => <<<'END_OF_TEXTBLOCK'
-                        Come svolgere test automatici su TurboLab.it (verifica dell'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine
-                        END_OF_TEXTBLOCK,
+                    'input-title'           => static::ARTICLE_QUALITY_TEST_STORED_TITLE,
                     'input-body'            => static::getTestAssetContent('acceptance-test-body-input-from-browser.html'),
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
-                        Come svolgere test automatici su TurboLab.it (verifica dell'impianto & "collaudo") | @ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" 'single quoted' \ / | » fine
+                    'title-stored'          => static::ARTICLE_QUALITY_TEST_STORED_TITLE,
+                    'title-output'          => static::ARTICLE_QUALITY_TEST_OUTPUT_TITLE,
+                    'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
+                        Questo è un articolo <em>di prova 🧪</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code> 🫆
                         END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
-                        Come svolgere test automatici su TurboLab.it (verifica dell'impianto &amp; "collaudo") | @ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine
+                    'abstract-output'       => <<<'END_OF_TEXTBLOCK'
+                        Questo è un articolo <em>di prova 🧪</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code> 🫆
                         END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
-                        Questo è un articolo <em>di prova</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code>
-                        END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
-                        Questo è un articolo <em>di prova</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code>
-                        END_OF_TEXTBLOCK,
-                    'output-body-db'        => static::getTestAssetContent('acceptance-test-body-input-stored.html'),
-                    'output-body-page'      => static::getTestAssetContent('acceptance-test-body-output.html'),
-                    'output-spotlight-id'   => 9513
+                    'body-stored'           => static::getTestAssetContent('acceptance-test-body-input-stored.html'),
+                    'body-output'           => static::getTestAssetContent('acceptance-test-body-output.html'),
+                    'spotlight-id'          => 9513
                 ]
-            ],
-            /* TEMPLATE
-            [
-                [
-                    'test-id'               => 'test-ZZZZ',
-                    'input-title'           => <<<'END_OF_TEXTBLOCK'
-
-                        END_OF_TEXTBLOCK,
-                    'input-body'            => static::getTestAssetContent('XXXXXXXXXXXX-body-input-from-browser.html'),
-                    'output-title-db'       => <<<'END_OF_TEXTBLOCK'
-
-                        END_OF_TEXTBLOCK,
-                    'output-title-page'     => <<<'END_OF_TEXTBLOCK'
-
-                        END_OF_TEXTBLOCK,
-                    'output-abstract-db'    => <<<'END_OF_TEXTBLOCK'
-
-                        END_OF_TEXTBLOCK,
-                    'output-abstract-page'  => <<<'END_OF_TEXTBLOCK'
-
-                        END_OF_TEXTBLOCK,
-                    'output-body-db'        => static::getTestAssetContent('XXXXXXXXXXXX-body-input-stored.html'),
-                    'output-body-page'      => static::getTestAssetContent('XXXXXXXXXXXX-body-output.html'),
-                    'output-spotlight-id'   => null
-                ]
-            ],
-            */
+            ]
         ];
     }
 
@@ -195,13 +163,12 @@ class ArticleEditorTest extends BaseT
                 ->setBody($arrTestData['input-body']);
 
         $entityTitle = $editor->getEntity()->getTitle();
-        $editorTitle = $editor->getTitle();
-
-        // title
         $this->assertNoEntities($entityTitle);
-        $this->assertEquals( trim($arrTestData['output-title-db']), $entityTitle );
+        $this->assertEquals( trim($arrTestData['title-stored']), $entityTitle );
+
+        $editorTitle = $editor->getTitle();
         $this->assertNoLegacyEntities($editorTitle);
-        $this->assertEquals( trim($arrTestData['output-title-page']), $editorTitle);
+        $this->assertEquals( trim($arrTestData['title-output']), $editorTitle);
     }
 
 
@@ -214,12 +181,12 @@ class ArticleEditorTest extends BaseT
                 ->setBody($arrTestData['input-body']);
 
         $entityAbstract = $editor->getEntity()->getAbstract();
-        $editorAbstract = $editor->getAbstract();
-
         $this->assertNoLegacyEntities($entityAbstract);
-        $this->assertEquals( trim($arrTestData['output-abstract-db']), $entityAbstract);
+        $this->assertEquals( trim($arrTestData['abstract-stored']), $entityAbstract);
+
+        $editorAbstract = $editor->getAbstract();
         $this->assertNoLegacyEntities($editorAbstract);
-        $this->assertEquals( trim($arrTestData['output-abstract-page']), $editorAbstract);
+        $this->assertEquals( trim($arrTestData['abstract-output']), $editorAbstract);
     }
 
 
@@ -232,13 +199,12 @@ class ArticleEditorTest extends BaseT
                 ->setBody($arrTestData['input-body']);
 
         $entityBody = $editor->getEntity()->getBody();
-        $editorBody = $editor->getBodyForDisplay();
-
-        // body
         $this->assertNoLegacyEntities($entityBody);
-        $this->assertEquals( trim($arrTestData['output-body-db']), $entityBody);
+        $this->assertEquals( trim($arrTestData['body-stored']), $entityBody);
+
+        $editorBody = $editor->getBodyForDisplay();
         $this->assertNoLegacyEntities($editorBody);
-        $this->assertEquals( trim($arrTestData['output-body-page']), $editorBody);
+        $this->assertEquals( trim($arrTestData['body-output']), $editorBody);
     }
 
 
@@ -251,9 +217,9 @@ class ArticleEditorTest extends BaseT
                 ->setBody($arrTestData['input-body']);
 
         $entitySpotlightId = $editor->getEntity()->getSpotlight()?->getId();
-        $editorSpotlightId = $editor->getSpotlight()?->getId();
+        $this->assertEquals($arrTestData['spotlight-id'], $entitySpotlightId);
 
-        $this->assertEquals($arrTestData['output-spotlight-id'], $entitySpotlightId);
-        $this->assertEquals($arrTestData['output-spotlight-id'], $editorSpotlightId);
+        $editorSpotlightId = $editor->getSpotlight()?->getId();
+        $this->assertEquals($arrTestData['spotlight-id'], $editorSpotlightId);
     }
 }

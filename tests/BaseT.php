@@ -28,11 +28,19 @@ use Twig\Environment;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 173;  // 👀 https://dev0.turbolab.it/#contact
+    const int HOME_TOTAL_PAGES          = 174;  // 👀 https://dev0.turbolab.it/#contact
     const int NEWS_TOTAL_PAGES          = 45;   // 👀 https://dev0.turbolab.it/news#contact
-    const int TAG_TLI_TOTAL_PAGES       = 2;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
+    const int TAG_TLI_TOTAL_PAGES       = 3;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
     const int TAG_WINDOWS_TOTAL_PAGES   = 67;   // 👀 https://dev0.turbolab.it/windows-10/#contact
     const int USER_ZANE_TOTAL_PAGES     = 45;   // 👀 https://dev0.turbolab.it/utenti/zane#contact
+
+    const string ARTICLE_QUALITY_TEST_STORED_TITLE =
+        '🧪 Come svolgere test automatici su TurboLab.it (verifica dell\'impianto & "collaudo") | @ & ' .
+        'òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine';
+
+    const string ARTICLE_QUALITY_TEST_OUTPUT_TITLE =
+        '🧪 Come svolgere test automatici su TurboLab.it (verifica dell\'impianto &amp; "collaudo") | @ &amp; ' .
+        'òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" \'single quoted\' \ / | » fine';
 
     protected static ?KernelBrowser $client = null;
     protected static ?Crawler $crawler;
@@ -205,12 +213,14 @@ abstract class BaseT extends WebTestCase
     }
 
 
-    public function expect404(string $url)
+    public function expect404(string $url) : static
     {
         $this->browse($url);
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND,
             'Expected 404 check failed! URL: ##' . $url . '## doesn\'t return ' . Response::HTTP_NOT_FOUND
         );
+
+        return $this;
     }
     //</editor-fold>
 
@@ -331,6 +341,11 @@ abstract class BaseT extends WebTestCase
             if( str_starts_with($src, '/forum/') || str_starts_with($src, "{$siteUrl}forum/") ) {
                 // testing forum images is not supported
                 return $this;
+            }
+
+            if( str_ends_with($src, '/immagini/reg/6/image-26662.avif') ) {
+                // deleted image in quality test article
+                return $this->expect404($src);
             }
 
             $this->fetchImage($src);
