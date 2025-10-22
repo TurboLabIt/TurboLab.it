@@ -115,7 +115,18 @@ abstract class HtmlProcessorBase
         // https://www.php.net/manual/en/domdocument.savexml.php#76867
         //$domDoc->formatOutput = true;
 
-        $text = empty($singleNodeOnly) ? $domDoc->saveHTML() : $domDoc->saveHTML($singleNodeOnly);
-        return $this->convertLegacyEntitiesToUtf8Chars($text);
+        if( empty($singleNodeOnly) ) {
+
+            // Why does DOMDocument::saveHTML()'s behavior differ in encoding UTF-8 as entities in style & script elements?
+            // https://stackoverflow.com/q/51660286/1204976
+            // https://stackoverflow.com/questions/59938856/why-do-these-two-domdocument-functions-behave-differently/59940487#comment106002356_59940487
+            $html = $domDoc->saveHTML($domDoc);
+
+        } else {
+
+            $html = $domDoc->saveHTML($singleNodeOnly);
+        }
+
+        return $this->convertLegacyEntitiesToUtf8Chars($html);
     }
 }
