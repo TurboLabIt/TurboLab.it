@@ -39,7 +39,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
 
 ## every xx hours: attach-remove images to articles, delete unused images
-3 */3 * * * root bash ${SCRIPT_DIR}images-maintenance.sh >> ${LOG_PATH}images-maintenance.sh.log 2>&1
+#3 */3 * * * root bash ${SCRIPT_DIR}images-maintenance.sh >> ${LOG_PATH}images-maintenance.sh.log 2>&1
 
 ## every night: tag aggregator
 30 23 * * * root bash ${SCRIPT_DIR}tag-aggregator.sh >> ${LOG_PATH}tag-aggregator.sh.log 2>&1
