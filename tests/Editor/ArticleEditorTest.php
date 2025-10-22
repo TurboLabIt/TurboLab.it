@@ -114,7 +114,7 @@ class ArticleEditorTest extends BaseT
                     'input-title'           => <<<'END_OF_TEXTBLOCK'
                         O&amp;O AppBuster rimuove e reinstalla le app da Windows 10 e 11
                         END_OF_TEXTBLOCK,
-                    'input-body'            => static::getTestAssetContent('oo-body-input-from-browser.html'),
+                    'input-body'            => static::getTestAssetContent('article-oo-input-body.html'),
                     'title-stored'          => <<<'END_OF_TEXTBLOCK'
                         O&O AppBuster rimuove e reinstalla le app da Windows 10 e 11
                         END_OF_TEXTBLOCK,
@@ -127,8 +127,8 @@ class ArticleEditorTest extends BaseT
                     'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&amp;O AppBuster.
                         END_OF_TEXTBLOCK,
-                    'body-stored'           => static::getTestAssetContent('oo-body-input-stored.html'),
-                    'body-output'           => static::getTestAssetContent('oo-body-output.html'),
+                    'body-stored'           => static::getTestAssetContent('article-oo-body-stored.html'),
+                    'body-output'           => static::getTestAssetContent('article-oo-body-output.html'),
                     'spotlight-id'          => 22106
                 ]
             ],
@@ -136,7 +136,7 @@ class ArticleEditorTest extends BaseT
                 [
                     'test-id'               => 'test-eee',
                     'input-title'           => static::ARTICLE_QUALITY_TEST_STORED_TITLE,
-                    'input-body'            => static::getTestAssetContent('acceptance-test-body-input-from-browser.html'),
+                    'input-body'            => static::getTestAssetContent('article-quality-test-input-body.html'),
                     'title-stored'          => static::ARTICLE_QUALITY_TEST_STORED_TITLE,
                     'title-output'          => static::ARTICLE_QUALITY_TEST_OUTPUT_TITLE,
                     'abstract-stored'       => <<<'END_OF_TEXTBLOCK'
@@ -145,8 +145,8 @@ class ArticleEditorTest extends BaseT
                     'abstract-output'       => <<<'END_OF_TEXTBLOCK'
                         Questo è un articolo <em>di prova 🧪</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code> 🫆
                         END_OF_TEXTBLOCK,
-                    'body-stored'           => static::getTestAssetContent('acceptance-test-body-input-stored.html'),
-                    'body-output'           => static::getTestAssetContent('acceptance-test-body-output.html'),
+                    'body-stored'           => static::getTestAssetContent('article-quality-test-body-stored.html'),
+                    'body-output'           => static::getTestAssetContent('article-quality-test-body-output.html'),
                     'spotlight-id'          => 9513
                 ]
             ]
