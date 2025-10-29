@@ -1,0 +1,11 @@
+{% if Article.isEditable %}
+
+    <button type="button" class="btn btn-outline-primary fw-bold tli-file-upload">
+            {#data-tli-modal-url="{{ path('app_article_edit_tags_get-modal', {articleId: Article.id}) }}">#}
+        <i class="fa-solid fa-upload"></i> Allega file (alpha)
+    </button>
+
+    <input type="file" multiple class="d-none tli-file-uploader"
+           data-save-url="{{ path('app_article_edit_files-upload', {articleId: Article.id}) }}">
+
+{% endif %}

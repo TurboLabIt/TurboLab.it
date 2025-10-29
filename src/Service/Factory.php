@@ -11,6 +11,7 @@ use App\Service\Cms\Article as ArticleService;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticleUrlGenerator;
 use App\Service\Cms\File as FileService;
+use App\Service\Cms\FileEditor;
 use App\Service\Cms\FileUrlGenerator;
 use App\Service\Cms\Image as ImageService;
 use App\Service\Cms\ImageEditor;
@@ -20,16 +21,14 @@ use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
 use App\Service\Sentinel\ArticleSentinel;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
-use App\ServiceCollection\Cms\ImageEditorCollection;
-use App\ServiceCollection\Cms\TagEditorCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
+use App\ServiceCollection\Cms\TagCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\Service\PhpBB\Topic as TopicService;
 use App\Service\PhpBB\Post as PostService;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
-use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Meilisearch\Bundle\SearchService;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -212,10 +211,7 @@ class Factory
 
     public function getTagUrlGenerator() : TagUrlGenerator { return $this->tagUrlGenerator; }
 
-
     public function createTagCollection() : TagCollection { return new TagCollection($this); }
-
-    public function createTagEditorCollection() : TagEditorCollection { return new TagEditorCollection($this); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** Image ***">
@@ -263,14 +259,23 @@ class Factory
 
 
     public function createImageCollection() : ImageCollection { return new ImageCollection($this); }
-
-    public function createImageEditorCollection() : ImageEditorCollection { return new ImageEditorCollection($this); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** File ***">
     public function createFile(?FileEntity $entity = null) : FileService
     {
         $service = new FileService($this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+
+
+    public function createFileEditor(?FileEntity $entity = null) : FileEditor
+    {
+        $service = new FileEditor($this, $this->createTextProcessor());
         if( !empty($entity) ) {
             $service->setEntity($entity);
         }
@@ -311,7 +316,6 @@ class Factory
         return $service;
     }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** User ***">
     public function createUser(?UserEntity $entity = null) : UserService

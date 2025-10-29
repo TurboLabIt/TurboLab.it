@@ -93,45 +93,7 @@
 
                         {% include 'article/badges.html.twig' %}
 
-                        {% if Article.isReadable and Article.Files is not empty %}
-
-                            <div class="container">
-                                {% for File in Article.Files %}
-                                    <div class="d-flex align-items-start mb-20 tli-file-download">
-                                        <span class="d-flex align-items-center">
-
-                                            <a href="{{ File.url }}" target="_blank">
-                                                <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
-                                            </a>
-
-                                            <span class="ml-10">
-                                                <a href="{{ File.url }}" target="_blank" class="tli-download-text-link">
-                                                    <span>{{ File.title }}</span>
-                                                </a>
-                                                {% for OS in File.Compatibilities %}
-                                                    <i class="fa-brands fa-{{ OS.slug }}"
-                                                        title="Compatibile con {{ OS.name }}"
-                                                        {% if OS.color is not empty %}style="color: {{ OS.color }};"{% endif %}></i>
-                                                {% endfor %}
-                                                <br>
-                                                <span class="tli-author-articles-counter">
-                                                    <i class="fa-solid fa-flask-vial"></i>
-                                                    Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
-                                                    {% if File.isBitTorrent %}
-                                                        <i class="fa-solid fa-circle-nodes"></i>
-                                                        <a href="{{ BitTorrentGuide.url }}">Necessario BitTorrent</a>
-                                                    {% elseif File.isExternal %}
-                                                        <i class="fa-solid fa-person-walking-dashed-line-arrow-right" style="color: #FFD43B;"></i>
-                                                        File fornito da un sito esterno
-                                                    {% endif %}
-                                                </span>
-                                            </span>
-
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                        {% include 'article/files.html.twig' %}
 
 
                         {% if Article.isReadable %}

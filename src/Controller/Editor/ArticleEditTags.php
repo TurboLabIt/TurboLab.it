@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Editor;
 
+use App\ServiceCollection\Cms\TagEditorCollection;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,7 +59,7 @@ class ArticleEditTags extends ArticleEditBaseController
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $tags =
-                $this->factory->createTagEditorCollection()
+                (new TagEditorCollection($this->factory))
                     ->setFromIdsAndTags($arrIdsAndTags, $currentUserAsAuthor);
 
             $this->articleEditor

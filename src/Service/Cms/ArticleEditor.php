@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
@@ -293,6 +294,31 @@ class ArticleEditor extends Article
     {
         foreach($images as $image) {
             $this->addImage($image, $author);
+        }
+
+        return $this;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 📎 File ***">
+    public function addFile(File|FileEntity $file, User $author) : static
+    {
+        $fileEntity     = $file instanceof File ? $file->getEntity() : $file;
+        $authorEntity   = $author instanceof User ? $author->getEntity() : $author;
+
+        $this->entity->addFile(
+            (new ArticleFile())
+                ->setFile($fileEntity)
+                ->setUser($authorEntity)
+        );
+
+        return $this;
+    }
+
+    public function addFiles(iterable $files, User $author) : static
+    {
+        foreach($files as $file) {
+            $this->addFile($file, $author);
         }
 
         return $this;

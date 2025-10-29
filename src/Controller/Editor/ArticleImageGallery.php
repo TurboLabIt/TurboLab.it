@@ -3,6 +3,7 @@ namespace App\Controller\Editor;
 
 use App\Service\Cms\ImageEditor;
 use App\Service\Sentinel\ImageSentinel;
+use App\ServiceCollection\Cms\ImageEditorCollection;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +24,7 @@ class ArticleImageGallery extends ArticleEditBaseController
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $images =
-                $this->factory->createImageEditorCollection()
+                (new ImageEditorCollection($this->factory))
                     ->setFromUpload($uploadedImages, $currentUserAsAuthor);
 
             $this->articleEditor->addImages($images, $currentUserAsAuthor);

@@ -8,4 +8,20 @@ use App\Repository\BaseRepository;
 class FileRepository extends BaseRepository
 {
     const string ENTITY_CLASS = File::class;
+
+    public function getByHash(array $arrHashes) : array
+    {
+        // TODO FileRepository::getByHash
+        return [];
+
+        if( empty($arrHashes) ) {
+            return [];
+        }
+
+        return
+            $this->createQueryBuilder('t', 't.hash')
+                ->andWhere( 't.hash IN(:hashes)')
+                ->setParameter('hashes', $arrHashes)
+                ->getQuery()->getResult();
+    }
 }
