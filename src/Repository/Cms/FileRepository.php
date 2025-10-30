@@ -8,6 +8,8 @@ use App\Repository\BaseRepository;
 class FileRepository extends BaseRepository
 {
     const string ENTITY_CLASS = File::class;
+    const int ORPHANS_AFTER_MONTHS          = ImageRepository::ORPHANS_AFTER_MONTHS;
+    const int DELETE_ORPHANS_AFTER_MONTHS   = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
 
 
     public function getByHash(array $arrHashes) : array

@@ -14,6 +14,9 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     const string REGEX_IMAGE_PLACEHOLDER    = '/(?<=(==###immagine::id::))[1-9]+[0-9]*(?=(###==))/';
     const string REGEX_IMAGE_SHORTURL       = '/(?<=(\/immagini\/))[1-9]+[0-9]*(?=(\/))/';
 
+    const string REGEX_FILE_PLACEHOLDER     = '/(?<=(==###file::id::))[1-9]+[0-9]*(?=(###==))/';
+    const string REGEX_FILE_URL             = '/(?<=(\/scarica\/))[1-9]+[0-9]*/';
+
 
     public function processArticleBody(Article $article) : string
     {
@@ -149,7 +152,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
 
     protected function fileLinksFromPlaceholderToUrl(DOMDocument $domDoc)
     {
-        $fileRegEx      = '/(?<=(==###file::id::))[1-9]+[0-9]*(?=(###==))/';
+        $fileRegEx      = static::REGEX_FILE_PLACEHOLDER;
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $fileRegEx);
 
         $fileCollection = $this->factory->createFileCollection();

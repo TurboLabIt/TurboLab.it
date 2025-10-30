@@ -282,7 +282,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
 
             if( empty($image) ) {
 
-                $this->arrImagesNotFound = $logEntry;
+                $this->arrImagesNotFound[] = $logEntry;
                 continue;
             }
 
