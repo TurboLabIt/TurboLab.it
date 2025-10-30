@@ -40,8 +40,8 @@ class FileEditor extends File
         $this
             ->setTitle($filenameWithoutExtension)
             ->entity
-                ->setFormat( $file->guessExtension() );
-                //->setHash($hash);
+                ->setFormat( $file->guessExtension() )
+                ->setHash($hash);
 
         $this->save();
 
