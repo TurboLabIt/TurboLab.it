@@ -192,6 +192,12 @@ class File extends BaseCmsService
         return $fileName;
     }
 
+
     public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
-        { return $this->factory->getFileUrlGenerator()->generateUrl($this, $urlType); }
+    {
+        return $this->factory->getFileUrlGenerator()->generateUrl($this, $urlType);
+    }
+
+
+    public function getHash() : ?string { return $this->entity->getHash(); }
 }

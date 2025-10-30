@@ -3,6 +3,7 @@ namespace App\Entity\Cms;
 
 use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
+use App\Trait\HashableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +26,7 @@ class Image extends BaseCmsEntity
     const string FORMAT_WEBP    = 'webp';
     const string FORMAT_AVIF    = 'avif';
 
-    use TitleableEntityTrait;
+    use TitleableEntityTrait, HashableEntityTrait;
     // overwrite to remove "unique"
     #[ORM\Column(length: self::TITLE_MAX_LENGTH)]
     #[NotBlank]
@@ -39,9 +40,6 @@ class Image extends BaseCmsEntity
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     protected bool $reusable = false;
-
-    #[ORM\Column(length: 32, unique: true, options: ["fixed" => true])]
-    protected ?string $hash = null;
 
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
@@ -109,14 +107,6 @@ class Image extends BaseCmsEntity
     public function setReusable(bool $reusable) : static
     {
         $this->reusable = $reusable;
-        return $this;
-    }
-
-    public function getHash(): ?string { return $this->hash; }
-
-    public function setHash(string $hash) : static
-    {
-        $this->hash = $hash;
         return $this;
     }
 

@@ -9,11 +9,9 @@ class FileRepository extends BaseRepository
 {
     const string ENTITY_CLASS = File::class;
 
+
     public function getByHash(array $arrHashes) : array
     {
-        // TODO FileRepository::getByHash
-        return [];
-
         if( empty($arrHashes) ) {
             return [];
         }

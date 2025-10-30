@@ -89,4 +89,11 @@ class FileEditor extends File
 
         $this->clear();
     }
+
+
+    public function setHash(string $hash) : static
+    {
+        $this->entity->setHash($hash);
+        return $this;
+    }
 }

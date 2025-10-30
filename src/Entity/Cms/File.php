@@ -2,6 +2,7 @@
 namespace App\Entity\Cms;
 
 use App\Repository\Cms\FileRepository;
+use App\Trait\HashableEntityTrait;
 use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,7 +15,7 @@ class File extends BaseCmsEntity
 {
     const string TLI_CLASS = 'file';
 
-    use TitleableEntityTrait, ViewableEntityTrait;
+    use TitleableEntityTrait, ViewableEntityTrait, HashableEntityTrait;
 
     #[ORM\Column(length: 15, nullable: true)]
     protected ?string $format = null;
