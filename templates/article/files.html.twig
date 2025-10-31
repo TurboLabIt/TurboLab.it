@@ -11,9 +11,8 @@
                     </a>
 
                     <span class="ml-10">
-                        <a href="{{ File.url }}" target="_blank" class="tli-download-text-link">
-                            <span>{{ File.title }}</span>
-                        </a>
+                        <a href="{{ File.url }}" target="_blank"
+                           class="tli-download-text-link"><span>{{ File.title }}</span></a>
 
                         {% for OS in File.Compatibilities %}
                             <i class="fa-brands fa-{{ OS.slug }}" title="Compatibile con {{ OS.name }}"

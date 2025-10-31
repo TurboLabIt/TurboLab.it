@@ -7,6 +7,7 @@ use App\Exception\FileNotFoundException;
 use App\Repository\Cms\FileRepository;
 use App\Service\Factory;
 use App\Service\HtmlProcessorBase;
+use App\Trait\AuthorableTrait;
 use App\Trait\VisitableServiceTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -23,7 +24,7 @@ class File extends BaseCmsService
 
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
-    use VisitableServiceTrait;
+    use AuthorableTrait, VisitableServiceTrait;
 
     protected ProjectDir $projectDir;
     protected FileEntity $entity;

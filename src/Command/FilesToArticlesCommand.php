@@ -326,10 +326,14 @@ class FilesToArticlesCommand extends AbstractBaseCommand
 
             $this->arrNewJunctions[] = $logEntry;
 
+            $authors        = $file->getAuthors();
+            $authorEntity   = reset($authors)->getEntity();
+
             $newJunction =
                 (new ArticleFile())
                     ->setArticle($article->getEntity())
                     ->setFile($file->getEntity())
+                    ->setUser($authorEntity)
                     ->setRanking(0);
 
             $this->articleFileRepository->save($newJunction, false);
