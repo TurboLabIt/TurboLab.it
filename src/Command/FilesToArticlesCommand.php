@@ -178,11 +178,10 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     protected function scanOneArticle($key, Article $article) : static
     {
         $articleId  = $article->getId();
-        $articleUrl = $article->getShortUrl();
 
         $this->arrArticleMap[$articleId] = [
             'articleId' => $articleId,
-            'Files'    => []
+            'Files'     => []
         ];
 
         $text = $article->getEntity()->getBody();
@@ -191,34 +190,24 @@ class FilesToArticlesCommand extends AbstractBaseCommand
             return $this;
         }
 
-        $domDoc = $this->htmlProcessor->parseHTML($text);
-        if( $domDoc === false ) {
-            $this->endWithError("Parsing of article ## $articleUrl ## failed");
-        }
+        $arrFileIds = [];
 
-        $aNodes = $domDoc->getElementsByTagName('a');
-        if( $aNodes->length == 0 ) {
-            return $this;
-        }
 
-        foreach($aNodes as $a) {
+        $arrMatchesFilePlaceholder = [];
+        preg_match_all(HtmlProcessorForDisplay::REGEX_FILE_PLACEHOLDER, $text,  $arrMatchesFilePlaceholder);
 
-            $arrMatches = [];
-            $src        = $a->getAttribute('href');
-            $found      = preg_match(HtmlProcessorForDisplay::REGEX_FILE_PLACEHOLDER, $src, $arrMatches);
+        $arrMatchesFileUrl = [];
+        preg_match_all(HtmlProcessorForDisplay::REGEX_FILE_URL, $text,  $arrMatchesFileUrl);
 
-            if( !$found ) {
-                $found = preg_match(HtmlProcessorForDisplay::REGEX_FILE_URL, $src, $arrMatches);
+        foreach([$arrMatchesFilePlaceholder, $arrMatchesFileUrl] as $arrMatches) {
+
+            foreach($arrMatches[0] as $match) {
+                $value = (int)$match;
+                $arrFileIds[$value] = $value;
             }
-
-            if( !$found ) {
-                continue;
-            }
-
-            $this->arrArticleMap[$articleId]['Files'][] = (int)$arrMatches[0];
         }
 
-        $this->arrArticleMap[$articleId]['Files'] = array_unique($this->arrArticleMap[$articleId]['Files']);
+        $this->arrArticleMap[$articleId]['Files'] = array_values($arrFileIds);
 
         return $this;
     }
@@ -231,9 +220,9 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $fileId     = $junction->getFile()->getId();
 
 
-        if( $articleId == Article::ID_ABOUT_US && in_array($fileId, [File::ID_LOGO]) ) {
+        if( $articleId == Article::ID_ABOUT_US ) {
 
-            // special case! these files are attached on the "about us" article, but not used
+            // special case! some files (logo, presentation, ...) are attached on the "about us" article, but not linked
             return $this->removeFromArticleMap($articleId, $fileId);
         }
 
