@@ -280,10 +280,13 @@ class Article extends BaseCmsEntity
 
     public function removeFile(ArticleFile $file) : static
     {
-        if ($this->files->removeElement($file)) {
-            // set the owning side to null (unless already changed)
-            if ($file->getArticle() === $this) {
-                $file->setArticle(null);
+        $currentItems = $this->getFiles();
+        foreach($currentItems as $item) {
+
+            if( $item->getFile()->getId() == $file->getFile()->getId() ) {
+
+                $this->files->removeElement($item);
+                $item->setArticle(null);
             }
         }
 

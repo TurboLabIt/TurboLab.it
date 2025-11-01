@@ -323,6 +323,18 @@ class ArticleEditor extends Article
 
         return $this;
     }
+
+
+    public function removeFile(File|FileEntity $file) : static
+    {
+        $fileEntity = $file instanceof File ? $file->getEntity() : $file;
+
+        $this->entity->removeFile(
+            (new ArticleFile())->setFile($fileEntity)
+        );
+
+        return $this;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 💬 Comments topic ***">

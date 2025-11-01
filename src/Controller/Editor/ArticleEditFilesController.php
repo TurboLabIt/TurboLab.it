@@ -40,19 +40,17 @@ class ArticleEditFilesController extends ArticleEditBaseController
     }
 
 
-    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/files/delete/{fileId<[1-9]+[0-9]*>}',
-        name: 'app_article_edit_files-delete', methods: ['DELETE'], condition: "'%kernel.environment%' != 'prod'")]
-    public function delete(int $articleId, int $fileId, FileEditor $file, FileSentinel $sentinel) : JsonResponse|Response
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/files/delete/{fileId<[1-9]+[0-9]*>}', name: 'app_article_edit_files-delete', methods: ['DELETE'])]
+    public function delete(int $articleId, int $fileId, FileEditor $file) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
-
             $file->load($fileId);
-            $sentinel
-                ->setFile($file)
-                ->enforceCanDelete();
 
-            $file->delete();
+            $this->articleEditor->removeFile($file);
+
+            // there is no need to save() the article here
+            $this->factory->getEntityManager()->flush();
 
             return new Response('OK');
 

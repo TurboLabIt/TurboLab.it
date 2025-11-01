@@ -5,7 +5,10 @@
         {% for File in Article.Files %}
 
             <div class="d-flex align-items-start mb-20 tli-file-download">
-                <span class="d-flex align-items-center">
+
+                <span class="d-flex align-items-center"
+                      data-delete-url="{{ path('app_article_edit_files-delete', {'articleId': Article.id, 'fileId': File.id}) }}">
+
                     <a href="{{ File.url }}" target="_blank">
                         <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
                     </a>
@@ -40,6 +43,10 @@
                         </span>
 
                     </span>
+
+                    {% if Article.isEditable %}
+                        <i class="fa-solid fa-trash-can fa-xl tli-delete-file" style="color: #b0b0b0;"></i>
+                    {% endif %}
 
                 </span>
 

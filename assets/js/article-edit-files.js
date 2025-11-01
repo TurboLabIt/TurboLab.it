@@ -117,22 +117,27 @@ debugger;
  */
 
 
-$(document).on('click', '#tli-files-gallery .tli-delete-file', function(e) {
+$(document).on('click', '#tli-downloadable-files .tli-delete-file', function(e) {
 
     e.preventDefault();
     if( !confirm('Sicuro?') ) {
         return false;
     }
 
-    $(this).closest('.col').fadeOut();
+    let fileContainer = $(this).closest('[data-delete-url]');
+    fileContainer.removeClass('d-flex');
+    fileContainer.fadeOut();
 
-    let galleryItemContainer = $(this).closest('.col');
-    let deleteUrl = galleryItemContainer.find('[data-delete-url]').data('delete-url');
+    let deleteUrl = fileContainer.data('delete-url');
 
     $.ajax({
         url: deleteUrl,
         type: 'DELETE',
         error: function(jqXHR, textStatus, errorThrown) {
+
+            fileContainer.fadeIn(function(){
+                fileContainer.addClass('d-flex');
+            });
 
             let errorMessage = jqXHR.responseText ?? null;
             if( errorMessage && errorMessage != '' ) {
