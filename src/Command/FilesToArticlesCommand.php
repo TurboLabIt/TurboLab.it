@@ -5,7 +5,6 @@ use App\Entity\Cms\ArticleFile;
 use App\Repository\Cms\ArticleFileRepository;
 use App\Repository\Cms\FileRepository;
 use App\Service\Cms\Article;
-use App\Service\Cms\File;
 use App\Service\Entity\Article as ArticleEntity;
 use App\Service\Entity\File as FileEntity;
 use App\Service\HtmlProcessorForDisplay;
@@ -30,11 +29,11 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 )]
 class FilesToArticlesCommand extends AbstractBaseCommand
 {
-    protected bool $allowDryRunOpt          = true;
-    protected array $arrArticleMap          = [];
-    protected array $arrDeletedJunctions    = [];
-    protected array $arrNewJunctions        = [];
-    protected array $arrFilesNotFound       = [];
+    protected bool $allowDryRunOpt      = true;
+    protected array $arrArticleMap      = [];
+    protected array $arrDeletedJunctions= [];
+    protected array $arrNewJunctions    = [];
+    protected array $arrFilesNotFound   = [];
 
 
     public function __construct(
