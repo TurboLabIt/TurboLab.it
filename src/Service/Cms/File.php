@@ -24,6 +24,8 @@ class File extends BaseCmsService
 
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
+    const string ATTACHED_BUT_UNUSED_FILE_NAME  = 'files-orphans.json';
+
     use AuthorableTrait, VisitableServiceTrait;
 
     protected ProjectDir $projectDir;

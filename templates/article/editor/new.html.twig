@@ -258,7 +258,14 @@
 
                                     <h2>Altre risorse per gli autori</h2>
                                     <ul>
-                                        <li><i class="fa-solid fa-images"></i> <a href="{{ path('app_image_orphans') }}">Immagini orfane</a></li>
+                                        <li>
+                                            <i class="fa-solid fa-images"></i>
+                                            <a href="{{ path('app_image_orphans') }}">Immagini orfane</a>
+                                        </li>
+                                        <li>
+                                            <i class="fa-solid fa-file-half-dashed"></i>
+                                            <a href="{{ path('app_file_need-fixing') }}">File da controllare</a>
+                                        </li>
                                     </ul>
 
                                 {% endif %}

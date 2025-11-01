@@ -3,8 +3,10 @@ namespace App\Controller;
 
 use App\Service\Cms\Visit;
 use App\Service\Cms\File;
+use App\Service\FrontendHelper;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
 class FileController extends BaseController
@@ -61,5 +63,26 @@ class FileController extends BaseController
         $response->headers->set('X-Accel-Redirect', $xSendPath);
 
         return $response;
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/da-controllare', name: 'app_file_need-fixing')]
+    public function needFixing(ProjectDir $projectDir, FrontendHelper $frontendHelper) : Response
+    {
+        $filepath           = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
+        $txtJson            = file_get_contents($filepath);
+        $arrAttachedUnused  = json_decode($txtJson, true);
+
+        $countAttachedUnused = count($arrAttachedUnused);
+        $countAttachedUnused = number_format($countAttachedUnused, 0, ',', '.');
+
+        return $this->render('file/need-fixing.html.twig', [
+            'metaTitle'                 => 'File da controllare',
+            'activeMenu'                => null,
+            'FrontendHelper'            => $frontendHelper,
+            'AttachedUnused'            => $arrAttachedUnused,
+            'numAttachedUnused'         => $countAttachedUnused,
+            'dateAttachedUnusedList'    => new \DateTime('@' . filemtime($filepath))
+        ]);
     }
 }

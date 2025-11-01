@@ -5,6 +5,7 @@ use App\Entity\Cms\ArticleFile;
 use App\Repository\Cms\ArticleFileRepository;
 use App\Repository\Cms\FileRepository;
 use App\Service\Cms\Article;
+use App\Service\Cms\File;
 use App\Service\Entity\Article as ArticleEntity;
 use App\Service\Entity\File as FileEntity;
 use App\Service\HtmlProcessorForDisplay;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
+use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
 /**
@@ -34,15 +36,17 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     protected array $arrDeletedJunctions= [];
     protected array $arrNewJunctions    = [];
     protected array $arrFilesNotFound   = [];
+    protected string $filePath;
 
 
     public function __construct(
         protected ArticleCollection $articles, protected FileCollection $files,
         protected ArticleFileRepository $articleFileRepository, protected HtmlProcessorForDisplay $htmlProcessor,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager, protected ProjectDir $projectDir
     )
     {
         parent::__construct();
+        $this->filePath = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
     }
 
 
@@ -80,6 +84,11 @@ class FilesToArticlesCommand extends AbstractBaseCommand
 
         $this->fxTitle("🚮 Deleting unused junctions....");
         $this->processItems($junctions, [$this, 'deleteOneJunctionIfUnused']);
+
+        $this
+            ->fxTitle("📄 Storing deleted junctions to file....")
+            ->storeDeletedJunctionsToFile()
+            ->fxOK('OK! ##' . $this->filePath . '##');
 
 
         $this->fxTitle("🆕 Creating new junctions....");
@@ -281,6 +290,68 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         if( $key !== false ) {
             unset($this->arrArticleMap[$articleId]['Files'][$key]);
         }
+
+        return $this;
+    }
+
+
+    protected function storeDeletedJunctionsToFile() : static
+    {
+        $arrDataSource = [];
+        foreach($this->arrDeletedJunctions as $item) {
+
+            $articleId  = $item['articleId'];
+
+            if( !array_key_exists($articleId, $arrDataSource) ) {
+
+                $arrDataSource[$articleId]['Article']   = $this->articles->get($articleId);
+                $arrDataSource[$articleId]['Files']     = [];
+            }
+
+            $fileId = $item['fileId'];
+            $arrDataSource[$articleId]['Files'][$fileId] = $this->files->get($fileId);
+        }
+
+
+        usort($arrDataSource, function(array $arr1, array $arr2) {
+            return $arr2["Article"]->getUpdatedAt() <=>  $arr1["Article"]->getUpdatedAt();
+        });
+
+
+        $arrDataToWrite = [];
+        foreach($arrDataSource as $arrItem) {
+
+            $article    = $arrItem['Article'];
+            $articleId  = $article->getId();
+            $arrDataToWrite[$articleId] = [
+                'title'     => $article->getTitle(),
+                'url'       => $article->getUrl(),
+                'Authors'   => [],
+                'Files'     => []
+            ];
+
+            $authors = $article->getAuthors();
+            foreach($authors as $author) {
+
+                $authorId = $author->getId();
+                $arrDataToWrite[$articleId]['Authors'][$authorId] = [
+                    'username'  => $author->getUsername(),
+                    'url'       => $author->getUrl(),
+                ];
+            }
+
+            foreach($arrItem['Files'] as $file) {
+
+                $fileId = $file->getId();
+                $arrDataToWrite[$articleId]['Files'][$fileId] = [
+                    'title' => $file->getTitle(),
+                    'url'   => $file->getUrl()
+                ];
+            }
+        }
+
+
+        file_put_contents($this->filePath, json_encode($arrDataToWrite, JSON_PRETTY_PRINT) );
 
         return $this;
     }
