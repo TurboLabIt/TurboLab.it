@@ -18,6 +18,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
@@ -42,7 +43,8 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     public function __construct(
         protected ArticleCollection $articles, protected FileCollection $files,
         protected ArticleFileRepository $articleFileRepository, protected HtmlProcessorForDisplay $htmlProcessor,
-        protected EntityManagerInterface $entityManager, protected ProjectDir $projectDir
+        protected EntityManagerInterface $entityManager, protected ProjectDir $projectDir,
+        protected UrlGeneratorInterface $urlGenerator
     )
     {
         parent::__construct();
@@ -167,6 +169,10 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $this->fxOK("##$createdJunctionsNum## files(s) not found");
 
 
+        $this
+            ->fxTitle("Web URL")
+            ->fxOK( $this->urlGenerator->generate('app_file_need-fixing', [], UrlGeneratorInterface::ABSOLUTE_URL) );
+
         $this->io->newLine();
 
         return $this->endWithSuccess();
@@ -179,7 +185,14 @@ class FilesToArticlesCommand extends AbstractBaseCommand
             return '[' . $item['articleId'] . ']';
         }
 
-        return '[' . $item->getId() . '] ' . $item->getTitle();
+        $title = $item->getTitle();
+        if( mb_strlen($title) > 60 ) {
+            $title = mb_substr($title, 0, 60) . '...';
+        }
+
+        $title = str_ireplace(['<', '>'], '', $title);
+
+        return '[' . $item->getId() . '] ' . $title;
     }
 
 
