@@ -32,7 +32,7 @@ class ImageEditorCollection extends BaseImageCollection
         }
 
 
-        $arrExistingImageEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash( array_keys($arrData) );
+        $arrExistingImageEntities = $this->getRepository()->getByHash( array_keys($arrData) );
 
         foreach($arrData as $hash => $item) {
 

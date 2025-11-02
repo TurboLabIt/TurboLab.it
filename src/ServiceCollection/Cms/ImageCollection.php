@@ -27,14 +27,14 @@ class ImageCollection extends BaseImageCollection
     public function loadByHash(array|int $hashes) : static
     {
         $hashes = is_array($hashes) ? $hashes : [$hashes];
-        $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->getByHash($hashes);
+        $arrEntities = $this->getRepository()->getByHash($hashes);
         return $this->setEntities($arrEntities);
     }
 
 
     public function loadOrphans() : static
     {
-        $arrEntities = $this->em->getRepository(static::ENTITY_CLASS)->getOrphans();
+        $arrEntities = $this->getRepository(static::ENTITY_CLASS)->getOrphans();
         return $this->setEntities($arrEntities);
     }
 }

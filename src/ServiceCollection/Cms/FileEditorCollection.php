@@ -27,7 +27,7 @@ class FileEditorCollection extends FileCollection
             ];
         }
 
-        $fileRepository = $this->em->getRepository(static::ENTITY_CLASS);
+        $fileRepository = $this->getRepository();
 
         $arrExistingFileEntitiesByHash = $fileRepository->getByHash( array_keys($arrData) );
 
