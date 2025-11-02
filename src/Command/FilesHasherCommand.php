@@ -4,6 +4,7 @@ namespace App\Command;
 use App\Service\Entity\File as FileEntity;
 use App\Service\Cms\FileEditor;
 use App\ServiceCollection\Cms\FileEditorCollection;
+use App\Trait\CommandTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
@@ -21,6 +22,9 @@ class FilesHasherCommand extends AbstractBaseCommand
     protected bool $allowDryRunOpt  = true;
     protected array $arrHashedFiles = [];
 
+    use CommandTrait;
+
+
     public function __construct(protected FileEditorCollection $files, protected EntityManagerInterface $entityManager)
     {
         parent::__construct();
@@ -30,12 +34,7 @@ class FilesHasherCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->fxTitle("🚚 Loading local files...");
-        $this->files->loadAll();
-        $count = $this->files->count();
-        $this->fxOK("##$count## file(s) loaded");
-
-        if($count == 0) { return $this->endWithSuccess(); }
+        $this->loadAllFiles();
 
         $this->fxTitle("#️⃣ Hashing...");
         $this->processItems($this->files, [$this, 'hashOneFile'], null, [$this, 'buildItemTitle']);
@@ -60,12 +59,6 @@ class FilesHasherCommand extends AbstractBaseCommand
         $this->io->newLine();
 
         return $this->endWithSuccess();
-    }
-
-
-    protected function buildItemTitle($key, $item) : string
-    {
-        return '[' . $item->getId() . '] ' . $item->getTitle();
     }
 
 

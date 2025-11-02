@@ -10,6 +10,7 @@ use App\Service\Entity\Article as ArticleEntity;
 use App\Service\HtmlProcessorForDisplay;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\ImageCollection;
+use App\Trait\CommandTrait;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -34,6 +35,8 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     protected array $arrNewJunctions        = [];
     protected array $arrImagesNotFound      = [];
 
+    use CommandTrait;
+
 
     public function __construct(
         protected ArticleCollection $articles, protected ImageCollection $images,
@@ -49,12 +52,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this
-            ->fxTitle("🚚 Loading articles...")
-            ->articles->loadAll();
-
-        $articlesNum = $this->articles->count();
-        $this->fxOK("##$articlesNum## articles(s) loaded");
+        $this->loadAllArticles();
 
         $this->fxTitle("🔬 Scanning each article text to determine which images it actually uses....");
         $this->processItems($this->articles, [$this, 'scanOneArticle']);

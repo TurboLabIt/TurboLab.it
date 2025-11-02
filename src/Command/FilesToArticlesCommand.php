@@ -12,6 +12,7 @@ use App\Service\HtmlProcessorForDisplay;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
+use App\Trait\CommandTrait;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -39,6 +40,8 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     protected array $arrFilesNotFound   = [];
     protected string $filePath;
 
+    use CommandTrait;
+
 
     public function __construct(
         protected ArticleCollection $articles, protected FileCollection $files,
@@ -55,12 +58,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this
-            ->fxTitle("🚚 Loading articles...")
-            ->articles->loadAll();
-
-        $articlesNum = $this->articles->count();
-        $this->fxOK("##$articlesNum## articles(s) loaded");
+        $this->loadAllArticles();
 
         $this->fxTitle("🔬 Scanning each article text to determine which files it actually uses....");
         $this->processItems($this->articles, [$this, 'scanOneArticle']);
@@ -74,14 +72,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $junctionsNum = count($junctions);
         $this->fxOK("##$junctionsNum## junctions(s) loaded");
 
-
-        $this
-            ->fxTitle("🚚 Loading files...")
-            ->files->loadAll();
-
-        $filesNum = $this->files->count();
-        $this->fxOK("##$filesNum## file(s) loaded");
-
+        $this->loadAllFiles();
 
         $this->fxTitle("🚮 Deleting unused junctions....");
         $this->processItems($junctions, [$this, 'deleteOneJunctionIfUnused']);
@@ -176,23 +167,6 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $this->io->newLine();
 
         return $this->endWithSuccess();
-    }
-
-
-    protected function buildItemTitle($key, $item) : string
-    {
-        if( is_array($item) ) {
-            return '[' . $item['articleId'] . ']';
-        }
-
-        $title = $item->getTitle();
-        if( mb_strlen($title) > 60 ) {
-            $title = mb_substr($title, 0, 60) . '...';
-        }
-
-        $title = str_ireplace(['<', '>'], '', $title);
-
-        return '[' . $item->getId() . '] ' . $title;
     }
 
 
