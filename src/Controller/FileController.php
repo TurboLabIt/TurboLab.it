@@ -70,11 +70,15 @@ class FileController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/da-controllare', name: 'app_file_need-fixing')]
     public function needFixing(ProjectDir $projectDir, FrontendHelper $frontendHelper, FileCollection $files) : Response
     {
-        $filepath           = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
-        $txtJson            = file_get_contents($filepath);
+        $filePathUnused     = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
+        $txtJson            = file_get_contents($filePathUnused);
         $arrAttachedUnused  = json_decode($txtJson, true);
 
         $orphans = $files->loadOrphans();
+
+        $filePathMissingOnFilesystem = $projectDir->getVarDirFromFilePath(File::MISSING_ON_FILESYSTEM_FILE_NAME);
+        $txtJson                    = file_get_contents($filePathMissingOnFilesystem);
+        $arrMissingOnFilesystem     = json_decode($txtJson, true);
 
         return $this->render('file/need-fixing.html.twig', [
             'metaTitle'                 => 'File da controllare',
@@ -83,10 +87,13 @@ class FileController extends BaseController
             //
             'AttachedUnused'            => $arrAttachedUnused,
             'numAttachedUnused'         => number_format(count($arrAttachedUnused), 0, ',', '.'),
-            'dateAttachedUnusedList'    => new \DateTime('@' . filemtime($filepath)),
+            'dateAttachedUnusedList'    => new \DateTime('@' . filemtime($filePathUnused)),
             //
             'Orphans'                   => $files,
-            'numOrphans'                => number_format($orphans->count(), 0, ',', '.')
+            'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),
+            //
+            'MissingOnFilesystem'       => $arrMissingOnFilesystem,
+            'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.')
         ]);
     }
 }

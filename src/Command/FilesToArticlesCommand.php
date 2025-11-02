@@ -48,7 +48,6 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     )
     {
         parent::__construct();
-        $this->filePath = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
     }
 
 
@@ -81,14 +80,15 @@ class FilesToArticlesCommand extends AbstractBaseCommand
             ->files->loadAll();
 
         $filesNum = $this->files->count();
-        $this->fxOK("##$filesNum## files(s) loaded");
+        $this->fxOK("##$filesNum## file(s) loaded");
 
 
         $this->fxTitle("🚮 Deleting unused junctions....");
         $this->processItems($junctions, [$this, 'deleteOneJunctionIfUnused']);
 
+        $this->fxTitle("📄 Storing deleted junctions to file....");
+        $this->filePath = $this->projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
         $this
-            ->fxTitle("📄 Storing deleted junctions to file....")
             ->storeDeletedJunctionsToFile()
             ->fxOK('OK! ##' . $this->filePath . '##');
 
@@ -147,7 +147,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $this->fxOK("##$createdJunctionsNum## junctions(s) created");
 
 
-        $this->fxTitle("⚠️ Files(s) not found...");
+        $this->fxTitle("⚠️ File(s) not found...");
         if( !empty($this->arrFilesNotFound) ) {
 
             usort($this->arrFilesNotFound, function(array $arr1, array $arr2) {
@@ -166,7 +166,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         }
 
         $createdJunctionsNum = count($this->arrFilesNotFound);
-        $this->fxOK("##$createdJunctionsNum## files(s) not found");
+        $this->fxOK("##$createdJunctionsNum## file(s) not found");
 
 
         $this

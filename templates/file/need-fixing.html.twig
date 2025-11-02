@@ -4,6 +4,8 @@
 
 {% block bodyMainContent %}
 
+    {% block beforeArticleList %}{% endblock %}
+
     <!-- ARCHIVE bodyMainContent START -->
 
     <div class="container">
@@ -21,6 +23,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="container">
         <div class="row">
@@ -48,8 +51,6 @@
             </div>
         </div>
     </div>
-
-    {% block beforeArticleList %}{% endblock %}
 
     <div class="container">
         <div class="row">
@@ -121,6 +122,57 @@
                             <td>
                                 {% for Author in File.Authors %}
                                     {{ Author.username }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2 class="title">File mancanti su filesystem: {{ numMissingOnFilesystem }}</h2>
+                    <p class="tli-readable-text">
+                        I seguenti file locali non sono presenti sul filesystem del server.
+                        Al momento, non è possibile intervenire via web per ripristinarli.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">File</th>
+                        <th scope="col">Autori</th>
+                        <th scope="col">Articoli</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for fileId,Item in MissingOnFilesystem %}
+                        <tr>
+                            <th scope="row">{{ fileId }}</th>
+                            <td><a href="{{ Item.url }}">{{ Item.title }}</a></td>
+                            <td>
+                                {% for Author in Item.Authors %}
+                                    {{ Author.username }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for articleId,Article in Item.Articles %}
+                                    <a href="{{ Article.url }}">{{ Article.title }} (#{{ articleId }})</a>
+                                    {% if not loop.last %}<br>{% endif %}
                                 {% endfor %}
                             </td>
                         </tr>

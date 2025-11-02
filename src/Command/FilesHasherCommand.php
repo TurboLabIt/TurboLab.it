@@ -55,7 +55,7 @@ class FilesHasherCommand extends AbstractBaseCommand
         }
 
         $hashedFilesNum = count($this->arrHashedFiles);
-        $this->fxOK("##$hashedFilesNum## files(s) hashed");
+        $this->fxOK("##$hashedFilesNum## file(s) hashed");
 
         $this->io->newLine();
 

@@ -4,6 +4,7 @@
 source $(dirname $(readlink -f $0))/script_begin.sh
 wsuSymfony console FilesHasher "$@"
 wsuSymfony console FilesToArticles "$@"
+wsuSymfony console FilesNotFound "$@"
 
 wsuSymfony console ImagesToArticles "$@"
 wsuSymfony console ImagesDelete "$@"

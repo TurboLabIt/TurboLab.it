@@ -25,11 +25,14 @@ class File extends BaseCmsService
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
     const string ATTACHED_BUT_UNUSED_FILE_NAME  = 'files-orphans.json';
+    const string MISSING_ON_FILESYSTEM_FILE_NAME= 'files-missing-on-filesystem.json';
+    const string MISSING_ON_DATABASE_FILE_NAME  = 'files-missing-on-database.json';
 
     use AuthorableTrait, VisitableServiceTrait;
 
     protected ProjectDir $projectDir;
     protected FileEntity $entity;
+    protected ?array $arrArticles = null;
 
 
     public function __construct(protected Factory $factory)
@@ -121,6 +124,26 @@ class File extends BaseCmsService
         return [];
     }
     //</editor-fold>
+
+
+    public function getArticles() : array
+    {
+        if( is_array($this->arrArticles) ) {
+            return $this->arrArticles;
+        }
+
+        $this->arrArticles = [];
+
+        $fileJunctionEntities = $this->entity->getArticles();
+        foreach($fileJunctionEntities as $junctionEntity) {
+
+            $articleEntity  = $junctionEntity->getArticle();
+            $articleId      = $articleEntity->getId();
+            $this->arrArticles[$articleId] = $this->factory->createArticle($articleEntity);
+        }
+
+        return $this->arrArticles;
+    }
 
 
     public function getOriginalFileName() : ?string
