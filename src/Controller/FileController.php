@@ -76,9 +76,13 @@ class FileController extends BaseController
 
         $orphans = $files->loadOrphans();
 
-        $filePathMissingOnFilesystem = $projectDir->getVarDirFromFilePath(File::MISSING_ON_FILESYSTEM_FILE_NAME);
+        $filePathMissingOnFilesystem= $projectDir->getVarDirFromFilePath(File::MISSING_ON_FILESYSTEM_FILE_NAME);
         $txtJson                    = file_get_contents($filePathMissingOnFilesystem);
         $arrMissingOnFilesystem     = json_decode($txtJson, true);
+
+        $filePathMissingOnDatabase  = $projectDir->getVarDirFromFilePath(File::MISSING_ON_DATABASE_FILE_NAME);
+        $txtJson                    = file_get_contents($filePathMissingOnDatabase);
+        $arrMissingOnDatabase       = json_decode($txtJson, true);
 
         return $this->render('file/need-fixing.html.twig', [
             'metaTitle'                 => 'File da controllare',
@@ -93,7 +97,10 @@ class FileController extends BaseController
             'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),
             //
             'MissingOnFilesystem'       => $arrMissingOnFilesystem,
-            'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.')
+            'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
+            //
+            'MissingOnDatabase'         => $arrMissingOnDatabase,
+            'numMissingOnDatabase'      => number_format(count($arrMissingOnDatabase), 0, ',', '.')
         ]);
     }
 }

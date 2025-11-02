@@ -8,6 +8,7 @@ use App\Service\Entity\File as FileEntity;
 use App\Service\HtmlProcessorForDisplay;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
+use App\Trait\CommandTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,9 +23,13 @@ class FilesNotFoundCommand extends AbstractBaseCommand
 {
     protected string $filesUploadDir                = '';
     protected array $arrFilesOnFilesystem           = [];
+    protected array $arrFilesByPath                 = [];
     protected array $arrMissingOnFilesystem         = [];
+    protected array $arrMissingOnDatabase           = [];
     protected string $filePathMissingOnFilesystem   = '';
     protected string $filePathMissingOnDatabase     = '';
+
+    use CommandTrait;
 
 
     public function __construct(
@@ -42,13 +47,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this
-            ->fxTitle("🚚 Loading files from database...")
-            ->files->loadAll();
-
-        $filesNum = $this->files->count();
-        $this->fxOK("##$filesNum## file(s) loaded");
-
+        $this->loadAllFiles();
 
         $this->fxTitle('🔍 Scanning the file system...');
         $this->filesUploadDir = $this->projectDir->getVarDir(File::UPLOADED_FILES_FOLDER_NAME);
@@ -73,8 +72,12 @@ class FilesNotFoundCommand extends AbstractBaseCommand
             ->fxOK('OK! ##' . $this->filePathMissingOnFilesystem . '##');
 
 
+        $this
+            ->fxTitle("🗺️ Indexing database entities by file path....")
+            ->indexFilesByPath();
+
         $this->fxTitle("🔬 Matching each file with its database entity....");
-        $this->processItems($this->articles, [$this, 'matchFilesystemToEntities']);
+        $this->processItems($this->arrFilesOnFilesystem, [$this, 'matchFilesystemToEntities']);
 
         $this->fxTitle("📄 Storing missing file to json....");
         $this->filePathMissingOnDatabase = $this->projectDir->getVarDirFromFilePath(File::MISSING_ON_DATABASE_FILE_NAME);
@@ -88,23 +91,6 @@ class FilesNotFoundCommand extends AbstractBaseCommand
             ->fxOK( $this->urlGenerator->generate('app_file_need-fixing', [], UrlGeneratorInterface::ABSOLUTE_URL) );
 
         return $this->endWithSuccess();
-    }
-
-
-    protected function buildItemTitle($key, $item) : string
-    {
-        if( is_array($item) ) {
-            return '[' . $item['articleId'] . ']';
-        }
-
-        $title = $item->getTitle();
-        if( mb_strlen($title) > 60 ) {
-            $title = mb_substr($title, 0, 60) . '...';
-        }
-
-        $title = str_ireplace(['<', '>'], '', $title);
-
-        return '[' . $item->getId() . '] ' . $title;
     }
 
 
@@ -196,14 +182,46 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     }
 
 
-    protected function matchFilesystemToEntities() : static
+    protected function indexFilesByPath() : static
     {
+        foreach($this->files as $file) {
+
+            $filePath = $file->getOriginalFilePath();
+            $this->arrFilesByPath[$filePath] = null;
+        }
+
+        return $this;
+    }
+
+
+    protected function matchFilesystemToEntities($key, string $filepath) : static
+    {
+        if( !array_key_exists($filepath, $this->arrFilesByPath) ) {
+            $this->arrMissingOnDatabase[] = $filepath;
+        }
+
         return $this;
     }
 
 
     protected function storeMissingOnDatabase() : static
     {
+        usort($this->arrMissingOnDatabase, function(string $filepath1, string $filepath2) {
+            return filemtime($filepath2) <=>  filemtime($filepath1);
+        });
+
+        $arrDataSource = [];
+        foreach($this->arrMissingOnDatabase as $filepath) {
+
+            $arrDataSource[] = [
+                'filepath'      => $filepath,
+                'filename'      => basename($filepath),
+                'lastModified'  => \DateTime::createFromFormat('U', filemtime($filepath))->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        file_put_contents($this->filePathMissingOnDatabase, json_encode($arrDataSource, JSON_PRETTY_PRINT) );
+
         return $this;
     }
 }
