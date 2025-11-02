@@ -125,6 +125,10 @@ class FilesNotFoundCommand extends AbstractBaseCommand
 
     protected function matchEntitiesToFilesystem($key, File $file) : static
     {
+        if( !$file->isLocal() ) {
+            return $this;
+        }
+
         $filePath = $file->getOriginalFilePath();
 
         if( !in_array($filePath, $this->arrFilesOnFilesystem) ) {
