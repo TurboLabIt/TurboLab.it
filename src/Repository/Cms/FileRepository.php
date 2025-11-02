@@ -24,4 +24,14 @@ class FileRepository extends BaseRepository
                 ->setParameter('hashes', $arrHashes)
                 ->getQuery()->getResult();
     }
+
+
+    public function getOrphans() : array
+    {
+        return
+            $this->getQueryBuilder()
+                ->leftJoin('t.articles', 'articlesJunction')
+                ->where('articlesJunction.id IS NULL')
+                ->getQuery()->getResult();
+    }
 }

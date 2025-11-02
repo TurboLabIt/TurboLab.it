@@ -10,6 +10,16 @@ class FileCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = FileService::ENTITY_CLASS;
 
+
+    public function loadOrphans() : static
+    {
+        $arrEntities = $this->getRepository()->getOrphans();
+        return $this->setEntities($arrEntities);
+    }
+
+
     public function createService(?FileEntity $entity = null) : FileService
-        { return $this->factory->createFile($entity); }
+    {
+        return $this->factory->createFile($entity);
+    }
 }
