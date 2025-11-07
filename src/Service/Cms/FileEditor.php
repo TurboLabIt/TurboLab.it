@@ -37,6 +37,12 @@ class FileEditor extends File
             throw new UnprocessableEntityHttpException("You cannot upload an empty (zero-bytes) file!");
         }
 
+        $extension = $file->guessExtension();
+
+        if( empty($extension) ) {
+            throw new UnprocessableEntityHttpException("The system cannot determine the file extension!");
+        }
+
         $hash = hash_file('md5', $file->getPathname() );
 
         $originalFilename = $file->getClientOriginalName();
@@ -45,7 +51,7 @@ class FileEditor extends File
         $this
             ->setTitle($filenameWithoutExtension)
             ->entity
-                ->setFormat( $file->guessExtension() )
+                ->setFormat($extension)
                 ->setHash($hash);
 
         $this->save();
