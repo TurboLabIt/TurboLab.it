@@ -7,6 +7,7 @@ use App\Service\TextProcessor;
 use App\Service\User;
 use App\Trait\SaveableTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 
 class FileEditor extends File
@@ -32,6 +33,10 @@ class FileEditor extends File
 
     public function createFromUploadedFile(UploadedFile $file) : FileEditor
     {
+        if( $file->getSize() == 0 ) {
+            throw new UnprocessableEntityHttpException("You cannot upload an empty (zero-bytes) file!");
+        }
+
         $hash = hash_file('md5', $file->getPathname() );
 
         $originalFilename = $file->getClientOriginalName();
