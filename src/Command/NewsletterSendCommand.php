@@ -153,26 +153,10 @@ class NewsletterSendCommand extends AbstractBaseCommand
         }
 
 
-        $this->fxTitle("Generating the article on the website...");
+        $this
+            ->fxTitle("Generating the article on the website...")
+            ->prepareWebArticle();
 
-        // prevent duplicates in dev (multiple runs per day)
-        if( $this->isNotProd() ) {
-            $this->newsletter->setAddTimestampToWebArticle();
-        }
-
-        $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
-        $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
-
-        $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
-
-        if($persistArticle) {
-
-            $this->fxOK("Article ready: " . $articleUrl);
-
-        } else {
-
-            $this->fxWarning('The web article was NOT saved');
-        }
 
         $this->fxTitle("Processing every recipient...");
         $arrRecipients = $this->newsletter->getRecipients();
@@ -205,9 +189,28 @@ class NewsletterSendCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildItemTitle($key, $item) : string
+    protected function prepareWebArticle() : static
     {
-        return "[$key] " . $item->getUsername() . " <" . $item->getEmail() . ">";
+        $articleUrl = $this->newsletter->loadExistingWebArticle();
+        if( !empty($articleUrl) ) {
+            return $this->fxWarning("Pre-existing article found! $articleUrl");
+        }
+
+        // prevent duplicate titles in dev (multiple runs per day)
+        if( $this->isNotProd() ) {
+            $this->newsletter->setAddTimestampToWebArticle();
+        }
+
+        $realRecipients = $this->getCliOption(static::CLI_OPT_REAL_RECIPIENTS);
+        $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
+        $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
+
+        $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
+
+        return
+            $persistArticle
+                ? $this->fxOK("Article saved: $articleUrl")
+                : $this->fxWarning('The web article was NOT saved');
     }
 
 
@@ -227,5 +230,11 @@ class NewsletterSendCommand extends AbstractBaseCommand
             ->send();
 
         sleep( $this->pauseBetweenSends );
+    }
+
+
+    protected function buildItemTitle($key, $item) : string
+    {
+        return "[$key] " . $item->getUsername() . " <" . $item->getEmail() . ">";
     }
 }

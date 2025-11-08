@@ -251,6 +251,13 @@ class Newsletter extends Mailer
     }
 
 
+    public function loadExistingWebArticle() : ?string
+    {
+        $article = $this->articleCollection->loadExistingNewsletterOnTheWeb()->first();
+        return empty($article) ? null : $this->newsletterOnSiteUrl =  $article->getUrl();
+    }
+
+
     public function saveOnTheWeb(bool $persist) : ?string
     {
         $articleBody =

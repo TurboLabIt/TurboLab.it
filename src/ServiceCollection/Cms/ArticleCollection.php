@@ -210,4 +210,11 @@ class ArticleCollection extends BaseArticleCollection
         $arrArticles = $this->getRepository()->findForScheduling();
         return $this->setEntities($arrArticles);
     }
+
+
+    public function loadExistingNewsletterOnTheWeb() : static
+    {
+        $article = $this->getRepository()->findExistingNewsletterOnTheWeb();
+        return empty($article) ? $this->setEntities([]) : $this->setEntities([$article]);
+    }
 }

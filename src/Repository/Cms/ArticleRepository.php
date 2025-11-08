@@ -805,4 +805,19 @@ class ArticleRepository extends BaseRepository
                 ->andWhere('t.commentsTopicNeedsUpdate = ' . Article::COMMENTS_TOPIC_NEEDS_UPDATE_YES)
             ->getQuery()->getResult();
     }
+
+
+    public function findExistingNewsletterOnTheWeb() : ?Article
+    {
+        $dateLimit = new \DateTime('-48 hours');
+
+        return
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere("t.title LIKE 'Questa settimana su TLI%'")
+                ->andWhere('t.publishedAt >= :dateLimit')
+                    ->setParameter('dateLimit', $dateLimit)
+                ->orderBy('t.publishedAt', 'DESC')
+                ->setMaxResults(1)
+                ->getQuery()->getOneOrNullResult();
+    }
 }
