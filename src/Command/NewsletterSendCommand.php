@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Mailer\Exception\TransportException;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 
 
@@ -225,11 +226,28 @@ class NewsletterSendCommand extends AbstractBaseCommand
             $this->newsletter->switchTransportOnce('newsletter');
         }
 
-        $this->newsletter
-            ->buildForOne($user)
-            ->send();
+        $this->newsletter->buildForOne($user);
 
-        sleep( $this->pauseBetweenSends );
+        try {
+
+            $this->newsletter->send();
+            sleep( $this->pauseBetweenSends );
+
+        } catch(TransportException $ex1) {
+
+            $this->bashFx->fxError( $ex1->getMessage() );
+            $this->fxInfo("Retrying shortly...");
+            sleep( $this->pauseBetweenSends * 2 );
+
+            try {
+
+                $this->newsletter->send();
+
+            } catch(TransportException $ex2) {
+
+                $this->bashFx->fxError( $ex2->getMessage() );
+            }
+        }
     }
 
 
