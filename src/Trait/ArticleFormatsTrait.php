@@ -9,6 +9,8 @@ trait ArticleFormatsTrait
     const int FORMAT_ARTICLE    = 1;
     const int FORMAT_NEWS       = 2;
 
+    const int FORMAT_ACTION_SPONSOR = 22;
+
     public static function getFormats() : array { return [static::FORMAT_ARTICLE, static::FORMAT_NEWS]; }
 
     public static function validateFormat(int $format) : void

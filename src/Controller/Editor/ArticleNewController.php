@@ -2,6 +2,8 @@
 namespace App\Controller\Editor;
 
 use App\Service\Cms\Article;
+use App\Service\Cms\Tag;
+use App\Service\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -59,6 +61,7 @@ class ArticleNewController extends ArticleEditBaseController
             'formatFieldName'               => static::FORMAT_FIELD_NAME,
             'formatArticle'                 => Article::FORMAT_ARTICLE,
             'formatNews'                    => Article::FORMAT_NEWS,
+            'formatActionSponsor'           => Article::FORMAT_ACTION_SPONSOR,
             'csrfTokenFieldName'            => static::CSRF_TOKEN_PARAM_NAME,
             'csrfToken'                     => $this->csrfTokenManager->getToken(static::CSRF_TOKEN_ID)->getValue()
         ]);
@@ -85,13 +88,32 @@ class ArticleNewController extends ArticleEditBaseController
             return $this->redirect( $articles->first()->getUrl() );
         }
 
+
         $newArticleFormat = $this->request->get(static::FORMAT_FIELD_NAME);
-        $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
+
+        if( $newArticleFormat == Article::FORMAT_ACTION_SPONSOR ) {
+
+            $newArticleFormat = Article::FORMAT_NEWS;
+            $newArticleAuthor = $this->factory->createUser()->load(User::ID_SYSTEM);
+
+            $this->articleEditor->setTags([
+                $this->factory->createTag()->load(Tag::ID_SPONSOR),
+                $this->factory->createTag()->load(Tag::ID_GAMES),
+                $this->factory->createTag()->load(Tag::ID_CRYPTOCURRENCIES),
+                $this->factory->createTag()->load(Tag::ID_WINDOWS),
+                $this->factory->createTag()->load(Tag::ID_SECURITY),
+            ], $newArticleAuthor);
+
+        } else {
+
+            $newArticleAuthor = $this->sentinel->getCurrentUserAsAuthor();
+        }
+
 
         $this->articleEditor
             ->setFormat($newArticleFormat)
-            ->addAuthor($currentUserAsAuthor)
-            ->autotag($currentUserAsAuthor)
+            ->addAuthor($newArticleAuthor)
+            ->autotag($newArticleAuthor)
             ->save();
 
         return $this->redirect( $this->articleEditor->getUrl() );

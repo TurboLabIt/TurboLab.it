@@ -47,6 +47,7 @@ class Tag extends BaseCmsService
     const int ID_WHAT_TO_BUY        = 640;      // 👀 https://turbolab.it/tag-640
     const int ID_DATA_RECOVERY      = 819;      // 👀 https://turbolab.it/tag-819
     const int ID_LAPTOP             = 897;      // 👀 https://turbolab.it/tag-897
+    const int ID_GAMES              = 1088;     // 👀 https://turbolab.it/tag-1088
     const int ID_SERVER             = 1224;     // 👀 https://turbolab.it/tag-1224
     const int ID_FILESHARING        = 2914;     // 👀 https://turbolab.it/tag-2914
     const int ID_VPN                = 2942;     // 👀 https://turbolab.it/tag-2942

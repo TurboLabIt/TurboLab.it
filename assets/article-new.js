@@ -1,13 +1,13 @@
 import './styles/article-new.css';
 
-//import $ from 'jquery';
+//import $ from 'jQuery';
 import './js/slider';
 import './styles/slider-custom-arrows.css';
 
 
 function showNewArticleForm()
 {
-    let searchForm = jQuery('#search-article-form');
+    let searchForm = $('#search-article-form');
     searchForm.find('.input-group-lg')
         .removeClass('input-group-lg')
         .addClass('input-group-sm');
@@ -15,7 +15,7 @@ function showNewArticleForm()
     searchForm.find('.fa-shake')
         .removeClass('fa-shake');
 
-    let inputNewTitle = jQuery('#new-article-title');
+    let inputNewTitle = $('#new-article-title');
     inputNewTitle
         .prop('disabled', false)
         .attr('placeholder', inputNewTitle.data('placeholder-after-search'))
@@ -35,11 +35,13 @@ function showNewArticleForm()
 }
 
 
-jQuery(document).on('submit', '#search-article-form', function(event) {
+$(document).on('submit', '#search-article-form', function(event) {
     showNewArticleForm();
 });
 
 
-jQuery(document).on('dblclick', '.show-new-article-form', function(event) {
+$(document).on('dblclick', '.show-new-article-form', function(event) {
+
     showNewArticleForm();
+    $('#new-article-title').closest('form').find('.form-check.form-check-inline.d-none').removeClass('d-none');
 });
