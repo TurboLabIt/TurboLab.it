@@ -6,15 +6,13 @@ use App\Service\Factory;
 use App\Service\TextProcessor;
 use App\Service\User;
 use App\Trait\SaveableTrait;
+use App\Trait\UploadableFileTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 
 class FileEditor extends File
 {
-    use SaveableTrait;
-
-    protected UploadedFile $file;
+    use SaveableTrait, UploadableFileTrait;
 
 
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
@@ -33,15 +31,10 @@ class FileEditor extends File
 
     public function createFromUploadedFile(UploadedFile $file) : FileEditor
     {
-        if( $file->getSize() == 0 ) {
-            throw new UnprocessableEntityHttpException("You cannot upload an empty (zero-bytes) file!");
-        }
+        // general validation (from UploadableFileTrait)
+        $this->validateUploadedFile($file);
 
         $extension = $file->guessExtension();
-
-        if( empty($extension) ) {
-            throw new UnprocessableEntityHttpException("The system cannot determine the file extension!");
-        }
 
         $hash = hash_file('md5', $file->getPathname() );
 
