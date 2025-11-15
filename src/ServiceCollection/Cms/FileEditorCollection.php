@@ -41,12 +41,12 @@ class FileEditorCollection extends FileCollection
                     $this->createService()
                         ->createFromUploadedFile($item["UploadedFile"]);
 
+                $arrData[$hash]["FileService"]->addAuthor($author);
+
             } else {
 
                 $arrData[$hash]["FileService"] = $this->createService($existingFileEntity);
             }
-
-            $arrData[$hash]["FileService"]->addAuthor($author);
         }
 
         foreach($arrData as $item) {
