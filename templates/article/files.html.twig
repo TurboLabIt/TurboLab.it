@@ -8,7 +8,7 @@
 
                 <span class="d-flex align-items-center"
                       data-rename-url="{{ path('app_file_edit-rename', {'fileId': File.id}) }}"
-                      data-delete-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}">
+                      data-detach-from-article-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}">
 
                     <a href="{{ File.url }}" target="_blank">
                         <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>

@@ -167,11 +167,11 @@ $(document).on('click', '#tli-downloadable-files .tli-delete-file', function(e) 
         return false;
     }
 
-    let fileContainer = $(this).closest('[data-delete-url]');
+    let fileContainer = $(this).closest('[data-detach-from-article-url]');
     fileContainer.removeClass('d-flex');
     fileContainer.fadeOut();
 
-    let deleteUrl = fileContainer.data('delete-url');
+    let deleteUrl = fileContainer.data('detach-from-article-url');
 
     $.ajax({
         url: deleteUrl,
