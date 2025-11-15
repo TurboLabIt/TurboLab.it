@@ -100,16 +100,20 @@ class Article extends BaseCmsService
     public function getEntity() : ?ArticleEntity { return $this->entity ?? null; }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
-    public function isVisitable() : bool { return in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE); }
 
-    public function getPublishingStatus() : int { return $this->entity->getPublishingStatus(); }
-
+    //<editor-fold defaultstate="collapsed" desc="*** 👮🏻 Special access ***">
     public function isListable() : bool { return $this->factory->createArticleSentinel($this)->canList(); }
 
     public function isReadable() : bool { return $this->factory->createArticleSentinel($this)->canView(); }
 
     public function isEditable() : bool { return $this->factory->createArticleSentinel($this)->canEdit(); }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
+    public function isVisitable() : bool { return in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE); }
+
+    public function getPublishingStatus() : int { return $this->entity->getPublishingStatus(); }
 
     public function isDraft() : bool { return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_DRAFT; }
 
