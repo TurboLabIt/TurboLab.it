@@ -3,11 +3,13 @@ namespace App\Controller\Editor;
 
 use App\Service\Cms\FileEditor;
 use App\ServiceCollection\Cms\FileEditorCollection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -54,6 +56,23 @@ class FileEditController extends ArticleEditBaseController
                 ->save();
 
             return new Response('OK');
+
+        } catch(UniqueConstraintViolationException $ex) {
+
+            if ($ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false) {
+                throw $ex;
+            }
+
+            $title              = $this->fileEditor->getTitle();
+            $originalFileUrl    = $this->factory->createFile()->loadByTitle($title)->getUrl();
+
+            return
+                $this->textErrorResponse(
+                    new ConflictHttpException(
+                        "Impossibile salvare: esiste già un file con questo titolo ( $originalFileUrl ). " .
+                        "Per favore, presta attenzione a non creare file duplicati."
+                    )
+                );
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
