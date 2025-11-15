@@ -2,19 +2,22 @@
 namespace App\Controller\Editor;
 
 use App\Service\Cms\FileEditor;
-use App\Service\Sentinel\FileSentinel;
 use App\ServiceCollection\Cms\FileEditorCollection;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 
-class ArticleEditFilesController extends ArticleEditBaseController
+class FileEditController extends ArticleEditBaseController
 {
-    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/files/upload', name: 'app_article_edit_files-upload', methods: ['POST'])]
-    public function upload(int $articleId) : JsonResponse|Response
+    protected FileEditor $fileEditor;
+
+
+    #[Route('/ajax/editor/files/upload', name: 'app_file_edit-upload', methods: ['POST'])]
+    public function upload(#[MapQueryParameter] int $articleId) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
@@ -40,8 +43,25 @@ class ArticleEditFilesController extends ArticleEditBaseController
     }
 
 
-    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/files/delete/{fileId<[1-9]+[0-9]*>}', name: 'app_article_edit_files-delete', methods: ['DELETE'])]
-    public function delete(int $articleId, int $fileId, FileEditor $file) : JsonResponse|Response
+    #[Route('/ajax/editor/files/rename/{fileId<[1-9]+[0-9]*>}', name: 'app_file_edit-rename', methods: ['PATCH'])]
+    public function rename(int $fileId) : JsonResponse|Response
+    {
+        try {
+            $newTitle = $this->request->get('title');
+
+            $this->loadFileEditor($fileId)
+                ->setTitle($newTitle)
+                ->save();
+
+            return new Response('OK');
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+
+    #[Route('/ajax/editor/files/delete/{fileId<[1-9]+[0-9]*>}', name: 'app_file_edit-delete', methods: ['DELETE'])]
+    public function delete(int $fileId, FileEditor $file, #[MapQueryParameter] int $articleId) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
@@ -55,5 +75,19 @@ class ArticleEditFilesController extends ArticleEditBaseController
             return new Response('OK');
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+
+    protected function loadFileEditor(int $fileId) : FileEditor
+    {
+        $this->ajaxOnly();
+
+        $this->loginRequired();
+
+        return
+            $this->fileEditor =
+                $this->factory->createFileEditor()->load($fileId)
+                    ->enforceCanEdit();
     }
 }

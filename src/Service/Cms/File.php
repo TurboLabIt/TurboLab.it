@@ -59,6 +59,18 @@ class File extends BaseCmsService
     public function getEntity() : ?FileEntity { return $this->entity ?? null; }
     //</editor-fold>
 
+
+    //<editor-fold defaultstate="collapsed" desc="*** 👮🏻 Special access ***">
+    public function isEditable() : bool { return $this->factory->createFileSentinel($this)->canEdit(); }
+
+    public function enforceCanEdit() : static
+    {
+        $this->factory->createFileSentinel($this)->enforceCanEdit();
+        return $this;
+    }
+    //</editor-fold>
+
+
     //<editor-fold defaultstate="collapsed" desc="*** 👽 Local or remote hosted ***">
     public function getExternalDownloadUrl() : ?string { return $this->entity->getUrl(); }
 
@@ -124,6 +136,7 @@ class File extends BaseCmsService
         return [];
     }
     //</editor-fold>
+
 
 
     public function getArticles() : array

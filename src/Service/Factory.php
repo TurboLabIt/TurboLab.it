@@ -20,6 +20,7 @@ use App\Service\Cms\Tag as TagService;
 use App\Service\Cms\TagEditor;
 use App\Service\Cms\TagUrlGenerator;
 use App\Service\Sentinel\ArticleSentinel;
+use App\Service\Sentinel\FileSentinel;
 use App\ServiceCollection\Cms\ArticleAuthorCollection;
 use App\Service\PhpBB\ForumUrlGenerator;
 use App\ServiceCollection\Cms\TagCollection;
@@ -287,6 +288,18 @@ class Factory
     public function createFileCollection() : FileCollection { return new FileCollection($this); }
 
     public function getFileUrlGenerator() : FileUrlGenerator { return $this->fileUrlGenerator; }
+
+
+    public function createFileSentinel(?FileService $file = null) : FileSentinel
+    {
+        $service = new FileSentinel($this);
+
+        if( !empty($file) ) {
+            $service->setFile($file);
+        }
+
+        return $service;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** Forum ***">

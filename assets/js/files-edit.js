@@ -40,7 +40,7 @@ $(document).on('change', 'input[type="file"].tli-file-uploader', function() {
 
     editorFileGallery.find('.border-success').removeClass('border border-2 border-success');
     */
-debugger;
+
     $.ajax({
         //url: editorFileGallery.data('save-url'),
         url: thisInputFile.data('save-url'),
@@ -117,10 +117,53 @@ debugger;
  */
 
 
+$(document).on('click', '#tli-downloadable-files .tli-rename-file', function(e) {
+
+    e.preventDefault();
+
+    let fileContainer   = $(this).closest('[data-rename-url]');
+    let fileNameTarget  = fileContainer.find('.tli-download-text-link span')
+
+    let oldName = fileNameTarget.text();
+    let newName = prompt("Digita il nuovo nome del file", oldName);
+
+    if( !newName ) {
+        return false;
+    }
+
+    newName = newName.trim();
+
+    if( newName.trim() == '' || newName == oldName ) {
+        return false;
+    }
+
+    fileNameTarget.text(newName);
+
+    let renameUrl = fileContainer.data('rename-url');
+
+    $.ajax({
+        url: renameUrl,
+        type: 'PATCH',
+        data: {title: newName},
+        error: function(jqXHR, textStatus, errorThrown) {
+
+            fileNameTarget.text(oldName);
+
+            let errorMessage = jqXHR.responseText ?? null;
+            if( errorMessage && errorMessage != '' ) {
+
+                alert(errorMessage);
+                return false;
+            }
+        }
+    });
+});
+
+
 $(document).on('click', '#tli-downloadable-files .tli-delete-file', function(e) {
 
     e.preventDefault();
-    if( !confirm('Sicuro?') ) {
+    if( !confirm('Sei sicuro di voler eliminare questo file?') ) {
         return false;
     }
 

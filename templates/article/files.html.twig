@@ -7,7 +7,8 @@
             <div class="d-flex align-items-start mb-20 tli-file-download">
 
                 <span class="d-flex align-items-center"
-                      data-delete-url="{{ path('app_article_edit_files-delete', {'articleId': Article.id, 'fileId': File.id}) }}">
+                      data-rename-url="{{ path('app_file_edit-rename', {'fileId': File.id}) }}"
+                      data-delete-url="{{ path('app_file_edit-delete', {'fileId': File.id, 'articleId': Article.id}) }}">
 
                     <a href="{{ File.url }}" target="_blank">
                         <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
@@ -46,6 +47,10 @@
 
                     {% if Article.isEditable %}
                         <i class="fa-solid fa-trash-can fa-xl tli-delete-file" style="color: #b0b0b0;"></i>
+                    {% endif %}
+
+                    {% if File.isEditable %}
+                        <i class="fa-solid fa-i-cursor fa-xl tli-rename-file" style="color: #74C0FC;"></i>
                     {% endif %}
 
                 </span>
