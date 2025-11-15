@@ -59,15 +59,14 @@ class FileEditController extends ArticleEditBaseController
     }
 
 
-
-    #[Route('/ajax/editor/files/delete/{fileId<[1-9]+[0-9]*>}', name: 'app_file_edit-delete', methods: ['DELETE'])]
-    public function delete(int $fileId, FileEditor $file, #[MapQueryParameter] int $articleId) : JsonResponse|Response
+    #[Route('/ajax/editor/files/detach-from-article/{fileId<[1-9]+[0-9]*>}/{articleId<[1-9]+[0-9]*>}', name: 'app_file_edit-detach_from_article', methods: ['DELETE'])]
+    public function detachFromArticle(int $fileId, int $articleId) : JsonResponse|Response
     {
         try {
             $this->loadArticleEditor($articleId);
-            $file->load($fileId);
+            $fileEditor = $this->factory->createFileEditor()->load($fileId);
 
-            $this->articleEditor->removeFile($file);
+            $this->articleEditor->removeFile($fileEditor);
 
             // there is no need to save() the article here
             $this->factory->getEntityManager()->flush();
@@ -76,7 +75,6 @@ class FileEditController extends ArticleEditBaseController
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
-
 
 
     protected function loadFileEditor(int $fileId) : FileEditor
