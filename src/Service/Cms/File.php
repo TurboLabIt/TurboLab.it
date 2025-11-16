@@ -93,9 +93,13 @@ class File extends BaseCmsService
 
     public function isBitTorrent() : bool
     {
-        $format = $this->entity->getFormat();
-        return stripos($format, 'torrent') !== false || stripos($format, 'magnet') !== false;
+        return
+            stripos( $this->getFormat(), 'torrent') !== false ||
+            str_starts_with( $this->getExternalDownloadUrl(), 'magnet' );
     }
+
+
+    public function isEmule() : bool { return str_starts_with( $this->getExternalDownloadUrl(), 'ed2k' ); }
 
 
     public function getCompatibilities() : array
@@ -105,7 +109,7 @@ class File extends BaseCmsService
             return [];
         }
 
-        $arrWindowsFormats = ['exe', 'msi', 'bat', 'microsoft store', 'cmd', 'ps', 'appx'];
+        $arrWindowsFormats = ['exe', 'msi', 'bat', 'microsoft store (app store)', 'cmd', 'ps', 'appx'];
         if( in_array($format, $arrWindowsFormats) ) {
             return [[
                 "name"  => "Windows",
@@ -123,7 +127,7 @@ class File extends BaseCmsService
             ]];
         }
 
-        $arrAndroidFormats = ['apk'];
+        $arrAndroidFormats = ['apk', 'google play (app store)', 'f-droid (app store)'];
         if( in_array($format, $arrAndroidFormats) ) {
             return [[
                 "name"  => "Android",
@@ -131,7 +135,6 @@ class File extends BaseCmsService
                 "color" => "#3DDC84"
             ]];
         }
-
 
         return [];
     }

@@ -77,6 +77,7 @@ class ArticleController extends BaseController
                 'Article'               => $article,
                 'ArticleHowTo'          => $articleHowTo,
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
+                'EmuleGuide'            => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
                 'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article)
             ]);

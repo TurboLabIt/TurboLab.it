@@ -33,8 +33,13 @@
 
                             {% if File.isBitTorrent %}
 
-                                <i class="fa-solid fa-circle-nodes"></i>
+                                <i class="fa-solid fa-circle-nodes" style="color: darkgreen"></i>
                                 <a href="{{ BitTorrentGuide.url }}">Necessario BitTorrent</a>
+
+                            {% elseif File.isEmule %}
+
+                                <i class="fa-brands fa-sticker-mule" style="color: saddlebrown"></i>
+                                <a href="{{ EmuleGuide.url }}">Necessario eMule</a>
 
                             {% elseif File.isExternal %}
 
