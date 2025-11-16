@@ -122,7 +122,6 @@ $(document).on('click', '.tli-file-button-ok',  function(event) {
 
     let form = $('#tli-edit-file');
 
-    debugger;
     $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
