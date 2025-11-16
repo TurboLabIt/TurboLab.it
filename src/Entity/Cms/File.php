@@ -14,10 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
 class File extends BaseCmsEntity
 {
     const string TLI_CLASS = 'file';
+    const int FORMAT_MAX_LENGTH = 50;
 
     use TitleableEntityTrait, ViewableEntityTrait, HashableEntityTrait;
 
-    #[ORM\Column(length: 15, nullable: true)]
+    #[ORM\Column(length: self::FORMAT_MAX_LENGTH, nullable: true)]
     protected ?string $format = null;
 
     #[ORM\Column(length: 2500, nullable: true)]
