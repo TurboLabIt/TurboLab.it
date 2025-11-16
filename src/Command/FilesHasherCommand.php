@@ -30,6 +30,7 @@ class FilesHasherCommand extends AbstractBaseCommand
         parent::__construct();
     }
 
+
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         parent::execute($input, $output);

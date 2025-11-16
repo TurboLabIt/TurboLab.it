@@ -52,7 +52,7 @@ class File extends BaseCmsEntity
 
     public function setUrl(?string $url) : static
     {
-        $this->url = $url;
+        $this->url = empty($url) ? $url : trim($url);
         return $this;
     }
 

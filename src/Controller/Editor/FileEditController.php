@@ -45,8 +45,27 @@ class FileEditController extends ArticleEditBaseController
     }
 
 
-    #[Route('/ajax/editor/files/rename/{fileId<[1-9]+[0-9]*>}', name: 'app_file_edit-rename', methods: ['PATCH'])]
-    public function rename(int $fileId) : JsonResponse|Response
+    #[Route('/ajax/editor/files/get-modal/{fileId<[1-9]+[0-9]*>}/{articleId<[1-9]+[0-9]*>}', name: 'app_file_edit-get_modal', methods: ['GET'])]
+    public function getEditModal(int $fileId, int $articleId) : Response
+    {
+        try {
+            $this->loadFileEditor($fileId);
+
+            return $this->json([
+                "title" => "📝 Modifica file: " . $this->fileEditor->getTitle(),
+                "body"  => $this->twig->render('file/editor/modal.html.twig', [
+                    'File'      => $this->fileEditor,
+                    'Article'   => $this->factory->createArticle()->load($articleId),
+                    'Formats'   => $this->factory->createFileCollection()->getFormats()
+                ])
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    #[Route('/ajax/editor/file/update/{fileId<[1-9]+[0-9]*>}/{articleId<[1-9]+[0-9]*>}', name: 'app_editor_file_update', methods: ['POST'])]
+    public function update(int $fileId, int $articleId) : JsonResponse|Response
     {
         try {
             $newTitle = $this->request->get('title');
@@ -55,7 +74,9 @@ class FileEditController extends ArticleEditBaseController
                 ->setTitle($newTitle)
                 ->save();
 
-            return new Response('OK');
+            return $this->render('article/files.html.twig', [
+                'Article' => $this->factory->createArticle()->load($articleId)
+            ]);
 
         } catch(UniqueConstraintViolationException $ex) {
 

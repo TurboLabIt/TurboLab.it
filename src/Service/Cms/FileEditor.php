@@ -21,25 +21,16 @@ class FileEditor extends File
     }
 
 
-    public function setTitle(string $newTitle) : static
-    {
-        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
-        $this->entity->setTitle($cleanTitle);
-        return $this;
-    }
-
-
     public function createFromUploadedFile(UploadedFile $file) : FileEditor
     {
         // general validation (from UploadableFileTrait)
         $this->validateUploadedFile($file);
 
-        $extension = $file->guessExtension();
+        $originalFilename           = $file->getClientOriginalName();
+        $filenameWithoutExtension   = pathinfo($originalFilename, PATHINFO_FILENAME);
 
-        $hash = hash_file('md5', $file->getPathname() );
-
-        $originalFilename = $file->getClientOriginalName();
-        $filenameWithoutExtension = pathinfo($originalFilename, PATHINFO_FILENAME);
+        $extension  = $file->guessExtension();
+        $hash       = hash_file('md5', $file->getPathname() );
 
         $this
             ->setTitle($filenameWithoutExtension)
@@ -95,9 +86,24 @@ class FileEditor extends File
     }
 
 
+    public function setTitle(string $newTitle) : static
+    {
+        $cleanTitle = $this->textProcessor->processRawInputTitleForStorage($newTitle);
+        $this->entity->setTitle($cleanTitle);
+        return $this;
+    }
+
+
     public function setHash(string $hash) : static
     {
         $this->entity->setHash($hash);
         return $this;
+    }
+
+
+    public function setExternalDownloadUrl(string $url) : static
+    {
+        $this->entity->setUrl($url);
+        return $this->setHash( md5($url) );
     }
 }

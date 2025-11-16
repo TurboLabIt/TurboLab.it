@@ -116,38 +116,29 @@ $(document).on('change', 'input[type="file"].tli-file-uploader', function() {
  * **TODO** --moved to assets/js/article-edit-ckeditor.js--
  */
 
+$(document).on('click', '.tli-file-button-ok',  function(event) {
 
-$(document).on('click', '#tli-downloadable-files .tli-rename-file', function(e) {
+    event.preventDefault();
 
-    e.preventDefault();
+    let form = $('#tli-edit-file');
 
-    let fileContainer   = $(this).closest('[data-rename-url]');
-    let fileNameTarget  = fileContainer.find('.tli-download-text-link span')
-
-    let oldName = fileNameTarget.text();
-    let newName = prompt("Digita il nuovo nome del file", oldName);
-
-    if( !newName ) {
-        return false;
-    }
-
-    newName = newName.trim();
-
-    if( newName.trim() == '' || newName == oldName ) {
-        return false;
-    }
-
-    fileNameTarget.text(newName);
-
-    let renameUrl = fileContainer.data('rename-url');
-
+    debugger;
     $.ajax({
-        url: renameUrl,
-        type: 'PATCH',
-        data: {title: newName},
-        error: function(jqXHR, textStatus, errorThrown) {
+        url: form.attr('action'),
+        type: form.attr('method'),
+        data: form.serialize(),
+        success: function(response) {
 
-            fileNameTarget.text(oldName);
+            $('#tli-ajax-modal').find('.btn-close').trigger('click');
+
+            let target = $('#tli-downloadable-files');
+            target.fadeOut('slow', function() {
+                target
+                    .html(response)
+                    .fadeIn();
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
 
             let errorMessage = jqXHR.responseText ?? null;
             if( errorMessage && errorMessage != '' ) {

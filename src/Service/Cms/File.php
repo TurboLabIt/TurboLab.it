@@ -239,4 +239,6 @@ class File extends BaseCmsService
 
 
     public function getHash() : ?string { return $this->entity->getHash(); }
+
+    public function getFormat() : ?string { return $this->entity->getFormat(); }
 }

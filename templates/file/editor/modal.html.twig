@@ -1,0 +1,67 @@
+<div class="modal-body">
+
+    <form id="tli-edit-file" action="{{ path('app_editor_file_update', {'fileId': File.id, 'articleId': Article.id}) }}" method="POST">
+        <div class="mb-3">
+            <label for="tli-file-title" class="form-label">Nome del file</label>
+            <input type="text" name="title" id="tli-file-title" class="form-control" value="{{ File.title|raw }}" required
+                   maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}">
+        </div>
+{#
+        <div class="mb-3">
+            <label for="tli-file-format" class="form-label">Formato del file</label>
+            <select name="format" id="tli-file-format" class="form-select" required>
+                <option disabled>Seleziona il formato</option>
+                {% for value,label in Formats %}
+                    <option value="{{ value }}" {% if value == File.format %}selected{% endif %}>{{ label|raw }}</option>
+                {% endfor %}
+                <option>❓ Altro (non in lista)</option>
+            </select>
+            <div class="form-text">
+                Se il formato che desideri non è presente, seleziona <code>Altro (non in lista)</code>
+                e poi <a href="/49">segnala il problema</a>.
+            </div>
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">Modalità di erogazione</label>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="file-hosting-mode" id="tli-file-hosting-mode-local"
+                       {% if File.isLocal %}checked{% endif %} required>
+                <label class="form-check-label" for="file-hosting-mode-local">Locale (file caricato direttamente su TurboLab.it)</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="file-hosting-mode" id="tli-file-hosting-mode-remote"
+                       {% if not File.isLocal %}checked{% endif %} required>
+                <label class="form-check-label" for="file-hosting-mode-remote">Esterno (file ospitato altrove)</label>
+            </div>
+
+            <div class="form-text">
+                Modalità attuale:
+                <strong>
+                    {% if File.isLocal %}
+                        locale (<code>{{ File.url }}</code>)
+                    {% else %}
+                        remoto (<code>{{ File.externalDownloadUrl }}</code>)
+                    {% endif %}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="mb-3 {% if File.isLocal %}d-none{% endif %}">
+            <label for="tli-file-remote-url" class="form-label">URL remoto</label>
+            <input type="text" name="remote-url" id="tli-file-remote-url" class="form-control"
+                   {% if not File.isLocal %}required{% endif %} value="{{ File.externalDownloadUrl|raw }}">
+        </div>
+#}
+    </form>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-success tli-file-button-ok">Salva modifiche</button>
+    <button type="button" class="btn btn-secondary tli-file-button-cancel" data-bs-dismiss="modal">Annulla</button>
+</div>

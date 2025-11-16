@@ -7,8 +7,10 @@
             <div class="d-flex align-items-start mb-20 tli-file-download">
 
                 <span class="d-flex align-items-center"
-                      data-rename-url="{{ path('app_file_edit-rename', {'fileId': File.id}) }}"
-                      data-detach-from-article-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}">
+                    {% if Article.isEditable %}
+                        data-detach-from-article-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}"
+                    {% endif %}
+                    >
 
                     <a href="{{ File.url }}" target="_blank">
                         <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
@@ -45,12 +47,13 @@
 
                     </span>
 
-                    {% if Article.isEditable %}
-                        <i class="fa-solid fa-trash-can fa-xl tli-delete-file" style="color: #b0b0b0;"></i>
+                    {% if File.isEditable %}
+                        <i class="fa-solid fa-file-pen fa-xl tli-open-edit-file" style="color: #74C0FC;"
+                            data-tli-modal-url="{{ path('app_file_edit-get_modal', {'fileId': File.id, 'articleId': Article.id}) }}"></i>
                     {% endif %}
 
-                    {% if File.isEditable %}
-                        <i class="fa-solid fa-i-cursor fa-xl tli-rename-file" style="color: #74C0FC;"></i>
+                    {% if Article.isEditable %}
+                        <i class="fa-solid fa-trash-can fa-xl tli-delete-file" style="color: #b0b0b0;"></i>
                     {% endif %}
 
                 </span>

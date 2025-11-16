@@ -34,4 +34,15 @@ class FileRepository extends BaseRepository
                 ->where('articlesJunction.id IS NULL')
                 ->getQuery()->getResult();
     }
+
+
+    public function getFormats() : array
+    {
+        return
+            $this->createQueryBuilder('f')
+                ->select('f.format, COUNT(f.id) AS num')
+                ->groupBy('f.format')
+                ->orderBy('f.format', 'ASC')
+            ->getQuery()->getResult();
+    }
 }

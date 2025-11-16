@@ -1,6 +1,7 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
+use App\Repository\Cms\FileRepository;
 use App\Service\Cms\File as FileService;
 use App\Entity\Cms\File as FileEntity;
 use App\ServiceCollection\BaseServiceEntityCollection;
@@ -9,6 +10,7 @@ use App\ServiceCollection\BaseServiceEntityCollection;
 class FileCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = FileService::ENTITY_CLASS;
+    protected array $arrFormats = [];
 
 
     public function loadOrphans() : static
@@ -17,6 +19,39 @@ class FileCollection extends BaseServiceEntityCollection
         return $this->setEntities($arrEntities);
     }
 
+
+    public function getFormats()
+    {
+        if( !empty($this->arrFormats) ) {
+            return $this->arrFormats;
+        }
+
+        $arrFormats = $this->getRepository()->getFormats();
+        $arrBestValues  = [];
+        $arrOtherValues = [];
+
+        foreach($arrFormats as $item) {
+
+            $value = $item['format'];
+
+            if( empty($value) ) {
+                continue;
+            }
+
+            if( $item['num'] > 5 ) {
+
+                $arrBestValues[$value] = "⭐ $value (molto utilizzato)";
+                continue;
+            }
+
+            $arrOtherValues[$value] = $value;
+        }
+
+        return $this->arrFormats = array_merge($arrBestValues, $arrOtherValues);
+    }
+
+
+    public function getRepository() : FileRepository { return $this->em->getRepository(static::ENTITY_CLASS); }
 
     public function createService(?FileEntity $entity = null) : FileService
     {
