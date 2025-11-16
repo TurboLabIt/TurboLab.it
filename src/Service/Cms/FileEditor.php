@@ -101,6 +101,15 @@ class FileEditor extends File
     }
 
 
+    public function setFormat(string $newFormat) : static
+    {
+        $cleanFormat = $this->textProcessor->processRawInputTitleForStorage($newFormat);
+        $cleanFormat = mb_strtolower($cleanFormat);
+        $this->entity->setFormat($cleanFormat);
+        return $this;
+    }
+
+
     public function setExternalDownloadUrl(string $url) : static
     {
         $this->entity->setUrl($url);

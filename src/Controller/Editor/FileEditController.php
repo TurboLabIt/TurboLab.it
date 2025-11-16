@@ -68,10 +68,10 @@ class FileEditController extends ArticleEditBaseController
     public function update(int $fileId, int $articleId) : JsonResponse|Response
     {
         try {
-            $newTitle = $this->request->get('title');
 
             $this->loadFileEditor($fileId)
-                ->setTitle($newTitle)
+                ->setTitle( $this->request->get('title') )
+                ->setFormat( $this->request->get('format') )
                 ->save();
 
             return $this->render('article/files.html.twig', [
