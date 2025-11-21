@@ -253,7 +253,7 @@ class Newsletter extends Mailer
 
     public function loadExistingWebArticle() : ?string
     {
-        $article = $this->articleCollection->loadExistingNewsletterOnTheWeb()->first();
+        $article = $this->factory->createArticleCollection()->loadExistingNewsletterOnTheWeb()->first();
         return empty($article) ? null : $this->newsletterOnSiteUrl =  $article->getUrl();
     }
 
