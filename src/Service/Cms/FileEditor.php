@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\Cms;
 
+use App\Entity\Cms\File as FileEntity;
 use App\Entity\Cms\FileAuthor;
 use App\Service\Factory;
 use App\Service\TextProcessor;
@@ -12,7 +13,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileEditor extends File
 {
-    use SaveableTrait, UploadableFileTrait;
+    use UploadableFileTrait, SaveableTrait { save as protected traitSave; }
+
+    protected ?string $previousFilePath = null;
 
 
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
@@ -122,5 +125,37 @@ class FileEditor extends File
     {
         $this->entity->setUrl($url);
         return $this->setHash( md5($url) );
+    }
+
+
+    public function clear() : static
+    {
+        $this->previousFilePath = null;
+        return parent::clear();
+    }
+
+
+    public function setEntity(?FileEntity $entity = null): static
+    {
+        parent::setEntity($entity);
+        $this->previousFilePath = empty( $entity->getId() ) ? null : $this->getOriginalFilePath();
+        return $this;
+    }
+
+
+    public function save(bool $persist = true) : static
+    {
+        if( empty($this->getId()) ) {
+            return $this->traitSave($persist);
+        }
+
+        $previousFilePath   = $this->previousFilePath;
+        $currentFilePath    = $this->getOriginalFilePath();
+
+        if( $this->isLocal() && !empty($previousFilePath) && $previousFilePath != $currentFilePath ) {
+            rename($previousFilePath, $currentFilePath);
+        }
+
+        return $this->traitSave($persist);
     }
 }
