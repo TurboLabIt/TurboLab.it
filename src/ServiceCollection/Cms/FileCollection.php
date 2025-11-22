@@ -20,13 +20,13 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
-    public function getFormats()
+    public function getFormats() : array
     {
         if( !empty($this->arrFormats) ) {
             return $this->arrFormats;
         }
 
-        $arrFormats = $this->getRepository()->getFormats();
+        $arrFormats     = $this->getRepository()->getFormats();
         $arrBestValues  = [];
         $arrOtherValues = [];
 
@@ -40,11 +40,20 @@ class FileCollection extends BaseServiceEntityCollection
 
             if( $item['num'] > 5 ) {
 
-                $arrBestValues[$value] = "⭐ $value (molto utilizzato)";
-                continue;
-            }
+                $arrBestValues[$value] = [
+                    'label' => $value,
+                    'usage' => $item['num'],
+                    'top'   => true
+                ];
 
-            $arrOtherValues[$value] = $value;
+            } else {
+
+                $arrOtherValues[$value] = [
+                    'label' => $value,
+                    'usage' => $item['num'],
+                    'top'   => false
+                ];
+            }
         }
 
         return $this->arrFormats = array_merge($arrBestValues, $arrOtherValues);
