@@ -121,7 +121,7 @@ class FileEditor extends File
     }
 
 
-    public function setExternalDownloadUrl(string $url) : static
+    public function setExternalDownloadUrl(?string $url) : static
     {
         $this->entity->setUrl($url);
         return $this->setHash( md5($url) );

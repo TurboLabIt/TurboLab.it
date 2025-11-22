@@ -52,13 +52,16 @@
             </div>
 
         </div>
+        #}
 
+        {% if File.isExternal %}
         <div class="mb-3 {% if File.isLocal %}d-none{% endif %}">
             <label for="tli-file-remote-url" class="form-label">URL remoto</label>
             <input type="text" name="remote-url" id="tli-file-remote-url" class="form-control"
                    {% if not File.isLocal %}required{% endif %} value="{{ File.externalDownloadUrl|raw }}">
         </div>
-        #}
+        {% endif %}
+
     </form>
 
 </div>

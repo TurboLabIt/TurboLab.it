@@ -72,6 +72,7 @@ class FileEditController extends ArticleEditBaseController
             $this->loadFileEditor($fileId)
                 ->setTitle( $this->request->get('title') )
                 ->setFormat( $this->request->get('format') )
+                ->setExternalDownloadUrl( $this->fileEditor->isExternal() ? $this->request->get('remote-url') : null )
                 ->save();
 
             return $this->render('article/files.html.twig', [
