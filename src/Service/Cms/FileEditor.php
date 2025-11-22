@@ -29,8 +29,16 @@ class FileEditor extends File
         $originalFilename           = $file->getClientOriginalName();
         $filenameWithoutExtension   = pathinfo($originalFilename, PATHINFO_FILENAME);
 
-        $extension  = $file->guessExtension();
-        $hash       = hash_file('md5', $file->getPathname() );
+
+        $extension = $file->guessExtension();
+        // some file types, such as .ps1, have no "official" mime-type, thus are recognized as "text/plain" =>
+        // this would screw the extension ==> falling back to client-provided extension
+        if( $extension == 'txt' ) {
+            $extension = $file->getClientOriginalExtension();
+        }
+
+
+        $hash = hash_file('md5', $file->getPathname() );
 
         $this
             ->setTitle($filenameWithoutExtension)
