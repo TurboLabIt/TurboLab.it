@@ -33,7 +33,7 @@ class FileEditor extends File
         $extension = $file->guessExtension();
         // some file types, such as .ps1, have no "official" mime-type, thus are recognized as "text/plain" =>
         // this would screw the extension ==> falling back to client-provided extension
-        if( $extension == 'txt' ) {
+        if( empty($extension) || $extension == 'txt' ) {
             $extension = $file->getClientOriginalExtension();
         }
 

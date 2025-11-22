@@ -16,10 +16,6 @@ trait UploadableFileTrait
             throw new UnprocessableEntityHttpException("You cannot upload an empty (zero-bytes) file!");
         }
 
-        if( empty( $file->guessExtension() ) ) {
-            throw new UnprocessableEntityHttpException("The system cannot determine the file extension!");
-        }
-
         return $this;
     }
 }
