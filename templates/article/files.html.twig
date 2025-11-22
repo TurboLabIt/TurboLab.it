@@ -28,6 +28,10 @@
                         <br>
 
                         <span class="tli-author-articles-counter">
+
+                            Formato: <code>{{ File.format }}</code>
+                            {% if File.sizeLabel is not empty%} | {{ File.sizeLabel }}{% endif %}<br>
+
                             <i class="fa-solid fa-flask-vial"></i>
                             Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
 

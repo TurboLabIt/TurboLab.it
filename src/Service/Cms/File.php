@@ -244,4 +244,27 @@ class File extends BaseCmsService
     public function getHash() : ?string { return $this->entity->getHash(); }
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
+
+
+    public function getSizeLabel() : ?string
+    {
+        if( $this->isExternal() ) {
+            return null;
+        }
+
+        $filepath = $this->getOriginalFilePath();
+
+        if( !is_readable($filepath) ) {
+            return null;
+        }
+
+        $bytes = filesize($filepath);
+        $base = log($bytes, 1024);
+        $suffixes = ['bytes', 'kB', 'MB', 'GB', 'TB'];
+
+        // Ensure we don't go out of bounds for the array or handle 0 bytes
+        $class = $bytes === 0 ? 0 : floor($base);
+
+        return round(pow(1024, $base - $class), 2) . ' ' . $suffixes[$class];
+    }
 }
