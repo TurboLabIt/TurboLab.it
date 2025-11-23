@@ -59,6 +59,17 @@ class FileEditor extends File
     }
 
 
+    public function setAutoHash() : static
+    {
+        $localFilePath = $this->previousFilePath ?? $this->getOriginalFilePath();
+
+        $hash = $this->isLocal() ? hash_file('md5', $localFilePath) : md5( $this->getUrl() );
+
+        $this->entity->setHash($hash);
+        return $this;
+    }
+
+
     public function addAuthor(User $author) : static
     {
         $this->entity->addAuthor(
@@ -124,7 +135,7 @@ class FileEditor extends File
     public function setExternalDownloadUrl(?string $url) : static
     {
         $this->entity->setUrl($url);
-        return $this->setHash( md5($url) );
+        return $this;
     }
 
 
@@ -145,17 +156,21 @@ class FileEditor extends File
 
     public function save(bool $persist = true) : static
     {
-        if( empty($this->getId()) ) {
-            return $this->traitSave($persist);
+        $this->traitSave($persist);
+
+        if( $this->isExternal() ) {
+            return $this;
         }
 
         $previousFilePath   = $this->previousFilePath;
         $currentFilePath    = $this->getOriginalFilePath();
 
-        if( $this->isLocal() && !empty($previousFilePath) && $previousFilePath != $currentFilePath ) {
+        if( !empty($previousFilePath) && $previousFilePath != $currentFilePath ) {
+
             rename($previousFilePath, $currentFilePath);
+            $this->previousFilePath = null;
         }
 
-        return $this->traitSave($persist);
+        return $this;
     }
 }
