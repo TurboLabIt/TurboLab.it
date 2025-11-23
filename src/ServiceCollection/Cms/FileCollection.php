@@ -38,21 +38,21 @@ class FileCollection extends BaseServiceEntityCollection
                 continue;
             }
 
-            if( $item['num'] > 5 ) {
+            $arrOption = [
+                'label'         => $value,
+                'usage'         => $item['num'],
+                'top'           => $item['num'] > 5,
+                'externalOnly'  => stripos($value, 'store') !== false
+            ];
 
-                $arrBestValues[$value] = [
-                    'label' => $value,
-                    'usage' => $item['num'],
-                    'top'   => true
-                ];
+
+            if( $arrOption['top'] ) {
+
+                $arrBestValues[$value] = $arrOption;
 
             } else {
 
-                $arrOtherValues[$value] = [
-                    'label' => $value,
-                    'usage' => $item['num'],
-                    'top'   => false
-                ];
+                $arrOtherValues[$value] = $arrOption;
             }
         }
 

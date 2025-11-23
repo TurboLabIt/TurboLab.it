@@ -12,15 +12,17 @@
             <select name="format" id="tli-file-format" class="form-select" required>
                 <option disabled>Seleziona il formato</option>
                 {% for value,Item in Formats %}
-                    <option value="{{ value }}" {% if value == File.format %}selected{% endif %}>
+                    <option value="{{ value }}" {% if value == File.format %}selected{% endif %}
+                        {% if Item.externalOnly and File.isLocal %}class="external-only d-none"{% endif %}>
                         {% if Item.top %}📌 {% endif %}{{ Item.label|raw }}
                     </option>
                 {% endfor %}
                 <option>❓ Altro (non in lista)</option>
             </select>
             <div class="form-text">
-                Se il formato che desideri non è presente, seleziona <code>Altro (non in lista)</code>
-                e poi <a href="/49">segnala il problema</a>.
+                ❓ Se il formato che desideri non è presente, seleziona <code>Altro (non in lista)</code>
+                e poi <a href="/49">segnala il problema</a>.<br>
+                🛍️ Se il file è ospitato da un "app store", selezionalo dalla lista.
             </div>
         </div>
         {#
