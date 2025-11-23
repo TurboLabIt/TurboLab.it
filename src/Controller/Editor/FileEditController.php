@@ -52,7 +52,7 @@ class FileEditController extends ArticleEditBaseController
             $this->loadFileEditor($fileId);
 
             return $this->json([
-                "title" => "📝 Modifica file: " . $this->fileEditor->getTitle(),
+                "title" => "📝 Modifica file: " . $this->fileEditor->getTitle() . " | #" . $this->fileEditor->getId(),
                 "body"  => $this->twig->render('file/editor/modal.html.twig', [
                     'File'      => $this->fileEditor,
                     'Article'   => $this->factory->createArticle()->load($articleId),
