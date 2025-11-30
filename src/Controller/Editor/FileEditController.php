@@ -41,6 +41,22 @@ class FileEditController extends ArticleEditBaseController
                 'Article' => $this->articleEditor
             ]);
 
+        } catch(UniqueConstraintViolationException $ex) {
+
+            if( $ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false ) {
+                throw $ex;
+            }
+
+            return
+                $this->textErrorResponse(
+                    new ConflictHttpException(
+                        "Impossibile salvare: esiste già un file con questo titolo. " . PHP_EOL . PHP_EOL .
+                        "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
+                        "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
+                        "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
+                    )
+                );
+
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
 
@@ -82,18 +98,20 @@ class FileEditController extends ArticleEditBaseController
 
         } catch(UniqueConstraintViolationException $ex) {
 
-            if ($ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false) {
+            if( $ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false ) {
                 throw $ex;
             }
 
-            $title              = $this->fileEditor->getTitle();
-            $originalFileUrl    = $this->factory->createFile()->loadByTitle($title)->getUrl();
+            $title = $this->fileEditor->getTitle();
+            $originalFileUrl = $this->factory->createFile()->loadByTitle($title)->getUrl();
 
             return
                 $this->textErrorResponse(
                     new ConflictHttpException(
-                        "Impossibile salvare: esiste già un file con questo titolo ( $originalFileUrl ). " .
-                        "Per favore, presta attenzione a non creare file duplicati."
+                        "Impossibile salvare: esiste già un file dal titolo: $title ( $originalFileUrl ). " . PHP_EOL . PHP_EOL .
+                        "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
+                        "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
+                        "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
                     )
                 );
 
