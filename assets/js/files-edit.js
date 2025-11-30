@@ -82,7 +82,9 @@ $(document).on('change', 'input[type="file"].tli-file-uploader', function() {
             target.fadeOut('slow', function() {
                 target
                     .html(response)
-                    .fadeIn();
+                    .fadeIn('slow', function() {
+                        target.get(0).scrollIntoView({behavior: 'smooth'});
+                    });
             });
         },
         error: function(jqXHR, textStatus, errorThrown) {
