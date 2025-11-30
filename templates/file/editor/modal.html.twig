@@ -21,9 +21,11 @@
             </select>
             <div class="form-text">
                 ❓ Se il formato che desideri non è presente, seleziona <code>Altro (non in lista)</code>
-                e poi <a href="/49">segnala il problema</a>.<br>
-                🛍️ Se il file è ospitato da un "app store", selezionalo dalla lista.
+                e poi <a href="/49">segnala il problema</a>.
             </div>
+            {% if File.isExternal %}
+                <div class="form-text">🛍️ Se il file è ospitato da un "app store", selezionalo dalla lista.</div>
+            {% endif %}
         </div>
         {#
         <div class="mb-3">
