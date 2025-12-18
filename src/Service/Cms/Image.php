@@ -32,6 +32,8 @@ class Image extends BaseCmsService
         25143,  // 👀 https://turbolab.it/immagini/25143/reg
     ];
 
+    const int ID_CHRISTMAS_SPOTLIGHT = 25523; // 👀 https://turbolab.it/immagini/25523/reg
+
     const bool BUILD_CACHE_ENABLED      = true;
     const BUILD_FORMAT_FORCED           = null;
 

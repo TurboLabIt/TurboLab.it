@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository\Cms;
 
+use App\Command\ChristmasArticleGeneratorCommand;
 use App\Entity\Cms\Article;
 use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
@@ -518,7 +519,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
-                ->andWhere("t.title NOT LIKE  'Questa settimana su TLI%'")
+                ->andWhere("t.title NOT LIKE '" . Newsletter::TITLE . "%'")
                 ->andWhere('commentsTopic.postNum > 1')
                 ->orderBy('commentsTopic.postNum', 'DESC');
 
@@ -813,11 +814,54 @@ class ArticleRepository extends BaseRepository
 
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
-                ->andWhere("t.title LIKE 'Questa settimana su TLI%'")
+                ->andWhere("t.title LIKE '" . Newsletter::TITLE . "%'")
                 ->andWhere('t.publishedAt >= :dateLimit')
                     ->setParameter('dateLimit', $dateLimit)
                 ->orderBy('t.publishedAt', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()->getOneOrNullResult();
+    }
+
+
+    public function findExistingChristmas() : ?Article
+    {
+        $decemberStart  = new DateTime('first day of December this year 00:00:00');
+        $yearEnd        = new DateTime('last day of December this year 23:59:59');
+
+        return
+            $this->getQueryBuilderComplete()
+                ->andWhere("t.title LIKE '" . ChristmasArticleGeneratorCommand::ARTICLE_TITLE . "%'")
+                ->andWhere('t.publishedAt >= :decemberStart')
+                    ->setParameter('decemberStart', $decemberStart)
+                ->andWhere('t.publishedAt <= :yearEnd')
+                    ->setParameter('yearEnd', $yearEnd)
+                ->setMaxResults(1)
+                ->getQuery()->getOneOrNullResult();
+    }
+
+
+    public function findNewOfTheYear(null|int|array $format = null) : array
+    {
+        $yearStart  = new DateTime('first day of January this year 00:00:00');
+        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere("t.title NOT LIKE '" . Newsletter::TITLE . "%'")
+                ->andWhere('t.publishedAt >= :yearStart')
+                    ->setParameter('yearStart', $yearStart)
+                ->andWhere('t.publishedAt <= :yearEnd')
+                    ->setParameter('yearEnd', $yearEnd);
+
+        if( !empty($format) ) {
+            $query
+                ->andWhere('t.format IN(:publishingFormat)')
+                    ->setParameter('publishingFormat', is_array($format) ? $format : [$format]);
+        }
+
+        return
+            $query
+                ->orderBy('t.views', 'DESC')
+                ->getQuery()->getResult();
     }
 }

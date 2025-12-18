@@ -1,0 +1,198 @@
+<p>
+    Con <strong>{{ contentsNewNum|friendlyNum }}</strong> fra guide tecniche, segnalazioni e articoli proposti dal nostro sito e
+    <strong>{{ forumPostsNewNum|friendlyNum }}</strong> messaggi inseriti dalla community sul forum, il {{ currentYear }} è infine giunto a termine.
+    Nell'augurare a tutti coloro che frequentano <em>TurboLab.it</em> <strong>buon natale e felice {{ nextYear }}</strong>, abbiamo estrapolato alcuni dati sulla crescita della nostra community, una lista dei pezzi che maggiormente hanno interessato i visitatori e alcune curiosità
+</p>
+
+<p><img src="{{ Spotlight.url(ImageSizes.reg) }}"></p>
+
+<p>
+    Nota: l'uscita di nuovi articoli è sospesa per il resto della settimana.
+    Riprenderemo regolarmente -con le abituali sospensioni nei giorni festivi- a partire da <strong>lunedì 29 dicembre</strong>.
+    Naturalmente, <a href="https://turbolab.it/forum">il forum</a>, l'archivio completo delle pubblicazioni
+    e tutti gli altri servizi rimarranno sempre disponibili.
+    Chi fosse alla ricerca di <strong>qualche ispirazione "informatica" per trascorrere le vacanze</strong>, può dare un'occhiata alla selezione sottostante oppure portarsi avanti leggendo <a href="https://turbolab.it/calendario">i contributi in uscita nelle prossime settimane</a>.
+</p>
+
+
+{#<h2>Statistiche di accesso</h2>
+
+{$Dati.GoogleAnalytics.Sintesi}
+
+<p>» <a href="http://turbolab.it/statistiche">Vedi statistiche aggiornate quotidianamente</a></p>#}
+
+<h2>Articoli, guide, notizie e segnalazioni</h2>
+
+<p>
+    Nel corso del {{ currentYear }}, TurboLab.it ha proposto <strong>{{ articlesNewNum }}</strong> articoli/guide e
+    <strong>{{ newsNewNum }}</strong> notizie/segnalazioni,
+    per un totale complessivo di <strong>{{ contentsNewNum }}</strong> pubblicazioni.
+    In media, dunque, abbiamo proposto {{ contentsNewWeeklyAvg|number_format(2, ',', '.') }} nuove pubblicazioni ogni settimana.
+</p>
+
+<p>Gli autori più attivi, in termini di contributi pubblicati, sono stati:</p>
+
+<ul>
+    {% for User in Authors %}
+        <li>
+            <strong>
+                <a href="{{ User.url }}">{{ User.username }}</a>
+            </strong>
+            - {{ User.articlesOfTheYearNum|friendlyNum }}
+            {% if User.articlesOfTheYearNum > 1 %}pubblicazioni{% else %}pubblicazione{% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<p><img src="{{ ArticleJoinTli.spotlightUrl(ImageSizes.reg) }}"></p>
+
+
+<h2>Forum e community</h2>
+
+<p>
+    Nel corso del {{ currentYear }}, la nostra community si è arricchita di <strong>{{ usersNewNum|friendlyNum }}</strong> nuovi iscritti.
+    Fra loro, i più attivi sono stati:
+</p>
+
+<ul>
+    {% for User in ForumNewUsersTopPosters %}
+        <li>
+            <strong>
+                <a href="https://turbolab.it/forum/memberlist.php?mode=viewprofile&amp;u={{ User.id }}">{{ User.username }}</a>
+            </strong>
+            - {{ User.postNum|friendlyNum }}
+            {% if User.postNum > 1 %}messaggi{% else %}messaggio{% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<p>
+    Con l'arrivo dei nuovi amici, la community di TurboLab.it raggiunge un totale di
+    <strong>{{ usersTotalNum|friendlyNum }}</strong> iscritti.
+</p>
+
+<p>
+    Sul forum sono state aperte complessivamente <strong>{{ forumTopicsNewNum|friendlyNum }}</strong> nuove discussioni.
+    I nuovi messaggi <em>postati</em> sono stati invece <strong>{{ forumPostsNewNum|friendlyNum }}</strong>.
+</p>
+
+
+<p>Gli utenti più attivi sul forum in assoluto del {{ currentYear }} sono stati:</p>
+
+<ul>
+    {% for User in ForumUsersTopPosters %}
+        <li>
+            <strong>
+                <a href="https://turbolab.it/forum/memberlist.php?mode=viewprofile&amp;u={{ User.id }}">{{ User.username }}</a>
+            </strong>
+            - {{ User.postNum|friendlyNum }} messaggi
+        </li>
+    {% endfor %}
+</ul>
+
+
+<h2>Le novità che riguardano TurboLab.it</h2>
+
+{% for Article in ArticlesTli %}
+    {% if spotlightTliShown is not defined %}
+        {% set spotlightTliShown = true %}
+        <p><img src="{{ Article.spotlightUrl(ImageSizes.reg) }}"></p>
+    {% endif %}
+{% endfor %}
+
+<ul>
+    {% for Article in ArticlesTli %}
+        <li><a href="{{ Article.url }}">{{ Article.title|raw }}</a></li>
+    {% endfor %}
+</ul>
+
+<p>&gt;&gt; Vedi tutti gli articoli con il tag: 🏷️ <a href="http://turbolab.it/tag/turbolab.it">TurboLab.it</a></p>
+
+
+<h2>Newsletter</h2>
+
+<p><img src="{{ ArticleNewsletter.spotlightUrl(ImageSizes.reg) }}"></p>
+
+<p>
+    <strong>{{ Newsletter.countRecipients|friendlyNum }}</strong> utenti iscritti a TurboLab.it hanno
+    <a href="{{ ArticleNewsletter.url }}">attivato la ricezione della newsletter</a>.
+    Di questi, <strong>{{ Newsletter.countRecipientsOfTheYear|friendlyNum }}</strong> si sono iscritti nel corso del {{ currentYear }}.
+</p>
+<p>
+    I domini più usati da chi riceve la newsletter sono
+    {% for domain,Provider in Newsletter.TopEmailProviders %}
+        <em>@{{ domain }}</em> ({{ Provider.percentage }}%{% if loop.first %} degli iscritti{% endif %}){% if not loop.last %},{% else %}.{% endif %}
+    {% endfor %}
+</p>
+
+
+<h2>Gli articoli più visitati del {{ currentYear }}: Windows</h2>
+
+{% for Article in ArticlesWindows %}
+    {% if spotlightWindowsShown is not defined %}
+        {% set spotlightWindowsShown = true %}
+        <p><img src="{{ Article.spotlightUrl(ImageSizes.reg) }}"></p>
+    {% endif %}
+{% endfor %}
+
+<ul>
+    {% for Article in ArticlesWindows %}
+        <li><a href="{{ Article.url }}">{{ Article.title|raw }}</a></li>
+    {% endfor %}
+</ul>
+
+<p>&gt;&gt; Vedi tutti gli articoli con il tag: 🏷️ <a href="http://turbolab.it/tag/windows">Windows</a></p>
+
+
+<h2>Gli articoli più visitati del {{ currentYear }}: Linux</h2>
+
+{% for Article in ArticlesLinux %}
+    {% if spotlightLinuxShown is not defined %}
+        {% set spotlightLinuxShown = true %}
+        <p><img src="{{ Article.spotlightUrl(ImageSizes.reg) }}"></p>
+    {% endif %}
+{% endfor %}
+
+<ul>
+    {% for Article in ArticlesLinux %}
+        <li><a href="{{ Article.url }}">{{ Article.title|raw }}</a></li>
+    {% endfor %}
+</ul>
+
+<p>&gt;&gt; Vedi tutti gli articoli con il tag: 🏷️ <a href="http://turbolab.it/tag/linux">Linux</a></p>
+
+
+<h2>Gli articoli più visitati del {{ currentYear }}: Android</h2>
+
+{% for Article in ArticlesAndroid %}
+    {% if spotlightAndroidShown is not defined %}
+        {% set spotlightAndroidShown = true %}
+        <p><img src="{{ Article.spotlightUrl(ImageSizes.reg) }}"></p>
+    {% endif %}
+{% endfor %}
+
+<ul>
+    {% for Article in ArticlesAndroid %}
+        <li><a href="{{ Article.url }}">{{ Article.title|raw }}</a></li>
+    {% endfor %}
+</ul>
+
+<p>&gt;&gt; Vedi tutti gli articoli con il tag: 🏷️ <a href="http://turbolab.it/tag/android">Android</a></p>
+
+
+<h2>I contributi più visitati del {{ currentYear }}: Hardware e PC</h2>
+
+{% for Article in ArticlesHardware %}
+    {% if spotlightHardwareShown is not defined %}
+        {% set spotlightHardwareShown = true %}
+        <p><img src="{{ Article.spotlightUrl(ImageSizes.reg) }}"></p>
+    {% endif %}
+{% endfor %}
+
+<ul>
+    {% for Article in ArticlesHardware %}
+        <li><a href="{{ Article.url }}">{{ Article.title|raw }}</a></li>
+    {% endfor %}
+</ul>
+
+<p>&gt;&gt; Vedi tutti gli articoli con il tag: 🏷️ <a href="http://turbolab.it/tag/hardware">Hardware</a></p>

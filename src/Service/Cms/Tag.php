@@ -18,6 +18,7 @@ class Tag extends BaseCmsService
     const string TLI_CLASS              = TagEntity::TLI_CLASS;
     const string NOT_FOUND_EXCEPTION    = TagNotFoundException::class;
 
+    const int ID_TURBOLAB_IT        = 1;        // 👀 https://turbolab.it/tag-1
     const int ID_DEFAULT_TAG        = 642;      // 👀 https://turbolab.it/tag-642
     const int ID_TEST_NO_ARTICLES   = 12600;    // 👀 https://turbolab.it/tag-12600
     const int ID_NEWSLETTER_TLI     = 1349;     // 👀 https://turbolab.it/tag-1349

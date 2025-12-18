@@ -3,6 +3,7 @@ namespace App\ServiceCollection\Cms;
 
 use App\Serializer\ArticleSearchNormalizer;
 use App\Service\Cms\Article;
+use App\Service\Cms\Tag;
 use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Factory;
@@ -216,5 +217,27 @@ class ArticleCollection extends BaseArticleCollection
     {
         $article = $this->getRepository()->findExistingNewsletterOnTheWeb();
         return empty($article) ? $this->setEntities([]) : $this->setEntities([$article]);
+    }
+
+
+    public function loadNewOfTheYear(null|int|array $format = null) : static
+    {
+        $articles = $this->getRepository()->findNewOfTheYear($format);
+        return $this->setEntities($articles);
+    }
+
+
+    public function loadNewOfTheYearWithTag(Tag $tag, ?int $num = null) : static
+    {
+        $this->loadNewOfTheYear();
+        $this->filter(function(Article $article) use ($tag) {
+            return $article->hasTag($tag);
+        });
+
+        if( !empty($num) ) {
+            $this->arrData = $this->getItems($num);
+        }
+
+        return $this;
     }
 }

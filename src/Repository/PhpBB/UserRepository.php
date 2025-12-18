@@ -3,8 +3,10 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\User;
 use App\Service\Cms\Article;
+use DateTime;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
+use Doctrine\Persistence\ManagerRegistry;
 
 
 class UserRepository extends BasePhpBBRepository
@@ -18,6 +20,11 @@ class UserRepository extends BasePhpBBRepository
         user_avatar_type, user_avatar,
         user_posts, user_colour, user_allow_massemail
     ';
+
+    public function __construct(protected array $arrConfig, ManagerRegistry $registry, private readonly ManagerRegistry $managerRegistry)
+    {
+        parent::__construct($arrConfig, $registry);
+    }
 
 
     public function findOneByUserSidKey(int $userId, string $sessionId, string $sessionKey)
@@ -253,5 +260,104 @@ class UserRepository extends BasePhpBBRepository
         }
 
         return $this->getById($arrIds);
+    }
+
+
+    public function findNewOfTheYear() : array
+    {
+        $yearStart  = new DateTime('first day of January this year 00:00:00');
+        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+
+        return
+            $this->getQueryBuilderComplete()
+                // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
+                ->andWhere('t.user_type IN(0,3)')
+                ->andWhere('t.regDate >= :yearStart')
+                    ->setParameter('yearStart', $yearStart->getTimestamp())
+                ->andWhere('t.regDate <= :yearEnd')
+                    ->setParameter('yearEnd', $yearEnd->getTimestamp())
+                ->getQuery()->getResult();
+    }
+
+
+    public function findTopPostersOfTheYear() : array
+    {
+        $yearStart  = new DateTime('first day of January this year 00:00:00');
+        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+
+        $sqlSelectPostsOfTheYear = '
+            SELECT poster_id, COUNT(1) AS num FROM ' . $this->getPhpBBTableName('phpbb_posts') . '
+            WHERE post_time >= :yearStart AND post_time <= :yearEnd
+            GROUP BY poster_id
+            ORDER BY num DESC
+        ';
+
+        $arrPostersOfTheYear =
+            $this->sqlQueryExecute($sqlSelectPostsOfTheYear, [
+                'yearStart'   => $yearStart->getTimestamp(),
+                'yearEnd'     => $yearEnd->getTimestamp(),
+            ])->fetchAllAssociativeIndexed();
+
+        if( empty($arrPostersOfTheYear) ) {
+            return [];
+        }
+
+        $arrUsers = $this->getById( array_keys($arrPostersOfTheYear) );
+
+        /** @var User $user */
+        foreach($arrUsers as $user) {
+
+            $userId = $user->getId();
+            $postsOfTheYearNum = $arrPostersOfTheYear[$userId]['num'];
+            $user->setPostNum($postsOfTheYearNum);
+        }
+
+        return $arrUsers;
+    }
+
+
+    public function findTopAuthorsOfTheYear() : array
+    {
+        $articlesOfTheYear =
+            $this->managerRegistry->getRepository(\App\Entity\Cms\Article::class)->findNewOfTheYear();
+
+        $arrArticleIds = array_map(fn(\App\Entity\Cms\Article $article) => $article->getId(), $articlesOfTheYear);
+
+        if( empty($arrArticleIds) ) {
+            return [];
+        }
+
+        $sqlSelectArticlesOfTheYear = '
+            SELECT user_id, COUNT(1) AS num FROM article_author
+            WHERE article_id IN (' . implode(',', $arrArticleIds) . ')
+            GROUP BY user_id
+            ORDER BY num DESC
+        ';
+
+        $arrAuthorsOfTheYear = $this->sqlQueryExecute($sqlSelectArticlesOfTheYear)->fetchAllAssociativeIndexed();
+
+        $arrUsers = $this->getById( array_keys($arrAuthorsOfTheYear) );
+
+        /** @var User $user */
+        foreach($arrUsers as &$user) {
+
+            $userId = $user->getId();
+            $articlesOfTheYearNum = $arrAuthorsOfTheYear[$userId]['num'];
+            $user->setArticlesOfTheYearNum($articlesOfTheYearNum);
+        }
+
+        return $arrUsers;
+    }
+
+
+    public function countAllActive() : int
+    {
+        return
+            $this->createQueryBuilder('t')
+                ->select('COUNT(t)')
+                // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
+                ->andWhere('t.user_type IN(0,3)')
+                ->getQuery()->getSingleScalarResult();
+
     }
 }

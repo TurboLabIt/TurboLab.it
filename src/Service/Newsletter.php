@@ -185,11 +185,35 @@ class Newsletter extends Mailer
     }
 
 
-    public function countArticles()     : int { return $this->articleCollection->count(); }
-    public function countTopics()       : int { return $this->topicCollection->count(); }
-    public function countRecipients()   : int { return $this->userCollection->count(); }
-    public function getRecipients()     : array { return $this->arrRecipients; }
-    public function getSubject()        : string { return $this->subject; }
+    public function countArticles() : int { return $this->articleCollection->count(); }
+
+    public function countTopics() : int { return $this->topicCollection->count(); }
+
+    public function getRecipients() : array { return $this->arrRecipients; }
+
+    public function getSubject() : string { return $this->subject; }
+
+    public function countRecipients() : int { return $this->userCollection->count(); }
+
+    public function countRecipientsOfTheYear() : int
+    {
+        $yearStart  = (new DateTime('first day of January this year 00:00:00'))->getTimestamp();
+        $yearEnd    = (new DateTime('last day of December this year 23:59:59'))->getTimestamp();
+        $num        = 0;
+
+        $this->userCollection->iterate(function(User $user) use($yearStart, $yearEnd, &$num) {
+
+            $userReg = $user->getRegistrationDate()->getTimestamp();
+            if( $userReg > $yearStart && $userReg < $yearEnd ) {
+                $num++;
+            }
+        });
+
+        return $num;
+    }
+
+
+    public function getTopEmailProviders() : array { return $this->arrTopProviders; }
 
 
     public function buildForOne(User $user) : static

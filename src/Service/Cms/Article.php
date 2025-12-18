@@ -278,9 +278,11 @@ class Article extends BaseCmsService
     }
 
 
-    public function isSponsored() :bool { return array_key_exists(Tag::ID_SPONSOR, $this->getTags()); }
+    public function hasTag(Tag $tag) : bool { return array_key_exists($tag->getId(), $this->getTags()); }
 
-    public function isNewsletter() :bool { return array_key_exists(Tag::ID_NEWSLETTER_TLI, $this->getTags()); }
+    public function isSponsored() : bool { return array_key_exists(Tag::ID_SPONSOR, $this->getTags()); }
+
+    public function isNewsletter() : bool { return array_key_exists(Tag::ID_NEWSLETTER_TLI, $this->getTags()); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 📂 Files ***">

@@ -93,10 +93,8 @@ class Forum extends BaseEntity
         return $this;
     }
 
-    public function getLastPostTime() : ?int
-    {
-        return $this->last_post_time;
-    }
+
+    public function getLastPostTime() : ?int { return $this->last_post_time; }
 
     public function setLastPostTime(int $last_post_time) : static
     {

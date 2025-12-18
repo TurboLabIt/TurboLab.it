@@ -38,7 +38,7 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every hour: dump server configuration for the info page
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
 
-## every xx hours: attach,remove images,files to articles, delete unused images,files
+## every xx hours: attach+remove images|files to articles, delete unused images|files
 3 */3 * * * root bash ${SCRIPT_DIR}uploaded-assets-maintenance.sh >> ${LOG_PATH}uploaded-assets-maintenance.sh.log 2>&1
 
 ## every night: tag aggregator
@@ -52,6 +52,9 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 
 ## every night: sitemap generator
 0 3 * * * root bash ${SCRIPT_DIR}sitemap-generate.sh >> ${LOG_PATH}sitemap.sh.log 2>&1
+
+## every year, from Dec 7th to Dec 31, at 23:58: Christmas article
+58 23 7-31 12 * root bash ${SCRIPT_DIR}cli.sh ChristmasArticleGenerator >> ${LOG_PATH}christmas-article-generator.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇

@@ -6,6 +6,7 @@ use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\UserNotFoundException;
 use App\Repository\PhpBB\UserRepository;
 use App\ServiceCollection\Cms\BaseArticleCollection;
+use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -139,6 +140,10 @@ class User extends BaseServiceEntity
         $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
         return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
     }
+
+    public function getPostNum() : ?int { return $this->entity->getPostNum(); }
+
+    public function getRegistrationDate() : DateTime { return $this->entity->getRegistrationDate(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👮 Roles ***">
@@ -249,6 +254,9 @@ class User extends BaseServiceEntity
             $this->arrArticlesCollections['ko'] =
                 $this->factory->createArticleAuthorCollection($this)->loadKo();
     }
+
+
+    public function getArticlesOfTheYearNum() : int { return $this->entity->getArticlesOfTheYearNum(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 📩 Newsletter ***">

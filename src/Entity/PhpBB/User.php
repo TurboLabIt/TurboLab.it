@@ -10,7 +10,9 @@ use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\ImageAuthor;
 use App\Entity\Cms\TagAuthor;
 use App\Exception\InvalidIdException;
+use App\Exception\InvalidOperationException;
 use App\Repository\PhpBB\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -71,8 +73,13 @@ class User extends BaseEntity implements UserInterface
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
     protected ?int $user_type = 0;
 
+    #[ORM\Column(name: "user_regdate", type: Types::INTEGER, options: ['unsigned' => true])]
+    protected ?int $regDate = null;
+
     protected array $arrUserGroups = [];
     protected array $roles = [];
+
+    protected ?int $articlesOfTheYearNum = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $articles;
@@ -223,6 +230,24 @@ class User extends BaseEntity implements UserInterface
     }
 
 
+    public function getRegDate() : ?int { return $this->regDate; }
+
+    public function getRegistrationDate() : ?DateTime
+    {
+        $regDate = $this->getRegDate();
+
+        return
+            empty($regDate) ? null :
+                DateTime::createFromFormat('U', (string)$regDate);
+    }
+
+    public function setRegDate(?int $regDate) : static
+    {
+        $this->regDate = $regDate;
+        return $this;
+    }
+
+
     /**
      * A visual identifier that represents this user.
      *
@@ -279,6 +304,23 @@ class User extends BaseEntity implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+
+    public function getArticlesOfTheYearNum() : int
+    {
+        // the value must be loaded on-demand via repository
+        if( $this->articlesOfTheYearNum === null ) {
+            throw new InvalidOperationException("Tried to access User::articlesOfTheYearNum before it was loaded");
+        }
+
+        return $this->articlesOfTheYearNum;
+    }
+
+    public function setArticlesOfTheYearNum(?int $articlesOfTheYearNum) : static
+    {
+        $this->articlesOfTheYearNum = $articlesOfTheYearNum;
+        return $this;
     }
 
 
@@ -455,12 +497,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return Collection<int, Bug>
      */
-    public function getBugs(): Collection
+    public function getBugs() : Collection
     {
         return $this->bugs;
     }
 
-    public function addBug(Bug $bug): static
+    public function addBug(Bug $bug) : static
     {
         if (!$this->bugs->contains($bug)) {
             $this->bugs->add($bug);
@@ -470,7 +512,7 @@ class User extends BaseEntity implements UserInterface
         return $this;
     }
 
-    public function removeBug(Bug $bug): static
+    public function removeBug(Bug $bug) : static
     {
         if ($this->bugs->removeElement($bug)) {
             // set the owning side to null (unless already changed)

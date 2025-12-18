@@ -106,5 +106,55 @@ class UserCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadNewOfTheYear() : static
+    {
+        $arrUsers = $this->getRepository()->findNewOfTheYear();
+        return $this->setEntities($arrUsers);
+    }
+
+
+    public function loadTopPosterOfTheYear() : static
+    {
+        $arrUsers = $this->getRepository()->findTopPostersOfTheYear();
+        return $this->setEntities($arrUsers);
+    }
+
+
+    public function getTopPosters(int $topNum = 5) : array
+    {
+        $arrUsersByPostsNum = [];
+        $this->iterate(function(User $user) use (&$arrUsersByPostsNum) {
+
+            $postNum = $user->getPostNum();
+
+            if( empty($postNum) ) {
+                return true;
+            }
+
+            $arrUsersByPostsNum[$postNum][] = $user;
+        });
+
+        ksort($arrUsersByPostsNum, SORT_NUMERIC);
+
+        // get the last 3 values (greatest)
+        $arrUsersByPostsNum = array_slice($arrUsersByPostsNum, -$topNum, null, true);
+
+        // greatest first
+        $arrUsersByPostsNum = array_reverse($arrUsersByPostsNum, true);
+
+        // flatten the arrays
+        $arrTopPosters = array_merge(...$arrUsersByPostsNum);
+
+        return $arrTopPosters;
+    }
+
+
+    public function loadTopAuthorsOfTheYear() : static
+    {
+        $arrUsers = $this->getRepository()->findTopAuthorsOfTheYear();
+        return $this->setEntities($arrUsers);
+    }
+
+
     public function createService(?UserEntity $entity = null) : User { return $this->factory->createUser($entity); }
 }
