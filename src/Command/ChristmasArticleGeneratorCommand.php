@@ -159,13 +159,13 @@ class ChristmasArticleGeneratorCommand extends AbstractBaseCommand
 
         $this->output->writeln('');
         $this->articleEditor =
-            $this->articleEditorCollection->loadExistingChristmas()->first() ?? $this->articleEditor;
+            $this->articleEditorCollection->loadExistingChristmas()->first() ??
+            $this->factory->createArticleEditor();
 
         if( empty($this->articleEditor->getId()) ) {
 
             $this->fxInfo("Pre-existing article not found. Generating it now.");
-            $this->articleEditor
-                ->createCommentsTopicPlaceholder();
+            $this->articleEditor->createCommentsTopicPlaceholder();
 
         } else {
 
