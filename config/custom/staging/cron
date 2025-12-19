@@ -30,7 +30,8 @@ AUTODEPLOY_FILENAME_TO_CHECK=async-runner-request-turbolab.it-autodeploy-main-no
 
 
 ## every friday morning: deploy and import production data
-0 5 * * 5 root bash ${SCRIPT_DIR}autodeploy-download-import.sh > ${LOG_PATH}autodeploy-download-import.sh.log 2>&1
+# this doesn't work: next SSH key is not authorized to access prod - run the script manually to use your own key
+#0 5 * * 5 root bash ${SCRIPT_DIR}autodeploy-download-import.sh > ${LOG_PATH}autodeploy-download-import.sh.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider the file broken and refuse to run it 👇
