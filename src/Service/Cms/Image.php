@@ -26,10 +26,10 @@ class Image extends BaseCmsService
     const int ID_404                    = 26661;    // 👀 https://turbolab.it/immagini/26661/reg
     const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/reg
     const array IDS_NEWSLETTER_SPOTLIGHT = [
-        // uploaded here: https://turbolab.it/179
         25141,  // 👀 https://turbolab.it/immagini/25141/reg
         25142,  // 👀 https://turbolab.it/immagini/25142/reg
         25143,  // 👀 https://turbolab.it/immagini/25143/reg
+        26853   // 👀 https://turbolab.it/immagini/26853/reg
     ];
 
     const int ID_CHRISTMAS_SPOTLIGHT = 25523; // 👀 https://turbolab.it/immagini/25523/reg
@@ -118,6 +118,13 @@ class Image extends BaseCmsService
 
     public function getEntity() : ?ImageEntity { return $this->entity ?? null; }
     //</editor-fold>
+
+
+    public function loadSpotlightForNewsletter() : static
+    {
+        $spotlightId = array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT));
+        return $this->load($spotlightId);
+    }
 
 
     public function getSizes() : array { return static::SIZES; }
@@ -394,12 +401,6 @@ class Image extends BaseCmsService
         // the client doesn't support ANY graphic format! Maybe it's running from CLI?
         // let's just return the best format we have
         return reset($arrImageFormats);
-    }
-
-
-    public static function getNewsletterSpotlightId() : int
-    {
-        return array_rand(array_flip(static::IDS_NEWSLETTER_SPOTLIGHT));
     }
 
 

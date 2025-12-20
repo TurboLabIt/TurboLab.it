@@ -6,6 +6,8 @@ use App\Entity\NewsletterOpener;
 use App\Repository\NewsletterExpiringWarnRepository;
 use App\Repository\NewsletterOpenerRepository;
 use App\Service\Cms\Article;
+use App\Service\Cms\ArticleEditor;
+use App\Service\Cms\Image;
 use App\Service\Cms\Tag;
 use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
@@ -35,12 +37,12 @@ class Newsletter extends Mailer
     protected array $arrVideos;
     protected Tag $tagNewsletterTli;
     protected User $userSystem;
-    protected array $arrRecipients              = [];
+    protected array $arrRecipients = [];
     protected int $totalSubscribersCount;
     protected array $arrTopProviders;
-    protected bool $showingTestArticles         = false;
-    protected bool $showingTestTopics           = false;
-    protected bool $addTimestampToWebArticle    = false;
+    protected bool $showingTestArticles     = false;
+    protected bool $showingTestTopics       = false;
+    protected bool $addTimestampToWebArticle= false;
 
 
     public function __construct(
@@ -51,6 +53,7 @@ class Newsletter extends Mailer
         protected UrlGeneratorInterface $urlGenerator, protected Encryptor $encryptor,
         protected Environment $twig, protected TelegramMessenger $alertMessenger,
         MailerInterface $mailer, ProjectDir $projectDir, protected ParameterBagInterface $parameters,
+        protected Image $spotlight, protected ArticleEditor $articleOnTheWebEditor
     )
     {
         // init to homepage (failsafe)
@@ -106,7 +109,7 @@ class Newsletter extends Mailer
         if( empty($this->privacyUrl) ) {
 
             $this->privacyUrl =
-                $this->articleCollection->createService()->load(Article::ID_PRIVACY_POLICY)
+                $this->factory->createArticle()->load(Article::ID_PRIVACY_POLICY)
                     ->getUrl();
         }
 
@@ -118,7 +121,11 @@ class Newsletter extends Mailer
             $this->userSystem = $this->factory->createUser()->load(User::ID_SYSTEM);
         }
 
-        return $this->generateSubject();
+        $this->spotlight->loadSpotlightForNewsletter();
+
+        $this->generateSubject();
+
+        return $this;
     }
 
 
@@ -275,21 +282,21 @@ class Newsletter extends Mailer
     }
 
 
-    public function loadExistingWebArticle() : ?string
+    public function loadExistingWebArticle() : ArticleEditor
     {
-        $article = $this->factory->createArticleCollection()->loadExistingNewsletterOnTheWeb()->first();
-        return empty($article) ? null : $this->newsletterOnSiteUrl =  $article->getUrl();
+        return $this->articleOnTheWebEditor;//->loadExistingNewsletterOnTheWeb();
     }
 
 
-    public function saveOnTheWeb(bool $persist) : ?string
+    public function saveOnTheWeb(bool $persist) : ?ArticleEditor
     {
         $articleBody =
             $this->twig->render('newsletter/article.html.twig', [
+                    "Spotlight"         => $this->spotlight,
                     "Articles"          => $this->articleCollection,
                     "Topics"            => $this->topicCollection,
                     "Videos"            => $this->arrVideos,
-                    "newsletterUrl"     => $this->articleCollection->createService()->load(Article::ID_NEWSLETTER)->getUrl(),
+                    "newsletterUrl"     => $this->factory->createArticle()->load(Article::ID_NEWSLETTER)->getUrl(),
                     "subscriberCount"   => $this->totalSubscribersCount,
                     "TopEmailProviders" => $this->arrTopProviders,
                 ]
@@ -303,7 +310,7 @@ class Newsletter extends Mailer
         }
 
         $article =
-            $this->factory->createArticleEditor()
+            $this->articleOnTheWebEditor
                 ->setTitle($articleTitle)
                 ->addAuthor($this->userSystem)
                 ->addTag($this->tagNewsletterTli, $this->userSystem)
@@ -323,7 +330,7 @@ class Newsletter extends Mailer
             $this->newsletterOnSiteUrl = $article->getUrl();
         }
 
-        return $this->newsletterOnSiteUrl;
+        return $this->articleOnTheWebEditor;
     }
 
 

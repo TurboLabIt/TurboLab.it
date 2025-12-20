@@ -810,7 +810,7 @@ class ArticleRepository extends BaseRepository
 
     public function findExistingNewsletterOnTheWeb() : ?Article
     {
-        $dateLimit = new \DateTime('-48 hours');
+        $dateLimit = new \DateTime('-72 hours');
 
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)

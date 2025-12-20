@@ -213,13 +213,6 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadExistingNewsletterOnTheWeb() : static
-    {
-        $article = $this->getRepository()->findExistingNewsletterOnTheWeb();
-        return empty($article) ? $this->setEntities([]) : $this->setEntities([$article]);
-    }
-
-
     public function loadNewOfTheYear(null|int|array $format = null) : static
     {
         $articles = $this->getRepository()->findNewOfTheYear($format);

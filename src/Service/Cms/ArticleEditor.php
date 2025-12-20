@@ -24,6 +24,17 @@ class ArticleEditor extends Article
         parent::__construct($factory);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🏗️ Loaders for existing articles ***">
+    public function loadExistingNewsletterOnTheWeb() : static
+    {
+        $this->clear();
+
+        $articleEntity = $this->getRepository()->findExistingNewsletterOnTheWeb();
+        $this->setEntity($articleEntity);
+
+        return $this;
+    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 📜 Title and Body ***">
     public function setTitle(string $newTitle) : static

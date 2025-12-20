@@ -192,12 +192,15 @@ class NewsletterSendCommand extends AbstractBaseCommand
 
     protected function prepareWebArticle() : static
     {
-        $articleUrl = $this->newsletter->loadExistingWebArticle();
-        if( !empty($articleUrl) ) {
-            return $this->fxWarning("Pre-existing article found! $articleUrl");
+        $existingArticle = $this->newsletter->loadExistingWebArticle();
+        if( !empty( $existingArticle->getId() ) ) {
+            $this->fxWarning("Pre-existing article found! " . $existingArticle->getShortUrl() );
         }
 
-        // prevent duplicate titles in dev (multiple runs per day)
+        /* add timestamp to title in dev:
+         * - makes it easier to spot+check
+         * - (earlier versions) prevent duplicate titles in dev (multiple runs per day)
+         */
         if( $this->isNotProd() ) {
             $this->newsletter->setAddTimestampToWebArticle();
         }
@@ -206,11 +209,11 @@ class NewsletterSendCommand extends AbstractBaseCommand
         $sendingInProd  = $this->isProd() && $realRecipients && $this->isSendingMessageAllowed();
         $persistArticle = $this->isNotDryRun() && ( $sendingInProd || $this->isNotProd() );
 
-        $articleUrl = $this->newsletter->saveOnTheWeb($persistArticle);
+        $articleOnTheWeb = $this->newsletter->saveOnTheWeb($persistArticle);
 
         return
             $persistArticle
-                ? $this->fxOK("Article saved: $articleUrl")
+                ? $this->fxOK("Article saved: " . $articleOnTheWeb->getShortUrl() )
                 : $this->fxWarning('The web article was NOT saved');
     }
 
