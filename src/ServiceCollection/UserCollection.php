@@ -132,6 +132,8 @@ class UserCollection extends BaseServiceEntityCollection
             }
 
             $arrUsersByPostsNum[$postNum][] = $user;
+
+            return true;
         });
 
         ksort($arrUsersByPostsNum, SORT_NUMERIC);

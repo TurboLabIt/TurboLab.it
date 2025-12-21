@@ -8,6 +8,7 @@ use App\Service\PhpBB\Topic;
 use App\Service\User;
 use App\ServiceCollection\Cms\ArticleEditorCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -113,7 +114,7 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
             $article->setCommentsTopicNeedsUpdate(Article::COMMENTS_TOPIC_NEEDS_UPDATE_NO);
             $this->entityManager->flush();
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             $arrResult[] = '❌';
 

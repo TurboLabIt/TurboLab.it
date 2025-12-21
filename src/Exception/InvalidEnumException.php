@@ -1,4 +1,7 @@
 <?php
 namespace App\Exception;
 
-class InvalidEnumException extends \Exception {}
+use Exception;
+
+
+class InvalidEnumException extends Exception {}

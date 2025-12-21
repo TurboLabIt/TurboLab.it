@@ -34,7 +34,7 @@ class ImageCollection extends BaseImageCollection
 
     public function loadOrphans() : static
     {
-        $arrEntities = $this->getRepository(static::ENTITY_CLASS)->getOrphans();
+        $arrEntities = $this->getRepository()->getOrphans();
         return $this->setEntities($arrEntities);
     }
 }

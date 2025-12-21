@@ -215,11 +215,9 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
 
 
         $articleImages = $this->arrArticleMap[$articleId]['Images'] ?? [];
-        $key = array_search($imageId, $articleImages);
+        $isAlreadyAttached = in_array($imageId, $articleImages);
 
-        if( $key !== false ) {
-
-            // it's already attached
+        if( $isAlreadyAttached ) {
             return $this->removeFromArticleMap($articleId, $imageId);
         }
 

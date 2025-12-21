@@ -3,6 +3,7 @@ namespace App\Repository;
 
 use App\Entity\Bug;
 use App\Service\User;
+use DateTime;
 
 
 class BugRepository extends BaseRepository
@@ -14,7 +15,7 @@ class BugRepository extends BaseRepository
     public function getRecentByAuthor(User $author, string $authorIpAddress) : array
     {
         $timeLimit =
-            (new \DateTime())
+            (new DateTime())
                 ->modify('-' . static::TIME_LIMIT_MINUTES . ' minutes');
 
         return

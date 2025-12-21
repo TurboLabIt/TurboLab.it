@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use Exception;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -64,7 +65,7 @@ class SearchController extends BaseController
                     });
             }
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             return $this->textErrorResponse($ex);
         }
@@ -107,7 +108,7 @@ class SearchController extends BaseController
                     });
             }
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             return $this->textErrorResponse($ex);
         }

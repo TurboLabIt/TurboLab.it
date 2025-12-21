@@ -1,4 +1,7 @@
 <?php
 namespace App\Exception;
 
-class UserUpdateException extends \Exception {}
+use Exception;
+
+
+class UserUpdateException extends Exception {}

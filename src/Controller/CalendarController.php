@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Service\Cms\Article;
 use App\Service\HtmlProcessorBase;
 use DateTime;
+use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,7 +55,7 @@ class CalendarController extends BaseController
 
             $articles   = $this->factory->createArticleCollection()->loadByPublishedDateInterval($startDate, $endDate);
 
-        } catch (Exception|\Error) {
+        } catch (Exception|Error) {
 
             return $this->json([], Response::HTTP_BAD_REQUEST);
         }

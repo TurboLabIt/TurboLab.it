@@ -1,6 +1,8 @@
 <?php
 namespace App\Trait;
 
+use InvalidArgumentException;
+
 trait CommandTrait
 {
     protected function buildItemTitle($key, $item) : string
@@ -18,6 +20,8 @@ trait CommandTrait
         if( is_array($item) ) {
             return '[' . $item['articleId'] . ']';
         }
+
+        throw new InvalidArgumentException("Unhandled type in CommandTrait::buildItemTitle");
     }
 
 

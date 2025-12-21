@@ -1,4 +1,7 @@
 <?php
 namespace App\Exception;
 
-class ImageLogicException extends \RuntimeException {}
+use RuntimeException;
+
+
+class ImageLogicException extends RuntimeException {}

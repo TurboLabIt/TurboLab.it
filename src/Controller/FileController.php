@@ -5,6 +5,7 @@ use App\Service\Cms\Visit;
 use App\Service\Cms\File;
 use App\Service\FrontendHelper;
 use App\ServiceCollection\Cms\FileCollection;
+use DateTime;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -91,7 +92,7 @@ class FileController extends BaseController
             //
             'AttachedUnused'            => $arrAttachedUnused,
             'numAttachedUnused'         => number_format(count($arrAttachedUnused), 0, ',', '.'),
-            'dateAttachedUnusedList'    => new \DateTime('@' . filemtime($filePathUnused)),
+            'dateAttachedUnusedList'    => new DateTime('@' . filemtime($filePathUnused)),
             //
             'Orphans'                   => $files,
             'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),

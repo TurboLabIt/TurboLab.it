@@ -339,7 +339,7 @@ class UserRepository extends BasePhpBBRepository
         $arrUsers = $this->getById( array_keys($arrAuthorsOfTheYear) );
 
         /** @var User $user */
-        foreach($arrUsers as &$user) {
+        foreach($arrUsers as $user) {
 
             $userId = $user->getId();
             $articlesOfTheYearNum = $arrAuthorsOfTheYear[$userId]['num'];

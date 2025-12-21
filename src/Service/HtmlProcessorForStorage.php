@@ -4,6 +4,8 @@ namespace App\Service;
 use App\Service\Cms\UrlGenerator;
 use DOMDocument;
 use DOMElement;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
@@ -12,7 +14,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
-    protected \HTMLPurifier $htmlPurifier;
+    protected HTMLPurifier $htmlPurifier;
 
 
     public function purify(?string $text) : string
@@ -23,7 +25,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
         if( empty($this->htmlPurifier) ) {
 
-            $tliPurifierConfig = \HTMLPurifier_Config::createDefault();
+            $tliPurifierConfig = HTMLPurifier_Config::createDefault();
             $tliPurifierConfig->set('Core.Encoding', 'UTF-8');
             $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,s,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
 
@@ -40,7 +42,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('HTML.SafeIframe', true);
             $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
 
-            $this->htmlPurifier = new \HTMLPurifier($tliPurifierConfig);
+            $this->htmlPurifier = new HTMLPurifier($tliPurifierConfig);
         }
 
         // all the quotes in non-attributes will be decoded

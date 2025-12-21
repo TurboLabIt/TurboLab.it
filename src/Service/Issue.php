@@ -10,6 +10,7 @@ use App\Service\Cms\Article;
 use App\Service\PhpBB\Post;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -146,7 +147,7 @@ class Issue
 
             return $response->getContent();
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
 
             $statusCode = $response->getStatusCode();
 

@@ -9,6 +9,7 @@ use App\Service\HtmlProcessorForDisplay;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\Trait\CommandTrait;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -216,7 +217,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
             $arrDataSource[] = [
                 'filepath'      => $filepath,
                 'filename'      => basename($filepath),
-                'lastModified'  => \DateTime::createFromFormat('U', filemtime($filepath))->format('Y-m-d H:i:s'),
+                'lastModified'  => DateTime::createFromFormat('U', filemtime($filepath))->format('Y-m-d H:i:s'),
             ];
         }
 

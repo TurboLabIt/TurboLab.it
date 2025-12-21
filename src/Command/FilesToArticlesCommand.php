@@ -231,11 +231,9 @@ class FilesToArticlesCommand extends AbstractBaseCommand
 
 
         $articleFiles = $this->arrArticleMap[$articleId]['Files'] ?? [];
-        $key = array_search($fileId, $articleFiles);
+        $isAlreadyAttached = in_array($fileId, $articleFiles);
 
-        if( $key !== false ) {
-
-            // it's already attached
+        if( $isAlreadyAttached ) {
             return $this->removeFromArticleMap($articleId, $fileId);
         }
 

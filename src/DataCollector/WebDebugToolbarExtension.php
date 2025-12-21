@@ -4,12 +4,13 @@ namespace App\DataCollector;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 
 // 📚 https://symfony.com/doc/current/profiler.html#creating-a-data-collector
 class WebDebugToolbarExtension extends AbstractDataCollector
 {
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null) : void
+    public function collect(Request $request, Response $response, ?Throwable $exception = null) : void
     {
         // Collect the data that you want to display in the toolbar
         $this->data = [

@@ -7,6 +7,7 @@ use App\Service\Newsletter;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use http\Exception\InvalidArgumentException;
 
 
@@ -223,7 +224,7 @@ class TopicRepository extends BasePhpBBRepository
                 return $newTopicId;
             });
 
-        } catch(\Exception $ex) {
+        } catch(Exception $ex) {
             throw $ex;
         }
 
