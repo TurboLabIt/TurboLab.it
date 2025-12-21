@@ -14,12 +14,5 @@ class ArticleEditorCollection extends BaseArticleCollection
     }
 
 
-    public function loadExistingChristmas() : static
-    {
-        $article = $this->getRepository()->findExistingChristmas();
-        return empty($article) ? $this->setEntities([]) : $this->setEntities([$article]);
-    }
-
-
     public function createService(?ArticleEntity $entity = null) : ArticleEditor { return $this->factory->createArticleEditor($entity); }
 }

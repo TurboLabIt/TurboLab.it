@@ -157,10 +157,7 @@ class ChristmasArticleGeneratorCommand extends AbstractBaseCommand
         $this->fxOK("🖼️ Christmas spotlight loaded (" . $this->spotlight->getUrl(Image::SIZE_REG) . ")");
 
         $this->output->writeln('');
-        $this->articleEditor =
-            $this->articleEditorCollection->loadExistingChristmas()->first() ??
-            $this->factory->createArticleEditor();
-
+        $this->articleEditor->loadExistingChristmas();
         if( empty($this->articleEditor->getId()) ) {
 
             $this->fxInfo("Pre-existing article not found. Generating it now.");

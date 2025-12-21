@@ -34,6 +34,19 @@ class ArticleEditor extends Article
 
         return $this;
     }
+
+
+    public function loadExistingChristmas() : static
+    {
+        $this->clear();
+
+        $articleEntity = $this->getRepository()->findExistingChristmas();
+        $this->setEntity($articleEntity);
+
+        return $this;
+    }
+
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 📜 Title and Body ***">
