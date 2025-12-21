@@ -8,6 +8,7 @@ La newsletter raccoglie i link a tutti i contenuti pubblicati sul sito nel corso
 
 - articoli e notizie usciti (o ri-usciti) in home page
 - discussioni del forum: iniziate, oppure che hanno ricevuto nuove risposte
+- ultimi video da YouTube (in ordine temporale, quindi non solo quelli pubblicati in settimana)
 
 Ogni volta che viene spedita la newsletter, viene generato e pubblicato automaticamente un articolo sul sito con i medesimi contenuti.
 
@@ -24,14 +25,17 @@ L'archivio completo di tutti gli invii è il [tag "newsletter turbolab.it"](http
 Le priorità principali nella gestione della newsletter sono:
 
 - **automazione totale**: generazione e invio devono avvenire automaticamente, senza bisogno di alcuna conferma o interventi esterni
-- offrire a quanti più utenti possibile l'occasione di ricevere almeno una volta la newsletter per valutare se possa loro interessare
+- offrire a quanti più utenti possibile l'occasione di ricevere la newsletter almeno una volta, di modo che possano valutare se interessa
 - **NO SPAM**! Chi non vuole la newsletter non deve riceverla, senza ostacoli o ritardi
 
-La newsletter viene generata sul server di TurboLab.it e inviata direttamente alle mailbox degli iscritti tramite il servizio SMTP in esecuzione sul server stesso. Abbiamo dunque scelto di **non utilizzare servizi esterni**, per i seguenti motivi:
+La newsletter viene generata sul server di TurboLab.it e inviata direttamente alle mailbox degli iscritti ~~tramite il servizio SMTP in esecuzione sul server stesso. Abbiamo dunque scelto di **non utilizzare servizi esterni**, per i seguenti motivi:~~
 
-1. non dipendere dalla disponibilità di un servizio sul quale non abbiamo alcun controllo
-2. evitare i costi dei servizi esterni di invio mail, che oltretutto crescono con il numero di invii
-3. evitare di condividere gli indirizzi email degli iscritti con aziende terze
+1. ~~non dipendere dalla disponibilità di un servizio sul quale non abbiamo alcun controllo~~
+2. ~~evitare i costi dei servizi esterni di invio mail, che oltretutto crescono con il numero di invii~~
+3. ~~evitare di condividere gli indirizzi email degli iscritti con aziende terze~~
+
+Purtroppo è risultato IMPOSSIBILE ottenere un buon tasso di delivery con l'SMTP del server.
+L'invio avviene dunque tramite il servizio ~~[Postmark](https://postmarkapp.com/)~~ [SMTP2Go](https://www.smtp2go.com/).
 
 
 ## Iscrizione alla newsletter
@@ -83,7 +87,9 @@ Tale comando viene eseguito quotidianamente via *cron* ([staging](https://github
 
 ## Rilevazione dei click sui link
 
-Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere**. Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
+Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere**.
+
+Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
 
 Allo scopo, ogni link presente nella newsletter è inserito come parametro della pagina `/newsletter/open`. Tale pagina riceve due parametri:
 
@@ -141,3 +147,17 @@ Come parte della procedura di dis-iscrizione vengono inoltre eliminate tutte le 
 - il markup del template HTML è scritto in [📚 Inky](https://get.foundation/emails/docs/inky.html)
 - il CSS viene spostato *in-line* tramite il filtro `inline_css`, fornito da `twig/cssinliner-extra`
 - il post-processing ("building") di Inky in HTML viene svolto dal filtro Twig `inky_to_html`, fornito da `twig/inky-extra`
+
+
+## Spotlight per la versione web
+
+L'articolo pubblicato sul sito corrispondente a ogni newsletter richiede uno spotlight. La procedura di generazione sceglie automaticamente un'immagine fra quelle definitine in [Image::IDS_NEWSLETTER_SPOTLIGHT](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php).
+
+Tali immagini sono generate tramite AI:
+
+Caricare questa immagine:  https://turbolab.it/images/logo/turbolab.it.png
+
+> Genera l'immagine di un'ipotetica newsletter cartacea spedita dal sito "TurboLab.it". Come logo/titolo, usa l'immagine che ti allego.
+> Il tema della newsletter deve essere "Guide PC, Windows, Linux, Android e Bitcoin". Assicurati che siano presenti immagini di computer, laptop e tablet dall'aspetto moderno. Presta la MASSIMA ATTENZIONE a non distorcere i caratteri.
+> La newsletter è appoggiata sul tavolo di una scrivania da ufficio, con una luce calda e accogliente.
+> Le dimensioni complessive dell'immagine generata devono essere esattamente 1920x1080 pixel. L'immagine generata deve essere fotorealistica e ad alta definizione.
