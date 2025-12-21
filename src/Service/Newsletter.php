@@ -284,7 +284,7 @@ class Newsletter extends Mailer
 
     public function loadExistingWebArticle() : ArticleEditor
     {
-        return $this->articleOnTheWebEditor;//->loadExistingNewsletterOnTheWeb();
+        return $this->articleOnTheWebEditor->loadExistingNewsletterOnTheWeb();
     }
 
 

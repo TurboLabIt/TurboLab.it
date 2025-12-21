@@ -16,7 +16,6 @@ use App\ServiceCollection\Cms\ArticleEditorCollection;
 use App\ServiceCollection\UserCollection;
 use DateTime;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
