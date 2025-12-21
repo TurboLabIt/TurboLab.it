@@ -1,7 +1,7 @@
 <?php
 namespace App\Exception;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use TurboLabIt\ServiceEntityPlusBundle\Exception\ItemNotFoundException;
 
 
-class FileNotFoundException extends NotFoundHttpException {}
+class FileNotFoundException extends ItemNotFoundException {}
