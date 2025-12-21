@@ -43,7 +43,7 @@ class User extends BaseServiceEntity
 
     public function setEntity(?UserEntity $entity = null) : static
     {
-        $this->entity = $entity;
+        $this->entity = $entity ?? new (static::ENTITY_CLASS)();
         return $this;
     }
 

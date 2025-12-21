@@ -44,15 +44,14 @@ class ChristmasArticleGeneratorCommand extends AbstractBaseCommand
     protected Article $articleNewsletter;
     protected Article $articleJoinTli;
 
-    protected ArticleEditor $articleEditor;
-
 
     public function __construct(
         protected Factory $factory, protected ArticleEditorCollection $articlesEditor,
         protected PostRepository $forumPostRepository, protected TopicRepository $forumTopicRepository,
         protected UserRepository $userRepository,
         protected Environment $twig, protected User $articleAuthor, protected Tag $tagTli,
-        protected ArticleEditorCollection $articleEditorCollection, protected Image $spotlight,
+        protected ArticleEditorCollection $articleEditorCollection,
+        protected Image $spotlight, protected ArticleEditor $articleEditor,
         protected Newsletter $newsletter
     )
     {

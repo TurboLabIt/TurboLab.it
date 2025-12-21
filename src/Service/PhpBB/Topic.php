@@ -78,7 +78,7 @@ class Topic extends BaseServiceEntity
 
     public function setEntity(?TopicEntity $entity = null) : static
     {
-        $this->entity = $entity;
+        $this->entity = $entity ?? new (static::ENTITY_CLASS)();
         return $this;
     }
 

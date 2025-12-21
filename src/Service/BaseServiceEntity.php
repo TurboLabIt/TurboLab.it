@@ -59,10 +59,10 @@ abstract class BaseServiceEntity
     public function setEntity(?SpecificTypeEntity $entity = null) : static
     {
         if( property_exists($this, 'localViewCount') ) {
-            $this->localViewCount = $entity->getViews();
+            $this->localViewCount = $entity?->getViews() ?? 0;
         }
 
-        $this->entity = $entity;
+        $this->entity = $entity ?? new (static::ENTITY_CLASS)();
         return $this;
     }
 

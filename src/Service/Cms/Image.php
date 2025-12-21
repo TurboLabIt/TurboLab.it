@@ -114,7 +114,7 @@ class Image extends BaseCmsService
 
     public function setEntity(?ImageEntity $entity = null) : static
     {
-        $this->entity = $entity;
+        $this->entity = $entity ?? new (static::ENTITY_CLASS)();
         return $this;
     }
 

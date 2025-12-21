@@ -92,8 +92,8 @@ class Article extends BaseCmsService
 
     public function setEntity(?ArticleEntity $entity = null) : static
     {
-        $this->localViewCount   = $entity->getViews();
-        $this->entity           = $entity;
+        $this->localViewCount   = $entity?->getViews() ?? 0;
+        $this->entity           = $entity ?? new (static::ENTITY_CLASS)();
 
         return $this;
     }

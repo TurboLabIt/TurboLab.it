@@ -150,6 +150,7 @@ class FileEditor extends File
     {
         parent::setEntity($entity);
         $this->previousFilePath = empty( $entity->getId() ) ? null : $this->getOriginalFilePath();
+
         return $this;
     }
 

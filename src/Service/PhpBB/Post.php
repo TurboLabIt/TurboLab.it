@@ -37,7 +37,7 @@ class Post extends BaseServiceEntity
 
     public function setEntity(?PostEntity $entity = null) : static
     {
-        $this->entity = $entity;
+        $this->entity = $entity ?? new (static::ENTITY_CLASS)();
         return $this;
     }
 
