@@ -85,7 +85,7 @@
             <strong>
                 <a href="https://turbolab.it/forum/memberlist.php?mode=viewprofile&amp;u={{ User.id }}">{{ User.username }}</a>
             </strong>
-            - {{ User.postNum|friendlyNum }} messaggi
+            - {{ User.cachedData('postNum')|friendlyNum }} messaggi
         </li>
     {% endfor %}
 </ul>

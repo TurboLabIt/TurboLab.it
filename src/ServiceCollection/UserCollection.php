@@ -125,7 +125,7 @@ class UserCollection extends BaseServiceEntityCollection
         $arrUsersByPostsNum = [];
         $this->iterate(function(User $user) use (&$arrUsersByPostsNum) {
 
-            $postNum = $user->getPostNum();
+            $postNum = $user->getCachedData('postNum') ?? $user->getPostNum();
 
             if( empty($postNum) ) {
                 return true;

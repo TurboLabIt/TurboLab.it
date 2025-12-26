@@ -309,7 +309,7 @@ class UserRepository extends BasePhpBBRepository
 
             $userId = $user->getId();
             $postsOfTheYearNum = $arrPostersOfTheYear[$userId]['num'];
-            $user->setPostNum($postsOfTheYearNum);
+            $user->setCachedData('postNum', $postsOfTheYearNum);
         }
 
         return $arrUsers;

@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use TurboLabIt\ServiceEntityPlusBundle\Trait\CacheableDataTrait;
 
 
 /**
@@ -28,6 +29,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 // the mapping is handled by https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Doctrine/TLINamingStrategy.php
 class User extends BaseEntity implements UserInterface
 {
+    use CacheableDataTrait;
+
     const string TLI_CLASS      = 'user';
     const string ROLE_ADMIN     = 'ROLE_ADMIN';
     const string ROLE_EDITOR    = 'ROLE_EDITOR';
