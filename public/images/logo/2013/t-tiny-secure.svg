@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 100 100">
+    <title>TurboLab.it</title>
+    <g transform="translate(0.625 0.625) scale(1.15) translate(-10 -10)">
+        <path d="M 15,10 L 95,10 L 91,30 L 61,30 L 49,90 L 29,90 L 41,30 L 11,30 Z" fill="#C90000" stroke="black" stroke-width="1" stroke-linejoin="round"/>
+    </g>
+</svg>

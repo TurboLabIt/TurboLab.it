@@ -16,7 +16,7 @@
 ````
 
 
-## Icona TTTT
+## Icona TurboLab.it
 
 ![Icona di TurboLab.it](https://turbolab.it/images/logo/icon.png)
 
@@ -28,3 +28,14 @@
 [img]https://turbolab.it/images/logo/icon.png[/img]
 ````
 
+**SVG Tiny Portable/Secure (SVG Tiny-PS)**
+
+![Icona di TurboLab.it](https://turbolab.it/images/logo/icon.svg)
+
+````
+![Icona TurboLab.it](https://turbolab.it/images/logo/icon.svg)
+````
+
+````
+[img]https://turbolab.it/images/logo/icon.svg[/img]
+````
