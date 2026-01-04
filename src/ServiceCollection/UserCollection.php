@@ -25,8 +25,8 @@ class UserCollection extends BaseServiceEntityCollection
         ];
 
         $arrTestAddresses = [
-            // https://www.mail-tester.com/test-m8dwvnnnt
-            "test-m8dwvnnnt@srv1.mail-tester.com",
+            // https://www.mail-tester.com/test-tli
+            "test-tli@srv1.mail-tester.com",
             // https://mxtoolbox.com/deliverability
             "ping@tools.mxtoolbox.com",
             // https://app.mailgenius.com/spam-test/6e3913
