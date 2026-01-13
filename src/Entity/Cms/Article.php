@@ -60,13 +60,20 @@ class Article extends BaseCmsEntity
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $files;
 
+    /**
+     * @var Collection<int, ArticleGroup>
+     */
+    #[ORM\OneToMany(targetEntity: ArticleGroup::class, mappedBy: 'article', orphanRemoval: true)]
+    private Collection $articleGroups;
+
 
     public function __construct()
     {
-        $this->authors  = new ArrayCollection();
-        $this->images   = new ArrayCollection();
-        $this->tags     = new ArrayCollection();
-        $this->files    = new ArrayCollection();
+        $this->authors          = new ArrayCollection();
+        $this->images           = new ArrayCollection();
+        $this->tags             = new ArrayCollection();
+        $this->files            = new ArrayCollection();
+        $this->articleGroups    = new ArrayCollection();
     }
 
 
@@ -287,6 +294,33 @@ class Article extends BaseCmsEntity
 
                 $this->files->removeElement($item);
                 $item->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleGroup>
+     */
+    public function getArticleGroups() : Collection { return $this->articleGroups; }
+
+    public function addArticleGroup(ArticleGroup $articleGroup): static
+    {
+        if (!$this->articleGroups->contains($articleGroup)) {
+            $this->articleGroups->add($articleGroup);
+            $articleGroup->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticleGroup(ArticleGroup $articleGroup): static
+    {
+        if ($this->articleGroups->removeElement($articleGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($articleGroup->getArticle() === $this) {
+                $articleGroup->setArticle(null);
             }
         }
 
