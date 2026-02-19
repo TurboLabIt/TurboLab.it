@@ -38,14 +38,14 @@ LOG_PATH=/var/www/turbolab.it/var/log/cron_
 ## every hour: dump server configuration for the info page
 0 * * * * root bash ${SCRIPT_DIR}server-info-dump.sh >> ${LOG_PATH}server-info-dump.sh.log 2>&1
 
+## every hour: run the cleaner
+7 * * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
+
 ## every xx hours: attach+remove images|files to articles, delete unused images|files
 3 */3 * * * root bash ${SCRIPT_DIR}uploaded-assets-maintenance.sh >> ${LOG_PATH}uploaded-assets-maintenance.sh.log 2>&1
 
 ## every night: tag aggregator
 30 23 * * * root bash ${SCRIPT_DIR}tag-aggregator.sh >> ${LOG_PATH}tag-aggregator.sh.log 2>&1
-
-## mid-night and mid-day: run the cleaner (also: clear "controller" (app) cache only)
-1 0,12 * * * root bash ${SCRIPT_DIR}cleaner.sh >> ${LOG_PATH}cleaner.sh.log 2>&1
 
 ## every night: total meilisearch reindex
 0 2 * * * root bash ${SCRIPT_DIR}reindex.sh >> ${LOG_PATH}reindex.sh.log 2>&1
