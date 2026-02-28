@@ -137,7 +137,10 @@ class User extends BaseServiceEntity
             return null;
         }
 
-        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bio);
+        $bioDecoded = HtmlProcessorBase::decode($bio);
+        $bioEncoded = htmlspecialchars($bioDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+
+        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bioEncoded);
         return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
     }
 
