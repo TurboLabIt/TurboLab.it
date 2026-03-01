@@ -4,6 +4,7 @@ namespace App\Repository\PhpBB;
 use App\Entity\PhpBB\User;
 use App\Service\Cms\Article;
 use DateTime;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 use Doctrine\Persistence\ManagerRegistry;
@@ -206,11 +207,13 @@ class UserRepository extends BasePhpBBRepository
         }
 
         // mark all the watches as "notified, not viewed"
-        $csvIds = implode(",", $arrUserIds);
         foreach(["topics_watch", "forums_watch"] as $watchTableName) {
 
             $fullyQualifiedTableName = $this->arrConfig["forumDatabaseName"] . '.' . static::TABLE_PREFIX . $watchTableName;
-            $this->sqlQueryExecute("UPDATE $fullyQualifiedTableName SET notify_status = 1 WHERE user_id IN($csvIds)");
+            $this->sqlQueryExecute(
+                "UPDATE $fullyQualifiedTableName SET notify_status = 1 WHERE user_id IN(:userIds)",
+                ['userIds' => $arrUserIds], ['userIds' => ArrayParameterType::INTEGER]
+            );
         }
 
         return $this;
