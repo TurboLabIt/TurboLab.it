@@ -3,6 +3,7 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\Tag;
 use App\Repository\BaseRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 
 
@@ -109,13 +110,18 @@ class TagRepository extends BaseRepository
 
     public function findPopular(?int $num = null) : array
     {
-        $sqlQuery = "SELECT tag_id FROM article_tag GROUP BY tag_id HAVING COUNT(1) > 1 ORDER BY COUNT(1) DESC ";
+        $arrParams      = [];
+        $arrParamsTypes = [];
+        $sqlQuery       = "SELECT tag_id FROM article_tag GROUP BY tag_id HAVING COUNT(1) > 1 ORDER BY COUNT(1) DESC";
+
         if( !empty($num) ) {
-            // cannot be passed as :limit in PDO
-            $sqlQuery .= "LIMIT $num";
+
+            $sqlQuery .= " LIMIT :limit";
+            $arrParams["limit"]         = $num;
+            $arrParamsTypes["limit"]    = ParameterType::INTEGER;
         }
 
-        $arrIds = $this->getIdsFromSqlQuery($sqlQuery);
+        $arrIds = $this->getIdsFromSqlQuery($sqlQuery, $arrParams, $arrParamsTypes);
 
         return $this->getById($arrIds);
     }

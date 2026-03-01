@@ -6,6 +6,7 @@ use App\Entity\PhpBB\Topic;
 use App\Service\Newsletter;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use http\Exception\InvalidArgumentException;
@@ -51,8 +52,9 @@ class TopicRepository extends BasePhpBBRepository
             $this->getQueryBuilderCompleteFromSqlQuery(
                 $this->getSqlSelectQuery() . "
                 ORDER BY topic_last_post_time DESC
-                LIMIT $num
-            ");
+                LIMIT :limit",
+                ['limit' => $num], ["limit" => ParameterType::INTEGER]
+            );
 
         if( empty($qb) ) {
             return [];
@@ -100,9 +102,9 @@ class TopicRepository extends BasePhpBBRepository
         $qb =
             $this->getQueryBuilderCompleteFromSqlQuery(
                 $this->getSqlSelectQuery() . "
-                ORDER BY
-                    RAND() LIMIT $num
-            ");
+                ORDER BY RAND() LIMIT :limit",
+                ['limit' => $num], ["limit" => ParameterType::INTEGER]
+            );
 
         if( empty($qb) ) {
             return [];

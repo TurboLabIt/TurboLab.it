@@ -252,7 +252,8 @@ class UserRepository extends BasePhpBBRepository
                     user_id
                 ORDER BY
                     COUNT(1) DESC
-                LIMIT ' . $num
+                LIMIT :limit',
+                ['limit' => $num], ["limit" => ParameterType::INTEGER]
             );
 
         if( empty($arrIds) ) {
