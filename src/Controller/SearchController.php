@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Exception\AjaxOnlyException;
 use Exception;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,7 +44,14 @@ class SearchController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/ajax/serp/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax', priority: 1)]
     public function performSearch(string $termToSearch = '') : Response
     {
-        $this->ajaxOnly();
+        try {
+            $this->ajaxOnly();
+
+        } catch(AjaxOnlyException){
+
+            return $this->redirectToRoute('app_search', ['termToSearch' => $termToSearch]);
+        }
+
 
         try {
 

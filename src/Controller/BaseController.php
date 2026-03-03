@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Exception\AjaxOnlyException;
 use App\Exception\NotImplementedException;
 use App\Service\Cms\Paginator;
 use App\Service\Factory;
@@ -146,7 +147,7 @@ abstract class BaseController extends AbstractController
 
 
         if( !$this->request->isXmlHttpRequest() ) {
-            throw new BadRequestException('This page can only be requested via AJAX');
+            throw new AjaxOnlyException();
         }
     }
 
