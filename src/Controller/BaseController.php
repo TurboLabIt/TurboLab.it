@@ -135,13 +135,10 @@ abstract class BaseController extends AbstractController
     protected function ajaxOnly() : void
     {
         if(
+            $this->isDevOrTest() ||
             $this->request->headers->get('bypass-ajax-only-check-token') ==
             $this->getParameter('bypass_ajax_only_check_token')
         ) {
-            return;
-        }
-
-        if( $this->isDevOrTest() ) {
             return;
         }
 
