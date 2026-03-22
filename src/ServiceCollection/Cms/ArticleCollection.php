@@ -9,12 +9,12 @@ use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Factory;
 use DateInvalidOperationException;
 use DateTime;
-use Meilisearch\Bundle\SearchService;
+use Meilisearch\Bundle\SearchManagerInterface;
 
 
 class ArticleCollection extends BaseArticleCollection
 {
-    public function __construct(Factory $factory, protected SearchService $searchService)
+    public function __construct(Factory $factory, protected SearchManagerInterface $searchService)
     {
         parent::__construct($factory);
     }
@@ -182,15 +182,12 @@ class ArticleCollection extends BaseArticleCollection
         $termToSearchNormalized     = ArticleSearchNormalizer::normalizeForIndexing($termToSearch);
         $termToSearchNoStopWords    = $this->factory->getStopWords()->removeFromSting($termToSearchNormalized);
 
-        $arrArticles =
-            $this->searchService->search(
-                $this->factory->getEntityManager(), static::ENTITY_CLASS, $termToSearchNoStopWords
-            );
+        $arrSearchResult = $this->searchService->search(static::ENTITY_CLASS, $termToSearchNoStopWords);
 
         // we could setEntities($arrArticles) directly...
         // ... but then there would be no tags loaded => n+1 queries to generate the URLs
         $arrIds = [];
-        foreach($arrArticles as $article) {
+        foreach($arrSearchResult->getHits() as $article) {
             $arrIds[] = $article->getId();
         }
 

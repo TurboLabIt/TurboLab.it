@@ -31,7 +31,7 @@ use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Meilisearch\Bundle\SearchService;
+use Meilisearch\Bundle\SearchManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -52,7 +52,7 @@ class Factory
     //<editor-fold defaultstate="collapsed" desc="*** __construct ***">
     public function __construct(
         protected EntityManagerInterface $em, protected ProjectDir $projectDir, protected Security $security,
-        protected SearchService $searchService,
+        protected SearchManagerInterface $searchService,
 
         protected StopWords $stopWords,
         protected UrlGeneratorInterface $urlGenerator,
