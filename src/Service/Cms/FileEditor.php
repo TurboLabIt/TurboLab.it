@@ -86,20 +86,13 @@ class FileEditor extends File
 
     public function delete(bool $persist = true) : void
     {
-        // TODO FileEditor::delete()
-        foreach(static::SIZES as $size) {
-
-            $filePath = $this->getBuiltFilePath($size, false);
-            if( file_exists($filePath) ) {
-                unlink($filePath);
-            }
+        // physical file on disk
+        $filePath = $this->getOriginalFilePath();
+        if( file_exists($filePath) ) {
+            unlink($filePath);
         }
 
-
-        $filePath = $this->getOriginalFilePath();
-        unlink($filePath);
-
-
+        // db entity
         $em = $this->factory->getEntityManager();
         $em->remove($this->entity);
 

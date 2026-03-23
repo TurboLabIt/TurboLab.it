@@ -352,10 +352,9 @@ class ArticleEditor extends Article
     public function removeFile(File|FileEntity $file) : static
     {
         $fileEntity = $file instanceof File ? $file->getEntity() : $file;
+        $junction   = (new ArticleFile())->setFile($fileEntity);
 
-        $this->entity->removeFile(
-            (new ArticleFile())->setFile($fileEntity)
-        );
+        $this->entity->removeFile($junction);
 
         return $this;
     }

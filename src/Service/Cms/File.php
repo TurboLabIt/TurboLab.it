@@ -80,6 +80,7 @@ class File extends BaseCmsService
     public function isExternal() : bool { return !$this->isLocal(); }
     //</editor-fold>
 
+
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 File type ***">
     public function getMimeType() : ?string
     {

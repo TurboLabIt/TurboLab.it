@@ -126,7 +126,19 @@ class FileEditController extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
             $fileEditor = $this->factory->createFileEditor()->load($fileId);
 
-            $this->articleEditor->removeFile($fileEditor);
+            $arrUsedBy = $fileEditor->getArticles();
+
+            // this file is linked by 0 or 1 article ➡ delete the file directly
+            if( count($arrUsedBy) < 2 ) {
+
+                $fileEditor->delete();
+
+            // this file is linked by 2 or more articles ➡ just detach from the current article
+            } else {
+
+                $this->articleEditor->removeFile($fileEditor);
+            }
+
 
             // there is no need to save() the article here
             $this->factory->getEntityManager()->flush();
