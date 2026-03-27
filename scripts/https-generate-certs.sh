@@ -8,6 +8,7 @@ if [ "$APP_ENV" = "prod" ]; then
   sudo certbot certonly --email info@turbolab.it --no-eff-email --agree-tos --cert-name turbolab.it --webroot -w ${WEBROOT_DIR} -d turbolab.it -d www.turbolab.it
   sudo certbot certonly --email info@turbolab.it --no-eff-email --agree-tos --cert-name turbolab.it-next-gateway --webroot -w /var/www/proxyall-webroot -d next.turbolab.it
   sudo certbot certonly --email info@turbolab.it --no-eff-email --agree-tos --cert-name turbolab.it-bug --webroot -w /var/www/proxyall-webroot -d bug.turbolab.it
+  sudo certbot certonly --email info@turbolab.it --no-eff-email --agree-tos --cert-name turbolab.it-wsu --webroot -w /var/www/proxyall-webroot -d wsu.turbolab.it
 
 elif [ "$APP_ENV" = "staging" ]; then
 
