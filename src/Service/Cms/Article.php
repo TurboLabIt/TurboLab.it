@@ -44,6 +44,7 @@ class Article extends BaseCmsService
     const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
     const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
     const int ID_EMULE_GUIDE        = 3020;     // 👀 https://turbolab.it/3020
+    const int ID_POLICY_AI          = 4524;     // 👀 https://turbolab.it/4524
 
     use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentsTopicStatusesTrait, VisitableServiceTrait;
 
