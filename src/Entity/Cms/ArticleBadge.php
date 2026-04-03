@@ -1,8 +1,8 @@
 <?php
 namespace App\Entity\Cms;
 
+use App\Entity\PhpBB\User;
 use App\Repository\Cms\ArticleBadgeRepository;
-use App\Trait\ArticleRelationableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -18,7 +18,9 @@ class ArticleBadge extends BaseCmsEntity
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected ?Badge $badge = null;
 
-    use ArticleRelationableEntityTrait;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(referencedColumnName: 'user_id', nullable: false)]
+    protected ?User $user = null;
 
 
     public function getBadge() : ?Badge { return $this->badge; }
@@ -26,6 +28,24 @@ class ArticleBadge extends BaseCmsEntity
     public function setBadge(?Badge $badge) : static
     {
         $this->badge = $badge;
+        return $this;
+    }
+
+
+    public function getArticle() : ?Article { return $this->article; }
+
+    public function setArticle(?Article $article) : static
+    {
+        $this->article = $article;
+        return $this;
+    }
+
+
+    public function getUser() : ?User { return $this->user; }
+
+    public function setUser(?User $user) : static
+    {
+        $this->user = $user;
         return $this;
     }
 }
