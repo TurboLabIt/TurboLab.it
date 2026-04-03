@@ -514,6 +514,13 @@ class Article extends BaseCmsService
         }
 
         $this->arrBadges = [];
+        foreach($this->entity->getBadges() as $junction) {
+
+            $badge  = $junction->getBadge();
+            $badgeId= (string)$badge->getId();
+            $this->arrBadges[$badgeId] = $badge;
+        }
+
 
         $tags = $this->getTags();
 

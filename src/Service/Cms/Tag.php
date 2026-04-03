@@ -243,8 +243,8 @@ class Tag extends BaseCmsService
         foreach($junctions as $junction) {
 
             $badge  = $junction->getBadge();
-            $badeId = (string)$badge->getId();
-            $this->arrBadges[$badeId] = $badge;
+            $badgeId = (string)$badge->getId();
+            $this->arrBadges[$badgeId] = $badge;
         }
 
         return $this->arrBadges;

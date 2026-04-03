@@ -1,8 +1,8 @@
 <?php
 namespace App\Entity\Cms;
 
-use App\Service\Cms\Tag as TagService;
 use App\Repository\Cms\ArticleRepository;
+use App\Service\Cms\Tag as TagService;
 use App\Service\Newsletter;
 use App\Trait\AbstractableEntityTrait;
 use App\Trait\AdsableEntityTrait;
@@ -44,27 +44,27 @@ class Article extends BaseCmsEntity
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?Image $spotlight = null;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleAuthor::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleImage::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleTag::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     //#[ORM\OrderBy(['ranking' => 'ASC'])] no! Tags are order via code, below (can also be re-ordered at runtime)
     protected Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleFile::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $files;
 
-    /**
-     * @var Collection<int, ArticleGroup>
-     */
-    #[ORM\OneToMany(targetEntity: ArticleGroup::class, mappedBy: 'article', orphanRemoval: true)]
-    private Collection $articleGroups;
+    #[ORM\OneToMany(targetEntity: ArticleGroup::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected Collection $articleGroups;
+
+    #[ORM\OneToMany(targetEntity: ArticleBadge::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $badges;
 
 
     public function __construct()
@@ -74,6 +74,7 @@ class Article extends BaseCmsEntity
         $this->tags             = new ArrayCollection();
         $this->files            = new ArrayCollection();
         $this->articleGroups    = new ArrayCollection();
+        $this->badges           = new ArrayCollection();
     }
 
 
@@ -321,6 +322,33 @@ class Article extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($articleGroup->getArticle() === $this) {
                 $articleGroup->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleBadge>
+     */
+    public function getBadges() : Collection { return $this->badges; }
+
+    public function addBadge(ArticleBadge $badge) : static
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
+            $badge->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(ArticleBadge $badge) : static
+    {
+        if ($this->badges->removeElement($badge)) {
+            // set the owning side to null (unless already changed)
+            if ($badge->getArticle() === $this) {
+                $badge->setArticle(null);
             }
         }
 

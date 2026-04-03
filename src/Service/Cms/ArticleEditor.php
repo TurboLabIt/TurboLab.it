@@ -2,6 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\ArticleAuthor;
+use App\Entity\Cms\ArticleBadge;
 use App\Entity\Cms\ArticleFile;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
@@ -355,6 +356,42 @@ class ArticleEditor extends Article
         $junction   = (new ArticleFile())->setFile($fileEntity);
 
         $this->entity->removeFile($junction);
+
+        return $this;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 📎 Badge ***">
+    public function addBadge(Badge|BadgeEntity $badge, User $author) : static
+    {
+        $badgeEntity    = $badge instanceof Badge ? $badge->getEntity() : $badge;
+        $authorEntity   = $author instanceof User ? $author->getEntity() : $author;
+
+        $this->entity->addBadge(
+            (new ArticleBadge())
+                ->setBadge($badgeEntity)
+                ->setUser($authorEntity)
+        );
+
+        return $this;
+    }
+
+    public function addBadges(iterable $badges, User $author) : static
+    {
+        foreach($badges as $badge) {
+            $this->addBadge($badge, $author);
+        }
+
+        return $this;
+    }
+
+
+    public function removeBadge(Badge|BadgeEntity $badge) : static
+    {
+        $badgeEntity = $badge instanceof Badge ? $badge->getEntity() : $badge;
+        $junction   = (new ArticleBadge())->setBadge($badgeEntity);
+
+        $this->entity->removeBadge($junction);
 
         return $this;
     }

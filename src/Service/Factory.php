@@ -39,6 +39,8 @@ use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User as UserService;
 use App\ServiceCollection\UserCollection;
+use App\Entity\Cms\Badge as BadgeEntity;
+use App\Service\Cms\Badge as BadgeService;
 
 
 class Factory
@@ -296,6 +298,18 @@ class Factory
 
         if( !empty($file) ) {
             $service->setFile($file);
+        }
+
+        return $service;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** Badge ***">
+    public function createBadge(?BadgeEntity $entity = null) : BadgeService
+    {
+        $service = new BadgeService($this);
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
         }
 
         return $service;

@@ -2,6 +2,7 @@
 namespace App\Controller\Editor;
 
 use App\Service\Cms\Article;
+use App\Service\Cms\Badge;
 use App\Service\Cms\Tag;
 use App\Service\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,7 @@ class ArticleNewController extends ArticleEditBaseController
 {
     const string TITLE_FIELD_NAME       = 'new-article-title';
     const string FORMAT_FIELD_NAME      = 'new-article-format';
+    const string AI_CHECKBOX_FIELD_NAME = 'ai';
     const string CSRF_TOKEN_ID          = self::TITLE_FIELD_NAME;
 
 
@@ -113,8 +115,15 @@ class ArticleNewController extends ArticleEditBaseController
         $this->articleEditor
             ->setFormat($newArticleFormat)
             ->addAuthor($newArticleAuthor)
-            ->autotag($newArticleAuthor)
-            ->save();
+            ->autotag($newArticleAuthor);
+
+        if( $this->request->request->get(static::AI_CHECKBOX_FIELD_NAME) ) {
+
+            $aiBadge = $this->factory->createBadge()->load(Badge::ID_AI);
+            $this->articleEditor->addBadge($aiBadge, $newArticleAuthor);
+        }
+
+        $this->articleEditor->save();
 
         return $this->redirect( $this->articleEditor->getUrl() );
     }

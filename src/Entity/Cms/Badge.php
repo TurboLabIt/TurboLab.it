@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
 class Badge extends BaseCmsEntity
 {
+    const string TLI_CLASS = 'badge';
+
     use TitleableEntityTrait, AbstractableEntityTrait, BodyableEntityTrait;
 
     #[ORM\Column(length: 1024, nullable: true)]
@@ -24,8 +26,15 @@ class Badge extends BaseCmsEntity
     #[ORM\OneToMany(mappedBy: 'badge', targetEntity: TagBadge::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $tags;
 
+    #[ORM\OneToMany(targetEntity: ArticleBadge::class, mappedBy: 'badge', orphanRemoval: true)]
+    private Collection $articles;
 
-    public function __construct() { $this->tags = new ArrayCollection(); }
+
+    public function __construct()
+    {
+        $this->tags     = new ArrayCollection();
+        $this->articles = new ArrayCollection();
+    }
 
 
     public function getImageUrl() : ?string { return $this->imageUrl; }
@@ -73,6 +82,33 @@ class Badge extends BaseCmsEntity
             // set the owning side to null (unless already changed)
             if ($tag->getBadge() === $this) {
                 $tag->setBadge(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleBadge>
+     */
+    public function getArticles() : Collection { return $this->articles; }
+
+    public function addArticle(ArticleBadge $article): static
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setBadge($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(ArticleBadge $article) : static
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getBadge() === $this) {
+                $article->setBadge(null);
             }
         }
 
