@@ -49,6 +49,11 @@ export default class TliLinkArticle extends Plugin {
 
 jQuery(function() {
 
+    function setModalControlsDisabled(modalFrame, disabled) {
+        modalFrame.find('.tli-link-article-search-input, .tli-link-article-search-btn, input[name="article-format"], #tli-link-article-mine-only')
+            .prop('disabled', disabled);
+    }
+
     function performSearch(modalFrame) {
 
         const query = modalFrame.find('.tli-link-article-search-input').val().trim();
@@ -63,11 +68,24 @@ jQuery(function() {
             '</div>'
         );
 
-        const endpoint = '/cerca/ajax/link-article/' + encodeURIComponent(query);
+        setModalControlsDisabled(modalFrame, true);
+
+        const format    = modalFrame.find('input[name="article-format"]:checked').val() || '';
+        const onlyMine  = modalFrame.find('#tli-link-article-mine-only').is(':checked') ? '1' : '';
+
+        let endpoint = '/cerca/ajax/link-article/' + encodeURIComponent(query);
+        const params = new URLSearchParams();
+        if( format )    params.set('format', format);
+        if( onlyMine )  params.set('only-mine', '1');
+        const qs = params.toString();
+        if( qs ) endpoint += '?' + qs;
+
         jQuery.get(endpoint, function(html) {
             resultsContainer.html(html);
         }).fail(function(jqXHR) {
             resultsContainer.html('<p class="alert alert-danger">' + (jqXHR.responseText || 'Errore durante la ricerca') + '</p>');
+        }).always(function() {
+            setModalControlsDisabled(modalFrame, false);
         });
     }
 
@@ -83,6 +101,11 @@ jQuery(function() {
             event.preventDefault();
             performSearch( jQuery(this).closest('.modal') );
         }
+    });
+
+    // Auto-search on filter change
+    jQuery(document).on('change', '#tli-link-article-modal input[name="article-format"], #tli-link-article-mine-only', function() {
+        performSearch( jQuery(this).closest('.modal') );
     });
 
 

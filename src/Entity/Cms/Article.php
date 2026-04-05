@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -78,7 +79,20 @@ class Article extends BaseCmsEntity
     }
 
 
+    #[Groups(['searchable'])]
     public function getFormat() : ?int { return $this->format; }
+
+
+    #[Groups(['searchable'])]
+    public function getAuthorIds() : array
+    {
+        $ids = [];
+        foreach($this->authors as $articleAuthor) {
+            $ids[] = $articleAuthor->getUser()->getId();
+        }
+        return $ids;
+    }
+
 
     public function setFormat(int $format) : static
     {

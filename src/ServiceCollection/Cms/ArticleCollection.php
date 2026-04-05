@@ -178,12 +178,24 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadSerp(string $termToSearch) : static
+    public function loadSerp(string $termToSearch, ?int $format = null, ?int $authorId = null) : static
     {
         $termToSearchNormalized     = ArticleSearchNormalizer::normalizeForIndexing($termToSearch);
         $termToSearchNoStopWords    = $this->factory->getStopWords()->removeFromSting($termToSearchNormalized);
 
-        $arrSearchResult = $this->searchService->search(static::ENTITY_CLASS, $termToSearchNoStopWords);
+        $searchParams = [];
+        $filters = [];
+        if( $format !== null ) {
+            $filters[] = "format = $format";
+        }
+        if( $authorId !== null ) {
+            $filters[] = "authorIds = $authorId";
+        }
+        if( !empty($filters) ) {
+            $searchParams['filter'] = $filters;
+        }
+
+        $arrSearchResult = $this->searchService->search(static::ENTITY_CLASS, $termToSearchNoStopWords, $searchParams);
 
         // we could setEntities($arrArticles) directly...
         // ... but then there would be no tags loaded => n+1 queries to generate the URLs

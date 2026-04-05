@@ -33,6 +33,19 @@ $(document).on('click', '#tli-search-button',  function(event) {
 });
 
 
+// Auto-search on format change
+$(document).on('change', 'input[name="search-format"]', function() {
+    performSearch();
+});
+
+
+function setSearchControlsDisabled(disabled) {
+    SEARCH_INPUT.prop('disabled', disabled);
+    $('#tli-search-button').prop('disabled', disabled);
+    $('input[name="search-format"]').prop('disabled', disabled);
+}
+
+
 function performSearch()
 {
     let term = SEARCH_INPUT.val().trim();
@@ -52,12 +65,11 @@ function performSearch()
 
     let searchContainer = $('#tli-search-container');
     if( searchContainer.hasClass(IN_PROGRESS_CLASS) ) {
-
-        alert('Ricerca in corso. Potrai cercare di nuovo fra un attimo');
         return false;
     }
 
     searchContainer.addClass(IN_PROGRESS_CLASS);
+    setSearchControlsDisabled(true);
 
 
     $('#tli-search-closing-message').addClass('collapse');
@@ -81,9 +93,12 @@ function performSearch()
 
     // ajax data loading
     let url = searchResults.data('url') + '/' + encodeURIComponent(term);
+    let format = $('input[name="search-format"]:checked').val();
+    if( format ) url += '?format=' + format;
     searchResults.load(url, function(responseText, status, xhr){
 
         searchContainer.removeClass(IN_PROGRESS_CLASS);
+        setSearchControlsDisabled(false);
 
         //$('#tli-search-container').get(0).scrollIntoView({behavior: 'smooth'});
         $('#tli-search-closing-message').removeClass('collapse');

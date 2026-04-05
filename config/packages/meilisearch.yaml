@@ -10,3 +10,7 @@ meilisearch:
           class: App\Entity\Cms\Article
           enable_serializer_groups: true
           index_if: isIndexable
+          settings:
+              filterableAttributes:
+                  - format
+                  - authorIds

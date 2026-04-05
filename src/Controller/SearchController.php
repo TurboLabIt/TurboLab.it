@@ -62,7 +62,9 @@ class SearchController extends BaseController
             } else {
 
                 $buildHtmlResult =
-                    $this->cache->get("search_$termToSearch", function(ItemInterface $cacheItem) use($termToSearch) {
+                    $format = $this->request->query->getInt('format');
+                    $cacheKey = "search_{$termToSearch}_f{$format}";
+                    $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($termToSearch) {
 
                         $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results.html.twig');
 
@@ -84,9 +86,11 @@ class SearchController extends BaseController
 
     protected function buildHtml(string $termToSearch, string $twigTemplatePath) : string|Response
     {
+        $format = $this->request->query->getInt('format') ?: null;
+
         return
             $this->twig->render($twigTemplatePath, [
-                'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch)
+                'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format)
             ]);
     }
 
@@ -116,7 +120,14 @@ class SearchController extends BaseController
 
         try {
 
-            $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-link-article.html.twig');
+            $format     = $this->request->query->getInt('format') ?: null;
+            $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser()
+                            ? $this->getUser()->getId() : null;
+
+            $buildHtmlResult =
+                $this->twig->render('search/results-link-article.html.twig', [
+                    'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format, $authorId)
+                ]);
 
         } catch(Exception $ex) {
 
