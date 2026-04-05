@@ -57,7 +57,7 @@ const editorConfig = {
             'findAndReplace', /*'fullscreen'*/
             'tliPublishingStatus'
         ],
-        shouldNotGroupWhenFull: false
+        shouldNotGroupWhenFull: true
     },
     plugins: [
         AutoLink,
