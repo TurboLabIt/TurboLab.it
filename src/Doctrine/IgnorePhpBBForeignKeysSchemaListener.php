@@ -18,7 +18,7 @@ class IgnorePhpBBForeignKeysSchemaListener
             foreach($table->getForeignKeys() as $foreignKey) {
 
                 if( str_contains($foreignKey->getReferencedTableName()->toString(), 'phpbb_') ) {
-                    $table->dropForeignKey($foreignKey->getName());
+                    $table->dropForeignKey($foreignKey->getObjectName()->toString());
                 }
             }
         }
