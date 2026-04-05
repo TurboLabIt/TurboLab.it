@@ -3,7 +3,7 @@
     <div class="tli-link-article-result border-bottom py-2 px-1"
          data-article-url="{{ Article.url }}"
          data-article-title="{{ Article.title|e('html_attr') }}"
-         data-article-spotlight="{{ Article.spotlightUrl('med') }}">
+         data-article-spotlight="{{ Article.spotlightUrl('reg') }}">
 
         <div class="d-flex gap-2 align-items-start mb-1">
             {% if Article.spotlightUrl('min') is not empty %}
