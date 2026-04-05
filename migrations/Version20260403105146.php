@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20260403105146 extends AbstractMigration
 {
-    public function getDescription(): string { return ''; }
+    public function getDescription(): string { return 'article_badge junction + ai badge'; }
 
     public function up(Schema $schema): void
     {
