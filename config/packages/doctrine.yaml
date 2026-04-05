@@ -18,6 +18,11 @@ doctrine:
         validate_xml_mapping: true
         #naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         naming_strategy: App\Doctrine\TLINamingStrategy
+        schema_ignore_classes:
+            - App\Entity\PhpBB\User
+            - App\Entity\PhpBB\Topic
+            - App\Entity\PhpBB\Forum
+            - App\Entity\PhpBB\Post
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
