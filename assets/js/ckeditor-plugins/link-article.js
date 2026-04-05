@@ -30,8 +30,6 @@ export default class TliLinkArticle extends Plugin {
 
                 const modalFrame = jQuery('#tli-link-article-modal');
                 modalFrame.data('selected-text', selectedText.trim());
-                modalFrame.find('.tli-link-article-results').html('');
-                modalFrame.find('.tli-link-article-search-input').val('');
 
                 const articleFormat = jQuery('article').data('format') || 1;
                 modalFrame.find('input[name="article-format"][value="' + articleFormat + '"]').prop('checked', true);
