@@ -47,7 +47,7 @@
                 </div>
 
                 <!-- ARTICLE main content START -->
-                <article class="col-lg-8"
+                <article class="col-lg-8" data-format="{{ Article.format }}"
                     data-save-url="{{ path('app_editor_article_update', {articleId: Article.id}) }}"
                     data-set-publishing-status-url="{{ path('app_editor_article_set-publishing-status', {articleId: Article.id}) }}">
 
@@ -222,6 +222,10 @@
     <!-- ARTICLE bodyMainContent END -->
 
     {% include 'parts/modal-ajax.html.twig' %}
+
+    {% if Article.isEditable %}
+        {% include 'article/editor/link-article-modal.html.twig' %}
+    {% endif %}
 
 {% endblock %}
 

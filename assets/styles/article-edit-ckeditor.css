@@ -13,3 +13,7 @@
 span.html-object-embed.ck-widget {
     width: 100%;
 }
+
+.ck .tli-link-article-icon path {
+    fill: #C90000;
+}

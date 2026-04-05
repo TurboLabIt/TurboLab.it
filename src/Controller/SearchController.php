@@ -98,23 +98,25 @@ class SearchController extends BaseController
 
         try {
 
-            if( !$this->isCachable() ) {
+            $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
 
-                $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
+        } catch(Exception $ex) {
 
-            } else {
+            return $this->textErrorResponse($ex);
+        }
 
-                $buildHtmlResult =
-                    $this->cache->get("search_$termToSearch", function(ItemInterface $cacheItem) use($termToSearch) {
+        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
+    }
 
-                        $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
 
-                        $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                        $cacheItem->tag(["search"]);
+    #[Route('/' . self::SECTION_SLUG . '/ajax/link-article/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax_link-article', priority: 1)]
+    public function performSearchForLinkArticle(string $termToSearch = '') : Response
+    {
+        $this->ajaxOnly();
 
-                        return $buildHtmlResult;
-                    });
-            }
+        try {
+
+            $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-link-article.html.twig');
 
         } catch(Exception $ex) {
 

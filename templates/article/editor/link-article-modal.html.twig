@@ -1,0 +1,45 @@
+<div class="modal fade" id="tli-link-article-modal" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-link"></i>
+                    Cerca e inserisci link ad articoli e notizie di TurboLab.it
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control tli-link-article-search-input"
+                           placeholder="Cerca articoli e notizie da linkare...">
+                    <button class="btn btn-primary tli-link-article-search-btn" type="button">
+                        <i class="fa-solid fa-magnifying-glass"></i> Cerca
+                    </button>
+                </div>
+
+                <div class="mb-3 small d-none">
+                    <span class="me-2">Mostra solo:</span>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="article-format" id="tli-link-article-format-1" value="1">
+                        <label class="form-check-label" for="tli-link-article-format-1">Articoli</label>
+                    </div>
+                    <div class="form-check form-check-inline me-0">
+                        <input class="form-check-input" type="radio" name="article-format" id="tli-link-article-format-2" value="2">
+                        <label class="form-check-label" for="tli-link-article-format-2">Notizie</label>
+                    </div>
+                    <span class="border-start mx-2"></span>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="tli-link-article-mine-only" name="only-mine" value="1">
+                        <label class="form-check-label" for="tli-link-article-mine-only">Scritti da me</label>
+                    </div>
+                </div>
+
+                <div class="tli-link-article-results"></div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
