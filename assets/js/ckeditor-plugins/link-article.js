@@ -11,7 +11,7 @@ export default class TliLinkArticle extends Plugin {
             const view = new ButtonView(locale);
             view.set({
                 icon: $('#tli-toolbar-icons .tli-link-article-icon')[0].outerHTML,
-                tooltip: 'Inserisci link ad articolo',
+                tooltip: 'Inserisci link ad articolo (Ctrl+L)',
                 withText: false
             });
 

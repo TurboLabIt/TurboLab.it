@@ -177,5 +177,13 @@ $(document).on('keydown', function(event) {
         return false;
     }
 
+    // CTRL+K or Command+K (Mac) — Link article
+    if( (event.ctrlKey || event.metaKey) && (event.key === 'l' || event.key === 'L') ) {
+
+        event.preventDefault();
+        $('[data-cke-tooltip-text="Inserisci link ad articolo (Ctrl+L)"]').first().trigger('click');
+        return false;
+    }
+
     return true;
 });
