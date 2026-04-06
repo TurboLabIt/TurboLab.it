@@ -263,50 +263,6 @@ Slider8.slick?.({
 
 //===== BRAND SLICK SLIDER
 
-var Slider9 = jQuery('.trending-news-slider');
-Slider9.slick?.({
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    dots: false,
-    infinite: false,
-    autoplay: false,
-    autoplaySpeed: 3000,
-    arrows: true,
-    prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
-    nextArrow: '<span class="next"><i class="fa fa-angle-right"></i></span>',
-    speed: 1000,
-    responsive: [
-        {
-            breakpoint: 1140,
-            settings: {
-                slidesToShow: 2,
-            }
-        },
-        {
-            breakpoint: 992,
-            settings: {
-                slidesToShow: 2,
-            }
-        },
-        {
-            breakpoint: 768,
-            settings: {
-                arrows: false,
-                slidesToShow: 1,
-            }
-        },
-        {
-            breakpoint: 576,
-            settings: {
-                arrows: false,
-                slidesToShow: 1,
-            }
-        },
-    ]
-});
-
-//===== BRAND SLICK SLIDER
-
 var Slider10 = jQuery('.trending-sidebar-slider');
 Slider10.slick?.({
     slidesToShow: 1,
@@ -339,35 +295,6 @@ Slider10.slick?.({
 
 //===== BRAND SLICK SLIDER
 
-var Slider11 = jQuery('.single-play-post-slider');
-Slider11.slick?.({
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    dots: false,
-    infinite: false,
-    autoplay: false,
-    autoplaySpeed: 3000,
-    arrows: true,
-    prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
-    nextArrow: '<span class="next"><i class="fa fa-angle-right"></i></span>',
-    speed: 1000,
-    responsive: [
-        {
-            breakpoint: 768,
-            settings: {
-                arrows: false,
-                slidesToShow: 1,
-            }
-        },
-        {
-            breakpoint: 576,
-            settings: {
-                arrows: false,
-                slidesToShow: 1,
-            }
-        },
-    ]
-});
 
 
 
