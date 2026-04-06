@@ -453,4 +453,6 @@ class Image extends BaseCmsService
         $this->tempOrder = $tempOrder;
         return $this;
     }
+
+    public function getWatermarkPosition() : int { return $this->entity->getWatermarkPosition(); }
 }

@@ -48,6 +48,10 @@ class ArticleImageGallery extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
 
             $image->load($imageId);
+            if( $image->getWatermarkPosition() == $watermarkPosition ) {
+                return new Response('OK');
+            }
+
             $sentinel
                 ->setImage($image)
                 ->enforceCanEdit();
