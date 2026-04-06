@@ -49,7 +49,7 @@ class ArticleImageGallery extends ArticleEditBaseController
 
             $image->load($imageId);
             if( $image->getWatermarkPosition() == $watermarkPosition ) {
-                return new Response('OK');
+                return new Response('La posizione del watermark è già quella desiderata. Nessuna modifica necessaria');
             }
 
             $sentinel

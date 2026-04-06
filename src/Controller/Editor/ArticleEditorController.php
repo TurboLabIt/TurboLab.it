@@ -63,8 +63,13 @@ class ArticleEditorController extends ArticleEditBaseController
     public function changeFormat(int $articleId, int $format) : JsonResponse|Response
     {
         try {
-            $this
-                ->loadArticleEditor($articleId)
+            $this->loadArticleEditor($articleId);
+
+            if( $this->articleEditor->getFormat() == $format ) {
+                return new Response('Il formato editoriale è già quello desiderato. Nessuna modifica necessaria');
+            }
+
+            $this->articleEditor
                 ->setFormat($format)
                 ->save();
 
