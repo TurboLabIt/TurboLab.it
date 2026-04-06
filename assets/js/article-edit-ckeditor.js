@@ -44,6 +44,7 @@ import TliPublishingStatusPlugin from "./ckeditor-plugins/publishing-status";
 import TliYoutube from "./ckeditor-plugins/youtube";
 import TliLinkArticle from "./ckeditor-plugins/link-article";
 import TliWatermark from "./ckeditor-plugins/watermark";
+import TliFormatPlugin from "./ckeditor-plugins/format";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -57,7 +58,8 @@ const editorConfig = {
             'tliLinkArticle', 'link', 'tliyoutube', '|',
             /*'codeBlock',*/ 'bulletedList', 'numberedList', '|',
             'undo', 'redo', '|',
-            'findAndReplace', /*'fullscreen'*/
+            'findAndReplace', /*'fullscreen'*/ '|',
+            'tliFormat', '|',
             'tliPublishingStatus'
         ],
         shouldNotGroupWhenFull: true
@@ -92,7 +94,8 @@ const editorConfig = {
         TliPublishingStatusPlugin,
         TliYoutube,
         TliLinkArticle,
-        TliWatermark
+        TliWatermark,
+        TliFormatPlugin
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {

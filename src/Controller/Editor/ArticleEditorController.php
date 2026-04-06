@@ -59,6 +59,24 @@ class ArticleEditorController extends ArticleEditBaseController
     }
 
 
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/change-format/{format<[0-9]>}', name: 'app_editor_article_change-format', methods: ['POST'])]
+    public function changeFormat(int $articleId, int $format) : JsonResponse|Response
+    {
+        try {
+            $this
+                ->loadArticleEditor($articleId)
+                ->setFormat($format)
+                ->save();
+
+            return
+                $this
+                    ->clearCachedArticle()
+                    ->jsonOKResponse("Formato editoriale modificato correttamente.");
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/set-publishing-status', name: 'app_editor_article_set-publishing-status', methods: ['POST'])]
     public function setPublishingStatus(int $articleId, ArticlePlanner $articlePlanner) : JsonResponse|Response
     {

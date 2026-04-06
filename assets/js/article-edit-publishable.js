@@ -52,8 +52,6 @@ function setPublishingStatus(status, onSuccessCallback)
         }, 'json')
 
             .fail(function(jqXHR, responseText) {
-
-                StatusBar
-                    .setError(jqXHR, responseText);
+                StatusBar.setError(jqXHR, responseText);
             });
 }
