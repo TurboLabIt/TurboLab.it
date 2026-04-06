@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Exception\AjaxOnlyException;
 use Exception;
-use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -52,80 +51,35 @@ class SearchController extends BaseController
             return $this->redirectToRoute('app_search', ['termToSearch' => $termToSearch]);
         }
 
-
-        try {
-
-            if( !$this->isCachable() ) {
-
-                $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results.html.twig');
-
-            } else {
-
-                $buildHtmlResult =
-                    $format = $this->request->query->getInt('format');
-                    $cacheKey = "search_{$termToSearch}_f{$format}";
-                    $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($termToSearch) {
-
-                        $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results.html.twig');
-
-                        $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                        $cacheItem->tag(["search"]);
-
-                        return $buildHtmlResult;
-                    });
-            }
-
-        } catch(Exception $ex) {
-
-            return $this->textErrorResponse($ex);
-        }
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-    }
-
-
-    protected function buildHtml(string $termToSearch, string $twigTemplatePath) : string|Response
-    {
-        $format = $this->request->query->getInt('format') ?: null;
-
-        return
-            $this->twig->render($twigTemplatePath, [
-                'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format)
-            ]);
+        return $this->searchResultResponse('search/results.html.twig', $termToSearch);
     }
 
 
     #[Route('/' . self::SECTION_SLUG . '/ajax/forum/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax_forum', priority: 1)]
     public function performSearchForForum(string $termToSearch = '') : Response
     {
-        $this->ajaxOnly();
-
-        try {
-
-            $buildHtmlResult = $this->buildHtml($termToSearch, 'search/results-forum.html.twig');
-
-        } catch(Exception $ex) {
-
-            return $this->textErrorResponse($ex);
-        }
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
+        return $this->searchResultResponse('search/results-forum.html.twig', $termToSearch);
     }
 
 
     #[Route('/' . self::SECTION_SLUG . '/ajax/link-article/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax_link-article', priority: 1)]
     public function performSearchForLinkArticle(string $termToSearch = '') : Response
     {
+        return $this->searchResultResponse('search/results-link-article.html.twig', $termToSearch);
+    }
+
+
+    protected function searchResultResponse(string $twigTemplatePath, string $termToSearch = '') : Response
+    {
         $this->ajaxOnly();
 
         try {
 
             $format     = $this->request->query->getInt('format') ?: null;
-            $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser()
-                            ? $this->getUser()->getId() : null;
+            $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser() ? $this->getUser()->getId() : null;
 
-            $buildHtmlResult =
-                $this->twig->render('search/results-link-article.html.twig', [
+            return
+                $this->render($twigTemplatePath, [
                     'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format, $authorId)
                 ]);
 
@@ -133,7 +87,5 @@ class SearchController extends BaseController
 
             return $this->textErrorResponse($ex);
         }
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
     }
 }
