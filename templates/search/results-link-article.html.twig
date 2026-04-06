@@ -15,9 +15,16 @@
                 <div class="fs-5 fw-bold">
                     <a href="{{ Article.url }}" target="_blank" class="text-decoration-none">{{ Article.titleWithFreshUpdatedAt|raw }}</a>
                 </div>
-                {% if Article.publishedAt is not empty %}
-                    <div class="smaller text-muted" style="font-size: 0.75rem;">{{ Article.publishedAt|date('d-m-Y') }}</div>
-                {% endif %}
+                <div class="text-muted" style="font-size: 0.75rem;">
+                    <i class="fa-solid fa-user-tie"></i> a cura di:
+                    {% for Author in Article.Authors %}
+                        <a href="{{ Author.url }}" target="_blank" class="text-muted">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                    {% else %}
+                        <em>&lt;sconosciuto&gt;</em>
+                    {% endfor %}
+                    <span class="mx-1">·</span>
+                    {% include('article/publishing-status.html.twig') %}
+                </div>
                 {% if Article.abstract is not empty %}
                     <div class="small text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ Article.abstract|raw }}</div>
                 {% endif %}
