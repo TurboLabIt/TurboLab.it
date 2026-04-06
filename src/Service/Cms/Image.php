@@ -20,8 +20,8 @@ use Imagine\Image\Point;
  */
 class Image extends BaseCmsService
 {
-    const string ENTITY_CLASS          = ImageEntity::class;
-    const string NOT_FOUND_EXCEPTION   = 'App\Exception\ImageNotFoundException';
+    const string ENTITY_CLASS           = ImageEntity::class;
+    const string NOT_FOUND_EXCEPTION    = 'App\Exception\ImageNotFoundException';
 
     const int ID_404                    = 26661;    // 👀 https://turbolab.it/immagini/26661/reg
     const int ID_DEFAULT_SPOTLIGHT      = 1;        // 👀 https://turbolab.it/immagini/1/reg
@@ -34,7 +34,7 @@ class Image extends BaseCmsService
         26855,  // 👀 https://turbolab.it/immagini/26855/reg
     ];
 
-    const int ID_CHRISTMAS_SPOTLIGHT = 25523; // 👀 https://turbolab.it/immagini/25523/reg
+    const int ID_CHRISTMAS_SPOTLIGHT    = 25523; // 👀 https://turbolab.it/immagini/25523/reg
 
     const bool BUILD_CACHE_ENABLED      = true;
     const BUILD_FORMAT_FORCED           = null;

@@ -82,20 +82,19 @@ class ImageEditor extends Image
     }
 
 
+    public function setWatermarkPosition(int $position) : static
+    {
+        $this->entity->setWatermarkPosition($position);
+        return $this->clearCached();
+    }
+
+
     public function delete(bool $persist = true) : void
     {
-        foreach(static::SIZES as $size) {
-
-            $filePath = $this->getBuiltFilePath($size, false);
-            if( file_exists($filePath) ) {
-                unlink($filePath);
-            }
-        }
-
+        $this->clearCached();
 
         $filePath = $this->getOriginalFilePath();
         unlink($filePath);
-
 
         $em = $this->factory->getEntityManager();
         $em->remove($this->entity);
@@ -105,5 +104,19 @@ class ImageEditor extends Image
         }
 
         $this->clear();
+    }
+
+
+    public function clearCached() : static
+    {
+        foreach(static::SIZES as $size) {
+
+            $filePath = $this->getBuiltFilePath($size, false);
+            if( file_exists($filePath) ) {
+                unlink($filePath);
+            }
+        }
+
+        return $this;
     }
 }

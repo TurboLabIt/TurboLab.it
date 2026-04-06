@@ -17,7 +17,7 @@ class ImageSentinel extends BaseSentinel
     }
 
 
-    public function canDelete(?Image $image = null) : bool
+    public function canEdit(?Image $image = null) : bool
     {
         $image          = $image ?? $this->image;
         $currentUser    = $this->getCurrentUser();
@@ -29,6 +29,20 @@ class ImageSentinel extends BaseSentinel
         return $currentUser->isEditor() || $image->isAuthor($this->getCurrentUser());
     }
 
+
+    public function canDelete(?Image $image = null) : bool { return $this->canEdit($image); }
+
+
+    public function enforceCanEdit(?Image $image = null, string $errorMessage = "You're not authorized to edit this image") : static
+    {
+        $image = $image ?? $this->image;
+
+        if( empty( $this->canEdit($image) ) ) {
+            throw new AccessDeniedException($errorMessage);
+        }
+
+        return $this;
+    }
 
 
     public function enforceCanDelete(?Image $image = null, string $errorMessage = "You're not authorized to delete this image") : static

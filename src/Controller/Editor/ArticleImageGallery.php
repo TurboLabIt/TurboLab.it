@@ -41,6 +41,27 @@ class ArticleImageGallery extends ArticleEditBaseController
     }
 
 
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/images/{imageId<[1-9]+[0-9]*>}/watermark/{watermarkPosition<[0-9]>}', name: 'app_article_edit_images-watermark', methods: ['POST'])]
+    public function watermark(int $articleId, int $imageId, int $watermarkPosition, ImageEditor $image, ImageSentinel $sentinel) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+
+            $image->load($imageId);
+            $sentinel
+                ->setImage($image)
+                ->enforceCanEdit();
+
+            $image
+                ->setWatermarkPosition($watermarkPosition)
+                ->save();
+
+            return new Response('OK');
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
     #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/images/delete/{imageId<[1-9]+[0-9]*>}', name: 'app_article_edit_images-delete', methods: ['DELETE'])]
     public function delete(int $articleId, int $imageId, ImageEditor $image, ImageSentinel $sentinel) : JsonResponse|Response
     {

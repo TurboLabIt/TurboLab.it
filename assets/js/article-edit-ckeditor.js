@@ -18,6 +18,7 @@ import {
     Heading,
     HeadingButtonsUI,
     ImageBlock,
+    ImageToolbar,
     Italic,
     Link,
     List,
@@ -42,6 +43,7 @@ import TliIstruzioniPlugin from "./ckeditor-plugins/istruzioni";
 import TliPublishingStatusPlugin from "./ckeditor-plugins/publishing-status";
 import TliYoutube from "./ckeditor-plugins/youtube";
 import TliLinkArticle from "./ckeditor-plugins/link-article";
+import TliWatermark from "./ckeditor-plugins/watermark";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -74,6 +76,7 @@ const editorConfig = {
         Heading,
         HeadingButtonsUI,
         ImageBlock,
+        ImageToolbar,
         Italic,
         Link,
         List,
@@ -88,7 +91,8 @@ const editorConfig = {
         TliIstruzioniPlugin,
         TliPublishingStatusPlugin,
         TliYoutube,
-        TliLinkArticle
+        TliLinkArticle,
+        TliWatermark
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {
@@ -109,6 +113,9 @@ const editorConfig = {
     placeholder: 'Digita qui il testo del tuo articolo',
     translations: [translations],
     // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html
+    image: {
+        toolbar: ['tliWatermark']
+    },
     heading: {
         options: [
             { model: 'heading2', view: 'h2', title: 'Titolo', class: 'ck-heading_heading2' },
