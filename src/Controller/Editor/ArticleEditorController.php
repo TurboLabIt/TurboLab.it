@@ -66,7 +66,7 @@ class ArticleEditorController extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
 
             if( $this->articleEditor->getFormat() == $format ) {
-                return new Response('Il formato editoriale è già quello desiderato. Nessuna modifica necessaria');
+                return $this->jsonOKResponse('Il formato editoriale è già quello desiderato. Nessuna modifica necessaria');
             }
 
             $this->articleEditor
