@@ -76,7 +76,7 @@ class Image extends BaseCmsService
         ],
         self::SIZE_REG  => [
             self::WIDTH     => 960,
-            self::HEIGHT    => 540,
+            self::HEIGHT    => 810,
         ],
         self::SIZE_MAX  => [
             self::WIDTH     => 1920,
