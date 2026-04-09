@@ -73,8 +73,7 @@
 
 <body class="home-1-bg" data-tli-visit-url="{{ path('app_ajax_count-visit') }}"
       data-tli-cms-type="{{ cmsType ?? null }}" data-tli-cms-id="{{ cmsId ?? null }}"
-      {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id > 1 %}data-user-id="{{ app.user.id }}"{% endif %}
->
+      {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id > 1 %}data-user-id="{{ app.user.id }}"{% endif %}>
 
     <div class="preloader"><div><div class="nb-spinner"></div></div></div>
 
