@@ -3,9 +3,16 @@ const lightboxEl = document.getElementById('tli-image-lightbox');
 if(lightboxEl) {
 
     const carouselEl = document.getElementById('tli-image-lightbox-carousel');
-    const carousel   = new bootstrap.Carousel(carouselEl, { interval: false });
     const items      = carouselEl.querySelectorAll('.carousel-item');
     const thumbs     = lightboxEl.querySelectorAll('.tli-lightbox-thumb');
+    let carousel     = null;
+
+    function getCarousel() {
+        if(!carousel) {
+            carousel = new bootstrap.Carousel(carouselEl, { interval: false });
+        }
+        return carousel;
+    }
 
     function loadImage(index) {
 
@@ -46,7 +53,7 @@ if(lightboxEl) {
         loadImage(slideIndex + 1);
         loadAllThumbnails();
 
-        carousel.to(slideIndex);
+        getCarousel().to(slideIndex);
         updateActiveThumbnail(slideIndex);
         new bootstrap.Modal(lightboxEl).show();
     });
