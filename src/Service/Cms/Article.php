@@ -51,6 +51,7 @@ class Article extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected ArticleEntity $entity;
     protected ?array $arrImages             = null;
+    protected ?array $arrImagesInUse        = null;
     protected ?array $arrTags               = null;
     protected ?array $arrFiles              = null;
     protected ?ImageService $spotlight      = null;
@@ -191,12 +192,48 @@ class Article extends BaseCmsService
                         ->setTempOrder($junctionRanking);
             }
 
-            usort($this->arrImages, function(Image $img1, Image $img2) {
+            uasort($this->arrImages, function(Image $img1, Image $img2) {
                 return $img1->getTempOrder() <=> $img2->getTempOrder();
             });
         }
 
         return $this->arrImages;
+    }
+
+
+    public function getImagesInUse() : array
+    {
+        if( is_array($this->arrImagesInUse) ) {
+            return $this->arrImagesInUse;
+        }
+
+        $this->arrImagesInUse = [];
+
+        $body = $this->getBody();
+
+        if( empty($body) ) {
+            return [];
+        }
+
+        $arrImagesIds = [];
+        preg_match_all(HtmlProcessorForDisplay::REGEX_IMAGE_PLACEHOLDER, $body, $arrImagesIds);
+
+        if( empty($arrImagesIds[0]) ) {
+            return [];
+        }
+
+        $arrAllAttachedImages = $this->getImages();
+
+        foreach($arrImagesIds[0] as $id) {
+
+            if( array_key_exists($id, $arrAllAttachedImages) ) {
+
+                $key = (string)$id;
+                $this->arrImagesInUse[$key] = $arrAllAttachedImages[$key];
+            }
+        }
+
+        return $this->arrImagesInUse;
     }
     //</editor-fold>
 
