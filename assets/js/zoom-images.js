@@ -4,7 +4,26 @@ if(lightboxEl) {
 
     const carouselEl = document.getElementById('tli-image-lightbox-carousel');
     const carousel   = new bootstrap.Carousel(carouselEl, { interval: false });
+    const items      = carouselEl.querySelectorAll('.carousel-item');
     const thumbs     = lightboxEl.querySelectorAll('.tli-lightbox-thumb');
+
+    function loadImage(index) {
+
+        if(index < 0 || index >= items.length) return;
+
+        const img = items[index].querySelector('img');
+        if(img && img.dataset.src && !img.src) {
+            img.src = img.dataset.src;
+        }
+    }
+
+    function loadAllThumbnails() {
+        thumbs.forEach(function(thumb) {
+            if(thumb.dataset.src && !thumb.src) {
+                thumb.src = thumb.dataset.src;
+            }
+        });
+    }
 
     // Click on article body image → open lightbox at that image
     $(document).on('click', '#tli-article-body img', function(e) {
@@ -16,24 +35,31 @@ if(lightboxEl) {
         if(!idMatch) return;
 
         const imageId = idMatch[1];
-        const items   = carouselEl.querySelectorAll('.carousel-item');
         let slideIndex = 0;
 
-        items.forEach((item, i) => {
+        items.forEach(function(item, i) {
             if(item.dataset.imageId === imageId) slideIndex = i;
         });
+
+        loadImage(slideIndex);
+        loadImage(slideIndex - 1);
+        loadImage(slideIndex + 1);
+        loadAllThumbnails();
 
         carousel.to(slideIndex);
         updateActiveThumbnail(slideIndex);
         new bootstrap.Modal(lightboxEl).show();
     });
 
-    // Sync active thumbnail on carousel slide
+    // Sync active thumbnail + preload neighbors on slide
     carouselEl.addEventListener('slid.bs.carousel', function(e) {
         updateActiveThumbnail(e.to);
+        loadImage(e.to);
+        loadImage(e.to - 1);
+        loadImage(e.to + 1);
     });
 
     function updateActiveThumbnail(index) {
-        thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+        thumbs.forEach(function(t, i) { t.classList.toggle('active', i === index); });
     }
 }

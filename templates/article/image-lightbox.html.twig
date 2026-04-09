@@ -14,7 +14,7 @@
                     <div class="carousel-inner h-100">
                         {% for Image in Article.ImagesInUse %}
                             <div class="carousel-item h-100{% if loop.first %} active{% endif %}" data-image-id="{{ Image.id }}">
-                                <img src="{{ Image.getUrl('max') }}" alt="{{ Image.title }}"
+                                <img data-src="{{ Image.getUrl('max') }}" alt="{{ Image.title }}"
                                      class="d-block mx-auto tli-lightbox-img">
                             </div>
                         {% endfor %}
@@ -36,7 +36,7 @@
                 {% if Article.ImagesInUse|length > 1 %}
                     <div class="tli-lightbox-thumbs d-flex justify-content-center gap-2 p-2">
                         {% for Image in Article.ImagesInUse %}
-                            <img src="{{ Image.getUrl('min') }}" alt="{{ Image.title }}"
+                            <img data-src="{{ Image.getUrl('min') }}" alt="{{ Image.title }}"
                                  class="tli-lightbox-thumb{% if loop.first %} active{% endif %}"
                                  data-image-id="{{ Image.id }}"
                                  data-bs-target="#tli-image-lightbox-carousel" data-bs-slide-to="{{ loop.index0 }}">
