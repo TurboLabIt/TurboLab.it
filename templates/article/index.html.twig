@@ -223,6 +223,10 @@
 
     {% include 'parts/modal-ajax.html.twig' %}
 
+    {% if not Article.isEditable and Article.ImagesInUse is not empty %}
+        {% include 'article/image-lightbox.html.twig' %}
+    {% endif %}
+
     {% if Article.isEditable %}
         {% include 'article/editor/link-article-modal.html.twig' %}
     {% endif %}
