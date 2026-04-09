@@ -126,7 +126,7 @@ jQuery(function() {
     });
 
 
-    // "Inserisci come » Leggi:" — insert formatted block
+    // "Inserisci come » Leggi: ... + Immagine" — insert formatted block with spotlight
     jQuery(document).on('click', '.tli-link-article-insert-leggi', function() {
 
         const resultRow     = jQuery(this).closest('.tli-link-article-result');
@@ -138,6 +138,21 @@ jQuery(function() {
         const html =
             `<p><strong>» Leggi:</strong> <a href="${articleUrl}">${articleTitle}</a></p>` +
             `<p><a href="${articleUrl}"><img src="${articleSpot}"></a></p>`;
+        insertHtmlIntoEditor(html);
+
+        bootstrap.Modal.getInstance(modalFrame[0]).hide();
+    });
+
+
+    // "Inserisci come » Leggi:" — insert formatted block without image
+    jQuery(document).on('click', '.tli-link-article-insert-leggi-no-img', function() {
+
+        const resultRow     = jQuery(this).closest('.tli-link-article-result');
+        const articleUrl    = resultRow.data('article-url');
+        const articleTitle  = resultRow.data('article-title');
+        const modalFrame    = jQuery('#tli-link-article-modal');
+
+        const html = `<p><strong>» Leggi:</strong> <a href="${articleUrl}">${articleTitle}</a></p>`;
         insertHtmlIntoEditor(html);
 
         bootstrap.Modal.getInstance(modalFrame[0]).hide();
