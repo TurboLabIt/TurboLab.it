@@ -796,6 +796,27 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function findLatestNewsScheduledBetween(DateTime $from, DateTime $to, ?int $excludeArticleId = null) : ?Article
+    {
+        $qb =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.format = ' . Article::FORMAT_NEWS)
+                ->andWhere('t.publishedAt >= :from')
+                    ->setParameter('from', $from)
+                ->andWhere('t.publishedAt < :to')
+                    ->setParameter('to', $to)
+                ->orderBy('t.publishedAt', 'DESC')
+                ->setMaxResults(1);
+
+        if( $excludeArticleId !== null ) {
+            $qb->andWhere('t.id != :excludeId')
+                ->setParameter('excludeId', $excludeArticleId);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+
     public function findCommentsTopicNeedsUpdate() : array
     {
         return

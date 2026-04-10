@@ -38,7 +38,7 @@ class ArticlePlanner
 
         //
         if( $article->isNews() && $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED ) {
-            return $this->publishOnDate($article, new DateTime());
+            return $this->publishOnDate($article, $this->findNewsPacedDate($article));
         }
 
         //
@@ -47,7 +47,7 @@ class ArticlePlanner
             in_array($publishingStatus, ArticleEditor::PUBLISHING_STATUSES_VISIBLE) &&
             $sentinel->getCurrentUser()->isEditor()
         ) {
-            return $this->publishOnDate($article, new DateTime());
+            return $this->publishOnDate($article, $this->findNewsPacedDate($article));
         }
 
         //
@@ -80,6 +80,22 @@ class ArticlePlanner
 
 
     public function getMailer() : Mailer { return $this->mailer; }
+
+
+    protected function findNewsPacedDate(ArticleEditor $article) : DateTime
+    {
+        $from   = (new DateTime())->modify('-1 hour');
+        $to     = (new DateTime())->modify('+12 hours');
+
+        $latestNews = $article->getRepository()->findLatestNewsScheduledBetween($from, $to, $article->getId());
+
+        if( $latestNews === null ) {
+            return new DateTime();
+        }
+
+        $lastPublishedAt = DateTime::createFromInterface($latestNews->getPublishedAt());
+        return $lastPublishedAt->modify('+1 hour');
+    }
 
 
     protected function publishScheduled(ArticleEditor $article) : static
