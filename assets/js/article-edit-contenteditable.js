@@ -71,6 +71,27 @@ function clearCacheTextHashForComparison()
 }
 
 
+// remove <new-line> and double spaces from the title field; returns true if something was cleaned
+function cleanTitleField()
+{
+    let titleField = TITLE_FIELD[0];
+    if( !titleField ) {
+        return false;
+    }
+
+    const cleaned = titleField.value.replace(/\s+/g, ' ');
+    if( titleField.value === cleaned ) {
+        return false;
+    }
+
+    titleField.value = cleaned;
+    // auto-height recalc since the value may have shrunk
+    titleField.style.height = "auto";
+    titleField.style.height = titleField.scrollHeight + "px";
+    return true;
+}
+
+
 // title auto-sizing
 TITLE_FIELD.css({
 
@@ -80,24 +101,19 @@ TITLE_FIELD.css({
 
 $(document).on('input', '[data-tli-editable-id="title"]', function() {
 
-    // remove <new-line> and double spaces
-    const cursorPosition = this.selectionStart;
-    const originalLength = this.value.length;
-
-    const newValue = this.value.replace(/\s+/g, ' ');
-
-    if (this.value !== newValue) {
-        this.value = newValue;
-        // Adjust cursor position
-        const newLength = this.value.length;
-        const diff = originalLength - newLength;
-        this.selectionStart = this.selectionEnd = Math.max(0, cursorPosition - diff);
-    }
-
     // auto-height
     this.style.height = "auto";
     this.style.height = this.scrollHeight + "px";
 
+});
+
+
+$(document).on('blur', '[data-tli-editable-id="title"]', function() {
+
+    if( cleanTitleField() ) {
+        // refresh the unsaved-warning state in case the cleaned value now matches the saved hash
+        showWarningIfChanged();
+    }
 });
 
 
@@ -109,6 +125,9 @@ $(document).on('input', '[data-tli-editable-id="title"]', debounce(function() {
 var articleSaveRequest = null;
 function saveArticle(title, body, token)
 {
+    // clean the title in case the user hit Ctrl+S without blurring the field first
+    cleanTitleField();
+
     // set to "unknown" until actually saved
     clearCacheTextHashForComparison();
 
