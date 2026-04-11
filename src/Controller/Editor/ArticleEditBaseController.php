@@ -118,7 +118,7 @@ abstract class ArticleEditBaseController extends BaseController
             }
         }
 
-        $arrTagsToDelete = array_merge([$this->articleEditor->getCacheKey(), 'app_views_page_1'], $arrTagsToDelete);
+        $arrTagsToDelete = array_merge([$this->articleEditor->getCacheKey(), 'app_views'], $arrTagsToDelete);
 
         $this->cache->invalidateTags($arrTagsToDelete);
 

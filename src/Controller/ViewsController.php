@@ -22,6 +22,8 @@ class ViewsController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<[1-9]+[0-9]*>}', name: 'app_views_multi')]
     public function multi(string $slug, ?int $page = null) : Response
     {
+        $page = empty($page) ? 1 : $page;
+
         $arrViewRequested = $this->factory->getViews()->get($slug);
 
         if( !$this->isCachable() ) {
