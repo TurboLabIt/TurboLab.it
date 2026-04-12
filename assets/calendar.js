@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: 'it',
         firstDay: 1,
         initialView: 'dayGridMonth',
+        defaultTimedEventDuration: '00:01',
         validRange: {
             start: jQuery('#calendar').data('min-date'),
             end: jQuery('#calendar').data('max-date'),
