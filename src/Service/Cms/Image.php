@@ -180,7 +180,7 @@ class Image extends BaseCmsService
     }
 
 
-    public static function setBuildFormat(string $format) : static
+    public static function setBuildFormat(string $format) : void
     {
         if( !in_array($format, ImageEntity::getFormats()) ) {
             return;
