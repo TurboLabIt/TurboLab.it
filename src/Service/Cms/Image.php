@@ -4,6 +4,7 @@ namespace App\Service\Cms;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
+use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
 use App\Service\Factory;
 use App\Trait\AuthorableTrait;
@@ -183,7 +184,7 @@ class Image extends BaseCmsService
     public static function setBuildFormat(string $format) : void
     {
         if( !in_array($format, ImageEntity::getFormats()) ) {
-            return;
+            throw new InvalidEnumException("Invalid format for image building!");
         }
 
         static::$buildFileExtension = $format;
