@@ -65,7 +65,7 @@ class ArticleController extends BaseController
                 'metaDescription'       => $article->getAbstractForHTMLAttribute(),
                 'metaCanonicalUrl'      => $article->getUrl(),
                 'metaOgType'            => 'article',
-                'metaPageImageUrl'      => $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX),
+                'metaPageImageUrl'      => $article->getSpotlightOrDefaultMetaUrl(Image::SIZE_MAX),
                 'metaRobots'            => $article->getMetaRobots(),
                 'activeMenu'            => $article->getActiveMenu(),
                 'FrontendHelper'        => $this->frontendHelper,

@@ -243,6 +243,11 @@ class Article extends BaseCmsService
         return $this->getSpotlightOrDefault()->getUrl($size);
     }
 
+    public function getSpotlightOrDefaultMetaUrl(string $size) : string
+    {
+        return $this->getSpotlightOrDefault()->getMetaUrl($size);
+    }
+
     public function getSpotlightUrl(string $size) : ?string { return $this->getSpotlight()?->getUrl($size); }
 
     public function getSpotlight() : ?ImageService

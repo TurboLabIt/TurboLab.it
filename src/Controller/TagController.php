@@ -97,7 +97,7 @@ class TagController extends BaseController
                 'metaTitle'         => $metaTitle,
                 'metaDescription'   => $metaTitle,
                 'metaCanonicalUrl'  => $tag->getUrl($page),
-                'metaPageImageUrl'  => $tag->getSpotlightOrDefaultUrlFromArticles(Image::SIZE_MAX),
+                'metaPageImageUrl'  => $tag->getSpotlightOrDefaultMetaUrlFromArticles(Image::SIZE_MAX),
                 'activeMenu'        => $tag->getActiveMenu(),
                 'FrontendHelper'    => $this->frontendHelper,
                 'Tag'               => $tag,

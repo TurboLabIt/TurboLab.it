@@ -142,7 +142,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
                 "title"     => $article->getTitle(),
                 "url"       => $article->getUrl(),
                 "prodUrl"   => $this->buildProductionUrl( $article->getUrl() ),
-                "spotlight" => $this->buildProductionUrl( $article->getSpotlightOrDefaultUrl(Image::SIZE_MAX) ),
+                "spotlight" => $this->buildProductionUrl( $article->getSpotlightOrDefaultMetaUrl(Image::SIZE_MAX) ),
                 "emoji"     => "📰",
                 "cta"       => "LEGGI TUTTO"
             ]);

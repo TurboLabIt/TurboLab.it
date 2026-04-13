@@ -180,6 +180,16 @@ class Image extends BaseCmsService
     }
 
 
+    public static function setBuildFormat(string $format) : static
+    {
+        if( !in_array($format, ImageEntity::getFormats()) ) {
+            return;
+        }
+
+        static::$buildFileExtension = $format;
+    }
+
+
     public function getBuiltFileName() : string
     {
         $fileName = $this->getOriginalFileName();
@@ -412,6 +422,12 @@ class Image extends BaseCmsService
     }
 
 
+    public function getMetaUrl(string $size) : string
+    {
+        return $this->factory->getImageUrlGenerator()->generateUrl($this, $size, format: ImageEntity::FORMAT_PNG);
+    }
+
+
     public function getShortUrl(string $size) : string
     {
         return $this->factory->getImageUrlGenerator()->generateShortUrl($this, $size);
@@ -421,7 +437,7 @@ class Image extends BaseCmsService
     public function checkRealUrl(string $size, ?string $imageFolderMod, string $slugDashId, ?string $format) : ?string
     {
         $candidateUrl   = "/immagini/$size/$imageFolderMod/$slugDashId.$format";
-        $realUrl        = $this->factory->getImageUrlGenerator()->generateUrl($this, $size, UrlGeneratorInterface::ABSOLUTE_PATH);
+        $realUrl        = $this->factory->getImageUrlGenerator()->generateUrl($this, $size, UrlGeneratorInterface::ABSOLUTE_PATH, $format);
         return $candidateUrl == $realUrl ? null : $this->getUrl($size);
     }
 

@@ -36,6 +36,9 @@ class ImageController extends BaseController
             return $this->redirect($imageRealUrl, Response::HTTP_MOVED_PERMANENTLY);
         }
 
+        // serve the image in the format requested by the URL
+        Image::setBuildFormat($format);
+
         $result = $image->tryPreBuilt($size);
         if($result) {
             return $this->xSendImage($image, $size, '1-tryPreBuilt');

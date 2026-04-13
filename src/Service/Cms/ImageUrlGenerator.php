@@ -6,14 +6,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ImageUrlGenerator extends UrlGenerator
 {
-    public function generateUrl(Image $image, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
+    public function generateUrl(Image $image, string $size, int $urlType = UrlGeneratorInterface::ABSOLUTE_URL, ?string $format = null) : string
     {
         return
             $this->symfonyUrlGenerator->generate('app_image', [
                 "size"              => $size,
                 "imageFolderMod"    => $image->getFolderMod(),
                 "slugDashId"        => $image->getSlug() . "-" . $image->getId(),
-                "format"            => Image::getClientSupportedBestFormat(),
+                "format"            => $format ?? Image::getClientSupportedBestFormat(),
             ], $urlType);
     }
 

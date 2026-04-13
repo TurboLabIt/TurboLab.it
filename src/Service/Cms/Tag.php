@@ -228,6 +228,16 @@ class Tag extends BaseCmsService
         return $firstArticle->getSpotlightOrDefaultUrl($size);
     }
 
+    public function getSpotlightOrDefaultMetaUrlFromArticles(string $size) : string
+    {
+        $firstArticle = $this->getFirstArticle();
+        if( empty($firstArticle) ) {
+            return $this->factory->createDefaultSpotlight()->getMetaUrl($size);
+        }
+
+        return $firstArticle->getSpotlightOrDefaultMetaUrl($size);
+    }
+
 
     public function getBadges() : array
     {
