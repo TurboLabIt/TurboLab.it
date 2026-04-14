@@ -67,7 +67,7 @@
         <div class="tli-tags-strip tli-article-editor-current-tags-list mb-2" data-changed="0"
              data-save-url="{{ path('app_article_edit_tags_submit', {'articleId': Article.id}) }}">
 
-            {% embed 'article/editor/tags-modal-list-items.html.twig' with {'Tags': Article.Tags} %}
+            {% embed 'article/editor/tags-modal-list-items.html.twig' with {'Tags': Article.Tags, 'modalMode': true} %}
                 {% block removeTagClass %}{% endblock %}
             {% endembed %}
         </div>

@@ -31,6 +31,29 @@ jQuery(document).on('tli-tag-modal-open', '.tli-article-editor-current-tags-list
 });
 
 
+jQuery(document).on('click', '#tli-ajax-modal .tli-tag-clickable',  function(event) {
+
+    let $target = jQuery(event.target);
+
+    // the "read" link opens the tag archive; let the browser handle it
+    if( $target.closest('.tli-tag-read').length ) {
+        return;
+    }
+
+    // the add/remove icons have their own handlers — avoid double-firing
+    if( $target.closest('.tli-add-tag, .tli-remove-tag').length ) {
+        return;
+    }
+
+    event.preventDefault();
+
+    let $action = jQuery(this).find('.tli-add-tag:not(.d-none), .tli-remove-tag:not(.d-none)').first();
+    if( $action.length ) {
+        $action.trigger('click');
+    }
+});
+
+
 jQuery(document).on('click', '.tli-article-editor-show-guide-action',  function(event) {
 
     event.preventDefault();

@@ -1,14 +1,27 @@
+{% set modalMode = modalMode|default(false) %}
+
 <ul>
     {% block tagsListLabelItem %}<li class="tli-tag-label"><i class="fas fa-tag"></i> Tag:</li>{% endblock %}
     {% for Tag in Tags %}
-        <li class="d-inline-flex align-items-center" data-tag-id="{{ Tag.id }}" data-tag="{{ Tag.title }}">
+        <li class="d-inline-flex align-items-center{% if modalMode %} tli-tag-clickable{% endif %}" data-tag-id="{{ Tag.id }}" data-tag="{{ Tag.title }}">
 
             {% if Tag.id is not empty %}
 
-                <a href="{{ Tag.url }}" {% block linkTargetBlank %}target="_blank"{% endblock %}>
-                    {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
-                    {{ Tag.navTitle|raw }}
-                </a>
+                {% if modalMode %}
+
+                    <span class="tli-tag-clickable-label">
+                        {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
+                        {{ Tag.navTitle|raw }}
+                    </span>
+
+                {% else %}
+
+                    <a href="{{ Tag.url }}" {% block linkTargetBlank %}target="_blank"{% endblock %}>
+                        {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
+                        {{ Tag.navTitle|raw }}
+                    </a>
+
+                {% endif %}
 
             {% else %}
 
@@ -20,6 +33,12 @@
                 <i class="fas fa-times-circle tli-remove-tag ms-2 {% block removeTagClass %}d-none{% endblock %}" title="Rimuovi"></i>
                 <i class="fa-solid fa-plus tli-add-tag ms-2 {% block addTagClass %}d-none{% endblock %}" title="Aggiungi"></i>
             {% endblock %}
+
+            {% if modalMode and Tag.id is not empty %}
+                <a href="{{ Tag.url }}" target="_blank" class="tli-tag-read ms-2" title="Leggi gli articoli con questo tag">
+                    <i class="fa-solid fa-book-open"></i>
+                </a>
+            {% endif %}
         </li>
     {% endfor %}
 </ul>

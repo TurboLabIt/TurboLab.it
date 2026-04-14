@@ -8,7 +8,7 @@
     {% endblock %}
 
     <div class="tli-tags-strip tli-tags-candidate">
-        {% embed 'article/editor/tags-modal-list-items.html.twig' %}
+        {% embed 'article/editor/tags-modal-list-items.html.twig' with {'modalMode': true} %}
             {% block tagsListLabelItem %}{% endblock %}
             {% block addTagClass %}{% endblock %}
         {% endembed %}

@@ -52,6 +52,22 @@
     font-size: large;
 }
 
+.tli-tag-clickable {
+    cursor: pointer;
+}
+
+.tli-tag-clickable-label {
+    user-select: none;
+}
+
+.tli-tag-read {
+    color: #6c757d;
+}
+
+.tli-tag-read:hover {
+    color: #000;
+}
+
 
 #tli-ajax-modal .tli-tags-strip ul li {
     padding: 0 5px;
