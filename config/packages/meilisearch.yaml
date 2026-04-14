@@ -14,3 +14,5 @@ meilisearch:
               filterableAttributes:
                   - format
                   - authorIds
+              sortableAttributes:
+                  - publishedAtTimestamp

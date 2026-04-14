@@ -94,6 +94,13 @@ class Article extends BaseCmsEntity
     }
 
 
+    #[Groups(['searchable'])]
+    public function getPublishedAtTimestamp() : ?int
+    {
+        return $this->publishedAt?->getTimestamp();
+    }
+
+
     public function setFormat(int $format) : static
     {
         static::validateFormat($format);

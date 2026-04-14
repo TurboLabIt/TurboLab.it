@@ -77,10 +77,11 @@ class SearchController extends BaseController
 
             $format     = $this->request->query->getInt('format') ?: null;
             $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser() ? $this->getUser()->getId() : null;
+            $sort       = $this->request->query->get('sort') === 'date' ? 'date' : null;
 
             return
                 $this->render($twigTemplatePath, [
-                    'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format, $authorId)
+                    'LocalResults' => $this->factory->createArticleCollection()->loadSerp($termToSearch, $format, $authorId, $sort)
                 ]);
 
         } catch(Exception $ex) {

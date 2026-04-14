@@ -178,7 +178,7 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadSerp(string $termToSearch, ?int $format = null, ?int $authorId = null) : static
+    public function loadSerp(string $termToSearch, ?int $format = null, ?int $authorId = null, ?string $sort = null) : static
     {
         $termToSearchNormalized     = ArticleSearchNormalizer::normalizeForIndexing($termToSearch);
         $termToSearchNoStopWords    = $this->factory->getStopWords()->removeFromSting($termToSearchNormalized);
@@ -193,6 +193,10 @@ class ArticleCollection extends BaseArticleCollection
         }
         if( !empty($filters) ) {
             $searchParams['filter'] = $filters;
+        }
+
+        if( $sort === 'date' ) {
+            $searchParams['sort'] = ['publishedAtTimestamp:desc'];
         }
 
         $arrSearchResult = $this->searchService->search(static::ENTITY_CLASS, $termToSearchNoStopWords, $searchParams);

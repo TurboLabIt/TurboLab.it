@@ -50,7 +50,7 @@ export default class TliLinkArticle extends Plugin {
 jQuery(function() {
 
     function setModalControlsDisabled(modalFrame, disabled) {
-        modalFrame.find('.tli-link-article-search-input, .tli-link-article-search-btn, input[name="article-format"], #tli-link-article-mine-only')
+        modalFrame.find('.tli-link-article-search-input, .tli-link-article-search-btn, input[name="article-format"], #tli-link-article-mine-only, input[name="article-sort"]')
             .prop('disabled', disabled);
     }
 
@@ -72,11 +72,13 @@ jQuery(function() {
 
         const format    = modalFrame.find('input[name="article-format"]:checked').val() || '';
         const onlyMine  = modalFrame.find('#tli-link-article-mine-only').is(':checked') ? '1' : '';
+        const sort      = modalFrame.find('input[name="article-sort"]:checked').val() || '';
 
         let endpoint = '/cerca/ajax/link-article/' + encodeURIComponent(query);
         const params = new URLSearchParams();
-        if( format )    params.set('format', format);
-        if( onlyMine )  params.set('only-mine', '1');
+        if( format )            params.set('format', format);
+        if( onlyMine )          params.set('only-mine', '1');
+        if( sort === 'date' )   params.set('sort', 'date');
         const qs = params.toString();
         if( qs ) endpoint += '?' + qs;
 
@@ -104,7 +106,7 @@ jQuery(function() {
     });
 
     // Auto-search on filter change
-    jQuery(document).on('change', '#tli-link-article-modal input[name="article-format"], #tli-link-article-mine-only', function() {
+    jQuery(document).on('change', '#tli-link-article-modal input[name="article-format"], #tli-link-article-mine-only, #tli-link-article-modal input[name="article-sort"]', function() {
         performSearch( jQuery(this).closest('.modal') );
     });
 
