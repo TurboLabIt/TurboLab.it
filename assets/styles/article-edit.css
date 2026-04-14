@@ -62,6 +62,8 @@
 
 .tli-tag-read {
     color: #6c757d;
+    border-left: 1px solid #C2C5C7;
+    padding-left: 8px;
 }
 
 .tli-tag-read:hover {
