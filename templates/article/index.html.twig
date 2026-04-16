@@ -188,7 +188,7 @@
 
                             {% if Article.commentsNum(false) > 0 %}
 
-                                <div class="post-comments-list" data-comments-loading-url="{{ commentsLoadingUrl }}"></div>
+                                <div class="post-comments-list" data-comments-loading-url="{{ commentsLoadingUrl }}"><div class="tli-comments-loader"><i class="fa-solid fa-spinner fa-spin"></i> Caricamento commenti...</div></div>
                                 <div>
                                     <span>
                                         <a href="{{ Article.commentsUrl }}">
