@@ -76,6 +76,22 @@ while( $arrRank = $db->sql_fetchrow($result) ) {
 }
 
 
+$phpbb_container->get('language')->add_lang('viewtopic');
+
+$attachments = [];
+$sqlAttachments = '
+    SELECT * FROM ' . ATTACHMENTS_TABLE . '
+    WHERE topic_id = ' . $topicId . '
+      AND in_message = 0
+    ORDER BY attach_id DESC, post_msg_id ASC
+';
+$resultAttach = $db->sql_query($sqlAttachments);
+while ($rowAttach = $db->sql_fetchrow($resultAttach)) {
+    $attachments[$rowAttach['post_msg_id']][] = $rowAttach;
+}
+$db->sql_freeresult($resultAttach);
+
+
 $sqlSelectPosts = '
     SELECT * FROM ' . POSTS_TABLE . ' AS posts
     LEFT JOIN ' . USERS_TABLE . ' AS users
@@ -133,9 +149,26 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
             $arrPost['post_text'], $arrPost['bbcode_uid'], $arrPost['bbcode_bitfield'], $arrPost['bbcode_options']
         );
 
+    $update_count = [];
+    $arrPost["tli_attachments_html"] = '';
+    if (!empty($attachments[$arrPost['post_id']])) {
+        parse_attachments($commentsForumId, $arrPost["tli_text"], $attachments[$arrPost['post_id']], $update_count);
+
+        if (!empty($attachments[$arrPost['post_id']])) {
+            $arrPost["tli_attachments_html"] = implode('', $attachments[$arrPost['post_id']]);
+        }
+    }
+
     $arrPost["tli_text"] = str_ireplace(
-        './../',
-        '/forum/', $arrPost["tli_text"]
+        ['./../', './download/', './images/upload_icons/'],
+        ['/forum/', '/forum/download/', '/forum/images/upload_icons/'],
+        $arrPost["tli_text"]
+    );
+
+    $arrPost["tli_attachments_html"] = str_ireplace(
+        ['./../', './download/', './images/upload_icons/'],
+        ['/forum/', '/forum/download/', '/forum/images/upload_icons/'],
+        $arrPost["tli_attachments_html"]
     );
 ?>
 
@@ -146,6 +179,9 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
                 <span class="tli-comment-date"><i class="fa-solid fa-calendar"></i> <?php echo $arrPost["tli_date"] ?></span>
             </h5>
             <div class="tli-comment-main-content"><?php echo $arrPost["tli_text"] ?></div>
+            <?php if (!empty($arrPost["tli_attachments_html"])) { ?>
+            <div class="tli-comment-attachments"><?php echo $arrPost["tli_attachments_html"] ?></div>
+            <?php } ?>
             <div class="tli-comment-reply">
                 <a href="/forum/posting.php?mode=reply&t=<?php echo $topicId ?>">Rispondi</a> |
                 <a href="/forum/posting.php?mode=quote&p=<?php echo $arrPost["post_id"] ?>">Rispondi citando</a>

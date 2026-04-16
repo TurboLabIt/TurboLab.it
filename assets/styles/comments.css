@@ -1,3 +1,11 @@
+.tli-comments-loader {
+    font-size: 22px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+    padding: 40px 0;
+}
+
 .tli-comment-reply {
     width: fit-content;
     border-top: lightgrey dashed 1px;
@@ -137,4 +145,21 @@
 .tli-comment-main-content a {
     font-size: 20px !important;
     line-height: 1.5;
+}
+
+
+.tli-comment-main-content dl.file dd,
+.tli-comment-main-content dl.thumbnail dd,
+.tli-comment-attachments dl.file dd,
+.tli-comment-attachments dl.thumbnail dd {
+    font-size: 13px;
+    color: #aaa;
+}
+
+.tli-comment-main-content dl.file dd a,
+.tli-comment-main-content dl.thumbnail dd a,
+.tli-comment-attachments dl.file dd a,
+.tli-comment-attachments dl.thumbnail dd a {
+    font-size: 13px !important;
+    color: #aaa;
 }
