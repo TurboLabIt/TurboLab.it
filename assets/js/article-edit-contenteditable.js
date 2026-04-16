@@ -125,6 +125,16 @@ $(document).on('input', '[data-tli-editable-id="title"]', debounce(function() {
 var articleSaveRequest = null;
 function saveArticle(title, body, token)
 {
+    // Block saves while pasted images are still being uploaded, otherwise the body
+    // would be persisted with huge "data:image/...;base64,..." payloads.
+    if( typeof window.TLI_PENDING_IMAGE_UPLOADS === 'function' && window.TLI_PENDING_IMAGE_UPLOADS() > 0 ) {
+        StatusBar.setError(
+            { responseText: 'Caricamento immagini in corso, attendi qualche istante e riprova.' },
+            'error'
+        );
+        return;
+    }
+
     // clean the title in case the user hit Ctrl+S without blurring the field first
     cleanTitleField();
 

@@ -45,6 +45,7 @@ import TliYoutube from "./ckeditor-plugins/youtube";
 import TliLinkArticle from "./ckeditor-plugins/link-article";
 import TliWatermark from "./ckeditor-plugins/watermark";
 import TliFormatPlugin from "./ckeditor-plugins/format";
+import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
 
 
 const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
@@ -95,7 +96,8 @@ const editorConfig = {
         TliYoutube,
         TliLinkArticle,
         TliWatermark,
-        TliFormatPlugin
+        TliFormatPlugin,
+        TliDataUriUpload
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {
