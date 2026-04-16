@@ -36,18 +36,27 @@ class ArticlePlanner
             $article->setPublishedAt(null);
         }
 
-        //
-        if( $article->isNews() && $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED ) {
-            return $this->publishOnDate($article, $this->findNewsPacedDate($article));
-        }
 
-        //
-        if(
-            $article->isNews() &&
-            in_array($publishingStatus, ArticleEditor::PUBLISHING_STATUSES_VISIBLE) &&
-            $sentinel->getCurrentUser()->isEditor()
-        ) {
-            return $this->publishOnDate($article, $this->findNewsPacedDate($article));
+        // 📰 news special handling
+        if( $article->isNews() ) {
+
+            // this is an "urgent" news publication
+            if( $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED && $publishUrgently ) {
+                return $this->publishOnDate($article, (new DateTime()));
+            }
+
+            // this is a "regular" news publication
+            if( $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED ) {
+                return $this->publishOnDate($article, $this->findNewsPacedDate($article));
+            }
+
+            // this is a staff member marking the news as "done" --> override and publish (no review)
+            if(
+                $sentinel->getCurrentUser()->isEditor() &&
+                $publishingStatus == ArticleEditor::PUBLISHING_STATUS_READY_FOR_REVIEW
+            ) {
+                return $this->publishOnDate($article, $this->findNewsPacedDate($article));
+            }
         }
 
         //
@@ -56,7 +65,6 @@ class ArticlePlanner
             $article->setPublishingStatus($publishingStatus);
             return $this;
         }
-
 
         //
         if($publishUrgently) {
@@ -84,17 +92,49 @@ class ArticlePlanner
 
     protected function findNewsPacedDate(ArticleEditor $article) : DateTime
     {
-        $from   = (new DateTime())->modify('-1 hour');
-        $to     = (new DateTime())->modify('+12 hours');
+        $now = new DateTime();
 
-        $latestNews = $article->getRepository()->findLatestNewsScheduledBetween($from, $to, $article->getId());
+        // Define the target day's news window: 06:30 to 22:50
+        $dayStart = (clone $now)->setTime(6, 30);
+        $dayEnd   = (clone $now)->setTime(22, 50);
 
+        // Past today's window → target tomorrow
+        if( $now > $dayEnd ) {
+            $dayStart->modify('+1 day');
+            $dayEnd->modify('+1 day');
+        }
+
+        // The query uses strict <, so add 1 minute to include news scheduled at exactly 22:50
+        $latestNews = $article->getRepository()->findLatestNewsScheduledBetween(
+            $dayStart, (clone $dayEnd)->modify('+1 minute'), $article->getId()
+        );
+
+        // No news scheduled for the target day → first news at 06:30
         if( $latestNews === null ) {
-            return new DateTime();
+            return $now > $dayStart ? clone $now : clone $dayStart;
         }
 
         $lastPublishedAt = DateTime::createFromInterface($latestNews->getPublishedAt());
-        return $lastPublishedAt->modify('+1 hour');
+
+        // Second news of the day goes at 08:05
+        if( $lastPublishedAt->format('H:i') === '06:30' ) {
+            $nextSlot = (clone $lastPublishedAt)->setTime(8, 5, 0);
+        } else {
+            // Otherwise, 1 hour after the last
+            $nextSlot = (clone $lastPublishedAt)->modify('+1 hour');
+        }
+
+        // Past the day's limit → next day at 06:30
+        if( $nextSlot > $dayEnd ) {
+            return (clone $dayStart)->modify('+1 day');
+        }
+
+        // Slot is in the past → publish now
+        if( $nextSlot < $now ) {
+            return clone $now;
+        }
+
+        return $nextSlot;
     }
 
 
