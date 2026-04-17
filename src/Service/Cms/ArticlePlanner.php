@@ -94,39 +94,50 @@ class ArticlePlanner
     {
         $now = new DateTime();
 
-        // Define the target day's news window: 06:30 to 22:50
+        // Target day's 06:30. Past today's 21:30 → target tomorrow.
         $dayStart = (clone $now)->setTime(6, 30);
-        $dayEnd   = (clone $now)->setTime(22, 50);
-
-        // Past today's window → target tomorrow
-        if( $now > $dayEnd ) {
+        if( $now > (clone $now)->setTime(21, 30) ) {
             $dayStart->modify('+1 day');
-            $dayEnd->modify('+1 day');
         }
 
-        // The query uses strict <, so add 1 minute to include news scheduled at exactly 22:50
-        $latestNews = $article->getRepository()->findLatestNewsScheduledBetween(
-            $dayStart, (clone $dayEnd)->modify('+1 minute'), $article->getId()
-        );
+        // Unlimited forward search: everything scheduled from the target day's 06:30 onward
+        $upcomingNews = $article->getRepository()->findAllNewsScheduledFrom($dayStart, $article->getId());
 
-        // No news scheduled for the target day → first news at 06:30
-        if( $latestNews === null ) {
+        // No news in the queue → first news at 06:30 (or now if past 06:30)
+        if( empty($upcomingNews) ) {
             return $now > $dayStart ? clone $now : clone $dayStart;
         }
 
-        $lastPublishedAt = DateTime::createFromInterface($latestNews->getPublishedAt());
+        $latest          = $upcomingNews[0];
+        $lastPublishedAt = DateTime::createFromInterface($latest->getPublishedAt());
 
-        // Second news of the day goes at 08:05
+        // Second news of the day goes at 08:05 (fixed)
         if( $lastPublishedAt->format('H:i') === '06:30' ) {
-            $nextSlot = (clone $lastPublishedAt)->setTime(8, 5, 0);
+            $nextSlot = (clone $lastPublishedAt)->setTime(8, 5);
+
         } else {
-            // Otherwise, 1 hour after the last
-            $nextSlot = (clone $lastPublishedAt)->modify('+1 hour');
+            // 1 hour + 15 minutes per upcoming news already scheduled on the same day as the
+            // latest (queue-depth slowdown, reset per calendar day)
+            $latestYmd       = $lastPublishedAt->format('Y-m-d');
+            $sameDayCount    = count(array_filter(
+                $upcomingNews,
+                fn($n) => $n->getPublishedAt()->format('Y-m-d') === $latestYmd
+            ));
+
+            $gapMinutes = 60 + ($sameDayCount * 15);
+            $nextSlot   = (clone $lastPublishedAt)->modify("+{$gapMinutes} minutes");
         }
 
-        // Past the day's limit → next day at 06:30
-        if( $nextSlot > $dayEnd ) {
-            return (clone $dayStart)->modify('+1 day');
+        // Past the slot's own day 21:30 → roll to next day 06:30
+        $slotDayEnd = (clone $nextSlot)->setTime(21, 30);
+        if( $nextSlot > $slotDayEnd ) {
+            $nextSlot = (clone $nextSlot)->modify('+1 day')->setTime(6, 30);
+        }
+
+        // Gap landed before the day's 06:30 (e.g. +3h from 22:00 → 01:00 next day) → lift to 06:30
+        $slotDayStart = (clone $nextSlot)->setTime(6, 30);
+        if( $nextSlot < $slotDayStart ) {
+            $nextSlot = $slotDayStart;
         }
 
         // Slot is in the past → publish now

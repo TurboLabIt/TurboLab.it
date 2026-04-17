@@ -796,24 +796,22 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findLatestNewsScheduledBetween(DateTime $from, DateTime $to, ?int $excludeArticleId = null) : ?Article
+    /** @return Article[] ordered by publishedAt DESC */
+    public function findAllNewsScheduledFrom(DateTime $from, ?int $excludeArticleId = null) : array
     {
         $qb =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('t.format = ' . Article::FORMAT_NEWS)
                 ->andWhere('t.publishedAt >= :from')
                     ->setParameter('from', $from)
-                ->andWhere('t.publishedAt < :to')
-                    ->setParameter('to', $to)
-                ->orderBy('t.publishedAt', 'DESC')
-                ->setMaxResults(1);
+                ->orderBy('t.publishedAt', 'DESC');
 
         if( $excludeArticleId !== null ) {
             $qb->andWhere('t.id != :excludeId')
                 ->setParameter('excludeId', $excludeArticleId);
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getResult();
     }
 
 
