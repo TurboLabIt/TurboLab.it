@@ -17,7 +17,7 @@ class TliUpdateEditing extends Plugin {
         editor.conversion.for('downcast').attributeToElement({
             model: 'ins',
             view: (value, { writer }) =>
-                writer.createAttributeElement('ins', {}, { priority: 5 })
+                writer.createAttributeElement('ins', {}, { priority: 1 })
         });
 
         editor.commands.add('tliUpdate', new TliUpdateCommand(editor));

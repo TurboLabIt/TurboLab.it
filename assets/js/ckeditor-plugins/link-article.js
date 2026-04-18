@@ -119,10 +119,33 @@ jQuery(function() {
         const articleTitle  = resultRow.data('article-title');
         const modalFrame    = jQuery('#tli-link-article-modal');
         const selectedText  = modalFrame.data('selected-text') || '';
-        const linkText      = selectedText !== '' ? selectedText : articleTitle;
 
-        const html = `<a href="${articleUrl}">${linkText}</a>`;
-        insertHtmlIntoEditor(html);
+        const editable = document.querySelector('.ck-editor__editable');
+        if( editable && editable.ckeditorInstance ) {
+
+            const editor = editable.ckeditorInstance;
+
+            if( selectedText !== '' ) {
+                // Text already in the document — just apply the link attribute,
+                // preserving surrounding formatting (ins, bold, etc.)
+                editor.execute('link', articleUrl);
+            } else {
+                // No selection — insert the article title as linked text,
+                // inheriting any attributes active at the cursor (ins, bold, etc.)
+                editor.model.change(writer => {
+                    const selection = editor.model.document.selection;
+                    const attrs = {};
+                    for( const [key, value] of selection.getAttributes() ) {
+                        attrs[key] = value;
+                    }
+                    attrs.linkHref = articleUrl;
+                    const text = writer.createText(articleTitle, attrs);
+                    editor.model.insertContent(text, selection);
+                });
+            }
+
+            editor.editing.view.focus();
+        }
 
         bootstrap.Modal.getInstance(modalFrame[0]).hide();
     });
@@ -154,8 +177,34 @@ jQuery(function() {
         const articleTitle  = resultRow.data('article-title');
         const modalFrame    = jQuery('#tli-link-article-modal');
 
-        const html = `<p><strong>» Leggi:</strong> <a href="${articleUrl}">${articleTitle}</a></p>`;
-        insertHtmlIntoEditor(html);
+        const editable = document.querySelector('.ck-editor__editable');
+        if( editable && editable.ckeditorInstance ) {
+
+            const editor = editable.ckeditorInstance;
+
+            editor.model.change(writer => {
+
+                const selection = editor.model.document.selection;
+
+                // Inherit text attributes active at the cursor (ins, etc.) but
+                // drop any pre-existing link so the article URL doesn't clash.
+                const inheritedAttrs = {};
+                for( const [key, value] of selection.getAttributes() ) {
+                    if( key !== 'linkHref' ) {
+                        inheritedAttrs[key] = value;
+                    }
+                }
+
+                const paragraph = writer.createElement('paragraph');
+                writer.appendText('» Leggi:', Object.assign({}, inheritedAttrs, { bold: true }), paragraph);
+                writer.appendText(' ', inheritedAttrs, paragraph);
+                writer.appendText(articleTitle, Object.assign({}, inheritedAttrs, { linkHref: articleUrl }), paragraph);
+
+                editor.model.insertContent(paragraph, selection);
+            });
+
+            editor.editing.view.focus();
+        }
 
         bootstrap.Modal.getInstance(modalFrame[0]).hide();
     });
