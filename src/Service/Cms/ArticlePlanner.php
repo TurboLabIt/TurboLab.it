@@ -108,7 +108,7 @@ class ArticlePlanner
             return $now > $dayStart ? clone $now : clone $dayStart;
         }
 
-        $latest          = $upcomingNews[0];
+        $latest          = reset($upcomingNews);
         $lastPublishedAt = DateTime::createFromInterface($latest->getPublishedAt());
 
         // Second news of the day goes at 08:05 (fixed)
