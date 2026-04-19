@@ -8,6 +8,7 @@
 const articleMetaStrip  = jQuery('#tli-article-meta-strip');
 const articleAuthorsBio = jQuery('#tli-article-authors-bio');
 const articleTags       = jQuery('#tli-article-tags');
+const articleFiles      = jQuery('#tli-downloadable-files');
 
 const ArticleMeta = {
     update(json) {
@@ -16,6 +17,7 @@ const ArticleMeta = {
         articleMetaStrip.html(json.strip);
         articleAuthorsBio.html(json.bios);
         articleTags.html(json.tags);
+        articleFiles.html(json.files);
         return this;
     }
 };

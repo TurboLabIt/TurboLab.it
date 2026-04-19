@@ -83,7 +83,8 @@ abstract class ArticleEditBaseController extends BaseController
             "title"     => $this->articleEditor->getTitleForHTMLAttribute(),
             "strip"     => $this->twig->render('article/meta-strip.html.twig', $arrData),
             "bios"      => $this->twig->render('article/authors-bio.html.twig', $arrData),
-            "tags"      => $this->twig->render('article/tags.html.twig',$arrData)
+            "tags"      => $this->twig->render('article/tags.html.twig',$arrData),
+            "files"     => $this->twig->render('article/files.html.twig', $arrData)
         ]);
     }
 
