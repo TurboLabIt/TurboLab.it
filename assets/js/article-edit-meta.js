@@ -12,7 +12,7 @@ const articleFiles      = jQuery('#tli-downloadable-files');
 
 const ArticleMeta = {
     update(json) {
-        document.title = json.title;
+        document.title = jQuery('<textarea/>').html(json.title).val();
         history.replaceState(null, null, json.path);
         articleMetaStrip.html(json.strip);
         articleAuthorsBio.html(json.bios);
