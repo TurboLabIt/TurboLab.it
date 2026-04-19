@@ -1,0 +1,50 @@
+{% for File in LocalResults %}
+
+    <div class="tli-link-file-result border-bottom py-2 px-1"
+         data-file-url="{{ File.url }}"
+         data-file-title="{{ File.title|e('html_attr') }}"
+         data-file-name="{{ File.userPerceivedFileName|e('html_attr') }}">
+
+        <div class="d-flex gap-2 align-items-start mb-1">
+            <div class="flex-shrink-0 pt-1">
+                <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
+            </div>
+            <div>
+                <div class="fs-5 fw-bold">
+                    <a href="{{ File.url }}" target="_blank" class="text-decoration-none">{{ File.title }}</a>
+                </div>
+                <div class="text-muted" style="font-size: 0.75rem;">
+                    {% if File.format is not empty %}
+                        Formato: <code>{{ File.format }}</code>
+                    {% endif %}
+                    {% if File.sizeLabel is not empty %}
+                        <span class="mx-1">·</span> {{ File.sizeLabel }}
+                    {% endif %}
+                    <span class="mx-1">·</span>
+                    <i class="fa-solid fa-user-tie"></i> a cura di:
+                    {% for Author in File.Authors %}
+                        <a href="{{ Author.url }}" target="_blank" class="text-muted">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                    {% else %}
+                        <em>&lt;sconosciuto&gt;</em>
+                    {% endfor %}
+                    <span class="mx-1">·</span>
+                    <i class="fa-solid fa-flask-vial"></i>
+                    Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sm border tli-link-file-insert-link">
+                <i class="fa-solid fa-link"></i> Crea collegamento
+            </button>
+            <button type="button" class="btn btn-sm border tli-link-file-insert-download">
+                <i class="fa-solid fa-arrow-right"></i> Inserisci link come: » Download: ...
+            </button>
+        </div>
+    </div>
+
+{% else %}
+
+    <p class="alert alert-warning"> 🪹 Nessun risultato.</p>
+
+{% endfor %}

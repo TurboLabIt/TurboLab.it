@@ -214,5 +214,13 @@ $(document).on('keydown', function(event) {
         return false;
     }
 
+    // CTRL+D or Command+D (Mac) — Link file (overrides browser bookmark shortcut)
+    if( (event.ctrlKey || event.metaKey) && (event.key === 'd' || event.key === 'D') ) {
+
+        event.preventDefault();
+        $('[data-cke-tooltip-text="Inserisci link a file (Ctrl+D)"]').first().trigger('click');
+        return false;
+    }
+
     return true;
 });

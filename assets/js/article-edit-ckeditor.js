@@ -43,6 +43,7 @@ import TliIstruzioniPlugin from "./ckeditor-plugins/istruzioni";
 import TliPublishingStatusPlugin from "./ckeditor-plugins/publishing-status";
 import TliYoutube from "./ckeditor-plugins/youtube";
 import TliLinkArticle from "./ckeditor-plugins/link-article";
+import TliLinkFile from "./ckeditor-plugins/link-file";
 import TliWatermark from "./ckeditor-plugins/watermark";
 import TliFormatPlugin from "./ckeditor-plugins/format";
 import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
@@ -56,7 +57,7 @@ const editorConfig = {
             'save', '|',
             'heading2', 'paragraph', '|',
             'bold', 'italic', 'strikethrough', 'tliIstruzioni', 'tliUpdate', 'removeFormat', '|',
-            'tliLinkArticle', 'link', 'tliyoutube', '|',
+            'tliLinkArticle', 'tliLinkFile', 'link', 'tliyoutube', '|',
             /*'codeBlock',*/ 'bulletedList', 'numberedList', '|',
             'undo', 'redo', '|',
             'findAndReplace', /*'fullscreen'*/ '|',
@@ -95,6 +96,7 @@ const editorConfig = {
         TliPublishingStatusPlugin,
         TliYoutube,
         TliLinkArticle,
+        TliLinkFile,
         TliWatermark,
         TliFormatPlugin,
         TliDataUriUpload

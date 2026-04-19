@@ -45,4 +45,76 @@ class FileRepository extends BaseRepository
                 ->orderBy('f.format', 'ASC')
             ->getQuery()->getResult();
     }
+
+
+    public function getSerpByFulltext(string $termToSearch, ?int $authorId = null, ?string $sort = null) : array
+    {
+        $termToSearch   = preg_replace('/[^a-z0-9_ ]/i', '', $termToSearch);
+        $arrTerms       = explode(' ', $termToSearch);
+
+        foreach($arrTerms as $k => $term) {
+
+            $term = trim($term);
+
+            if( empty($term) || mb_strlen($term) < 2 ) {
+
+                unset($arrTerms[$k]);
+                continue;
+            }
+
+            $arrTerms[$k] = "+$term";
+        }
+
+        $termToSearchPrepared = implode(' ', $arrTerms);
+        if( empty($termToSearchPrepared) ) {
+            return [];
+        }
+
+        $sqlParams      = ['termToSearch' => $termToSearchPrepared];
+        $authorFilter   = '';
+
+        if( !empty($authorId) ) {
+            $authorFilter           = "AND EXISTS (SELECT 1 FROM file_author fa WHERE fa.file_id = f.id AND fa.user_id = :authorId)";
+            $sqlParams['authorId']  = $authorId;
+        }
+
+        $orderBy    = $sort === 'date' ? 'f.id DESC' : 'ranking DESC';
+        $tableName  = $this->getTableName();
+
+        $sqlSelect = "
+            SELECT f.id, MATCH(f.title) AGAINST(:termToSearch IN BOOLEAN MODE) AS ranking FROM $tableName AS f
+            WHERE
+                MATCH(f.title) AGAINST(:termToSearch IN BOOLEAN MODE)
+                AND f.format IS NOT NULL AND f.format != ''
+                $authorFilter
+            ORDER BY $orderBy
+            LIMIT 50
+        ";
+
+        $arrIds = $this->sqlQueryExecute($sqlSelect, $sqlParams)->fetchFirstColumn();
+        if( empty($arrIds) ) {
+            return [];
+        }
+
+        $arrFiles =
+            $this->getQueryBuilder()
+                ->andWhere('t.id IN (:ids)')
+                ->setParameter("ids", $arrIds)
+                ->getQuery()
+                ->getResult();
+
+        $arrReorder = array_flip($arrIds);
+        foreach($arrReorder as $fileId => $value) {
+
+            if( !array_key_exists($fileId, $arrFiles) ) {
+
+                unset($arrReorder[$fileId]);
+                continue;
+            }
+
+            $arrReorder[$fileId] = $arrFiles[$fileId];
+        }
+
+        return $arrReorder;
+    }
 }

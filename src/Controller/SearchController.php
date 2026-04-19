@@ -69,6 +69,28 @@ class SearchController extends BaseController
     }
 
 
+    #[Route('/' . self::SECTION_SLUG . '/ajax/link-file/{termToSearch}', requirements: ['termToSearch' => '.*'], name: 'app_search_ajax_link-file', priority: 1)]
+    public function performSearchForLinkFile(string $termToSearch = '') : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser() ? $this->getUser()->getId() : null;
+            $sort       = $this->request->query->get('sort') === 'date' ? 'date' : null;
+
+            return
+                $this->render('search/results-link-file.html.twig', [
+                    'LocalResults' => $this->factory->createFileCollection()->loadSerp($termToSearch, $authorId, $sort)
+                ]);
+
+        } catch(Exception $ex) {
+
+            return $this->textErrorResponse($ex);
+        }
+    }
+
+
     protected function searchResultResponse(string $twigTemplatePath, string $termToSearch = '') : Response
     {
         $this->ajaxOnly();

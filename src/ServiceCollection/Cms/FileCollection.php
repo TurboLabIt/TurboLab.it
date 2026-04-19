@@ -20,6 +20,13 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadSerp(string $termToSearch, ?int $authorId = null, ?string $sort = null) : static
+    {
+        $arrFiles = $this->getRepository()->getSerpByFulltext($termToSearch, $authorId, $sort);
+        return $this->setEntities($arrFiles);
+    }
+
+
     public function getFormats() : array
     {
         if( !empty($this->arrFormats) ) {
