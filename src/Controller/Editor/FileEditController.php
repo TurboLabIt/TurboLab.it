@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Editor;
 
+use App\Service\Cms\Article;
 use App\Service\Cms\FileEditor;
 use App\ServiceCollection\Cms\FileEditorCollection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -38,7 +39,9 @@ class FileEditController extends ArticleEditBaseController
             $this->factory->getEntityManager()->flush();
 
             return $this->render('article/files.html.twig', [
-                'Article' => $this->articleEditor
+                'Article'           => $this->articleEditor,
+                'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
+                'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
             ]);
 
         } catch(UniqueConstraintViolationException $ex) {
@@ -93,7 +96,9 @@ class FileEditController extends ArticleEditBaseController
                 ->save();
 
             return $this->render('article/files.html.twig', [
-                'Article' => $this->factory->createArticle()->load($articleId)
+                'Article'           => $this->factory->createArticle()->load($articleId),
+                'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
+                'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
             ]);
 
         } catch(UniqueConstraintViolationException $ex) {

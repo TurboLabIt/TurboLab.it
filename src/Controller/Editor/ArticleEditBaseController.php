@@ -72,9 +72,11 @@ abstract class ArticleEditBaseController extends BaseController
     protected function jsonOKResponse(string $okMessage) : JsonResponse
     {
         $arrData = [
-            "Article"       => $this->articleEditor,
-            "Sentinel"      => $this->sentinel,
-            "CurrentUser"   => $this->getCurrentUser()
+            "Article"           => $this->articleEditor,
+            "Sentinel"          => $this->sentinel,
+            "CurrentUser"       => $this->getCurrentUser(),
+            'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
+            'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
         ];
 
         return $this->json([
