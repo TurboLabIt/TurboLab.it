@@ -80,14 +80,14 @@ class NewsletterController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/open', name: 'app_newsletter_opener')]
     public function opener(NewsletterService $newsletter) : Response
     {
-        $goToUrl        = $this->request->get("url");
+        $goToUrl        = $this->request->query->get("url");
         $arrParsedUrl   = parse_url($goToUrl);
         // prevent open redirection
         if( !in_array($arrParsedUrl["host"], UrlGenerator::INTERNAL_DOMAINS) ) {
             throw new Exception("Bad redirection hostname");
         }
 
-        $encryptedUserData = $this->request->get("opener");
+        $encryptedUserData = $this->request->query->get("opener");
 
         try {
             $arrUserData = $this->encryptor->decrypt($encryptedUserData);

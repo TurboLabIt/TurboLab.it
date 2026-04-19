@@ -37,7 +37,7 @@ class ArticleEditAuthors extends ArticleEditBaseController
         try {
             $this->loginRequired();
 
-            $username   = $this->request->get('username');
+            $username   = $this->request->query->get('username');
             $authors    = $this->factory->createUserCollection();
 
             empty($username) ? $authors->loadLatestAuthors() : $authors->loadBySearchUsername($username);
@@ -57,7 +57,7 @@ class ArticleEditAuthors extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
 
             $arrPreviousAuthors = $this->articleEditor->getAuthors();
-            $arrAuthorIds       = $this->request->get('authors') ?? [];
+            $arrAuthorIds       = $this->request->request->all('authors');
             $authors            = $this->factory->createUserCollection()->load($arrAuthorIds);
 
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();

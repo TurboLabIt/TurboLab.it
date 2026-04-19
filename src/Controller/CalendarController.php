@@ -42,8 +42,8 @@ class CalendarController extends BaseController
     #[Route('/calendario/eventi', name: 'app_calendar_events')]
     public function calendarEvents() : JsonResponse
     {
-        $txtStartDate   = $this->request->get('start');
-        $txtEndDate     = $this->request->get('end');
+        $txtStartDate   = $this->request->query->get('start');
+        $txtEndDate     = $this->request->query->get('end');
 
         try {
             if( empty($txtStartDate) || empty($txtEndDate) ) {

@@ -22,7 +22,7 @@ class ArticleEditorController extends ArticleEditBaseController
 
             foreach(['title', 'body'] as $param) {
 
-                $value = $this->request->get($param);
+                $value = $this->request->request->get($param);
                 $method = "set" . ucfirst($param);
                 $this->articleEditor->$method($value);
             }
@@ -89,7 +89,7 @@ class ArticleEditorController extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
 
             $previousPublishedAt    = $this->articleEditor->getPublishedAt();
-            $publishingStatus       = $this->request->get('status');
+            $publishingStatus       = $this->request->request->get('status');
 
             if( $publishingStatus == ArticleEditor::PUBLISHING_ACTION_PUBLISH_URGENTLY ) {
 

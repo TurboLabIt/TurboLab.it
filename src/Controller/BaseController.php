@@ -152,7 +152,7 @@ abstract class BaseController extends AbstractController
     protected function validateCsrfToken(?string $errorMessage = null, null|int|string $tokenId = null, ?string $tokenParamName = null)
     {
         $tokenParamName ??= static::CSRF_TOKEN_PARAM_NAME;
-        $csrfToken = $this->request->get($tokenParamName);
+        $csrfToken = $this->request->request->get($tokenParamName) ?? $this->request->query->get($tokenParamName);
 
         $tokenId ??= static::CSRF_TOKEN_ID;
         $oToken = new CsrfToken($tokenId, $csrfToken);

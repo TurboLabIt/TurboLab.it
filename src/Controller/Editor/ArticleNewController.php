@@ -77,7 +77,7 @@ class ArticleNewController extends ArticleEditBaseController
 
         //$this->validateCsrfToken();
 
-        $newArticleTitle = $this->request->get(static::TITLE_FIELD_NAME);
+        $newArticleTitle = $this->request->request->get(static::TITLE_FIELD_NAME);
 
         $this->articleEditor->setTitle($newArticleTitle);
 
@@ -91,7 +91,7 @@ class ArticleNewController extends ArticleEditBaseController
         }
 
 
-        $newArticleFormat = $this->request->get(static::FORMAT_FIELD_NAME);
+        $newArticleFormat = $this->request->request->get(static::FORMAT_FIELD_NAME);
 
         if( $newArticleFormat == Article::FORMAT_ACTION_SPONSOR ) {
 

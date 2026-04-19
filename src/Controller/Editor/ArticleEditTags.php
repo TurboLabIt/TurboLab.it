@@ -37,7 +37,7 @@ class ArticleEditTags extends ArticleEditBaseController
         try {
             $this->loginRequired();
 
-            $tag = $this->request->get('tag');
+            $tag = $this->request->query->get('tag');
 
             return $this->render('article/editor/tags-autocomplete.html.twig', [
                 'Tags' => $this->factory->createTagCollection()->loadBySearchTagOrCreate($tag)
@@ -54,7 +54,7 @@ class ArticleEditTags extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
 
             $arrPreviousTags    = $this->articleEditor->getTags();
-            $arrIdsAndTags      = $this->request->get('tags') ?? [];
+            $arrIdsAndTags      = $this->request->request->all('tags');
 
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 

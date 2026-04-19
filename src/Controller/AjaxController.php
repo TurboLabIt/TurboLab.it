@@ -22,7 +22,7 @@ class AjaxController extends BaseController
         $siteUrl = rtrim($siteUrl, '/');
 
         // $originUrl is no longer used below
-        $originUrl = $this->request->get('originUrl') ?? $siteUrl;
+        $originUrl = $this->request->request->get('originUrl') ?? $siteUrl;
         if( stripos($originUrl, $siteUrl) !== 0 ) {
             throw new InvalidArgumentException('Origin page is not valid');
         }
@@ -86,8 +86,8 @@ class AjaxController extends BaseController
             ]);
         }
 
-        $cmsId  = (int)$this->request->get('cmsId');
-        $cmsType= $this->request->get('cmsType');
+        $cmsId  = (int)$this->request->request->get('cmsId');
+        $cmsType= $this->request->request->get('cmsType');
         $oCms   = $this->factory->createService($cmsType)->load($cmsId);
         $user   = $this->getCurrentUserAsAuthor();
 

@@ -20,7 +20,7 @@ class SearchController extends BaseController
     public function search(string $termToSearch = '') : Response
     {
         // legacy redirect
-        $legacyQueryStringParam = $this->request->get('query') ?? '';
+        $legacyQueryStringParam = $this->request->query->get('query') ?? '';
         $legacyQueryStringParam = trim($legacyQueryStringParam);
 
         if( !empty($legacyQueryStringParam) ){

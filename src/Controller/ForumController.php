@@ -17,7 +17,7 @@ class ForumController extends BaseController
     {
         $this->ajaxOnly();
 
-        $postId = (int)$this->request->get('postId');
+        $postId = (int)$this->request->request->get('postId');
 
         try {
             $this->loginRequired();

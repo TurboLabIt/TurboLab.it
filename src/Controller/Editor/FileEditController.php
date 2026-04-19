@@ -89,9 +89,9 @@ class FileEditController extends ArticleEditBaseController
         try {
 
             $this->loadFileEditor($fileId)
-                ->setTitle( $this->request->get('title') )
-                ->setFormat( $this->request->get('format') )
-                ->setExternalDownloadUrl( $this->fileEditor->isExternal() ? $this->request->get('remote-url') : null )
+                ->setTitle( $this->request->request->get('title') )
+                ->setFormat( $this->request->request->get('format') )
+                ->setExternalDownloadUrl( $this->fileEditor->isExternal() ? $this->request->request->get('remote-url') : null )
                 ->setAutoHash()
                 ->save();
 
