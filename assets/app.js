@@ -11,5 +11,5 @@ import './js/scroll-to-selector'
 import './js/prevent-change-url'
 import './js/form-submit-to-path'
 import './js/userbar';
-import './js/visit';
+import './js/visit-on-load';
 import './js/chevron';

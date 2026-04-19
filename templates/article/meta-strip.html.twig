@@ -15,14 +15,20 @@
                 <li>
                     <a href="{{ Article.commentsUrl }}">
                         <i class="fa-solid fa-comment"></i> Commenti:
-                        <span class="tli-comments-num-target" data-value="0"> <i class="fa-solid fa-calculator fa-fade"></i></span>
+                        {# the number of comments shown in the article is ALWAYS fetched async #}
+                        <span class="tli-comments-num-target" data-value="0">
+                            <i class="fa-solid fa-calculator fa-fade"></i>
+                        </span>
                     </a>
                 </li>
             {% endif %}
 
             <li>
                 <i class="fa-brands fa-readme"></i> Letture:
-                <span class="tli-views-num-target" data-value="0"> <i class="fa-solid fa-calculator fa-fade"></i></span>
+                {# the number views shown in the article is ALWAYS fetched async #}
+                <span class="tli-views-num-target" data-value="0">
+                    <i class="fa-solid fa-calculator fa-fade"></i>
+                </span>
             </li>
             <li>
                 <i class="fa-solid fa-pen-to-square"></i>

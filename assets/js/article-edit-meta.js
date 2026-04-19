@@ -5,6 +5,8 @@
  * ArticleMeta.update(json);
  */
 
+import * as PageCounter from './page-counter';
+
 const articleMetaStrip  = jQuery('#tli-article-meta-strip');
 const articleAuthorsBio = jQuery('#tli-article-authors-bio');
 const articleTags       = jQuery('#tli-article-tags');
@@ -18,6 +20,8 @@ const ArticleMeta = {
         articleAuthorsBio.html(json.bios);
         articleTags.html(json.tags);
         articleFiles.html(json.files);
+        PageCounter.odometerUpdate(json.views, '.tli-views-num-target');
+        PageCounter.odometerUpdate(json.commentsNum, '.tli-comments-num-target');
         return this;
     }
 };

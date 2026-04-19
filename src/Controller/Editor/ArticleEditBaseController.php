@@ -75,18 +75,21 @@ abstract class ArticleEditBaseController extends BaseController
             "Article"           => $this->articleEditor,
             "Sentinel"          => $this->sentinel,
             "CurrentUser"       => $this->getCurrentUser(),
+            // the following guides are required by article/files.html.twig
             'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
             'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
         ];
 
         return $this->json([
-            "message"   => "✅ OK! $okMessage - " . (new DateTime())->format('Y-m-d H:i:s'),
-            "path"      => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
-            "title"     => $this->articleEditor->getTitleForHTMLAttribute(),
-            "strip"     => $this->twig->render('article/meta-strip.html.twig', $arrData),
-            "bios"      => $this->twig->render('article/authors-bio.html.twig', $arrData),
-            "tags"      => $this->twig->render('article/tags.html.twig',$arrData),
-            "files"     => $this->twig->render('article/files.html.twig', $arrData)
+            "message"       => "✅ OK! $okMessage - " . (new DateTime())->format('Y-m-d H:i:s'),
+            "path"          => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
+            "title"         => $this->articleEditor->getTitleForHTMLAttribute(),
+            "strip"         => $this->twig->render('article/meta-strip.html.twig', $arrData),
+            "views"         => $this->articleEditor->getViews(false),
+            "commentsNum"   => $this->articleEditor->getCommentsNum(false),
+            "files"         => $this->twig->render('article/files.html.twig', $arrData),
+            "tags"          => $this->twig->render('article/tags.html.twig',$arrData),
+            "bios"          => $this->twig->render('article/authors-bio.html.twig', $arrData),
         ]);
     }
 
