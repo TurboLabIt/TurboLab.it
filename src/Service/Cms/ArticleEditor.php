@@ -83,6 +83,20 @@ class ArticleEditor extends Article
         $abstract = $this->textProcessor->getAbstract();
         $this->entity->setAbstract($abstract);
 
+        //
+        $fileIdsInBody  = $this->textProcessor->getFileIds();
+        $currentFiles   = $this->getFiles();
+        $missingFileIds = array_diff($fileIdsInBody, array_keys($currentFiles));
+
+        if( empty($missingFileIds) ) {
+            return $this;
+        }
+
+        $this->addFiles(
+            $this->factory->createFileCollection()->load($missingFileIds),
+            $this->factory->getCurrentUserAsAuthor()
+        );
+
         return $this;
     }
     //</editor-fold>
@@ -336,6 +350,8 @@ class ArticleEditor extends Article
                 ->setFile($fileEntity)
                 ->setUser($authorEntity)
         );
+
+        $this->arrFiles = null;
 
         return $this;
     }

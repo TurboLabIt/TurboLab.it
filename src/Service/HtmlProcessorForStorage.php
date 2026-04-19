@@ -14,6 +14,7 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
+    protected array $fileIds = [];
     protected HTMLPurifier $htmlPurifier;
 
 
@@ -251,6 +252,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
             $fileId = $fileUrl->extractIdFromUrl($href);
             if( !empty($fileId) ) {
+
+                $this->fileIds[] = $fileId;
                 $a->setAttribute("href", '==###file::id::' . $fileId . '###==');
             }
         }
@@ -340,6 +343,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         return $this;
     }
 
-
     public function getAbstract() : ?string { return $this->abstract; }
+
+
+    public function getFileIds() : array { return $this->fileIds; }
 }

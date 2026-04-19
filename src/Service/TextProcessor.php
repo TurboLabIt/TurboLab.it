@@ -6,6 +6,7 @@ class TextProcessor
 {
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
+    protected array $fileIds = [];
 
 
     public function __construct(protected HtmlProcessorForStorage $htmlProcessor) {}
@@ -47,6 +48,7 @@ class TextProcessor
 
         $this->spotlightId  = $this->htmlProcessor->getSpotlightId();
         $this->abstract     = $this->htmlProcessor->getAbstract();
+        $this->fileIds      = $this->htmlProcessor->getFileIds();
 
         return trim($finalHtml);
     }
@@ -95,4 +97,6 @@ class TextProcessor
     public function getSpotlightId() : ?int { return $this->spotlightId; }
 
     public function getAbstract() : ?string { return $this->abstract; }
+
+    public function getFileIds() : array { return $this->fileIds; }
 }
