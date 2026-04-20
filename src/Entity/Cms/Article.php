@@ -14,6 +14,8 @@ use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -58,7 +60,7 @@ class Article extends BaseCmsEntity
     protected Collection $tags;
 
     #[ORM\OneToMany(targetEntity: ArticleFile::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => 'ASC', 'updated_at' => 'DESC'])]
     protected Collection $files;
 
     #[ORM\OneToMany(targetEntity: ArticleGroup::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -289,12 +291,19 @@ class Article extends BaseCmsEntity
     /**
      * @return Collection<int, ArticleFile>
      */
-    public function getFiles() : Collection { return $this->files; }
+    public function getFiles() : Collection
+    {
+        $criteria = Criteria::create()->orderBy([
+            'ranking'   => Order::Ascending,
+            'updated_at'=> Order::Descending,
+        ]);
+
+        return $this->files->matching($criteria);
+    }
 
     public function addFile(ArticleFile $file) : static
     {
-        $currentItems = $this->getFiles();
-        foreach($currentItems as $item) {
+        foreach($this->files as $item) {
 
             if( $item->getFile()->getId() == $file->getFile()->getId() ) {
                 return $this;
