@@ -14,8 +14,6 @@ use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -56,11 +54,9 @@ class Article extends BaseCmsEntity
     protected Collection $images;
 
     #[ORM\OneToMany(targetEntity: ArticleTag::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    //#[ORM\OrderBy(['ranking' => 'ASC'])] no! Tags are order via code, below (can also be re-ordered at runtime)
     protected Collection $tags;
 
     #[ORM\OneToMany(targetEntity: ArticleFile::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC', 'updated_at' => 'DESC'])]
     protected Collection $files;
 
     #[ORM\OneToMany(targetEntity: ArticleGroup::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -293,12 +289,19 @@ class Article extends BaseCmsEntity
      */
     public function getFiles() : Collection
     {
-        $criteria = Criteria::create()->orderBy([
-            'ranking'   => Order::Ascending,
-            'updated_at'=> Order::Descending,
-        ]);
+        $items = $this->files->toArray();
 
-        return $this->files->matching($criteria);
+        usort($items, function(ArticleFile $a, ArticleFile $b) : int {
+
+            $rank = $a->getRanking() <=> $b->getRanking();
+            if( $rank !== 0 ) {
+                return $rank;
+            }
+
+            return $b->getFile()?->getUpdatedAt() <=> $a->getFile()?->getUpdatedAt();
+        });
+
+        return new ArrayCollection($items);
     }
 
     public function addFile(ArticleFile $file) : static
