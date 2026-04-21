@@ -22,8 +22,12 @@
                     {% else %}
                         <em>&lt;sconosciuto&gt;</em>
                     {% endfor %}
-                    <span class="mx-1">·</span>
+                    <span class="mx-1"></span>
                     {% include('article/publishing-status.html.twig') %}
+                    {% if Article.updatedAt %}
+                        <span class="mx-1"></span>
+                        <i class="fa-regular fa-clock"></i> Ultimo aggiornamento: {{ Article.updatedAt|friendlyDate }}
+                    {% endif %}
                 </div>
                 {% if Article.abstract is not empty %}
                     <div class="small text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ Article.abstract|raw }}</div>

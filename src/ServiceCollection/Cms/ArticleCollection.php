@@ -178,6 +178,13 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
+    public function loadLatestForLinkPicker(?int $format = null, ?int $authorId = null) : static
+    {
+        $arrArticles = $this->getRepository()->getLatestForLinkPicker($format, $authorId);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function loadSerp(string $termToSearch, ?int $format = null, ?int $authorId = null, ?string $sort = null) : static
     {
         $termToSearchNormalized     = ArticleSearchNormalizer::normalizeForIndexing($termToSearch);

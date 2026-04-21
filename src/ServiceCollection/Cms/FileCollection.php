@@ -27,6 +27,13 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadLatest(?int $authorId = null) : static
+    {
+        $arrFiles = $this->getRepository()->getLatest($authorId);
+        return $this->setEntities($arrFiles);
+    }
+
+
     public function getFormats() : array
     {
         if( !empty($this->arrFormats) ) {

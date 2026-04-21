@@ -135,6 +135,35 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function getLatestForLinkPicker(?int $format = null, ?int $authorId = null, int $limit = 10) : \Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $qb = $this->getQueryBuilderCompleteWherePublishingStatus();
+
+        if( $format !== null ) {
+            $qb->andWhere('t.format = :format')->setParameter('format', $format);
+        }
+
+        if( !empty($authorId) ) {
+
+            $arrArticleIds =
+                $this->sqlQueryExecute(
+                    "SELECT DISTINCT article_id FROM article_author WHERE user_id = :authorId",
+                    ['authorId' => $authorId]
+                )->fetchFirstColumn();
+
+            $qb->andWhere('t.id IN (:ids)')
+                ->setParameter('ids', empty($arrArticleIds) ? [0] : $arrArticleIds);
+        }
+
+        $query =
+            $qb->orderBy('t.updatedAt', 'DESC')
+                ->setMaxResults($limit)
+                ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
     public function findByTag(Tag $tag, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         // we need to extract "having at least this tag" first

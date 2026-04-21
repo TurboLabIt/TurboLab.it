@@ -54,12 +54,18 @@ jQuery(function() {
             .prop('disabled', disabled);
     }
 
+    function updateRelevanceRadioState(modalFrame) {
+        const query = modalFrame.find('.tli-link-article-search-input').val().trim();
+        const relevanceRadio = modalFrame.find('#tli-link-article-sort-relevance');
+        relevanceRadio.prop('disabled', query === '');
+        if( query === '' && relevanceRadio.is(':checked') ) {
+            modalFrame.find('#tli-link-article-sort-date').prop('checked', true);
+        }
+    }
+
     function performSearch(modalFrame) {
 
         const query = modalFrame.find('.tli-link-article-search-input').val().trim();
-        if( query.length < 2 ) {
-            return;
-        }
 
         const resultsContainer = modalFrame.find('.tli-link-article-results');
         resultsContainer.html(
@@ -74,41 +80,75 @@ jQuery(function() {
         const onlyMine  = modalFrame.find('#tli-link-article-mine-only').is(':checked') ? '1' : '';
         const sort      = modalFrame.find('input[name="article-sort"]:checked').val() || '';
 
-        let endpoint = '/cerca/ajax/link-article/' + encodeURIComponent(query);
         const params = new URLSearchParams();
-        if( format )            params.set('format', format);
-        if( onlyMine )          params.set('only-mine', '1');
-        if( sort === 'date' )   params.set('sort', 'date');
+        if( format )   params.set('format', format);
+        if( onlyMine ) params.set('only-mine', '1');
+
+        let endpoint;
+        if( query.length >= 2 ) {
+            endpoint = '/cerca/ajax/link-article/' + encodeURIComponent(query);
+            if( sort === 'date' ) params.set('sort', 'date');
+        } else {
+            endpoint = '/cerca/ajax/link-article-latest';
+        }
+
         const qs = params.toString();
         if( qs ) endpoint += '?' + qs;
 
-        jQuery.get(endpoint, function(html) {
+        return jQuery.get(endpoint, function(html) {
             resultsContainer.html(html);
         }).fail(function(jqXHR) {
             resultsContainer.html('<p class="alert alert-danger">' + (jqXHR.responseText || 'Errore durante la ricerca') + '</p>');
         }).always(function() {
             setModalControlsDisabled(modalFrame, false);
+            updateRelevanceRadioState(modalFrame);
         });
     }
 
 
+    let articleSearchDebounceTimer;
+
+    function triggerSearchImmediate(modalFrame) {
+        clearTimeout(articleSearchDebounceTimer);
+        performSearch(modalFrame);
+    }
+
     // Search button click
     jQuery(document).on('click', '.tli-link-article-search-btn', function() {
-        performSearch( jQuery(this).closest('.modal') );
+        triggerSearchImmediate( jQuery(this).closest('.modal') );
     });
 
     // Enter key in search input
     jQuery(document).on('keydown', '.tli-link-article-search-input', function(event) {
         if( event.key === 'Enter' ) {
             event.preventDefault();
-            performSearch( jQuery(this).closest('.modal') );
+            triggerSearchImmediate( jQuery(this).closest('.modal') );
         }
     });
 
     // Auto-search on filter change
     jQuery(document).on('change', '#tli-link-article-modal input[name="article-format"], #tli-link-article-mine-only, #tli-link-article-modal input[name="article-sort"]', function() {
-        performSearch( jQuery(this).closest('.modal') );
+        triggerSearchImmediate( jQuery(this).closest('.modal') );
     });
+
+    // Debounced auto-search 1s after the last keystroke
+    jQuery(document).on('input', '.tli-link-article-search-input', function() {
+        const modalFrame = jQuery(this).closest('.modal');
+        updateRelevanceRadioState(modalFrame);
+        clearTimeout(articleSearchDebounceTimer);
+        articleSearchDebounceTimer = setTimeout(function() {
+            performSearch(modalFrame).always(function() {
+                modalFrame.find('.tli-link-article-search-input').trigger('focus');
+            });
+        }, 1000);
+    });
+
+    // Eager preload on page load, while the modal is still hidden
+    const articleModalFrame = jQuery('#tli-link-article-modal');
+    if( articleModalFrame.length ) {
+        updateRelevanceRadioState(articleModalFrame);
+        performSearch(articleModalFrame);
+    }
 
 
     // "Crea collegamento" — insert selected text as link, or article title as link

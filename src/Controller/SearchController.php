@@ -91,6 +91,49 @@ class SearchController extends BaseController
     }
 
 
+    #[Route('/' . self::SECTION_SLUG . '/ajax/link-article-latest', name: 'app_search_ajax_link-article-latest', priority: 1)]
+    public function linkArticleLatest() : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            $format     = $this->request->query->getInt('format') ?: null;
+            $authorId   = $this->request->query->getBoolean('only-mine') && $this->getUser() ? $this->getUser()->getId() : null;
+
+            return
+                $this->render('search/results-link-article.html.twig', [
+                    'LocalResults' => $this->factory->createArticleCollection()->loadLatestForLinkPicker($format, $authorId)
+                ]);
+
+        } catch(Exception $ex) {
+
+            return $this->textErrorResponse($ex);
+        }
+    }
+
+
+    #[Route('/' . self::SECTION_SLUG . '/ajax/link-file-latest', name: 'app_search_ajax_link-file-latest', priority: 1)]
+    public function linkFileLatest() : Response
+    {
+        $this->ajaxOnly();
+
+        try {
+
+            $authorId = $this->request->query->getBoolean('only-mine') && $this->getUser() ? $this->getUser()->getId() : null;
+
+            return
+                $this->render('search/results-link-file.html.twig', [
+                    'LocalResults' => $this->factory->createFileCollection()->loadLatest($authorId)
+                ]);
+
+        } catch(Exception $ex) {
+
+            return $this->textErrorResponse($ex);
+        }
+    }
+
+
     protected function searchResultResponse(string $twigTemplatePath, string $termToSearch = '') : Response
     {
         $this->ajaxOnly();

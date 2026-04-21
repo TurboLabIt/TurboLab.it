@@ -11,25 +11,31 @@
             </div>
             <div>
                 <div class="fs-5 fw-bold">
-                    <a href="{{ File.url }}" target="_blank" class="text-decoration-none">{{ File.title }}</a>
+                    <a href="{{ File.url }}" target="_blank" class="text-decoration-none">{{ File.title|raw }}</a>
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">
-                    {% if File.format is not empty %}
-                        Formato: <code>{{ File.format }}</code>
-                    {% endif %}
-                    {% if File.sizeLabel is not empty %}
-                        <span class="mx-1">·</span> {{ File.sizeLabel }}
-                    {% endif %}
-                    <span class="mx-1">·</span>
                     <i class="fa-solid fa-user-tie"></i> a cura di:
                     {% for Author in File.Authors %}
                         <a href="{{ Author.url }}" target="_blank" class="text-muted">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
                     {% else %}
                         <em>&lt;sconosciuto&gt;</em>
                     {% endfor %}
-                    <span class="mx-1">·</span>
-                    <i class="fa-solid fa-flask-vial"></i>
-                    Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
+                    {% if File.format is not empty %}
+                        <span class="mx-1"></span>
+                        Formato: <code>{{ File.format }}</code>
+                    {% endif %}
+                    {% if File.sizeLabel is not empty %}
+                        <span class="mx-1"></span> {{ File.sizeLabel }}
+                    {% endif %}
+                    {% if File.views > 0 %}
+                        <span class="mx-1"></span>
+                        <i class="fa-solid fa-flask-vial"></i>
+                        Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
+                    {% endif %}
+                    {% if File.updatedAt %}
+                        <span class="mx-1"></span>
+                        <i class="fa-regular fa-clock"></i> Ultimo aggiornamento: {{ File.updatedAt|friendlyDate }}
+                    {% endif %}
                 </div>
             </div>
         </div>
