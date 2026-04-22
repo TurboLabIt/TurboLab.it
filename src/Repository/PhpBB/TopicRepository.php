@@ -239,7 +239,7 @@ class TopicRepository extends BasePhpBBRepository
         $yearStart  = new DateTime('first day of January this year 00:00:00');
         $yearEnd    = new DateTime('last day of December this year 23:59:59');
 
-        return
+        return (int)
             // warning! we're using parent::getQueryBuilder() instead of $this->getQueryBuilder() to skip some conditions
             // this is fine **as long as it's a count**
             parent::getQueryBuilder()

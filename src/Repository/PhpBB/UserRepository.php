@@ -356,7 +356,7 @@ class UserRepository extends BasePhpBBRepository
 
     public function countAllActive() : int
     {
-        return
+        return (int)
             $this->createQueryBuilder('t')
                 ->select('COUNT(t)')
                 // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
