@@ -7,12 +7,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 /**
+ * @deprecated No longer in use - https://github.com/TurboLabIt/TurboLab.it/issues/73
+ *
  * 📚 https://console.cloud.google.com/apis/api/customsearch.googleapis.com/metrics?invt=AbeCrw&project=tli2-search-1736167497152
  * 📚 https://programmablesearchengine.google.com/controlpanel/overview?cx=c8985352856be0e00
  *
  * Custom Search JSON API provides 100 search queries per day for free
  */
-#[\Deprecated(message: "No longer in use - https://github.com/TurboLabIt/TurboLab.it/issues/73")]
 class GoogleProgrammableSearchEngine
 {
     const string ENDPOINT       = 'https://customsearch.googleapis.com';
@@ -20,6 +21,7 @@ class GoogleProgrammableSearchEngine
     const string FORUM_RESULTS  = 'forum';
 
 
+    #[\Deprecated(message: "No longer in use - https://github.com/TurboLabIt/TurboLab.it/issues/73")]
     public function __construct(
         protected array $arrConfig,
         protected TagAwareCacheInterface $cache, protected HttpClientInterface $httpClient
