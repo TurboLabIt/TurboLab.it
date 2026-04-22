@@ -12,6 +12,7 @@ use App\Service\Factory;
 use App\Service\HtmlProcessorForDisplay;
 use App\Service\Mailer;
 use App\Service\User;
+use App\Entity\PhpBB\User as UserEntity;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,10 +29,10 @@ use Twig\Environment;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 177;  // 👀 https://dev0.turbolab.it/#contact
-    const int NEWS_TOTAL_PAGES          = 45;   // 👀 https://dev0.turbolab.it/news#contact
+    const int HOME_TOTAL_PAGES          = 179;  // 👀 https://dev0.turbolab.it/#contact
+    const int NEWS_TOTAL_PAGES          = 47;   // 👀 https://dev0.turbolab.it/news#contact
     const int TAG_TLI_TOTAL_PAGES       = 3;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
-    const int TAG_WINDOWS_TOTAL_PAGES   = 68;   // 👀 https://dev0.turbolab.it/windows-10/#contact
+    const int TAG_WINDOWS_TOTAL_PAGES   = 69;   // 👀 https://dev0.turbolab.it/windows-10/#contact
     const int USER_ZANE_TOTAL_PAGES     = 45;   // 👀 https://dev0.turbolab.it/utenti/zane#contact
 
     const string ARTICLE_QUALITY_TEST_STORED_TITLE =
@@ -71,6 +72,20 @@ abstract class BaseT extends WebTestCase
 
 
     protected static function getEntityManager() : EntityManagerInterface { return static::getService('doctrine.orm.entity_manager'); }
+
+
+    protected static function loginAsSystem() : void
+    {
+        // Force a freshly-booted kernel: between tests, tearDown() shuts the kernel down while
+        // static::$client retains a stale reference, and loginUser() would throw on getContainer().
+        static::ensureKernelShutdown();
+        static::$client = static::createClient();
+        static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
+        static::$client->setServerParameter('HTTPS', 'https');
+
+        $userEntity = static::getEntityManager()->find(UserEntity::class, User::ID_SYSTEM);
+        static::$client->loginUser($userEntity, 'tli_phpbb_cookies');
+    }
 
     protected static function getMailer() : Mailer { return static::getService(Mailer::class); }
 

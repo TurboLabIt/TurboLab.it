@@ -11,6 +11,7 @@ class ArticleEditorTest extends BaseT
 {
     protected static function buildEditor() : ArticleEditor
     {
+        static::loginAsSystem();
         return static::getService(Factory::class)->createArticleEditor();
     }
 
