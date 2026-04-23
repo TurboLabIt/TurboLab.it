@@ -10,3 +10,9 @@ Disallow: /forum/feed/*
 
 User-agent: PetalBot
 Disallow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
