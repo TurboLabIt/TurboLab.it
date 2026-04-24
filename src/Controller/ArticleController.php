@@ -109,7 +109,7 @@ class ArticleController extends BaseController
     public function legacyCommentsUrl(int $articleId) : Response
     {
         $article = $this->factory->createArticle()->load($articleId);
-        return $this->redirect($article->getCommentsUrl(), Response::HTTP_MOVED_PERMANENTLY);
+        $target = $article->getCommentsUrl() ?? $article->getUrl();
+        return $this->redirect($target, Response::HTTP_MOVED_PERMANENTLY);
     }
-
 }
