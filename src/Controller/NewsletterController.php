@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\Encryptor\EncryptionException;
 use TurboLabIt\Encryptor\Encryptor;
@@ -80,11 +81,11 @@ class NewsletterController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/open', name: 'app_newsletter_opener')]
     public function opener(NewsletterService $newsletter) : Response
     {
-        $goToUrl        = $this->request->query->get("url");
-        $arrParsedUrl   = parse_url($goToUrl);
+        $goToUrl = $this->request->query->get("url");
+        $host    = parse_url((string)$goToUrl, PHP_URL_HOST);
         // prevent open redirection
-        if( !in_array($arrParsedUrl["host"], UrlGenerator::INTERNAL_DOMAINS) ) {
-            throw new Exception("Bad redirection hostname");
+        if( !in_array($host, UrlGenerator::INTERNAL_DOMAINS) ) {
+            throw new BadRequestHttpException("Bad redirection hostname");
         }
 
         $encryptedUserData = $this->request->query->get("opener");
