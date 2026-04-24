@@ -19,6 +19,13 @@ set_exception_handler(function(Throwable $exception) {
 
 
 set_error_handler(function (int $severity, string $message, string $file, int $line) {
+
+    // don't promote deprecations/notices to exceptions: third-party libs (phpBB core on
+    // PHP 8.4+) emit them and we can't patch upstream. let PHP's default handler log them.
+    if( $severity & (E_DEPRECATED | E_USER_DEPRECATED | E_NOTICE | E_USER_NOTICE) ) {
+        return false;
+    }
+
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
