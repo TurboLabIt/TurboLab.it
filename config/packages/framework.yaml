@@ -15,6 +15,12 @@ framework:
     php_errors:
         log: true
 
+    # bot/crawler hits on AJAX-only endpoints are expected, not bugs.
+    # Log at info so prod's fingers_crossed handler (action_level: error) never flushes it to prod.log.
+    exceptions:
+        App\Exception\AjaxOnlyException:
+            log_level: 'info'
+
     disallow_search_engine_index: false
 
 when@test:
