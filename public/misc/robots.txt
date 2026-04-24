@@ -1,3 +1,12 @@
+User-agent: PetalBot
+Disallow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
 User-agent: *
 Sitemap: https://turbolab.it/sitemap/sitemap.xml.gz
 Disallow: /scarica/*
@@ -7,12 +16,3 @@ Disallow: /forum/memberlist.php
 Disallow: /forum/ucp.php
 Disallow: /forum/thankslist
 Disallow: /forum/feed/*
-
-User-agent: PetalBot
-Disallow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: Facebot
-Allow: /
