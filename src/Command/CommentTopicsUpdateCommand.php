@@ -2,6 +2,7 @@
 namespace App\Command;
 
 use App\Service\Cms\Article;
+use App\Service\Cms\ArticleUrlGenerator;
 use App\Service\Entity\Article as ArticleEntity;
 use App\Service\Cms\ArticleEditor;
 use App\Service\PhpBB\Topic;
@@ -32,7 +33,7 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
     public function __construct(
         protected ArticleEditorCollection $articles, protected HttpClientInterface $httpClient,
         protected UrlGeneratorInterface $urlGenerator, protected Environment $twig,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager, protected ArticleUrlGenerator $articleUrlGenerator,
     )
     {
         parent::__construct();
@@ -55,14 +56,59 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
         $count = $this->articles->count();
         $this->fxOK("##$count## article(s) loaded");
 
-        if($count == 0) { return $this->endWithSuccess(); }
-
         $this->fxTitle("🔃 Updating...");
-        $this->processItems($this->articles, [$this, 'processOneArticle']);
+        if( $count > 0 ) {
+
+            $this->processItems($this->articles, [$this, 'updateCommentTopic']);
+
+        } else {
+
+            $this->fxOK("No articles need updating found.");
+        }
+
+
+        $this->fxTitle("🔎 Searching for articles referencing orphan comment topics...");
+
+        $arrOrphans =
+            $this->entityManager->createQuery(
+                'SELECT t.id AS articleId, IDENTITY(t.commentsTopic) AS orphanTopicId
+                FROM ' . Article::ENTITY_CLASS . ' t
+                LEFT JOIN t.commentsTopic ct
+                WHERE t.commentsTopic IS NOT NULL
+                    AND ct.id IS NULL'
+            )->getArrayResult();
+
+        $orphanCount = count($arrOrphans);
+        $this->fxOK("##$orphanCount## article(s) with orphan comment topic reference(s)");
+
+        $this->fxTitle("🧹 Nulling out orphan references...");
+        if( $orphanCount > 0 ) {
+
+                $this->entityManager->createQuery(
+                    'UPDATE ' . Article::ENTITY_CLASS . ' t
+                    SET t.commentsTopic = NULL
+                    WHERE t.id IN (:ids)'
+                )
+                    ->setParameter('ids', array_column($arrOrphans, 'articleId'))
+                    ->execute();
+
+            foreach($arrOrphans as $row) {
+                $this->arrResults[] = [
+                    '✅', 'set-null', $row['articleId'],
+                    $this->articleUrlGenerator->generateShortUrlFromId($row['articleId']),
+                    "Ref. to comment topic #" . $row['orphanTopicId'] . " removed"
+                ];
+            }
+
+        } else {
+
+            $this->fxOK("No articles need updating found.");
+        }
+
 
         $this->fxTitle("📊 Results");
         (new Table($output))
-            ->setHeaders(['Done', 'Art. ID', 'URL', 'Message'])
+            ->setHeaders(['Done', 'Op', 'Art. ID', 'URL', 'Message'])
             ->setRows($this->arrResults)
             ->render();
 
@@ -72,7 +118,7 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
     }
 
 
-    protected function processOneArticle($key, ArticleEditor $article) : static
+    protected function updateCommentTopic($key, ArticleEditor $article) : static
     {
         $arrResult = [];
 
@@ -125,11 +171,9 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
             $message .= $ex->getMessage();
         }
 
-        $arrResult[] = $article->getId();
-        $arrResult[] = $article->getShortUrl();
-        $arrResult[] = $message;
-
-        $this->arrResults[] = $arrResult;
+        $this->arrResults[] = array_merge($arrResult, [
+            'topic-update', $article->getId(), $article->getShortUrl(), $message
+        ]);
 
         return $this;
     }
