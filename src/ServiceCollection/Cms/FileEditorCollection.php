@@ -8,7 +8,7 @@ use App\Service\User;
 
 class FileEditorCollection extends FileCollection
 {
-    public function setFromUpload(?array $arrUpload, User $author) : static
+    public function setFromUpload(?array $arrUpload, User $author, ?string $title = null) : static
     {
         $this->clear();
 
@@ -39,7 +39,7 @@ class FileEditorCollection extends FileCollection
 
                 $arrData[$hash]["FileService"] =
                     $this->createService()
-                        ->createFromUploadedFile($item["UploadedFile"]);
+                        ->createFromUploadedFile($item["UploadedFile"], $title);
 
                 $arrData[$hash]["FileService"]->addAuthor($author);
 

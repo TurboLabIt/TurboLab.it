@@ -1,4 +1,7 @@
-<div class="modal fade" id="tli-link-file-modal" tabindex="-1">
+<div class="modal fade" id="tli-link-file-modal" tabindex="-1"
+     data-search-state="idle"
+     data-create-from-url-url="{{ path('app_file_edit-create_from_url') }}?articleId={{ ArticleId }}"
+     data-create-from-upload-url="{{ path('app_file_edit-upload_from_modal') }}?articleId={{ ArticleId }}">
 
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -10,6 +13,68 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+
+                <div class="tli-link-file-create-banner mb-3 p-3 border rounded bg-body-tertiary">
+                    <p class="small mb-2">
+                        Hai cercato e non trovato il file di cui hai bisogno? Puoi crearlo ora.
+                        <strong>Carica</strong> il file (Upload) per materiale originale prodotto da te o per file rari/difficili da trovare altrove.
+                        <strong>Linka</strong> un URL esterno per file aggiornati frequentemente o facilmente reperibili in rete.
+                    </p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-primary btn-sm tli-link-file-create-via-url" disabled>
+                            <i class="fa-solid fa-link"></i> Crea via URL
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm tli-link-file-create-via-upload" disabled>
+                            <i class="fa-solid fa-upload"></i> Crea via Upload
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-2 mb-0 tli-link-file-create-hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Per evitare duplicati, esegui prima una ricerca.
+                    </p>
+
+                    <form class="tli-link-file-create-url-form mt-3 d-none">
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">URL del file</label>
+                            <input type="url" class="form-control form-control-sm tli-link-file-url-input"
+                                   placeholder="https://esempio.com/file.zip" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Titolo (nome leggibile)</label>
+                            <input type="text" class="form-control form-control-sm tli-link-file-url-title"
+                                   maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Formato</label>
+                            <select class="form-select form-select-sm tli-link-file-url-format" required>
+                                <option value="">-- scegli --</option>
+                                {% for value, Item in Formats %}
+                                    <option value="{{ value }}">{% if Item.top %}📌 {% endif %}{{ Item.label|raw }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm tli-link-file-url-submit">
+                            <i class="fa-solid fa-floppy-disk"></i> Salva e inserisci nell'articolo
+                        </button>
+                        <div class="tli-link-file-create-error mt-2"></div>
+                    </form>
+
+                    <form class="tli-link-file-create-upload-form mt-3 d-none">
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Seleziona file dal tuo computer</label>
+                            <input type="file" class="form-control form-control-sm tli-link-file-upload-input" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Titolo (nome leggibile)</label>
+                            <input type="text" class="form-control form-control-sm tli-link-file-upload-title"
+                                   maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm tli-link-file-upload-submit">
+                            <i class="fa-solid fa-upload"></i> Carica e inserisci nell'articolo
+                        </button>
+                        <div class="tli-link-file-create-error mt-2"></div>
+                    </form>
+                </div>
 
                 <div class="input-group mb-3">
                     <input type="text" class="form-control tli-link-file-search-input"

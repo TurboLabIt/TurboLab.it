@@ -76,6 +76,7 @@ class ArticleController extends BaseController
                 ],
                 'Article'               => $article,
                 'ArticleHowTo'          => $articleHowTo,
+                'FileFormats'           => $article->isEditable() ? $this->factory->createFileCollection()->getFormats() : null,
                 // the following guides are required by article/files.html.twig
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'EmuleGuide'            => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE),

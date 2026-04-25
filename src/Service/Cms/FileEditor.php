@@ -24,7 +24,20 @@ class FileEditor extends File
     }
 
 
-    public function createFromUploadedFile(UploadedFile $file) : FileEditor
+    public function createFromUrl(string $url, string $title, string $format) : FileEditor
+    {
+        $this
+            ->setExternalDownloadUrl($url)
+            ->setTitle($title)
+            ->setFormat($format)
+            ->setAutoHash()
+            ->save();
+
+        return $this;
+    }
+
+
+    public function createFromUploadedFile(UploadedFile $file, ?string $title = null) : FileEditor
     {
         // general validation (from UploadableFileTrait)
         $this->validateUploadedFile($file);
@@ -46,8 +59,10 @@ class FileEditor extends File
 
         $hash = hash_file('md5', $file->getPathname() );
 
+        $effectiveTitle = $title !== null && trim($title) !== '' ? $title : $filenameWithoutExtension;
+
         $this
-            ->setTitle($filenameWithoutExtension)
+            ->setTitle($effectiveTitle)
             ->entity
                 ->setFormat($extension)
                 ->setHash($hash);
@@ -66,7 +81,7 @@ class FileEditor extends File
     {
         $localFilePath = $this->previousFilePath ?? $this->getOriginalFilePath();
 
-        $hash = $this->isLocal() ? hash_file('md5', $localFilePath) : md5( $this->getUrl() );
+        $hash = $this->isLocal() ? hash_file('md5', $localFilePath) : md5( $this->getExternalDownloadUrl() );
 
         $this->entity->setHash($hash);
         return $this;

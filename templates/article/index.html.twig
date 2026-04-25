@@ -229,7 +229,10 @@
 
     {% if Article.isEditable %}
         {% include 'article/editor/link-article-modal.html.twig' %}
-        {% include 'article/editor/link-file-modal.html.twig' %}
+        {% include 'article/editor/link-file-modal.html.twig' with {
+            'ArticleId': Article.id,
+            'Formats': FileFormats
+        } %}
     {% endif %}
 
 {% endblock %}

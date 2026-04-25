@@ -10,6 +10,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -46,19 +47,85 @@ class FileEditController extends ArticleEditBaseController
 
         } catch(UniqueConstraintViolationException $ex) {
 
-            if( $ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false ) {
-                throw $ex;
+            return $this->buildDuplicateTitleResponse($ex);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    #[Route('/ajax/editor/files/upload-from-modal', name: 'app_file_edit-upload_from_modal', methods: ['POST'])]
+    public function uploadFromModal(#[MapQueryParameter] int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+
+            $uploadedFiles = $this->request->files->get('files', []);
+            $title         = trim( (string)$this->request->request->get('title', '') );
+
+            if( empty($title) ) {
+                throw new BadRequestHttpException("Il titolo è obbligatorio.");
             }
 
-            return
-                $this->textErrorResponse(
-                    new ConflictHttpException(
-                        "Impossibile salvare: esiste già un file con questo titolo. " . PHP_EOL . PHP_EOL .
-                        "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
-                        "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
-                        "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
-                    )
-                );
+            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
+
+            $files =
+                (new FileEditorCollection($this->factory))
+                    ->setFromUpload($uploadedFiles, $currentUserAsAuthor, $title);
+
+            $this->articleEditor->addFiles($files, $currentUserAsAuthor);
+            $this->factory->getEntityManager()->flush();
+
+            $fileEditor = null;
+            foreach($files as $f) { $fileEditor = $f; break; }
+
+            if( empty($fileEditor) ) {
+                throw new BadRequestHttpException("Nessun file ricevuto.");
+            }
+
+            return $this->buildCreatedFileJsonResponse($fileEditor);
+
+        } catch(UniqueConstraintViolationException $ex) {
+
+            return $this->buildDuplicateTitleResponse($ex);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    #[Route('/ajax/editor/files/create-from-url', name: 'app_file_edit-create_from_url', methods: ['POST'])]
+    public function createFromUrl(#[MapQueryParameter] int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+
+            $url    = trim( (string)$this->request->request->get('url', '') );
+            $title  = trim( (string)$this->request->request->get('title', '') );
+            $format = trim( (string)$this->request->request->get('format', '') );
+
+            if( empty($url) || empty($title) || empty($format) ) {
+                throw new BadRequestHttpException("URL, titolo e formato sono obbligatori.");
+            }
+
+            if( filter_var($url, FILTER_VALIDATE_URL) === false ) {
+                throw new BadRequestHttpException("L'URL inserito non è valido.");
+            }
+
+            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
+
+            $fileEditor =
+                $this->factory->createFileEditor()
+                    ->createFromUrl($url, $title, $format);
+
+            $fileEditor->addAuthor($currentUserAsAuthor);
+
+            $this->articleEditor->addFiles([$fileEditor], $currentUserAsAuthor);
+            $this->factory->getEntityManager()->flush();
+
+            return $this->buildCreatedFileJsonResponse($fileEditor);
+
+        } catch(UniqueConstraintViolationException $ex) {
+
+            return $this->buildDuplicateTitleResponse($ex);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
@@ -164,5 +231,39 @@ class FileEditController extends ArticleEditBaseController
             $this->fileEditor =
                 $this->factory->createFileEditor()->load($fileId)
                     ->enforceCanEdit();
+    }
+
+
+    protected function buildCreatedFileJsonResponse(FileEditor $fileEditor) : JsonResponse
+    {
+        return $this->json([
+            'id'                    => $fileEditor->getId(),
+            'downloadUrl'           => $fileEditor->getUrl(),
+            'title'                 => $fileEditor->getTitle(),
+            'userPerceivedFileName' => $fileEditor->getUserPerceivedFileName(),
+            'attachedFilesHtml'     => $this->twig->render('article/files.html.twig', [
+                'Article'           => $this->articleEditor,
+                'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
+                'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
+            ])
+        ]);
+    }
+
+
+    protected function buildDuplicateTitleResponse(UniqueConstraintViolationException $ex) : Response
+    {
+        if( $ex->getCode() != 1062 || stripos($ex, 'Duplicate entry') === false ) {
+            throw $ex;
+        }
+
+        return
+            $this->textErrorResponse(
+                new ConflictHttpException(
+                    "Impossibile salvare: esiste già un file con questo titolo. " . PHP_EOL . PHP_EOL .
+                    "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
+                    "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
+                    "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
+                )
+            );
     }
 }
