@@ -186,9 +186,10 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
         foreach($arrNodes as $img) {
 
             $src = $img->getAttribute('src');
+            $srcPath = parse_url($src, PHP_URL_PATH) ?? $src;
 
             $arrMatches = [];
-            $extractResult = preg_match('/(\d+)(?!.*\d)/', $src, $arrMatches);
+            $extractResult = preg_match('/(\d+)(?!.*\d)/', $srcPath, $arrMatches);
             if( !$extractResult ) {
 
                 $nodeImageRemovedAlert = $domDoc->createElement('p');

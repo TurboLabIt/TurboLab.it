@@ -223,4 +223,25 @@ class ArticleEditorTest extends BaseT
         $editorSpotlightId = $editor->getSpotlight()?->getId();
         $this->assertEquals($arrTestData['spotlight-id'], $editorSpotlightId);
     }
+
+
+    public function testArticleEditorImageWithCacheBuster()
+    {
+        // The watermark CKEditor plugin appends ?t=<timestamp> to the image URL after the watermark
+        // position is changed, to bypass the browser cache. The stored body must still resolve to
+        // the real image ID and not to the cache-buster timestamp.
+        $editor =
+            static::buildEditor()
+                ->setTitle('Cache-buster regression')
+                ->setBody(
+                    '<p><img src="https://dev0.turbolab.it/immagini/reg/amp-appbuster-rimuove-reinstalla-app-windows-10-11-22106.img?t=1714650000"></p>'
+                );
+
+        $this->assertEquals(
+            '<p><img src="==###immagine::id::22106###=="></p>',
+            $editor->getEntity()->getBody()
+        );
+
+        $this->assertEquals(22106, $editor->getEntity()->getSpotlight()?->getId());
+    }
 }
