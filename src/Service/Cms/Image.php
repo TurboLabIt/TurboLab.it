@@ -439,7 +439,8 @@ class Image extends BaseCmsService
     {
         $candidateUrl   = "/immagini/$size/$imageFolderMod/$slugDashId.$format";
         $realUrl        = $this->factory->getImageUrlGenerator()->generateUrl($this, $size, UrlGeneratorInterface::ABSOLUTE_PATH, $format);
-        return $candidateUrl == $realUrl ? null : $this->getUrl($size);
+        $realUrlPath    = parse_url($realUrl, PHP_URL_PATH);
+        return $candidateUrl == $realUrlPath ? null : $this->getUrl($size);
     }
 
 
