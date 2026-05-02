@@ -1,12 +1,12 @@
 {
     "devDependencies": {
         "@babel/core": ">=7.29.0",
-        "@babel/preset-env": ">=7.29.2",
+        "@babel/preset-env": ">=7.29.3",
         "@symfony/webpack-encore": ">=6.0.0",
         "ckeditor5": ">=48.0.1",
         "file-loader": ">=6.2.0",
         "jquery-is-in-viewport": ">=1.0.5",
-        "npm-check-updates": "^21.0.3",
+        "npm-check-updates": "^22.1.0",
         "odometer": "^0.4.8",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.99.0",
