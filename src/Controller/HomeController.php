@@ -107,6 +107,9 @@ class HomeController extends BaseController
         $arrVideos                  = $this->YouTubeChannel->getLatestVideos();
         $articlesMostViews          = $this->factory->createArticleCollection()->loadTopViews(1, 180);
 
+        //
+        $currentUser = $this->getCurrentUser();
+
         return
             $this->twig->render('home/index.html.twig', array_merge($arrTemplateParams, [
                 'ArticlesLatestSlider'      => $arrArticlesLatestSlider,
@@ -121,7 +124,8 @@ class HomeController extends BaseController
                     $articlesMostViews->getItems( $articlesMostViews->count() / 2),
                     $articlesMostViews->getItems( $articlesMostViews->count() - 1)
                 ],
-                'Articles'                  => $mainArticleCollection
+                'Articles'                  => $mainArticleCollection,
+                'hasAds'                    => empty($currentUser) || !$currentUser->isEditor()
             ]));
     }
 }

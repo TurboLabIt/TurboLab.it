@@ -40,8 +40,7 @@
         <link rel="next" href="{{ Pages.next.url }}">
     {% endif %}
 
-    {# GDPR Clickio Consent Tool #}
-    <script async src="//clickiocmp.com/t/consent_207914.js"></script>
+    {% include 'ads/clickio/header.html.twig' %}
 
     <!-- Google Analytics (GA4) Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMZ19KGXP8"></script>
@@ -173,6 +172,8 @@
         </div>
 
     </header>
+
+    {% include 'ads/clickio/sticky-leaderboard.html.twig' %}
 
     {% block bodyMainContent %}{% endblock %}
 
