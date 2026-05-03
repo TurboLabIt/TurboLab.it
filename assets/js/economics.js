@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const TLI_ECONOMICS_HIDE_COOKIE_NAME    = 'tli-economics-2025';
 const TLI_AXX_SPACE_SELECTOR            = 'ins.adsbygoogle';
 const TLI_HANDSTOP_SELECTOR             = '.tli-handstop';
