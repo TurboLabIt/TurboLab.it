@@ -1,0 +1,40 @@
+.tli-handstop {
+    display: none;
+    border: thick dashed red;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.tli-handstop-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tli-handstop-text {
+    flex: 1;
+}
+
+.tli-handstop-inner > .economics-handstop-icon:last-child {
+    transform: scaleX(-1);
+}
+
+.tli-handstop-text p {
+    color: black;
+    margin-bottom: 0.5rem;
+}
+
+.tli-handstop-text p:last-child {
+    margin-bottom: 0;
+}
+
+.tli-handstop a {
+    color: black;
+    text-decoration: underline;
+}
+
+.tli-handstop-hide {
+    margin: 0.75rem 0 0;
+    text-align: center;
+}

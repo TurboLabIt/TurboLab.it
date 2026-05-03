@@ -6,6 +6,7 @@ import './styles/forum/register.css'
 import './styles/forum/modal.css'
 import './styles/forum/link-article.css'
 import './styles/forum/thanks-button.css'
+import './styles/handstop.css'
 
 import './js/economics'
 import './js/forum/regolamento'
