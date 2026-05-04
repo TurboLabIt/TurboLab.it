@@ -124,8 +124,7 @@ class HomeController extends BaseController
                     $articlesMostViews->getItems( $articlesMostViews->count() / 2),
                     $articlesMostViews->getItems( $articlesMostViews->count() - 1)
                 ],
-                'Articles'                  => $mainArticleCollection,
-                'hasAds'                    => empty($currentUser) || !$currentUser->isEditor()
+                'Articles'                  => $mainArticleCollection
             ]));
     }
 }

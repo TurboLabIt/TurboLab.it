@@ -56,11 +56,13 @@ class ArticleController extends BaseController
 
         $articleHowTo = $article->isEditable() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
 
+        $sentinel = $this->factory->createArticleSentinel($article);
+
         $html =
             $this->twig->render('article/index.html.twig', [
                 'cmsId'                 => $article->getId(),
                 'cmsType'               => $article->getClass(),
-                'Sentinel'              => $this->factory->createArticleSentinel($article),
+                'Sentinel'              => $sentinel,
                 'metaTitle'             => $article->getTitleForHTMLAttribute(),
                 'metaDescription'       => $article->getAbstractForHTMLAttribute(),
                 'metaCanonicalUrl'      => $article->getUrl(),
@@ -81,7 +83,8 @@ class ArticleController extends BaseController
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'EmuleGuide'            => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
-                'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article)
+                'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article),
+                'hasAds'                => !$sentinel->canEdit()
             ]);
 
         if( $article->isDraft() ) {
