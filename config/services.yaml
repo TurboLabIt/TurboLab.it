@@ -66,6 +66,13 @@ services:
                 apiKey: '%env(APP_YOUTUBE_API_KEY)%'
                 channelId: '%env(APP_YOUTUBE_CHANNEL_ID)%'
 
+    App\Service\GoogleAnalytics:
+        arguments:
+            $arrConfig:
+                propertyId:         '%env(APP_GOOGLE_ANALYTICS_PROPERTY_ID)%'
+                metaTitleSuffix:    '%env(APP_META_TITLE_SUFFIX)%'
+                siteName:           '%env(APP_SITE_NAME)%'
+
     App\Repository\PhpBB\ForumRepository:
          arguments:
             $arrConfig:

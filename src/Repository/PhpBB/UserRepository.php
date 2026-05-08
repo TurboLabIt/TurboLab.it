@@ -364,4 +364,108 @@ class UserRepository extends BasePhpBBRepository
                 ->getQuery()->getSingleScalarResult();
 
     }
+
+
+    /**
+     * Returns ['YYYY-MM-DD' => int] — count of phpBB users (USER_NORMAL/USER_FOUNDER, i.e. activated)
+     * whose `user_regdate` falls on each day in the inclusive range.
+     */
+    public function getNewRegistrationsByDay(\DateTimeInterface $start, \DateTimeInterface $end) : array
+    {
+        $startTs    = (int)$start->format('U');
+        $endTs      = (int)$end->format('U') + 86399;       // include end-of-day
+
+        $sql = "
+            SELECT
+                DATE(FROM_UNIXTIME(users.user_regdate)) AS day,
+                COUNT(*) AS cnt
+            FROM " . $this->getPhpBBTableName() . "
+            WHERE
+                users.user_regdate BETWEEN :startTs AND :endTs AND
+                users.user_type IN(0, 3)
+            GROUP BY day
+        ";
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->bindValue('startTs', $startTs, ParameterType::INTEGER);
+        $stmt->bindValue('endTs', $endTs, ParameterType::INTEGER);
+
+        $arrResult = [];
+        foreach( $stmt->executeQuery()->fetchAllKeyValue() as $day => $cnt ) {
+            $arrResult[(string)$day] = (int)$cnt;
+        }
+
+        return $arrResult;
+    }
+
+
+    /**
+     * Returns the count of users (USER_NORMAL/USER_FOUNDER, i.e. activated) whose `user_regdate`
+     * is at or before the given UNIX timestamp.
+     */
+    public function countActivatedAtTimestamp(int $ts) : int
+    {
+        return (int)
+            $this->createQueryBuilder('t')
+                ->select('COUNT(t)')
+                // forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
+                ->andWhere('t.user_type IN(0, 3)')
+                ->andWhere('t.regDate <= :ts')
+                    ->setParameter('ts', $ts)
+                ->getQuery()->getSingleScalarResult();
+    }
+
+
+    /**
+     * Returns ['YYYY-MM-DD' => int] — count of activated users CURRENTLY subscribed to the newsletter
+     * (user_allow_massemail = 1) who registered on each day in the inclusive range.
+     *
+     * Caveat: this is an approximation — phpBB doesn't track historical opt-in/opt-out events, so users
+     * who later toggle their newsletter setting only show up under their CURRENT state.
+     */
+    public function getNewsletterSignupsByDay(\DateTimeInterface $start, \DateTimeInterface $end) : array
+    {
+        $startTs    = (int)$start->format('U');
+        $endTs      = (int)$end->format('U') + 86399;
+
+        $sql = "
+            SELECT
+                DATE(FROM_UNIXTIME(users.user_regdate)) AS day,
+                COUNT(*) AS cnt
+            FROM " . $this->getPhpBBTableName() . "
+            WHERE
+                users.user_regdate BETWEEN :startTs AND :endTs AND
+                users.user_type IN(0, 3) AND
+                users.user_allow_massemail = 1
+            GROUP BY day
+        ";
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->bindValue('startTs', $startTs, ParameterType::INTEGER);
+        $stmt->bindValue('endTs', $endTs, ParameterType::INTEGER);
+
+        $arrResult = [];
+        foreach( $stmt->executeQuery()->fetchAllKeyValue() as $day => $cnt ) {
+            $arrResult[(string)$day] = (int)$cnt;
+        }
+
+        return $arrResult;
+    }
+
+
+    /**
+     * Returns the count of activated users CURRENTLY subscribed to the newsletter (user_allow_massemail = 1)
+     * who registered at or before the given UNIX timestamp.
+     */
+    public function countNewsletterSubscribersAtTimestamp(int $ts) : int
+    {
+        return (int)
+            $this->createQueryBuilder('t')
+                ->select('COUNT(t)')
+                ->andWhere('t.user_type IN(0, 3)')
+                ->andWhere('t.user_allow_massemail = 1')
+                ->andWhere('t.regDate <= :ts')
+                    ->setParameter('ts', $ts)
+                ->getQuery()->getSingleScalarResult();
+    }
 }

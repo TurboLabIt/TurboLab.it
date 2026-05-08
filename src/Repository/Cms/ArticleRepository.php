@@ -706,6 +706,36 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    /**
+     * Returns ['YYYY-MM-DD' => int] — count of articles in PUBLISHING_STATUS_PUBLISHED whose
+     * `published_at` falls on each day in the inclusive range.
+     */
+    public function getPublishedByDay(\DateTimeInterface $start, \DateTimeInterface $end) : array
+    {
+        $sql = "
+            SELECT
+                DATE(article.published_at) AS day,
+                COUNT(*) AS cnt
+            FROM " . $this->getTableName() . "
+            WHERE
+                article.published_at BETWEEN :start AND :end AND
+                article.publishing_status = " . Article::PUBLISHING_STATUS_PUBLISHED . "
+            GROUP BY day
+        ";
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->bindValue('start',   $start->format('Y-m-d 00:00:00'));
+        $stmt->bindValue('end',     $end->format('Y-m-d 23:59:59'));
+
+        $arrResult = [];
+        foreach( $stmt->executeQuery()->fetchAllKeyValue() as $day => $cnt ) {
+            $arrResult[(string)$day] = (int)$cnt;
+        }
+
+        return $arrResult;
+    }
+
+
     public function getByPublishedDateInterval(DateTime $startDate, DateTime $endDate) : array
     {
         return
