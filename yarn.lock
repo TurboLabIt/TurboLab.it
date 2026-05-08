@@ -2836,11 +2836,11 @@ __metadata:
   linkType: hard
 
 "baseline-browser-mapping@npm:^2.10.12":
-  version: 2.10.27
-  resolution: "baseline-browser-mapping@npm:2.10.27"
+  version: 2.10.28
+  resolution: "baseline-browser-mapping@npm:2.10.28"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10c0/8ebadaeeddc99367a1522661476d6c895b452a96023c6cef0576aecf8f5f6d37c91e6bde8fa8904cc11a32c5c6bc9df2030481504e50a5aed17e6c7f8bac3b5a
+  checksum: 10c0/9471b802b7f7f18c1e5c089a78bd94283c7b032b4c8c489427f51d8ad49ae5c53544b6c64580540064687bdeee62737bfd47fdbf8179cce42e4dddd91958af24
   languageName: node
   linkType: hard
 
@@ -2944,7 +2944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chart.js@npm:^4.5.1":
+"chart.js@npm:>=4.5.1":
   version: 4.5.1
   resolution: "chart.js@npm:4.5.1"
   dependencies:
@@ -3510,12 +3510,12 @@ __metadata:
   linkType: hard
 
 "enhanced-resolve@npm:^5.20.0":
-  version: 5.21.1
-  resolution: "enhanced-resolve@npm:5.21.1"
+  version: 5.21.2
+  resolution: "enhanced-resolve@npm:5.21.2"
   dependencies:
     graceful-fs: "npm:^4.2.4"
     tapable: "npm:^2.3.3"
-  checksum: 10c0/272b365bb7573fe05384e28e9738a41828a71558bf651683aa194aad79a64a4c19e08857d9fb2f476e3481758c92b2cacf77ba9fa950250fe2e39954a0ac5bc4
+  checksum: 10c0/104714f6481d9310ad561bbc63d1e2ded53d69da934eab8d5aa9c751778e95aeb01531f19cd040d697b38d886d62bbd31f1cdc81e8b3fc66c30a520dc7a293ce
   languageName: node
   linkType: hard
 
@@ -4160,7 +4160,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-cookie@npm:^3.0.5":
+"js-cookie@npm:>=3.0.5":
   version: 3.0.5
   resolution: "js-cookie@npm:3.0.5"
   checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
@@ -4967,7 +4967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"odometer@npm:^0.4.8":
+"odometer@npm:>=0.4.8":
   version: 0.4.8
   resolution: "odometer@npm:0.4.8"
   checksum: 10c0/46c40bccf248e663c90ad731c26aacff9c25fc845ab552193f5f67c17f7d5ca5cbf75b10a4ab0b65a2e18fa30d3bd0c80d039725a478460a796a3cfa1aeb2658
@@ -5746,13 +5746,13 @@ __metadata:
     "@babel/core": "npm:>=7.29.0"
     "@babel/preset-env": "npm:>=7.29.5"
     "@symfony/webpack-encore": "npm:>=6.0.0"
-    chart.js: "npm:^4.5.1"
+    chart.js: "npm:>=4.5.1"
     ckeditor5: "npm:>=48.0.1"
     file-loader: "npm:>=6.2.0"
     jquery-is-in-viewport: "npm:>=1.0.5"
-    js-cookie: "npm:^3.0.5"
+    js-cookie: "npm:>=3.0.5"
     npm-check-updates: "npm:^22.1.1"
-    odometer: "npm:^0.4.8"
+    odometer: "npm:>=0.4.8"
     raw-loader: "npm:>=4.0.2"
     sass: "npm:>=1.99.0"
     sass-loader: "npm:>=16.0"
@@ -6051,8 +6051,8 @@ __metadata:
   linkType: hard
 
 "terser-webpack-plugin@npm:^5.3.0, terser-webpack-plugin@npm:^5.3.17":
-  version: 5.5.0
-  resolution: "terser-webpack-plugin@npm:5.5.0"
+  version: 5.6.0
+  resolution: "terser-webpack-plugin@npm:5.6.0"
   dependencies:
     "@jridgewell/trace-mapping": "npm:^0.3.25"
     jest-worker: "npm:^27.4.5"
@@ -6061,13 +6061,31 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   peerDependenciesMeta:
+    "@minify-html/node":
+      optional: true
     "@swc/core":
+      optional: true
+    "@swc/css":
+      optional: true
+    "@swc/html":
+      optional: true
+    clean-css:
+      optional: true
+    cssnano:
+      optional: true
+    csso:
       optional: true
     esbuild:
       optional: true
+    html-minifier-terser:
+      optional: true
+    lightningcss:
+      optional: true
+    postcss:
+      optional: true
     uglify-js:
       optional: true
-  checksum: 10c0/ea2277cc6c80981fd8ce170016b1cd92d33cdf89d50e81ad387218dd46db55b8d69c8f736a35d7deb238962dbe003dd084f0a2494cbbd55f46a9c9d3e90e583a
+  checksum: 10c0/191882a727d571291df49b11bdcfa7459aa78e96c542a993d66f70df052404e3b30157708a80c2895bbe2de4860217c2addcf15d5b2321df8f0aa0de2191f64f
   languageName: node
   linkType: hard
 
