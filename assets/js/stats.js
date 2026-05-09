@@ -553,7 +553,7 @@ function init() {
 
         try {
             const url  = ajaxBaseUrl + '?days=' + encodeURIComponent(days);
-            const res  = await fetch(url, { headers: { 'Accept': 'application/json' } });
+            const res  = await fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
             const json = await res.json();
 
             if( !res.ok ) {
