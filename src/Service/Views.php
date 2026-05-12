@@ -24,7 +24,7 @@ class Views
             "title" => "Gli articoli più commentati",
             "fx"    => 'loadTopTopComments'
         ],
-        "annuali"    => [
+        "refresh/annuali"    => [
             "title" => "Articoli annuali da aggiornare",
             "fx"    => 'loadPeriodicUpdateList'
         ],

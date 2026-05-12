@@ -11,7 +11,7 @@ class ViewsTest extends BaseT
 {
     public static function viewSlugProvider() : Generator
     {
-        yield from [['bozze'], ['finiti'], ['visitati'], ['commentati'], ['annuali'], ['refresh/ubuntu']];
+        yield from [['bozze'], ['finiti'], ['visitati'], ['commentati'], ['refresh/annuali'], ['refresh/ubuntu']];
     }
 
 
