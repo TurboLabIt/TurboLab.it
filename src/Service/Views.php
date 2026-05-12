@@ -27,6 +27,10 @@ class Views
         "annuali"    => [
             "title" => "Articoli annuali da aggiornare",
             "fx"    => 'loadPeriodicUpdateList'
+        ],
+        "refresh/ubuntu" => [
+            "title" => "Articoli su Ubuntu da aggiornare",
+            "fx"    => 'loadUbuntuRefreshList'
         ]
     ];
 

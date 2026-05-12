@@ -12,14 +12,14 @@ class ViewsController extends BaseController
     const string SECTION_SLUG = "viste";
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', name: 'app_views_multi_page_0-1')]
+    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', requirements: ['slug' => '[a-z-]+(?:/[a-z-]+)*'], name: 'app_views_multi_page_0-1')]
     public function appViewsMulti0Or1($slug) : Response
     {
         return $this->redirectToRoute('app_views_multi', ["slug" => $slug], Response::HTTP_MOVED_PERMANENTLY);
     }
 
 
-    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<[1-9]+[0-9]*>}', name: 'app_views_multi')]
+    #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<[1-9]+[0-9]*>}', requirements: ['slug' => '[a-z-]+(?:/[a-z-]+)*'], name: 'app_views_multi')]
     public function multi(string $slug, ?int $page = null) : Response
     {
         $page = empty($page) ? 1 : $page;
@@ -32,15 +32,18 @@ class ViewsController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
+
+        $cacheSlug = md5($slug);
+
         $buildHtmlResult =
-            $this->cache->get("views_$slug/$page", function(ItemInterface $cacheItem) use($slug, $arrViewRequested, $page) {
+            $this->cache->get("views_{$cacheSlug}_$page", function(ItemInterface $cacheItem) use($slug, $cacheSlug, $arrViewRequested, $page) {
 
                 $buildHtmlResult = $this->buildHtml($slug, $arrViewRequested, $page);
 
                 if( is_string($buildHtmlResult) ) {
 
                     $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                    $cacheItem->tag(['views', 'app_views', "app_views_page_$page", "app_views_$slug", "app_views_{$slug}_page_$page"]);
+                    $cacheItem->tag(['views', 'app_views', "app_views_page_$page", "app_views_$cacheSlug", "app_views_{$cacheSlug}_page_$page"]);
 
                 } else {
 

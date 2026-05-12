@@ -227,6 +227,13 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
+    public function loadUbuntuRefreshList(?int $page = 1) : static
+    {
+        $arrArticles = $this->getRepository()->findUbuntuRefreshList($page);
+        return $this->setEntities($arrArticles);
+    }
+
+
     public function loadForScheduling() : static
     {
         $arrArticles = $this->getRepository()->findForScheduling();

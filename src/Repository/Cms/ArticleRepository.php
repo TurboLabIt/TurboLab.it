@@ -842,6 +842,46 @@ class ArticleRepository extends BaseRepository
     }
 
 
+    public function findUbuntuRefreshList(?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        // Ubuntu LTS releases happen every even year in April.
+        // Latest LTS YY = current year if even, else current year - 1.
+        $year        = (int) date('Y');
+        $latestLtsYY = ($year - ($year % 2)) % 100;
+
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
+                ->andWhere('t.title LIKE :ubuntu')
+                    ->setParameter('ubuntu', '%ubuntu%');
+
+        // Title must reference some Ubuntu YY.MM version where YY < latestLtsYY
+        // (Ubuntu started with 4.10 in 2004)
+        $orX = $query->expr()->orX();
+        for ($yy = 4; $yy < $latestLtsYY; $yy++) {
+
+            $paramName = "ubuntu_yy_$yy";
+            $query->setParameter($paramName, '%' . sprintf('%02d', $yy) . '.%');
+            $orX->add($query->expr()->like('t.title', ':' . $paramName));
+        }
+
+        $query
+            ->andWhere($orX)
+            ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
+            ->andWhere('t.excludedFromPeriodicUpdateList = false')
+            ->orderBy('t.views', 'DESC');
+
+        $query
+            ->setFirstResult($startAt)
+            ->setMaxResults($this->itemsPerPage)
+            ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
     public function findForScheduling() : array
     {
         return
