@@ -8242,12 +8242,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-paginator.git",
-                "reference": "54ccb70e5ac96eaf0d2765bf4e87e1e38d2dd5f1"
+                "reference": "934fef2fad3de65f5312dad882934503eec97c5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/54ccb70e5ac96eaf0d2765bf4e87e1e38d2dd5f1",
-                "reference": "54ccb70e5ac96eaf0d2765bf4e87e1e38d2dd5f1",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-paginator/zipball/934fef2fad3de65f5312dad882934503eec97c5e",
+                "reference": "934fef2fad3de65f5312dad882934503eec97c5e",
                 "shasum": ""
             },
             "require": {
@@ -8280,7 +8280,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-paginator/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-paginator/tree/main"
             },
-            "time": "2025-10-01T23:37:16+00:00"
+            "time": "2026-05-17T09:12:20+00:00"
         },
         {
             "name": "turbolabit/php-encryptor",
@@ -8428,12 +8428,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-messenger.git",
-                "reference": "eab5b242c8234419de0aeb41a132ce32eeadfabc"
+                "reference": "d6f97fed5594861a017a5cbe8496ddce8a18944d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/eab5b242c8234419de0aeb41a132ce32eeadfabc",
-                "reference": "eab5b242c8234419de0aeb41a132ce32eeadfabc",
+                "url": "https://api.github.com/repos/TurboLabIt/php-symfony-messenger/zipball/d6f97fed5594861a017a5cbe8496ddce8a18944d",
+                "reference": "d6f97fed5594861a017a5cbe8496ddce8a18944d",
                 "shasum": ""
             },
             "require": {
@@ -8469,7 +8469,7 @@
                 "issues": "https://github.com/TurboLabIt/php-symfony-messenger/issues",
                 "source": "https://github.com/TurboLabIt/php-symfony-messenger/tree/main"
             },
-            "time": "2025-06-11T13:36:57+00:00"
+            "time": "2026-05-17T09:12:20+00:00"
         },
         {
             "name": "turbolabit/service-entity-plus-bundle",
