@@ -432,9 +432,18 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             "<code>" . $ex->getMessage() . "</code>" . PHP_EOL .
             "URL: $url";
 
-        $this->telegram
-            ->setMessageButtons([])
-            ->sendErrorMessage($message);
+        if( $this->isDevOrTest() ) {
+
+            $this
+                ->fxWarning("The following error would be delivered via Telegram, but it's disabled in this environment")
+                ->fxWarning($message);
+
+        } else {
+
+            $this->telegram
+                ->setMessageButtons([])
+                ->sendErrorMessage($message);
+        }
 
         return $this;
     }
