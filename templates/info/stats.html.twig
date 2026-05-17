@@ -58,63 +58,38 @@
                                     </div>
                                 </div>
 
-                            {% elseif StatsError %}
-
-                                <div class="tli-stats-card">
-                                    <div class="tli-stats-empty">
-                                        <i class="fa-solid fa-circle-exclamation fa-2x" style="color: #e01b24;"></i>
-                                        <h3 class="mt-20">Errore nel recupero dei dati</h3>
-                                        <p>{{ StatsError }}</p>
-                                    </div>
-                                </div>
-
                             {% else %}
 
-                                {# === Headline totals (GA-style) === #}
-                                {% set pvCurInit  = Stats.totals.pageViews.current %}
-                                {% set auCurInit  = Stats.totals.activeUsers.current %}
-                                {% set ruCurInit  = Stats.totals.registeredUsers.current %}
-                                {% set apCurInit  = Stats.totals.articlesPublished.current %}
-                                {% set daysInit   = Stats.range.days %}
-                                {% set pvAvgInit  = daysInit > 0 ? (pvCurInit / daysInit)|round : 0 %}
-                                {% set auAvgInit  = daysInit > 0 ? (auCurInit / daysInit)|round : 0 %}
+                                {# === Headline totals (GA-style) — values are populated by stats.js on AJAX load === #}
                                 <div class="tli-stats-headline" id="tli-stats-headline">
                                     <div class="tli-stats-headline-totals">
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Visualizzazioni</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="pageViews">{{ pvCurInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="pageViews">—</span>
                                         </div>
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Visitatori univoci</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="activeUsers">{{ auCurInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="activeUsers">—</span>
                                         </div>
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Visualizzazioni/giorno</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="pageViewsAvg">{{ pvAvgInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="pageViewsAvg">—</span>
                                         </div>
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Visitatori univoci/giorno</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="activeUsersAvg">{{ auAvgInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="activeUsersAvg">—</span>
                                         </div>
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Nuovi utenti registrati</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="registeredUsers">{{ ruCurInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="registeredUsers">—</span>
                                         </div>
                                         <div class="tli-stats-headline-total">
                                             <span class="tli-stats-headline-label">Articoli pubblicati</span>
-                                            <span class="tli-stats-headline-value"
-                                                  data-tli-headline="articlesPublished">{{ apCurInit|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-headline-value" data-tli-headline="articlesPublished">—</span>
                                         </div>
                                     </div>
                                     <div class="tli-stats-headline-range">
-                                        <span class="tli-stats-headline-range-tag" data-tli-headline-range>
-                                            {{ Stats.range.start|date('d/m/Y') }} – {{ Stats.range.end|date('d/m/Y') }}
-                                        </span>
+                                        <span class="tli-stats-headline-range-tag" data-tli-headline-range></span>
                                     </div>
                                 </div>
 
@@ -191,28 +166,13 @@
                                 <div class="tli-stats-card" id="tli-stats-card-toppages">
 
                                     <h3><i class="fa-solid fa-trophy" style="color: #e5a50a;"></i> Pagine più viste</h3>
-                                    <div class="tli-stats-card-meta" data-tli-toppages-meta>
-                                        Dal {{ Stats.range.start|date('d/m/Y') }}
-                                        al {{ Stats.range.end|date('d/m/Y') }}
-                                    </div>
+                                    <div class="tli-stats-card-meta" data-tli-toppages-meta></div>
                                     <div class="tli-stats-staff-only">
                                         <i class="fa-solid fa-lock"></i> Questa sezione è visibile solo ai membri dello staff
                                     </div>
 
-                                    {% if Stats.topPages is empty %}
-                                        <div class="tli-stats-toppages-empty" data-tli-toppages-empty>
-                                            Nessun dato disponibile per il periodo selezionato.
-                                        </div>
-                                    {% endif %}
-
-                                    {% set splitAt = (Stats.topPages|length / 2)|round(0, 'ceil') %}
-                                    <div class="tli-stats-toppages-grid"
-                                         data-tli-toppages-grid
-                                         {% if Stats.topPages is empty %}style="display:none"{% endif %}>
-
+                                    <div class="tli-stats-toppages-grid" data-tli-toppages-grid style="display:none">
                                         {% for col in [0, 1] %}
-                                            {% set fromIdx = col * splitAt %}
-                                            {% set slice   = Stats.topPages|slice(fromIdx, splitAt) %}
                                             <table class="tli-stats-toppages-table">
                                                 <thead>
                                                     <tr>
@@ -221,27 +181,9 @@
                                                         <th class="tli-stats-toppages-views">Visualizzazioni</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody data-tli-toppages-body="{{ col }}">
-                                                    {% for page in slice %}
-                                                        <tr>
-                                                            <td class="tli-stats-toppages-rank">{{ fromIdx + loop.index }}</td>
-                                                            <td>
-                                                                <span class="tli-stats-toppages-page-title">
-                                                                    <a href="{{ page.path }}" target="_blank" rel="noopener">
-                                                                        {%- if page.iconClass -%}
-                                                                            <i class="fa-solid {{ page.iconClass }}" style="color: {{ page.iconColor }};"></i>
-                                                                        {% endif %}
-                                                                        {{- page.displayTitle -}}
-                                                                    </a>
-                                                                </span>
-                                                            </td>
-                                                            <td class="tli-stats-toppages-views">{{ page.views|number_format(0, ',', '.') }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
+                                                <tbody data-tli-toppages-body="{{ col }}"></tbody>
                                             </table>
                                         {% endfor %}
-
                                     </div>
                                 </div>
                                 {% endif %}
@@ -251,28 +193,13 @@
                                 <div class="tli-stats-card" id="tli-stats-card-toptags">
 
                                     <h3><i class="fa-solid fa-tags" style="color: #e5a50a;"></i> Tag più visti</h3>
-                                    <div class="tli-stats-card-meta" data-tli-toptags-meta>
-                                        Dal {{ Stats.range.start|date('d/m/Y') }}
-                                        al {{ Stats.range.end|date('d/m/Y') }}
-                                    </div>
+                                    <div class="tli-stats-card-meta" data-tli-toptags-meta></div>
                                     <div class="tli-stats-staff-only">
                                         <i class="fa-solid fa-lock"></i> Questa sezione è visibile solo ai membri dello staff
                                     </div>
 
-                                    {% if Stats.topTags is empty %}
-                                        <div class="tli-stats-toppages-empty" data-tli-toptags-empty>
-                                            Nessun dato disponibile per il periodo selezionato.
-                                        </div>
-                                    {% endif %}
-
-                                    {% set splitAtT = (Stats.topTags|length / 2)|round(0, 'ceil') %}
-                                    <div class="tli-stats-toppages-grid"
-                                         data-tli-toptags-grid
-                                         {% if Stats.topTags is empty %}style="display:none"{% endif %}>
-
+                                    <div class="tli-stats-toppages-grid" data-tli-toptags-grid style="display:none">
                                         {% for col in [0, 1] %}
-                                            {% set fromIdx = col * splitAtT %}
-                                            {% set slice   = Stats.topTags|slice(fromIdx, splitAtT) %}
                                             <table class="tli-stats-toppages-table">
                                                 <thead>
                                                     <tr>
@@ -281,25 +208,9 @@
                                                         <th class="tli-stats-toppages-views">Visualizzazioni</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody data-tli-toptags-body="{{ col }}">
-                                                    {% for tag in slice %}
-                                                        {% set tagTitle = tag.title|trim is empty ? tag.path : tag.title %}
-                                                        <tr>
-                                                            <td class="tli-stats-toppages-rank">{{ fromIdx + loop.index }}</td>
-                                                            <td>
-                                                                <span class="tli-stats-toppages-page-title">
-                                                                    <a href="{{ tag.path }}" target="_blank" rel="noopener">
-                                                                        <i class="fa-solid fa-tag" style="color: #e5a50a;"></i> {{ tagTitle }}
-                                                                    </a>
-                                                                </span>
-                                                            </td>
-                                                            <td class="tli-stats-toppages-views">{{ tag.views|number_format(0, ',', '.') }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
+                                                <tbody data-tli-toptags-body="{{ col }}"></tbody>
                                             </table>
                                         {% endfor %}
-
                                     </div>
                                 </div>
                                 {% endif %}
@@ -360,20 +271,8 @@
                                         Utenti più attivi
                                     </h4>
 
-                                    {% if Stats.topPosters is empty %}
-                                        <div class="tli-stats-toppages-empty" data-tli-topposters-empty>
-                                            Nessun dato disponibile per il periodo selezionato.
-                                        </div>
-                                    {% endif %}
-
-                                    {% set splitAtP = (Stats.topPosters|length / 2)|round(0, 'ceil') %}
-                                    <div class="tli-stats-toppages-grid"
-                                         data-tli-topposters-grid
-                                         {% if Stats.topPosters is empty %}style="display:none"{% endif %}>
-
+                                    <div class="tli-stats-toppages-grid" data-tli-topposters-grid style="display:none">
                                         {% for col in [0, 1] %}
-                                            {% set fromIdx = col * splitAtP %}
-                                            {% set slice   = Stats.topPosters|slice(fromIdx, splitAtP) %}
                                             <table class="tli-stats-toppages-table">
                                                 <thead>
                                                     <tr>
@@ -382,26 +281,9 @@
                                                         <th class="tli-stats-toppages-views">Post</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody data-tli-topposters-body="{{ col }}">
-                                                    {% for poster in slice %}
-                                                        <tr>
-                                                            <td class="tli-stats-toppages-rank">{{ fromIdx + loop.index }}</td>
-                                                            <td>
-                                                                <span class="tli-stats-toppages-page-title">
-                                                                    <a href="/forum/memberlist.php?mode=viewprofile&u={{ poster.userId }}"
-                                                                       target="_blank" rel="noopener"
-                                                                       {% if poster.colour|trim is not empty %}style="color: #{{ poster.colour }};"{% endif %}>
-                                                                        <i class="fa-solid fa-user"></i> {{ poster.username }}
-                                                                    </a>
-                                                                </span>
-                                                            </td>
-                                                            <td class="tli-stats-toppages-views">{{ poster.posts|number_format(0, ',', '.') }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
+                                                <tbody data-tli-topposters-body="{{ col }}"></tbody>
                                             </table>
                                         {% endfor %}
-
                                     </div>
                                 </div>
 
@@ -409,21 +291,16 @@
                                 <div class="tli-stats-card" id="tli-stats-card-registeredusers">
 
                                     <h3><i class="fa-solid fa-user-check" style="color: #1c9099;"></i> Numero totale di utenti registrati e attivati</h3>
-                                    <div class="tli-stats-card-meta" data-tli-stats-meta>
-                                        Dal {{ Stats.range.start|date('d/m/Y') }}
-                                        al {{ Stats.range.end|date('d/m/Y') }}
-                                    </div>
+                                    <div class="tli-stats-card-meta" data-tli-stats-meta></div>
 
                                     <div class="tli-stats-totals">
                                         <div class="tli-stats-total">
                                             <span class="tli-stats-total-label">Totale al termine del periodo</span>
-                                            <span class="tli-stats-total-value"
-                                                  data-tli-stats-current>{{ Stats.totals.registeredUsers.totalAtEnd|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-total-value" data-tli-stats-current>—</span>
                                         </div>
                                         <div class="tli-stats-total">
                                             <span class="tli-stats-total-label">Nuovi nel periodo</span>
-                                            <span class="tli-stats-total-value"
-                                                  data-tli-stats-new-in-period>{{ Stats.totals.registeredUsers.current|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-total-value" data-tli-stats-new-in-period>—</span>
                                         </div>
                                     </div>
 
@@ -440,21 +317,16 @@
                                 <div class="tli-stats-card" id="tli-stats-card-newsletter">
 
                                     <h3><i class="fa-solid fa-envelope-open-text" style="color: #e66100;"></i> Iscritti newsletter</h3>
-                                    <div class="tli-stats-card-meta" data-tli-stats-meta>
-                                        Dal {{ Stats.range.start|date('d/m/Y') }}
-                                        al {{ Stats.range.end|date('d/m/Y') }}
-                                    </div>
+                                    <div class="tli-stats-card-meta" data-tli-stats-meta></div>
 
                                     <div class="tli-stats-totals">
                                         <div class="tli-stats-total">
                                             <span class="tli-stats-total-label">Totale al termine del periodo</span>
-                                            <span class="tli-stats-total-value"
-                                                  data-tli-stats-current>{{ Stats.totals.newsletterSubscribers.totalAtEnd|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-total-value" data-tli-stats-current>—</span>
                                         </div>
                                         <div class="tli-stats-total">
                                             <span class="tli-stats-total-label">Nuovi nel periodo</span>
-                                            <span class="tli-stats-total-value"
-                                                  data-tli-stats-new-in-period>{{ Stats.totals.newsletterSubscribers.current|number_format(0, ',', '.') }}</span>
+                                            <span class="tli-stats-total-value" data-tli-stats-new-in-period>—</span>
                                         </div>
                                     </div>
 
@@ -474,28 +346,13 @@
                                     <div class="tli-stats-card" id="tli-stats-card-topreferrers">
 
                                         <h3><i class="fa-solid fa-arrow-right-to-bracket" style="color: #9141ac;"></i> Top referrer</h3>
-                                        <div class="tli-stats-card-meta" data-tli-topreferrers-meta>
-                                            Dal {{ Stats.range.start|date('d/m/Y') }}
-                                            al {{ Stats.range.end|date('d/m/Y') }}
-                                        </div>
+                                        <div class="tli-stats-card-meta" data-tli-topreferrers-meta></div>
                                         <div class="tli-stats-staff-only">
                                             <i class="fa-solid fa-lock"></i> Questa sezione è visibile solo ai membri dello staff
                                         </div>
 
-                                        {% if Stats.topReferrers is empty %}
-                                            <div class="tli-stats-toppages-empty" data-tli-topreferrers-empty>
-                                                Nessun dato disponibile per il periodo selezionato.
-                                            </div>
-                                        {% endif %}
-
-                                        {% set splitAtR = (Stats.topReferrers|length / 2)|round(0, 'ceil') %}
-                                        <div class="tli-stats-toppages-grid"
-                                             data-tli-topreferrers-grid
-                                             {% if Stats.topReferrers is empty %}style="display:none"{% endif %}>
-
+                                        <div class="tli-stats-toppages-grid" data-tli-topreferrers-grid style="display:none">
                                             {% for col in [0, 1] %}
-                                                {% set fromIdx = col * splitAtR %}
-                                                {% set slice   = Stats.topReferrers|slice(fromIdx, splitAtR) %}
                                                 <table class="tli-stats-toppages-table">
                                                     <thead>
                                                         <tr>
@@ -504,29 +361,9 @@
                                                             <th class="tli-stats-toppages-views">Visualizzazioni</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody data-tli-topreferrers-body="{{ col }}">
-                                                        {% for ref in slice %}
-                                                            <tr>
-                                                                <td class="tli-stats-toppages-rank">{{ fromIdx + loop.index }}</td>
-                                                                <td>
-                                                                    {% if ref.url|trim is empty %}
-                                                                        <span class="tli-stats-toppages-page-title tli-stats-direct">
-                                                                            <i class="fa-solid fa-arrow-right" style="color: #9aa5ad;"></i>
-                                                                            Traffico diretto
-                                                                        </span>
-                                                                    {% else %}
-                                                                        <span class="tli-stats-toppages-page-title tli-stats-referrer-link">
-                                                                            {{ ref.displayUrl }}
-                                                                        </span>
-                                                                    {% endif %}
-                                                                </td>
-                                                                <td class="tli-stats-toppages-views">{{ ref.views|number_format(0, ',', '.') }}</td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
+                                                    <tbody data-tli-topreferrers-body="{{ col }}"></tbody>
                                                 </table>
                                             {% endfor %}
-
                                         </div>
                                     </div>
                                 {% endif %}
@@ -548,8 +385,7 @@
 
     {{ parent() }}
 
-    {% if Stats %}
-        <script type="application/json" id="tli-stats-initial-data">{{ Stats|json_encode|raw }}</script>
+    {% if StatsConfigured %}
         {{ encore_entry_script_tags('stats') }}
     {% endif %}
 

@@ -50,77 +50,18 @@ class InfoController extends BaseController
     #[Route('/statistiche', name: 'app_stats')]
     public function stats(GoogleAnalytics $googleAnalytics) : Response
     {
-        $isConfigured = $googleAnalytics->isConfigured();
-
-        $arrData = [
-            'metaTitle'         => 'Statistiche di traffico',
-            'activeMenu'        => null,
-            'FrontendHelper'    => $this->frontendHelper,
-            'CurrentUser'       => $this->getCurrentUser(),
-            'Stats'             => null,
-            'StatsError'        => null,
-            'StatsConfigured'   => $isConfigured,
-            'StatsAllowedDays'  => GoogleAnalytics::ALLOWED_RANGE_DAYS,
-            'StatsDefaultDays'  => GoogleAnalytics::DEFAULT_RANGE_DAYS
-        ];
-
-        if( !$isConfigured ) {
-            return $this->render('info/stats.html.twig', $arrData);
-        }
-
-
-        if( !$this->isCachable(true) ) {
-
-            $buildHtmlResult = $this->buildStatsHtml($googleAnalytics, $arrData);
-
-        } else {
-
-            $buildHtmlResult =
-                $this->cache->get('app_stats', function(ItemInterface $cacheItem) use($googleAnalytics, $arrData) {
-
-                    $buildHtmlResult = $this->buildStatsHtml($googleAnalytics, $arrData);
-
-                    if( is_string($buildHtmlResult) ) {
-
-                        $cacheItem->expiresAfter(static::CACHE_DEFAULT_EXPIRY);
-                        $cacheItem->tag(["app_stats", "app_stats_ajax"]);
-
-                    } else {
-
-                        $cacheItem->expiresAfter(-1);
-                    }
-
-                    return $buildHtmlResult;
-                });
-        }
-
-        return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
-    }
-
-
-    protected function buildStatsHtml(GoogleAnalytics $googleAnalytics, array &$arrData) : Response|string
-    {
-        try {
-            $stats = $googleAnalytics->getStatsForChart();
-
-            // Strip staff-only sections from the payload before it reaches the template (and the embedded JSON)
-            // so that non-staff users don't get the data via "view source" or via the AJAX endpoint.
-            $isStaff = $this->getCurrentUser()?->isEditor() ?? false;
-            if( !$isStaff ) {
-
-                $stats['topPages']      = [];
-                $stats['topTags']       = [];
-                $stats['topReferrers']  = [];
-            }
-
-            $arrData["Stats"] = $stats;
-
-        } catch(GoogleAnalyticsException $ex) {
-
-            $arrData["StatsError"] = $ex->getMessage();
-        }
-
-        return $this->twig->render('info/stats.html.twig', $arrData);
+        // The page renders a skeleton only — the heavy GA fetch is async via app_stats_ajax,
+        // which has its own per-range cache. This keeps the first paint fast even on a cold cache.
+        return
+            $this->render('info/stats.html.twig', [
+                'metaTitle'         => 'Statistiche di traffico',
+                'activeMenu'        => null,
+                'FrontendHelper'    => $this->frontendHelper,
+                'CurrentUser'       => $this->getCurrentUser(),
+                'StatsConfigured'   => $googleAnalytics->isConfigured(),
+                'StatsAllowedDays'  => GoogleAnalytics::ALLOWED_RANGE_DAYS,
+                'StatsDefaultDays'  => GoogleAnalytics::DEFAULT_RANGE_DAYS
+            ]);
     }
 
 

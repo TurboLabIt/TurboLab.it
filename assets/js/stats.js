@@ -28,12 +28,10 @@ function escapeHtml(s) {
 
 
 function init() {
-    const dataEl = document.getElementById('tli-stats-initial-data');
     const selector = document.getElementById('tli-stats-range-selector');
-    if( !dataEl || !selector ) return; // not on the stats page (or stats not configured)
+    if( !selector ) return; // not on the stats page (or stats not configured)
 
-    const initialStats = JSON.parse(dataEl.textContent);
-    const ajaxBaseUrl  = selector.dataset.ajaxUrl;
+    const ajaxBaseUrl = selector.dataset.ajaxUrl;
 
     const chartConfigs = [
         {
@@ -101,14 +99,7 @@ function init() {
     ];
 
     const charts = {};
-    let currentDataset = {
-        pageViews:              initialStats.pageViews,
-        activeUsers:            initialStats.activeUsers,
-        registeredUsers:        initialStats.registeredUsers,
-        newsletterSubscribers:  initialStats.newsletterSubscribers,
-        forumPosts:             initialStats.forumPosts,
-        articlesPublished:      initialStats.articlesPublished
-    };
+    const currentDataset = {};
 
 
     // Returns the y-axis min for the given cfg + dataset, or undefined for auto-scale
@@ -512,7 +503,10 @@ function init() {
                 }
             }
 
-            if( charts[cfg.key] ) {
+            // First applyStats() call: build the chart. Subsequent calls: update its dataset in place.
+            if( !charts[cfg.key] ) {
+                charts[cfg.key] = buildChart(cfg, currentDataset[cfg.key]);
+            } else {
                 charts[cfg.key].data = buildChartData(cfg, currentDataset[cfg.key]);
                 charts[cfg.key].options.scales.y.min = computeYMin(cfg, currentDataset[cfg.key]);
                 charts[cfg.key].update();
@@ -583,15 +577,15 @@ function init() {
     }
 
 
-    chartConfigs.forEach(cfg => {
-        charts[cfg.key] = buildChart(cfg, currentDataset[cfg.key]);
-    });
-
-    applyStats(initialStats);
-
     document.querySelectorAll('.tli-stats-range-pill').forEach(btn => {
         btn.addEventListener('click', onPillClick);
     });
+
+    // No data is rendered server-side anymore: fire the default-range AJAX immediately so charts
+    // and headlines populate as soon as the cached JSON returns.
+    const activeBtn = selector.querySelector('.tli-stats-range-pill.tli-active');
+    const initialDays = activeBtn ? parseInt(activeBtn.dataset.days, 10) : 30;
+    fetchAndApply(initialDays);
 }
 
 

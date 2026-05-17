@@ -66,18 +66,10 @@ class InfoTest extends BaseT
         $this->assertSame($ajaxUrl, $crawler->filter('#tli-stats-range-selector')->attr('data-ajax-url'),
             'Range selector data-ajax-url does not match the app_stats_ajax route');
 
-        // The embedded JSON block must carry initial totals so the headline fills in immediately on load
-        $jsonText = $crawler->filter('#tli-stats-initial-data')->text();
-        $stats    = json_decode($jsonText, true);
-        $this->assertIsArray($stats, 'tli-stats-initial-data did not contain valid JSON');
-        $this->assertArrayHasKey('totals', $stats);
-        $this->assertArrayHasKey('range',  $stats);
-
-        foreach( ['pageViews', 'activeUsers', 'registeredUsers', 'newsletterSubscribers', 'forumPosts', 'articlesPublished'] as $key ) {
-            $this->assertArrayHasKey($key, $stats);
-            $this->assertArrayHasKey($key, $stats['totals'], "totals.$key missing");
-            $this->assertArrayHasKey('current', $stats['totals'][$key], "totals.$key.current missing");
-        }
+        // The page is a skeleton — data lands via app_stats_ajax. Exactly one pill must be marked
+        // active so the JS can derive the default range from it on first load.
+        $this->assertCount(1, $crawler->filter('.tli-stats-range-pill.tli-active'),
+            'Exactly one Periodo pill must be marked .tli-active so stats.js can pick the default range');
     }
 
 
@@ -135,16 +127,8 @@ class InfoTest extends BaseT
                 "Gated card '#$cardId' was rendered to a non-staff visitor");
         }
 
-        // Embedded Stats JSON must also have empty arrays for the gated keys
-        $stats = json_decode($crawler->filter('#tli-stats-initial-data')->text(), true);
-        $this->assertIsArray($stats);
-
-        foreach( ['topPages', 'topTags', 'topReferrers' ] as $key ) {
-            $this->assertSame([], $stats[$key] ?? null,
-                "Embedded Stats JSON leaked '$key' to a non-staff visitor");
-        }
-
-        // The AJAX endpoint must apply the same gating
+        // The page is now a skeleton — no Stats JSON is embedded server-side, so the AJAX endpoint
+        // is the only data surface. Verify it applies the same gating.
         $ajaxUrl = $this->generateUrl('app_stats_ajax', [], UrlGeneratorInterface::ABSOLUTE_PATH) . '?days=7';
         $this->browse($ajaxUrl);
         $this->assertResponseIsSuccessful();
