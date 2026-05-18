@@ -1,7 +1,7 @@
 {
     "dependencies": {
         "chart.js": ">=4.5.1",
-        "ckeditor5": ">=48.1.0",
+        "ckeditor5": ">=48.1.1",
         "jquery-is-in-viewport": ">=1.0.5",
         "js-cookie": ">=3.0.7",
         "odometer": ">=0.4.8"
