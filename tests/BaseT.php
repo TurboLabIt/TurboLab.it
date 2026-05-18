@@ -29,7 +29,7 @@ use Twig\Environment;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 180;  // 👀 https://dev0.turbolab.it/#contact
+    const int HOME_TOTAL_PAGES          = 181;  // 👀 https://dev0.turbolab.it/#contact
     const int NEWS_TOTAL_PAGES          = 48;   // 👀 https://dev0.turbolab.it/news#contact
     const int TAG_TLI_TOTAL_PAGES       = 3;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
     const int TAG_WINDOWS_TOTAL_PAGES   = 69;   // 👀 https://dev0.turbolab.it/windows-10/#contact
