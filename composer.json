@@ -9,6 +9,7 @@
         "ext-dom": "*",
         "ext-fileinfo": "*",
         "ext-iconv": "*",
+        "ext-imagick": "*",
         "ext-imap": "*",
         "ext-libxml": "*",
         "ext-mbstring": "*",

@@ -10,7 +10,7 @@ use App\Service\Factory;
 use App\Trait\AuthorableTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
-use Imagine\Gd\Imagine;
+use Imagine\Imagick\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
