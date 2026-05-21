@@ -22,12 +22,6 @@ if [ "$APP_ENV" == "dev" ]; then
   fxTitle "Removing composer stuff..."
   sudo rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
 
-  fxTitle "npm-check-updates..."
-  yarn npm-check-updates -u
-
-  fxTitle "Removing yarn stuff..."
-  rm -f ${PROJECT_DIR}yarn.lock
-
   source "${WEBSTACKUP_SCRIPT_DIR}account/bashrc-dev-patch.sh"
 
   source ${SCRIPT_DIR}deploy_moment_030.sh
