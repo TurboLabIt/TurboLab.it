@@ -46,6 +46,12 @@ class ArticleSentinel extends BaseSentinel
     }
 
 
+    public function canDelete(?Article $article = null) : bool
+    {
+        return $this->getCurrentUser()?->isAdmin() ?? false;
+    }
+
+
     protected function isAuthor(?Article $article = null) : bool
     {
         $article = $article ?? $this->article;

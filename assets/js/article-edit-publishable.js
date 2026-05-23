@@ -6,6 +6,9 @@ import ArticleMeta from "./article-edit-meta";
 const ArticlePublishable = {
     setPublishingStatus(status, onSuccessCallback) {
         setPublishingStatus(status, onSuccessCallback);
+    },
+    deleteArticle() {
+        deleteArticle();
     }
 };
 
@@ -48,6 +51,44 @@ function setPublishingStatus(status, onSuccessCallback)
             StatusBar.setSaved(json.message);
             ArticleMeta.update(json);
             onSuccessCallback();
+
+        }, 'json')
+
+            .fail(function(jqXHR, responseText) {
+                StatusBar.setError(jqXHR, responseText);
+            });
+}
+
+
+var articleDeleteRequest = null;
+function deleteArticle()
+{
+    let confirmMessage =
+        "Eliminazione completa dell'articolo.\n\n" +
+        "Questa operazione è IRREVERSIBILE: dopo la conferma, l'articolo e i contenuti correlati saranno cancellati definitivamente e non potranno essere recuperati.\n\n" +
+        "Procedere?";
+
+    if( !confirm(confirmMessage) ) {
+        return false;
+    }
+
+    let article     = jQuery('article');
+    let endpoint    = article.attr('data-delete-url');
+
+    if( !endpoint ) {
+        return false;
+    }
+
+    StatusBar.setSaving();
+
+    if( articleDeleteRequest != null ) {
+        articleDeleteRequest.abort();
+    }
+
+    articleDeleteRequest =
+        jQuery.post(endpoint, {}, function(json) {
+
+            StatusBar.setSaved(json.message);
 
         }, 'json')
 
