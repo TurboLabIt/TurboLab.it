@@ -432,6 +432,20 @@ class ArticleEditor extends Article
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🗑️ Delete ***">
+    public function delete(bool $persist = true) : void
+    {
+        $em = $this->factory->getEntityManager();
+        $em->remove($this->entity);
+
+        if($persist) {
+            $em->flush();
+        }
+
+        $this->clear();
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** 💾 Save ***">
     public function save(bool $persist = true) : static
     {

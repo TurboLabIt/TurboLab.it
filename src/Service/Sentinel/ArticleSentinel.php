@@ -88,6 +88,16 @@ class ArticleSentinel extends BaseSentinel
     }
 
 
+    public function enforceCanDelete(?Article $article = null, string $errorMessage = "You're not authorized to delete this article") : static
+    {
+        if( empty( $this->canDelete($article) ) ) {
+            throw new AccessDeniedException($errorMessage);
+        }
+
+        return $this;
+    }
+
+
     public function enforceCanSetPublishingStatusTo(mixed $publishingStatus, ?Article $article = null, string $errorMessage = "You're not authorized to set this status on this article") : static
     {
         $this->enforceCanEdit($article);

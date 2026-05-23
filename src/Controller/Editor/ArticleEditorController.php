@@ -121,6 +121,26 @@ class ArticleEditorController extends ArticleEditBaseController
     }
 
 
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/delete', name: 'app_editor_article_delete', methods: ['POST'])]
+    public function delete(int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+            $this->sentinel->enforceCanDelete();
+
+            $response =
+                $this
+                    ->clearCachedArticle()
+                    ->jsonOKResponse("Articolo eliminato definitivamente. Ricarica la pagina per visualizzare l'errore 404");
+
+            $this->articleEditor->delete();
+
+            return $response;
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
     protected function createCommentsTopicPlaceholder(string $jsonOkMessage) : static
     {
         try {
