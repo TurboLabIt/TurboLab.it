@@ -1,5 +1,5 @@
 <?php
-// clear && curl --insecure -X POST -F "article-id=4423" https://dev0.turbolab.it/commenti/topic-upsert/
+// clear && curl --insecure -X POST -F "article-id=1939" https://dev0.turbolab.it/comments-topic-update/
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
 $db = $user = $auth = null;

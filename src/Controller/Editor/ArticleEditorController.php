@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Editor;
 
+use App\Exception\TopicHasRepliesException;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticlePlanner;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -121,26 +122,6 @@ class ArticleEditorController extends ArticleEditBaseController
     }
 
 
-    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/delete', name: 'app_editor_article_delete', methods: ['POST'])]
-    public function delete(int $articleId) : JsonResponse|Response
-    {
-        try {
-            $this->loadArticleEditor($articleId);
-            $this->sentinel->enforceCanDelete();
-
-            $response =
-                $this
-                    ->clearCachedArticle()
-                    ->jsonOKResponse("Articolo eliminato definitivamente. Ricarica la pagina per visualizzare l'errore 404");
-
-            $this->articleEditor->delete();
-
-            return $response;
-
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
-    }
-
-
     protected function createCommentsTopicPlaceholder(string $jsonOkMessage) : static
     {
         try {
@@ -149,12 +130,56 @@ class ArticleEditorController extends ArticleEditBaseController
                 ->save();
 
         } catch(Exception $ex) {
-
             throw new Exception($jsonOkMessage .
                 ". Si è però verificato un errore durante la creazione del topic dei commenti: " . $ex->getMessage()
             );
         }
 
         return $this;
+    }
+
+
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/delete', name: 'app_editor_article_delete', methods: ['POST'])]
+    public function delete(int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+            $this->sentinel->enforceCanDelete();
+
+            $articleDeletedMessage = "Articolo eliminato correttamente.";
+
+            $commentsTopic      = $this->articleEditor->getCommentsTopic();
+            $commentsTopicUrl   = $commentsTopic?->getUrl() ?? null;
+
+            $commentsTopicHtmlLink = empty($commentsTopicUrl) ? '' :
+                "<a href=\"$commentsTopicUrl\" target=\"_blank\">relativo topic dei commenti</a>";
+
+
+            try {
+
+                $response =
+                    $this
+                        ->clearCachedArticle()
+                        ->jsonOKResponse(
+                            "$articleDeletedMessage Il $commentsTopicHtmlLink non conteneva risposte, ed è stato anch'esso eliminato"
+                        );
+
+                $this->articleEditor->delete();
+
+                return $response;
+
+            } catch(TopicHasRepliesException) {
+
+                $commentsNum = $commentsTopic?->getPostNum() ?? 0;
+                // the very first message of the topic is still a post, so a topic without comments still have num=1
+                $commentsNum--;
+
+                throw new TopicHasRepliesException(
+                    "$articleDeletedMessage Tuttavia, il $commentsTopicHtmlLink contiene $commentsNum risposte, e quindi non è stato eliminato. " .
+                    "Devi valutare la qualità/rilevanza di tali risposte e, in caso, contattare un moderatore per richiedere la cancellazione manuale del topic"
+                );
+            }
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
 }

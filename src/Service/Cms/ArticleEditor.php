@@ -9,6 +9,7 @@ use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Entity\PhpBB\Forum;
+use App\Exception\TopicHasRepliesException;
 use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Entity\PhpBB\Topic as TopicEntity;
@@ -433,8 +434,10 @@ class ArticleEditor extends Article
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗑️ Delete ***">
-    public function delete(bool $persist = true) : void
+    public function delete(bool $persist = true) : bool
     {
+        $commentsTopic = $this->getCommentsTopic();
+
         $em = $this->factory->getEntityManager();
         $em->remove($this->entity);
 
@@ -443,6 +446,15 @@ class ArticleEditor extends Article
         }
 
         $this->clear();
+
+        $commentsNum = $commentsTopic?->getPostNum() ?? 0;
+
+        // the very first message of the topic is still a post, so a topic without comments still have num=1
+        if( $commentsNum > 1 ) {
+            throw new TopicHasRepliesException()->setTopic($commentsTopic);
+        }
+
+        return $commentsTopic?->delete() ?? true;
     }
     //</editor-fold>
 

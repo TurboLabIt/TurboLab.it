@@ -74,6 +74,8 @@ class Factory
 
     public function getStopWords() : StopWords { return $this->stopWords; }
 
+    public function getUrlGenerator() : UrlGeneratorInterface { return $this->urlGenerator; }
+
     public function getCurrentUser() : ?UserService
     {
         if( !empty($this->currentUser) ) {

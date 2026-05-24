@@ -65,8 +65,8 @@ function deleteArticle()
 {
     let confirmMessage =
         "Eliminazione completa dell'articolo.\n\n" +
-        "Questa operazione è IRREVERSIBILE: dopo la conferma, l'articolo e i contenuti correlati saranno cancellati definitivamente e non potranno essere recuperati.\n\n" +
-        "Procedere?";
+        "Questa operazione è IRREVERSIBILE: l'articolo verrà eliminato definitivamente e non potrà essere recuperato.\n\n" +
+        "⚠️ Procedere?";
 
     if( !confirm(confirmMessage) ) {
         return false;
@@ -94,5 +94,9 @@ function deleteArticle()
 
             .fail(function(jqXHR, responseText) {
                 StatusBar.setError(jqXHR, responseText);
+            })
+
+            .always(function() {
+                jQuery('body').addClass('tli-article-deleted');
             });
 }

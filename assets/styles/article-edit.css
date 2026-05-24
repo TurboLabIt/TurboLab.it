@@ -94,3 +94,8 @@
 #tli-images-gallery .tli-image-title {
     font-size: large;
 }
+
+
+body.tli-article-deleted {
+    background-color: #f8d7da !important;
+}

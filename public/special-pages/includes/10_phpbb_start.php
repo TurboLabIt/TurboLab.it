@@ -1,5 +1,7 @@
 <?php
 // 📚 https://www.phpbb.com/support/docs/en/3.0/kb/article/phpbb3-cross-site-sessions-integration/
+use App\Entity\PhpBB\Forum;
+
 define('IN_PHPBB', true);
 chdir(TLI_PROJECT_DIR . "public/forum/");
 $phpbb_root_path = './';
@@ -38,6 +40,17 @@ function tliGetTopicById(int $topicId) : array
 }
 
 
+function tliGetCommentsTopicById(int $topicId) : array
+{
+    return
+        tliGetPhpBBSomethingById(
+            $topicId, 'topic',
+            "SELECT * FROM " . TOPICS_TABLE . " WHERE topic_id = $topicId AND forum_id = " . Forum::ID_COMMENTS,
+            true
+        );
+}
+
+
 function tliGetForumById(int $forumId) : array
 {
     return
@@ -69,7 +82,7 @@ function tliGetPhpBBSomethingById(int $id, string $entityName, string $sqlQuery,
     }
 
     if($excludeOfflimitForums) {
-        $sqlQuery .= " AND forum_id NOT IN(" . implode(',', \App\Entity\PhpBB\Forum::ID_OFFLIMIT) . ")";
+        $sqlQuery .= " AND forum_id NOT IN(" . implode(',', Forum::ID_OFFLIMIT) . ")";
     }
 
     $result = $db->sql_query($sqlQuery);

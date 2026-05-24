@@ -2,13 +2,17 @@
 namespace App\Service\PhpBB;
 
 use App\Entity\PhpBB\Topic as TopicEntity;
+use App\Exception\TopicDeleteException;
 use App\Repository\PhpBB\TopicRepository;
 use App\Service\BaseServiceEntity;
 use App\Service\Factory;
 use App\Service\HtmlProcessorBase;
 use DateTime;
 use DateTimeZone;
+use Exception;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpClient\HttpClient;
 
 
 class Topic extends BaseServiceEntity
@@ -85,6 +89,7 @@ class Topic extends BaseServiceEntity
     public function getEntity() : ?TopicEntity { return $this->entity ?? null; }
     //</editor-fold>
 
+
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">
     public function getUrl(int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
         { return $this->factory->getForumUrlGenerator()->generateTopicViewUrl($this, $urlType); }
@@ -96,11 +101,45 @@ class Topic extends BaseServiceEntity
         { return $this->factory->getForumUrlGenerator()->generateCommentsAjaxLoadingUrl($this, $urlType); }
     //</editor-fold>
 
+
     public function getLastPostDateTime() : DateTime
     {
         $oDateTime = DateTime::createFromFormat('U', $this->entity->getLastPostTime());
         $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
         return $oDateTime;
+    }
+
+
+    public function delete() : bool
+    {
+        $deleteTopicEndpoint =
+            $this->factory->getUrlGenerator()
+                ->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'comments-topic-delete/';
+
+        $response =
+            HttpClient::create()->request(Request::METHOD_DELETE, $deleteTopicEndpoint, [
+                'verify_peer' => false,
+                'verify_host' => false,
+                'query' => ['topic-id' => $this->getId()],
+            ]);
+
+
+        try {
+
+            $response->getContent();
+
+        } catch(Exception $ex) {
+
+            $message = $response->getContent(false);
+
+            if( !empty($message) ) { $message .= " 🦠 "; }
+
+            $message .= $ex->getMessage();
+
+            throw new TopicDeleteException($message);
+        }
+
+        return true;
     }
 
 
