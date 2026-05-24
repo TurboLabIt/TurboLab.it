@@ -30,6 +30,7 @@ nbproject
 #https://adamcod.es/2013/03/07/composer-install-vs-composer-update.html
 #composer.lock
 /vendor/
+/auth.json
 
 
 # OS generated files #
