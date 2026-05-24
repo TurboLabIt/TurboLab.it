@@ -7,8 +7,8 @@ const ArticlePublishable = {
     setPublishingStatus(status, onSuccessCallback) {
         setPublishingStatus(status, onSuccessCallback);
     },
-    deleteArticle() {
-        deleteArticle();
+    deleteArticle(onConfirmCallback) {
+        deleteArticle(onConfirmCallback);
     }
 };
 
@@ -61,7 +61,7 @@ function setPublishingStatus(status, onSuccessCallback)
 
 
 var articleDeleteRequest = null;
-function deleteArticle()
+function deleteArticle(onConfirmCallback)
 {
     let confirmMessage =
         "Eliminazione completa dell'articolo.\n\n" +
@@ -70,6 +70,10 @@ function deleteArticle()
 
     if( !confirm(confirmMessage) ) {
         return false;
+    }
+
+    if( typeof onConfirmCallback === 'function' ) {
+        onConfirmCallback();
     }
 
     let article     = jQuery('article');

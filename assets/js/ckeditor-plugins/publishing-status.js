@@ -52,15 +52,20 @@ export default class TliPublishingStatus extends Plugin {
 
             if( jQuery('article').attr('data-delete-url') ) {
 
+                const deleteLabel = '(admin) ❌ Eliminazione completa';
+
                 const deleteBtn = new ButtonView(locale);
                 deleteBtn.set({
-                    label: '(admin) ❌ Eliminazione completa',
+                    label: deleteLabel,
                     withText: true
                 });
 
                 deleteBtn.on('execute', () => {
 
-                    ArticlePublishable.deleteArticle();
+                    ArticlePublishable.deleteArticle(function() {
+                        dropdownView.buttonView.set({ label: deleteLabel });
+                    });
+
                     dropdownView.isOpen = false;
                 });
 
