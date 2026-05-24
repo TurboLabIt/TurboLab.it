@@ -146,13 +146,23 @@ class ArticleEditorController extends ArticleEditBaseController
             $this->loadArticleEditor($articleId);
             $this->sentinel->enforceCanDelete();
 
-            $articleDeletedMessage = "Articolo eliminato correttamente.";
+            $articleDeletedMessage = "Articolo eliminato correttamente - ";
 
-            $commentsTopic      = $this->articleEditor->getCommentsTopic();
-            $commentsTopicUrl   = $commentsTopic?->getUrl() ?? null;
+            $commentsTopic = $this->articleEditor->getCommentsTopic();
 
-            $commentsTopicHtmlLink = empty($commentsTopicUrl) ? '' :
-                "<a href=\"$commentsTopicUrl\" target=\"_blank\">relativo topic dei commenti</a>";
+            if( empty($commentsTopic) ) {
+
+                $commentsTopicHtmlLink = '';
+                $okMessage = "$articleDeletedMessage L'articolo non aveva ancora un topic di commento associato, " .
+                    "quindi non è stato necessario eliminare null'altro";
+
+            } else {
+
+                $commentsTopicUrl = $commentsTopic->getUrl();
+                $commentsTopicHtmlLink = "<a href=\"$commentsTopicUrl\" target=\"_blank\">relativo topic dei commenti</a>";
+
+                $okMessage = "$articleDeletedMessage Il $commentsTopicHtmlLink non conteneva risposte, ed è stato anch'esso eliminato";
+            }
 
 
             try {
@@ -160,9 +170,7 @@ class ArticleEditorController extends ArticleEditBaseController
                 $response =
                     $this
                         ->clearCachedArticle()
-                        ->jsonOKResponse(
-                            "$articleDeletedMessage Il $commentsTopicHtmlLink non conteneva risposte, ed è stato anch'esso eliminato"
-                        );
+                        ->jsonOKResponse($okMessage);
 
                 $this->articleEditor->delete();
 
@@ -174,8 +182,10 @@ class ArticleEditorController extends ArticleEditBaseController
                 // the very first message of the topic is still a post, so a topic without comments still have num=1
                 $commentsNum--;
 
+                $commentsNumText = $commentsNum == 1 ? "1 risposta" : "$commentsNum risposte";
+
                 throw new TopicHasRepliesException(
-                    "$articleDeletedMessage Tuttavia, il $commentsTopicHtmlLink contiene $commentsNum risposte, e quindi non è stato eliminato. " .
+                    "$articleDeletedMessage Tuttavia, il $commentsTopicHtmlLink contiene $commentsNumText, e quindi non è stato eliminato. " .
                     "Devi valutare la qualità/rilevanza di tali risposte e, in caso, contattare un moderatore per richiedere la cancellazione manuale del topic"
                 );
             }
