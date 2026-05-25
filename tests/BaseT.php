@@ -363,7 +363,15 @@ abstract class BaseT extends WebTestCase
                 return $this->expect404($src);
             }
 
-            $this->fetchImage($src);
+            // the served format follows the URL extension (eg: newsletter spotlights use PNG via getMetaUrl())
+            $urlExtension = strtolower( (string)pathinfo((string)parse_url($src, PHP_URL_PATH), PATHINFO_EXTENSION) );
+            $expectedContentType = match($urlExtension) {
+                'jpg', 'jpeg'   => 'image/jpeg',
+                ''              => 'image/avif',
+                default         => "image/$urlExtension",
+            };
+
+            $this->fetchImage($src, $expectedContentType);
         }
 
         return $this;
