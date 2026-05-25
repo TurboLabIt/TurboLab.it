@@ -11,7 +11,7 @@
         "@babel/preset-env": ">=7.29.5",
         "@symfony/webpack-encore": ">=6.0.0",
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^22.2.0",
+        "npm-check-updates": "^22.2.1",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.100.0",
         "sass-loader": ">=17.0",
