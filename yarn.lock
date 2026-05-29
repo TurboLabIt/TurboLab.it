@@ -4928,13 +4928,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-check-updates@npm:^22.2.0":
-  version: 22.2.0
-  resolution: "npm-check-updates@npm:22.2.0"
+"npm-check-updates@npm:^22.2.1":
+  version: 22.2.1
+  resolution: "npm-check-updates@npm:22.2.1"
   bin:
     ncu: build/cli.js
     npm-check-updates: build/cli.js
-  checksum: 10c0/95c811f4fbf03c8b287edf477293b69e0a219e1522eb81fed4f02a0f56a012191648587d8ee77ab7aa7e5bdc9b99d642c5d553904e6574c2c33535618989db6d
+  checksum: 10c0/2307d1a911033ec6de92b63560e06ef57ea12bb554a31d28c5c7ef6f6f0b02b47569d5f401e7977fc11ce82c53f95175cea6113106be80aa578d9b70dc6769fd
   languageName: node
   linkType: hard
 
@@ -5731,7 +5731,7 @@ __metadata:
     file-loader: "npm:>=6.2.0"
     jquery-is-in-viewport: "npm:>=1.0.5"
     js-cookie: "npm:>=3.0.7"
-    npm-check-updates: "npm:^22.2.0"
+    npm-check-updates: "npm:^22.2.1"
     odometer: "npm:>=0.4.8"
     raw-loader: "npm:>=4.0.2"
     sass: "npm:>=1.100.0"
