@@ -29,6 +29,13 @@ foreach([&$postTitle, &$postBody, &$authorId, &$topicId] as &$var) {
     }
 }
 
+foreach([$authorId, $topicId] as $idInput) {
+
+    if( preg_match('/^[1-9]+[0-9]*$/', $idInput) !== 1 ) {
+        tliHtmlResponse('Invalid parameter', 400);
+    }
+}
+
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 
 // prepare for storage
