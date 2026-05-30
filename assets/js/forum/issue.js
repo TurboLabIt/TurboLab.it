@@ -1,4 +1,6 @@
 //import $ from 'jquery';
+import Validator from '../validator';
+
 const FADE_SPEED        = 300;
 const ISSUE_MODAL       = $('#tli-issue-modal');
 const IN_PROGRESS_CLASS = 'tli-issue-action-running';
@@ -50,6 +52,15 @@ $(document).on('click', '.tli-create-issue',  function(event) {
     $.post(clickedButton.data('url'), {postId : postId})
 
         .done( function(response) {
+
+            if( !Validator.isSameOriginHttpsUrl(response) ) {
+                responseTarget
+                    .html("Errore: risposta non valida. Ricarica la pagina.")
+                    .removeClass("alert-warning")
+                    .addClass("alert-danger");
+                submitters.prop('disabled', false);
+                return;
+            }
 
             responseTarget.html("OK!").addClass("alert-success");
 

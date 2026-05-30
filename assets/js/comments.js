@@ -1,6 +1,8 @@
 //import $ from 'jquery';
 import 'jquery-is-in-viewport';
 import selectAndCopy from "./select-and-copy";
+import Validator from './validator';
+
 
 $('.post-comments-list').isInViewport(function (status) {
 
@@ -8,6 +10,10 @@ $('.post-comments-list').isInViewport(function (status) {
     let url         = $(this).data('comments-loading-url');
 
     if( status !== 'entered' || isLoaded || url == '') {
+        return false;
+    }
+
+    if( !Validator.isSameOriginHttpsUrl(url) ) {
         return false;
     }
 
@@ -20,6 +26,8 @@ $('.post-comments-list').isInViewport(function (status) {
         type: 'GET',
         dataType: 'html',
         success: function(data) {
+            // data is trusted phpBB-rendered HTML from the comments endpoint
+            // (same-origin, validated above); phpBB handles its own escaping.
             that.html(data);
             $(".spoiler_button").css("display", "block");
         },
@@ -30,18 +38,18 @@ $('.post-comments-list').isInViewport(function (status) {
             let errorMessage = jqXHR.responseText ?? null;
             if( errorMessage && errorMessage != '' ) {
 
-                that.html(errorMessage);
+                that.text(errorMessage);
                 return false;
             }
 
             if( textStatus && textStatus != '' ) {
 
-                that.html(textStatus);
+                that.text(textStatus);
                 return false;
             }
 
             if( errorThrown && errorThrown != '' ) {
-                that.html(errorThrown);
+                that.text(errorThrown);
             }
         }
     });

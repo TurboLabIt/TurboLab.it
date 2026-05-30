@@ -1,4 +1,5 @@
 //import $ from 'jquery';
+import Validator from './validator';
 
 
 $(document).on('click', '.tli-file-upload',  function(event) {
@@ -13,15 +14,20 @@ $(document).on('change', 'input[type="file"].tli-file-uploader', function() {
         return;
     }
 
+    let thisInputFile = $(this);
+
+    const saveUrl = thisInputFile.data('save-url');
+    if( !Validator.isSameOriginHttpsUrl(saveUrl) ) {
+        return;
+    }
+
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
     }
 
-    let thisInputFile = $(this);
-
     $.ajax({
-        url: thisInputFile.data('save-url'),
+        url: saveUrl,
         type: 'POST',
         data: formData,
         processData: false,
@@ -31,6 +37,8 @@ $(document).on('change', 'input[type="file"].tli-file-uploader', function() {
             let target = $('#tli-downloadable-files');
             target.fadeOut('slow', function() {
                 target
+                    // response is trusted server-rendered HTML for the downloadable-files
+                    // section; the Validator guard ensures it came from our origin.
                     .html(response)
                     .fadeIn('slow', function() {
                         target.get(0).scrollIntoView({behavior: 'smooth'});
@@ -55,8 +63,13 @@ $(document).on('click', '.tli-file-button-ok',  function(event) {
 
     let form = $('#tli-edit-file');
 
+    const formUrl = form.attr('action');
+    if( !Validator.isSameOriginHttpsUrl(formUrl) ) {
+        return;
+    }
+
     $.ajax({
-        url: form.attr('action'),
+        url: formUrl,
         type: form.attr('method'),
         data: form.serialize(),
         success: function(response) {
@@ -66,6 +79,8 @@ $(document).on('click', '.tli-file-button-ok',  function(event) {
             let target = $('#tli-downloadable-files');
             target.fadeOut('slow', function() {
                 target
+                    // response is trusted server-rendered HTML for the downloadable-files
+                    // section; the Validator guard ensures it came from our origin.
                     .html(response)
                     .fadeIn();
             });

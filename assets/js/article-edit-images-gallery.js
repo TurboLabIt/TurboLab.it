@@ -1,4 +1,5 @@
 //import $ from 'jquery';
+import Validator from './validator';
 
 
 jQuery(document).on('click', '.tli-image-upload',  function(event) {
@@ -13,14 +14,19 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
         return;
     }
 
+    let thisInputFile = $(this);
+
+    let editorImageGallery = $('#tli-article-editor-image-gallery');
+
+    const saveUrl = editorImageGallery.data('save-url');
+    if( !Validator.isSameOriginHttpsUrl(saveUrl) ) {
+        return;
+    }
+
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append('images[]', files[i]);
     }
-
-    let thisInputFile = $(this);
-
-    let editorImageGallery = $('#tli-article-editor-image-gallery');
 
     const uploadCommandContainer = $('.tli-image-upload');
     uploadCommandContainer.addClass('d-none');
@@ -40,7 +46,7 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
     editorImageGallery.find('.border-success').removeClass('border border-2 border-success')
 
     $.ajax({
-        url: editorImageGallery.data('save-url'),
+        url: saveUrl,
         type: 'POST',
         data: formData,
         processData: false,
@@ -61,6 +67,9 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
 
             progressBar.addClass('bg-success');
 
+            // response is trusted server-rendered HTML from article/editor/images.html.twig
+            // (Twig auto-escaping); the Validator guard above ensures we got it from our
+            // own origin, so .append() is intentional.
             $('#tli-images-gallery').append(response);
 
             const container = $('#tli-article-editor-image-gallery');
@@ -83,7 +92,7 @@ $(document).on('change', '#tli-article-editor-image-gallery input[type="file"]',
 
             errorMessage
                 .removeClass('collapse')
-                .html(jqXHR.responseText);
+                .text(jqXHR.responseText);
         },
         complete: function() {
 

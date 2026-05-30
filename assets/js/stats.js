@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import Validator from './validator';
 
 
 function fmtIt(n) { return Number(n).toLocaleString('it-IT'); }
@@ -231,7 +232,7 @@ function init() {
             tbody.innerHTML = col.map((p, i) => {
                 const displayTitle = p.displayTitle || p.title || p.path;
                 const titleEsc     = escapeHtml(displayTitle);
-                const pathEsc      = escapeHtml(p.path);
+                const pathEsc      = escapeHtml(Validator.sanitizeHref(p.path));
                 const iconHtml     = p.iconClass
                     ? '<i class="fa-solid ' + escapeHtml(p.iconClass) + '" style="color: ' + escapeHtml(p.iconColor || '') + ';"></i> '
                     : '';
@@ -291,7 +292,7 @@ function init() {
             tbody.innerHTML = col.map((t, i) => {
                 const titleStr = t.title && t.title.trim() !== '' ? t.title : t.path;
                 const titleEsc = escapeHtml(titleStr);
-                const pathEsc  = escapeHtml(t.path);
+                const pathEsc  = escapeHtml(Validator.sanitizeHref(t.path));
                 return '' +
                     '<tr>' +
                         '<td class="tli-stats-toppages-rank">' + (fromIdx + i + 1) + '</td>' +
@@ -532,11 +533,12 @@ function init() {
 
 
     function showError(message) {
+        const messageEsc = escapeHtml(message || 'Errore nel recupero dei dati');
         chartConfigs.forEach(cfg => {
             const meta = document.querySelector('#' + cfg.cardId + ' [data-tli-stats-meta]');
             if( meta ) {
                 meta.innerHTML = '<span style="color: #cc1f1a;"><i class="fa-solid fa-circle-exclamation"></i> ' +
-                                 (message || 'Errore nel recupero dei dati') + '</span>';
+                                 messageEsc + '</span>';
             }
         });
     }
