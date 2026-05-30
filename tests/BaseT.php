@@ -29,11 +29,11 @@ use Twig\Environment;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 181;  // 👀 https://dev0.turbolab.it/#contact
-    const int NEWS_TOTAL_PAGES          = 48;   // 👀 https://dev0.turbolab.it/news#contact
+    const int HOME_TOTAL_PAGES          = 184;  // 👀 https://dev0.turbolab.it/#contact
+    const int NEWS_TOTAL_PAGES          = 51;   // 👀 https://dev0.turbolab.it/news#contact
     const int TAG_TLI_TOTAL_PAGES       = 3;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
-    const int TAG_WINDOWS_TOTAL_PAGES   = 69;   // 👀 https://dev0.turbolab.it/windows-10/#contact
-    const int USER_ZANE_TOTAL_PAGES     = 45;   // 👀 https://dev0.turbolab.it/utenti/zane#contact
+    const int TAG_WINDOWS_TOTAL_PAGES   = 70;   // 👀 https://dev0.turbolab.it/windows-10/#contact
+    const int USER_ZANE_TOTAL_PAGES     = 46;   // 👀 https://dev0.turbolab.it/utenti/zane#contact
 
     const string ARTICLE_QUALITY_TEST_STORED_TITLE =
         '🧪 Come svolgere test automatici su TurboLab.it (verifica dell\'impianto & "collaudo") | @ & ' .
