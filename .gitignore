@@ -109,7 +109,7 @@ drivers/geckodriver
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
-/src/.preload.php
+/vendor/
 ###< symfony/framework-bundle ###
 
 ###> phpstan/phpstan ###
