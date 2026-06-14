@@ -4,7 +4,8 @@ namespace App\Command;
 use App\Entity\PhpBB\Forum;
 use App\Service\Cms\Article;
 use App\Service\Factory;
-use DOMDocument;
+use App\Service\HtmlProcessorForDisplay;
+use DOMElement;
 use DOMXPath;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +21,7 @@ use Twig\Environment;
 #[AsCommand(name: 'ForumIntegrationBuilder', description: 'Build the site-forum integration files')]
 class ForumIntegrationBuilderCommand extends AbstractBaseCommand
 {
-    public function __construct(protected ProjectDir $projectDir, protected Environment $twig, protected Factory $factory)
+    public function __construct(protected ProjectDir $projectDir, protected Environment $twig, protected Factory $factory, protected HtmlProcessorForDisplay $htmlProcessor)
     {
         parent::__construct();
     }
@@ -114,10 +115,12 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
         $artRules   = $this->factory->createArticle()->load(Article::ID_FORUM_RULES);
         $htmlRules  = $artRules->getBodyForDisplay();
 
-        //
-        $dom = new DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML('<?xml encoding="utf-8" ?>' . $htmlRules, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        // Reuse the shared fragment parser so the UTF-8 prefix handling stays in one place
+        // (libxml 2.14+ parses the prefix as a comment, not a PI — see HtmlProcessorBase::parseHTML)
+        $dom = $this->htmlProcessor->parseHTML($htmlRules);
+        if( $dom === false ) {
+            $this->endWithError("Parsing of the forum rules article (##" . Article::ID_FORUM_RULES . "##) failed");
+        }
         libxml_clear_errors();
 
         $xpath = new DOMXPath($dom);
@@ -129,6 +132,10 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
 
             // Move each image outside the paragraph (insert before the p tag)
             foreach ($images as $img) {
+
+                if( !($img instanceof DOMElement) ) {
+                    continue;
+                }
 
                 $img->setAttribute('class', 'tli-register-rules-spotlight');
                 $p->parentNode->insertBefore($img, $p);
@@ -143,7 +150,6 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
         }
 
         $htmlRulesProcessed = $dom->saveHTML();
-        $htmlRulesProcessed = preg_replace('/^<\?xml encoding="utf-8" \?>\s*/', '', $htmlRulesProcessed);
 
         $artPrivacyPolicy = $this->factory->createArticle()->load(Article::ID_PRIVACY_POLICY);
 
