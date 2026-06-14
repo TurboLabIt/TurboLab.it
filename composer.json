@@ -112,5 +112,37 @@
         "symfony/phpunit-bridge": "@stable",
         "symfony/stopwatch": "@stable",
         "symfony/web-profiler-bundle": "@stable"
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url":  "../php-packages/php-encryptor",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url":  "../php-packages/php-foreachable",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url":  "../php-packages/php-symfony-basecommand",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url":  "../php-packages/php-symfony-messenger",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url":  "../php-packages/php-traits",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url":  "../php-packages/php-symfony-service-entity-plus-bundle",
+            "options": { "symlink": true }
+        }
+    ]
 }
