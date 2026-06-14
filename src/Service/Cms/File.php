@@ -96,12 +96,12 @@ class File extends BaseCmsService
     public function isBitTorrent() : bool
     {
         return
-            stripos( $this->getFormat(), 'torrent') !== false ||
-            str_starts_with( $this->getExternalDownloadUrl(), 'magnet' );
+            stripos( (string) $this->getFormat(), 'torrent') !== false ||
+            str_starts_with( (string) $this->getExternalDownloadUrl(), 'magnet' );
     }
 
 
-    public function isEmule() : bool { return str_starts_with( $this->getExternalDownloadUrl(), 'ed2k' ); }
+    public function isEmule() : bool { return str_starts_with( (string) $this->getExternalDownloadUrl(), 'ed2k' ); }
 
 
     public function getCompatibilities() : array

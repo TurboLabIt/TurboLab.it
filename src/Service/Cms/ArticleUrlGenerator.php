@@ -51,7 +51,7 @@ class ArticleUrlGenerator extends UrlGenerator
             return null;
         }
 
-        $url = $this->removeDomainFromUrl($url);
+        $url = $this->removeDomainFromUrl($url) ?? '';
 
         // short URL: https://turbolab.it/1939
         $arrMatches = [];

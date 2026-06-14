@@ -76,7 +76,7 @@ class ServerInfo
     protected function getUptime() : string
     {
         $str   = file_get_contents('/proc/uptime');
-        $num   = floatval($str);
+        $num   = (int) floatval($str);
         $secs  = $num % 60;
         $num   = (int)($num / 60);
         $mins  = $num % 60;

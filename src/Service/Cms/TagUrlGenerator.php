@@ -27,7 +27,7 @@ class TagUrlGenerator extends UrlGenerator
             return null;
         }
 
-        $url = $this->removeDomainFromUrl($url);
+        $url = $this->removeDomainFromUrl($url) ?? '';
 
         $arrMatches = [];
         $match = preg_match('/^\/[^\/]+-([1-9]+[0-9]*)$/', $url, $arrMatches);

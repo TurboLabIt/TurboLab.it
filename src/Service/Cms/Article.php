@@ -486,7 +486,7 @@ class Article extends BaseCmsService
     public function getAbstractForHTMLAttribute() : ?string
     {
         $processing = $this->getAbstract();
-        $processing = strip_tags($processing);
+        $processing = strip_tags((string) $processing);
         $processing = HtmlProcessorBase::decode($processing);
         return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
