@@ -37,6 +37,12 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             //When enabled, HTML Purifier will attempt to remove empty elements that contribute no semantic information to the document
             $tliPurifierConfig->set('AutoFormat.RemoveEmpty', true);
 
+            // Wrap loose, top-level inline text into <p>. libxml's old HTML4 parser did this implicitly;
+            // the new HTML5 parser (libxml 2.14+) leaves bare text unwrapped (and LIBXML_HTML_NOIMPLIED then
+            // drops it), which would otherwise lose the body text and the auto-extracted abstract.
+            // The extra blank line it inserts between blocks is normalized away by the later DOM round-trip.
+            $tliPurifierConfig->set('AutoFormat.AutoParagraph', true);
+
             // This is the content of the alt tag of an image if the user had not previously specified an alt attribute. This applies to all images without a valid alt attribute
             $tliPurifierConfig->set('Attr.DefaultImageAlt', '');
 

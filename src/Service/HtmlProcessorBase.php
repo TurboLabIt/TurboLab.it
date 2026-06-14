@@ -95,10 +95,17 @@ abstract class HtmlProcessorBase
             return false;
         }
 
-        // dirty fix
+        // Remove the leading xml-encoding prefix node injected above.
+        // Old libxml parsed it as a processing instruction; libxml 2.14+ (the new HTML5 parser)
+        // parses it as a comment instead, so we must strip both forms or it leaks into the output.
         // https://www.php.net/manual/en/domdocument.loadhtml.php#95251
-        foreach ($domDoc->childNodes as $item) {
-            if ($item->nodeType == XML_PI_NODE) {
+        foreach( iterator_to_array($domDoc->childNodes) as $item ) {
+
+            $isXmlPrefixHack =
+                $item->nodeType === XML_PI_NODE ||
+                ( $item->nodeType === XML_COMMENT_NODE && str_starts_with((string)$item->nodeValue, '?xml') );
+
+            if($isXmlPrefixHack) {
                 $domDoc->removeChild($item); // remove hack
             }
         }
