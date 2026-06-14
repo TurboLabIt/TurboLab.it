@@ -6,6 +6,7 @@ use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticleUrlGenerator;
 use App\Service\Cms\File;
 use App\Service\Cms\FileUrlGenerator;
+use App\Service\Cms\Paginator;
 use App\Service\Cms\Tag;
 use App\Service\Cms\TagUrlGenerator;
 use App\Service\Factory;
@@ -29,12 +30,6 @@ use Twig\Environment;
 
 abstract class BaseT extends WebTestCase
 {
-    const int HOME_TOTAL_PAGES          = 184;  // 👀 https://dev0.turbolab.it/#contact
-    const int NEWS_TOTAL_PAGES          = 51;   // 👀 https://dev0.turbolab.it/news#contact
-    const int TAG_TLI_TOTAL_PAGES       = 3;    // 👀 https://dev0.turbolab.it/turbolab.it-1/#contact
-    const int TAG_WINDOWS_TOTAL_PAGES   = 70;   // 👀 https://dev0.turbolab.it/windows-10/#contact
-    const int USER_ZANE_TOTAL_PAGES     = 46;   // 👀 https://dev0.turbolab.it/utenti/zane#contact
-
     const string ARTICLE_QUALITY_TEST_STORED_TITLE =
         '🧪 Come svolgere test automatici su TurboLab.it (verifica dell\'impianto & "collaudo") | @ & ' .
         'òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" \'single quoted\' \ / | » fine';
@@ -375,6 +370,15 @@ abstract class BaseT extends WebTestCase
         }
 
         return $this;
+    }
+
+
+    protected static function calculateExpectedTotalPages(int $totalItemsBeforePagination) : int
+    {
+        // mirrors TurboLabIt\PaginatorBundle\Service\Paginator::buildByTotalItems()
+        $itemsPerPage   = static::getService(Paginator::class)->getItemsPerPageNum();
+        $totalPages     = (int)ceil($totalItemsBeforePagination / $itemsPerPage);
+        return $totalPages < 1 ? 1 : $totalPages;
     }
 
 

@@ -40,10 +40,14 @@ class NewsTest extends BaseT
         $countH2 = $H2s->count();
         $this->assertGreaterThan(24, $countH2);
 
+        $expectedTotalPages = static::calculateExpectedTotalPages(
+            static::getArticleCollection()->loadLatestNewsPublished()->countTotalBeforePagination()
+        );
+
         $this
             ->internalLinksChecker($crawler)
             ->internalImagesChecker($crawler)
-            ->internalPaginatorChecker("/news", static::NEWS_TOTAL_PAGES);
+            ->internalPaginatorChecker("/news", $expectedTotalPages);
     }
 
 

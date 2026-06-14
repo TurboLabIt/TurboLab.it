@@ -58,6 +58,10 @@ class HomeTest extends BaseT
 
     public function testHomePaginator()
     {
-        $this->internalPaginatorChecker('/', static::HOME_TOTAL_PAGES);
+        $expectedTotalPages = static::calculateExpectedTotalPages(
+            static::getArticleCollection()->loadLatestPublished()->countTotalBeforePagination()
+        );
+
+        $this->internalPaginatorChecker('/', $expectedTotalPages);
     }
 }

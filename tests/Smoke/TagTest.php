@@ -64,20 +64,18 @@ class TagTest extends BaseT
                 [
                     "id"            => 1,
                     "tagTitle"      => "TurboLab.it",
-                    "totalPageNum"  => static::TAG_TLI_TOTAL_PAGES
                 ],
                 // 👀 https://turbolab.it/windows-10
                 [
                     "id"            => 10,
                     "tagTitle"      => "Windows",
-                    "totalPageNum"  => static::TAG_WINDOWS_TOTAL_PAGES
                 ],
             ];
     }
 
 
     #[DataProvider('tagsToTestThoroughlyProvider')]
-    public function testSpecialTags(int $id, string $tagTitle, int $totalPageNum)
+    public function testSpecialTags(int $id, string $tagTitle)
     {
         $tag = static::getTag($id);
         $url = $tag->getUrl();
@@ -95,6 +93,8 @@ class TagTest extends BaseT
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
         $this->assertGreaterThan(24, $countH2);
+
+        $totalPageNum = static::calculateExpectedTotalPages( $tag->getArticles()->countTotalBeforePagination() );
 
         $this
             ->internalLinksChecker($crawler)
