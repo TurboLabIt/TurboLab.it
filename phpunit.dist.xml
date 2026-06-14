@@ -7,6 +7,7 @@
          stopOnError="true" stopOnFailure="true"
          failOnNotice="true"
          failOnWarning="true"
+         failOnDeprecation="true"
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache">
     <php>
@@ -22,7 +23,7 @@
         </testsuite>
     </testsuites>
 
-    <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true">
+    <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
         <include>
             <directory>src</directory>
         </include>
