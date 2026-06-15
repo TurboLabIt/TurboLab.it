@@ -49,6 +49,18 @@ if [ "$APP_ENV" == "dev" ]; then
   sudo chown $(logname):www-data "${PROJECT_DIR}" -R
   sudo chmod ugo= "${PROJECT_DIR}" -R
   sudo chmod ugo=rwX "${PROJECT_DIR}" -R
+
+  fxTitle "Replacing vendor/turbolabit with a symlink..."
+  sudo rm -rf ${PROJECT_DIR}vendor/turbolabit/*
+  fxLink ${PROJECT_DIR}../php-packages/php-encryptor ${PROJECT_DIR}vendor/turbolabit/php-encryptor
+  fxLink ${PROJECT_DIR}../php-packages/php-foreachable ${PROJECT_DIR}vendor/turbolabit/php-foreachable
+  fxLink ${PROJECT_DIR}../php-packages/php-symfony-basecommand ${PROJECT_DIR}vendor/turbolabit/php-symfony-basecommand
+  fxLink ${PROJECT_DIR}../php-packages/php-symfony-messenger ${PROJECT_DIR}vendor/turbolabit/php-symfony-messenger
+  fxLink ${PROJECT_DIR}../php-packages/php-traits ${PROJECT_DIR}vendor/turbolabit/php-traits
+  fxLink ${PROJECT_DIR}../php-packages/php-symfony-service-entity-plus-bundle ${PROJECT_DIR}vendor/turbolabit/service-entity-plus-bundle
+  fxLink ${PROJECT_DIR}../php-packages/php-symfony-paginator ${PROJECT_DIR}vendor/turbolabit/paginatorbundle
+  echo ""
+  ls -l --color=always ${PROJECT_DIR}vendor/turbolabit
 fi
 
 bash "${SCRIPT_DIR}phpbb-cache-clear.sh"
