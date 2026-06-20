@@ -1,6 +1,6 @@
 # [Logo e icone di TurboLab.it](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/brand.md)
 
-⚡Questa pagina è raggiungibile anche dall'indirizzo [TurboLab.it/logo](https://turbolab.it/logo)
+⚡ Questa pagina è raggiungibile anche dall'indirizzo [TurboLab.it/logo](https://turbolab.it/logo)
 
 
 ## Logo TurboLab.it
@@ -27,6 +27,7 @@
 ````
 [img]https://turbolab.it/images/logo/icon.png[/img]
 ````
+
 
 **SVG Tiny Portable/Secure (SVG Tiny-PS)**
 
