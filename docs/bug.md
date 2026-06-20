@@ -1,6 +1,6 @@
 # [Integrazione issue GitHub](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/bug.md)
 
-Gli utenti registrati possono trasformare un post del forum in una *issue* sul [repository GitHub di TurboLab.it](https://github.com/TurboLabIt/TurboLab.it/issues) con un solo click. La issue viene creata tramite le API di GitHub e, contestualmente, il post originale sul forum viene modificato per aggiungervi un link alla issue appena creata.
+Gli utenti registrati a TurboLab.it possono trasformare un post del forum in una *issue* sul [repository GitHub di TurboLab.it](https://github.com/TurboLabIt/TurboLab.it/issues) con un solo click. La issue viene creata tramite le API di GitHub (non è necessario che l'utentente sia registrato a GitHub) e, contestualmente, il post originale sul forum viene modificato per aggiungervi un link alla issue appena creata.
 
 
 ## Informazioni/guida per utenti finali
@@ -14,7 +14,7 @@ Il meccanismo coinvolge tre attori:
 
 1. il *frontend* (modale + JavaScript sul forum)
 2. il *backend* Symfony (che parla con GitHub e orchestra il flusso)
-3. una *special page* PHP che opera nel contesto di phpBB (che riscrive il post)
+3. una *special page* PHP che opera nel contesto di phpBB e modifica il post per aggiungere il link alla issue appena creata
 
 
 ## Dove e quando appare il pulsante
@@ -31,16 +31,16 @@ L'icona viene mostrata solo se:
 - il post appartiene a uno dei forum abilitati: `Forum::ID_TLI` o `Forum::ID_COMMENTS`
 - **non** si tratta del primo post di una discussione nel forum commenti: quel post è generato automaticamente e rappresenta l'articolo, non una segnalazione
 
-Cliccando tale icona, si apre una modale di conferma `#tli-issue-modal`. È definita in [templates/forum/09-overall-header.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/forum/09-overall-header.html.twig) e contiene il promemoria di leggere la guida e il pulsante `OK`, che porta nell'attributo `data-url` l'URL dell'endpoint Symfony (route `app_forum_new_issue`).
+Cliccando tale icona, si apre una modale di conferma `#tli-issue-modal`. È definita in [templates/forum/09-overall-header.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/forum/09-overall-header.html.twig) e contiene il promemoria di leggere la guida e il pulsante `OK`, che porta, nell'attributo `data-url`, l'URL dell'endpoint Symfony (route `app_forum_new_issue`).
 
 
 ## Il flusso lato-client
 
-To-client, la funzionalità viene guidata da [assets/js/forum/issue.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/forum/issue.js), incluso tramite l'*entry point* [assets/forum.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/forum.js):
+Lato-client, la funzionalità viene guidata da [assets/js/forum/issue.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/forum/issue.js), incluso tramite l'*entry point* [assets/forum.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/forum.js):
 
 1. click sull'icona 🪲 (`.tli-open-issue-modal`) ➡ apre la modale e vi copia il `post-id` del post selezionato. Un *lock* (classe `tli-issue-action-running`) impedisce di avviare due creazioni in parallelo
 2. click su `OK` (`.tli-create-issue`) ➡ mostra uno spinner, disabilita i pulsanti ed esegue `POST {data-url}` con il solo parametro `postId`
-3. in caso di successo, la risposta del backend è l'URL del post. Prima di usarla per il redirect, viene validata da [Validator.isSameOriginHttpsUrl](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/validator.js): deve essere un URL `https` *same-origin*. Questo previene che una risposta inattesa o manomessa venga passata a `window.location` (es. uno schema `javascript:`). Se l'URL è valido ➡ redirect al post (con *reload* forzato se è la stessa pagina, così da mostrare il post aggiornato); altrimenti ➡ messaggio di errore
+3. in caso di successo, la risposta del backend è l'URL del post ➡ redirect verso tale URL
 4. in caso di errore, il `responseText` restituito dal backend viene mostrato così com'è all'utente, dentro la modale
 
 ⚠️ La risposta del backend in caso di errore è pensata per essere leggibile dall'utente finale (vedi [textErrorResponse](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ForumController.php)): i messaggi delle eccezioni sollevate dai service sono in italiano e già formattati (anche con HTML).
@@ -87,7 +87,7 @@ Due dettagli importanti:
 
 ## Registrazione locale: l'Entity Bug
 
-Ogni issue creata viene salvata come [Entity/Bug](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Bug.php) nel database del CMS. La riga conserva: l'utente, l'indirizzo IP, l'id remoto (`remoteId`, il *number* della issue su GitHub), l'URL remoto (`remoteUrl`, l'`html_url`), il post di origine e i timestamp (`TimestampableEntity`).
+Ogni issue creata viene salvata come [Entity/Bug](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Bug.php) nel database del CMS. La riga conserva: l'utente, l'indirizzo IP, l'ID remoto (`remoteId`, il *number* della issue su GitHub), l'URL remoto (`remoteUrl`, l'`html_url`), il post di origine e i timestamp (`TimestampableEntity`).
 
 Questa tabella ha un duplice scopo: è il *log* delle segnalazioni create ed è la fonte dati per il rate limiting descritto sopra.
 
@@ -100,22 +100,13 @@ Una volta creata la issue su GitHub, `updatePost` ([Issue.php](https://github.co
 
 Ma **le Entity di phpBB sono in sola lettura dal lato Symfony** (vedi [docs/users.md](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/users.md) e la nota sullo `schema_filter` di Doctrine): modificare un post rispettando *tutte* le regole di phpBB (parsing del BBCode, `message_md5`, *bitfield*, stato di approvazione, ecc.) richiede il runtime di phpBB.
 
-Per questo `updatePost` non scrive direttamente nel database, ma esegue una `POST` verso `https://<dominio>/issue-add-to-post/`, che [config/custom/nginx.conf](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/nginx.conf) riscrive sulla *special page* [public/special-pages/issues.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/special-pages/issues.php). La chiamata usa `verify_peer`/`verify_host` = `false`, perché il backend contatta sé stesso via HTTPS (in dev il certificato può essere *self-signed*).
+Per questi motivi, `updatePost` non scrive direttamente nel database, ma esegue una `POST` verso `/issue-add-to-post/`, che [config/custom/nginx.conf](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/nginx.conf) riscrive sulla *special page* [public/special-pages/issues.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/special-pages/issues.php). La chiamata usa `verify_peer`/`verify_host` = `false`, perché il backend contatta sé stesso via HTTPS (in dev il certificato può essere *self-signed*).
 
 [public/special-pages/issues.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/public/special-pages/issues.php):
 
 - **risponde solo a richieste provenienti da `127.0.0.1`** (`403` altrimenti). È un punto delicato — modifica un post per conto di un utente senza autenticarlo a sua volta — perciò l'unico chiamante legittimo è il backend Symfony sullo stesso host, e la pagina non è raggiungibile dall'esterno. Il commento in cima al file documenta il *contratto* interno e un esempio di chiamata `curl` da localhost
 - esegue il *bootstrap* di phpBB e carica post/topic/forum/autore
-- prende il BBCode grezzo del post, vi appende in fondo `🪲 [url=...]Issue #N su GitHub[/url]`, lo ri-processa con `parse_message` e salva la modifica con `submit_post('edit', ...)`, indicando come motivo della modifica "Link to GitHub issue #N" e come autore della modifica l'utente che ha aperto la segnalazione
+- prende il BBCode grezzo del post, vi accoda `🪲 [url=...]Issue #N su GitHub[/url]`, lo ri-processa con `parse_message` e salva la modifica con `submit_post('edit', ...)`, indicando come motivo della modifica "Link to GitHub issue #N" e come autore della modifica l'utente che ha aperto la segnalazione
 - risponde `200` con l'URL del post aggiornato
 
 Se questo secondo passaggio fallisce **dopo** che la issue è già stata creata su GitHub, `updatePost` solleva un'eccezione con un messaggio dedicato: avvisa l'utente che la issue è stata creata correttamente (ringraziandolo) ma che l'aggiornamento del post è fallito, invitandolo ad aprire una nuova discussione per segnalare quest'ultimo problema.
-
-
-## Perché due "salti" lato server
-
-Il flusso passa dal client al backend Symfony, e da questo a una special page PHP, prima di completarsi. I motivi:
-
-- phpBB è il sistema utenti ed è il proprietario dei post: il sito non può riscriverne i contenuti mantenendone l'integrità, quindi serve una special page che operi **nel contesto di phpBB**. È lo stesso motivo per cui anche il login passa da una special page dedicata (vedi [docs/users.md](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/users.md))
-- quella special page compie un'azione privilegiata **senza autenticazione propria**, perciò la si blinda accettando solo connessioni da `127.0.0.1`: l'unico chiamante è il backend del sito, sullo stesso host
-- la creazione della issue su GitHub è cortocircuitata fuori produzione, così sviluppo e test non sporcano il repository reale con segnalazioni fittizie
