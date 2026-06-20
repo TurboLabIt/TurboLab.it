@@ -1,34 +1,65 @@
 # [Gestione degli asset frontend](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/assets-frontend.md)
 
+Gli asset frontend si dividono in due categorie:
 
-## Asset "regolari"
+- **Asset "regolari"**
+- **Asset del tema**
 
 
+## Asset "regolari" (Webpack Encore) - assets/ ➡ public/build/
 
-## Asset del tema
+1. sorgenti: [assets/](https://github.com/TurboLabIt/TurboLab.it/tree/main/assets)
+2. build prodotta da Symfony Webpack Encore (config: [webpack.config.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/webpack.config.js))
+3. output: `public/build/`, serviti direttamente da lì (`try_files` di nginx)
 
-La cartella [public/assets](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/assets) contiene alcune risorse del tema Newspark che non possono essere gestite in altro modo.
+Il comando per generare i file è:
+
+- dev: [scripts/watch.sh](https://github.com/TurboLabIt/TurboLab.it/tree/main/scripts/watch.sh)
+- staging e prod: [scripts/build.sh](https://github.com/TurboLabIt/TurboLab.it/tree/main/scripts/build.sh) - eseguita automaticamente durante il deploy
+
+`assets/app.js` è l'entry caricato su **ogni pagina** (dal layout base). Le singole pagine hanno poi entrypoint dedicati (`home`, `article`, ...).
+
+Struttura di assets/:
+
+- `*.js` nella radice — i 10 entry point
+- `js/` — moduli JS custom (jQuery + vanilla JS); include `js/ckeditor-plugins/` (i plugin CKEditor 5) e `js/forum/`
+- `styles/` — CSS semplice; include il tema `styles/newspark/`, più `styles/forum/` e `styles/email/`
+- `images/` — immagini sorgente, copiate in `public/build/images/` durante la build
+- `dictionaries/` — `stopwords-it.txt` (elenco di stopword italiane)
+- `test/` — fixture HTML per i test dell'editor (encoding/XSS, vedi `tests/Editor/`)
+- `themes/2024 newspark/` — archivio originale del tema acquistato, conservato come riferimento
+
+
+## Asset del tema - public/assets/
+
+La cartella [public/assets/](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/assets) contiene alcune risorse del tema Newspark che non possono essere gestite via Webpack. Sono caricate con `<script>` diretti in fondo a `base.html.twig`:
+
+````html
+<script src="/assets/js/stellarnav.min.js"></script>
+<script src="/assets/js/main.js"></script>
+````
+
 
 ### main.js
 
-JS principale (custom) del tema.
+JS principale (custom) del tema Newspark.
 
 
-### [StellarNav.js](https://github.com/vinnymoreira/stellarnav)
+### StellarNav
 
-Nel CSS è indicata essere in uso la versione `2.5.0`. Non ci sono altri riferimenti di versione sul sito.
+Menu di navigazione responsive ([GitHub](https://github.com/vinnymoreira/stellarnav)). È composto da:
 
-- ✅ Il JS è originale
-- 🇮🇳 Il CSS è stato modificato
+- JS: `public/assets/js/stellarnav.min.js`: originale da GitHub
+- CSS: `assets/styles/newspark/stellarnav.css`: modificato da Newspark
 
-Ho provato ad aggiungere il repo via Yarn:
+Nel CSS è indicata in uso la versione `2.5.0`; non ci sono altri riferimenti di versione sul sito.
+
+Non è gestibile via Yarn perché il repo upstream è privo di `package.json`:
 
 ````shell
 yarn add stellarnav@https://github.com/vinnymoreira/stellarnav.git
 ````
 
-Ma non funziona, perchè manca il `package.json`:
-
 > Error: Manifest not found
 
-Il JS che versionato in `public/assets` è dunque quello fornito da Newspark.
+Per questo motivo il JS è dunque quello fornito da Newspark e resta versionato manualmente in `public/assets/`.
