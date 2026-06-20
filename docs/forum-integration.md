@@ -9,8 +9,8 @@ L'integrazione fra sito e forum è gestita tramite i seguenti elementi:
 
 1. modulo per phpBB: [src/Forum/ext-turbolabit/forumintegration](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Forum/ext-turbolabit/forumintegration)
 2. symlink in `public/forum/ext/turbolabit` che fa credere a phpBB che il modulo si trovi nel percorso dedicato ai moduli
-2. template HTML: [templates/forum](https://github.com/TurboLabIt/TurboLab.it/tree/main/templates/forum)
-3. comando Symfony: [ForumIntegrationBuilder](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ForumIntegrationBuilderCommand.php)
+3. template HTML: [templates/forum](https://github.com/TurboLabIt/TurboLab.it/tree/main/templates/forum)
+4. comando Symfony: [ForumIntegrationBuilder](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ForumIntegrationBuilderCommand.php)
 
 Il modulo per phpBB ha una cartella non versionata: `Forum/ext-turbolabit/forumintegration/styles/prosilver/template/event`.
 I file che si trovano in questa cartella vengono iniettati nel tema da phpBB.

@@ -1,9 +1,6 @@
 # [Gestione degli asset frontend](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/assets-frontend.md)
 
-Gli asset frontend si dividono in due categorie:
-
-- **Asset "regolari"**
-- **Asset del tema**
+Questo documento tratta la gestione di JS, CSS e icone utilizzate dal tema.
 
 
 ## Asset "regolari" (Webpack Encore) - assets/ ➡ public/build/
@@ -63,3 +60,8 @@ yarn add stellarnav@https://github.com/vinnymoreira/stellarnav.git
 > Error: Manifest not found
 
 Per questo motivo il JS è dunque quello fornito da Newspark e resta versionato manualmente in `public/assets/`.
+
+
+## Altre immagini (loghi, icone, forum, contenuti, ...)
+
+🔗 Vedi: [Gestione delle immagini](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/images.md)

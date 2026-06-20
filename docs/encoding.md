@@ -15,7 +15,7 @@ Questo è il set minimo: se non vengono trasformati in entity, il parser non è 
 - `il simbolo di minore in HTML si scrive &lt;` oppure `Barnes & Noble`
 - `<strong>` oppure `1 < 3 > 2`
 
-`"` (`&quot;`) e `'` (`&apos;`) devono essere trasformate in entity SOLO quando sono contenuto editoriale e dobbiamo stamparli all'interno di un attributo HTML. Questo, generalmente, avviene solo in visualizzazione: a database, generalmente, queste entity non devono figurare.
+`"` (`&quot;`) e `'` (`&apos;`) devono essere trasformate in entity SOLO quando sono contenuto editoriale e dobbiamo stamparli all'interno di un attributo HTML. Questo, generalmente, avviene solo in visualizzazione: a database queste entity non devono figurare.
 
 Rispettando queste specifiche, l'HTML generato supera la [validazione W3C](https://validator.w3.org).
 
