@@ -36,7 +36,7 @@ A questo punto, sarà possibile collegarsi in SSH impartendo:
 3. [postfix: external-relay](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/external-relay-template.md) con account `turbolab.prove@xxx` e relativa "app password"
 4. [postfix: redirect-all](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md) verso `turbolab.prove@xxx`
 5. file hosts: `127.0.0.1 dev0.turbolab.it dev1.turbolab.it dev2.turbolab.it`
-5. `bash /var/www/turbolab.it/scripts/cache-clear.sh`
+6. `bash /var/www/turbolab.it/scripts/cache-clear.sh`
 
 
 ## Xdebug con Visual Studio Code
@@ -80,6 +80,6 @@ Utilizzando phpStorm è necessario de-commentare la riga `RemoteForward 9003 loc
 Per utilizzare la cartella separata con i package su PC dev Windows:
 
 ````shell
-sudo rmdir /s /q "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit"
-sudo mklink /D "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit" D:\Dev\Webdev\symfony-vendor-turbolabit-link
+rmdir /s /q "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit"
+mklink /D "D:\Dev\Webdev\turbolab.it-v2\vendor\turbolabit" D:\Dev\Webdev\symfony-vendor-turbolabit-link
 ````
