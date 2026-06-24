@@ -1,6 +1,6 @@
 # [Gestione blacklist Cloudmark](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/email-blacklist-cloudmark.md)
 
-Capita di sovente che *Cloudmark* metta il nostro server in blacklist. È utilizzato da vari provider italiani (*Libero*, *Virgilio*, ...), i cui utenti non ricevono più le notifiche del forum, la newsletter e tutte le altre email che inviamo direttamente dal server.
+Capita di sovente che *Cloudmark* metta il nostro server in blacklist. È utilizzato da vari provider italiani (*Libero*, *Virgilio*, ...), i cui utenti non ricevono più le notifiche del forum e tutte le altre email che inviamo direttamente dal server.
 
 [MXToolbox non rileva](https://mxtoolbox.com/SuperTool.aspx?action=blacklist%3aturbolab.it&run=toolpage) il blocco.
 
@@ -23,4 +23,4 @@ Per richiedere lo sblocco, visitare l'URL indicato e compilare il form con i seg
 
 ## 🔗 Vedi anche
 
-- [Gestione newsletter](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md) — una delle email inviate dal server (via Postfix locale) e quindi colpite dal blocco
+- [Gestione newsletter](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md) — viene inviata tramite un servizio esterno (SMTP2Go), anche per evitare problemi di *delivery* come questo

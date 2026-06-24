@@ -2,7 +2,7 @@
 
 La newsletter di TurboLab.it, chiamata *Questa settimana su TLI*, è una email inviata settimanalmente agli iscritti.
 
-Il mittente della mail è impostato nel servizio [Newsletter.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Newsletter.php), ed è un *alias* della mailbox `info@turbolab.it`.
+Il mittente della mail è impostato nel servizio [Newsletter.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Newsletter.php), ed è un *alias* della mailbox `info@tli`.
 
 La newsletter raccoglie i link a tutti i contenuti pubblicati sul sito nel corso della settimana:
 
@@ -28,14 +28,9 @@ Le priorità principali nella gestione della newsletter sono:
 - offrire a quanti più utenti possibile l'occasione di ricevere la newsletter almeno una volta, di modo che possano valutare se interessa
 - **NO SPAM**! Chi non vuole la newsletter non deve riceverla, senza ostacoli o ritardi
 
-La newsletter viene generata sul server di TurboLab.it e inviata direttamente alle mailbox degli iscritti ~~tramite il servizio SMTP in esecuzione sul server stesso. Abbiamo dunque scelto di **non utilizzare servizi esterni**, per i seguenti motivi:~~
+La newsletter viene generata sul server di TurboLab.it, ma **inviata** agli iscritti tramite il servizio esterno [SMTP2Go](https://www.smtp2go.com/) (transport `newsletter` in [mailer.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/mailer.yaml), configurato tramite `MAILER_DSN_NEWSLETTER`).
 
-1. ~~non dipendere dalla disponibilità di un servizio sul quale non abbiamo alcun controllo~~
-2. ~~evitare i costi dei servizi esterni di invio mail, che oltretutto crescono con il numero di invii~~
-3. ~~evitare di condividere gli indirizzi email degli iscritti con aziende terze~~
-
-Purtroppo è risultato IMPOSSIBILE ottenere un buon tasso di delivery con l'SMTP del server.
-L'invio avviene dunque tramite il servizio ~~[Postmark](https://postmarkapp.com/)~~ [SMTP2Go](https://www.smtp2go.com/).
+In origine si inviava direttamente dall'SMTP del server (per non dipendere da terzi, risparmiare sui costi e non condividere gli indirizzi degli iscritti), ma si è rivelato impossibile ottenere un buon tasso di *delivery*. Dopo un tentativo con [Postmark](https://postmarkapp.com/), la scelta attuale è SMTP2Go.
 
 
 ## Iscrizione alla newsletter
@@ -69,7 +64,7 @@ Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLa
 
 **Per inviare manualmente la newsletter** tramite lo script, impartire:
 
-- `bash scripts/newsletter-send.sh`: invia la newsletter solo a `System <info.system@turbolab.it>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages)
+- `bash scripts/newsletter-send.sh`: invia la newsletter solo a `System <info.system@tli>`. A seconda di come è configurato l'ambiente, la mail potrebbe arrivare nella mailbox indicata oppure su [mailtrap.io](https://mailtrap.io/inboxes/974437/messages)
 - **⚠⚠** `bash scripts/newsletter-send.sh --real-recipients --send-messages`: invia la newsletter a tutti gli iscritti
 
 Se viene specificata l'opzione `--dry-run`, il comando non invia nessuna mail, ma simula solo l'esecuzione della procedura.
@@ -85,11 +80,33 @@ Quando la mailbox collegata all'invio della newsletter (`newsletter@tli`) riceve
 Tale comando viene eseguito quotidianamente via *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)), ma può anche essere lanciato manualmente.
 
 
+## Tecnologie utilizzate per il template HTML
+
+- il template della newsletter ([newsletter/email.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/newsletter/email.html.twig)) utilizza il CSS fornito da [📚 Foundation for Emails](https://get.foundation/emails.html)
+- il markup del template HTML è scritto in [📚 Inky](https://get.foundation/emails/docs/inky.html)
+- il CSS viene spostato *in-line* tramite il filtro `inline_css`, fornito da `twig/cssinliner-extra`
+- il post-processing ("building") di Inky in HTML viene svolto dal filtro Twig `inky_to_html`, fornito da `twig/inky-extra`
+
+
+## Spotlight per la versione web
+
+L'articolo pubblicato sul sito corrispondente a ogni newsletter richiede uno spotlight. La procedura di generazione sceglie automaticamente un'immagine fra quelle definitine in [Image::IDS_NEWSLETTER_SPOTLIGHT](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php).
+
+Tali immagini sono state generate manualmente tramite AI:
+
+Caricare questa immagine:  https://turbolab.it/images/logo/turbolab.it.png e aggiungere il seguente prompt:
+
+> Genera l'immagine di un'ipotetica newsletter cartacea spedita dal sito "TurboLab.it". Come logo/titolo, usa l'immagine che ti allego.
+> Il tema della newsletter deve essere "Guide PC, Windows, Linux, Android e Bitcoin". Assicurati che siano presenti immagini di computer, laptop e tablet dall'aspetto moderno. Presta la MASSIMA ATTENZIONE a non distorcere i caratteri.
+> La newsletter è appoggiata sul tavolo di una scrivania da ufficio, con una luce calda e accogliente.
+> Le dimensioni complessive dell'immagine generata devono essere esattamente 1920x1080 pixel. L'immagine generata deve essere fotorealistica e ad alta definizione.
+
+
 ## Rilevazione dei click sui link
 
-Vogliamo fare il possibile per **disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere**.
+Vogliamo fare il possibile per disattivare immediatamente l'invio della newsletter a coloro che non la vogliano ricevere.
 
-Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, è attivo un meccanismo che auto-annulla l'iscrizione se l'utente non clicca alcun link presente nella newsletter per un determinato numero di mesi consecutivi.
+Oltre ai link di dis-iscrizione presenti nel corpo di ogni email, l'obiettivo è auto-annullare l'iscrizione di chi non clicca alcun link per molti mesi consecutivi.
 
 Allo scopo, ogni link presente nella newsletter è inserito come parametro della pagina `/newsletter/open`. Tale pagina riceve due parametri:
 
@@ -108,9 +125,9 @@ La pagina `/newsletter/open` si occupa di:
 4. effettuare un redirect verso l'URL "reale", presente nel parametro `url=`
 
 
-## Avviso di imminente dis-iscrizione automatica
+## Avviso di imminente dis-iscrizione automatica 🔧 *(pianificato, non ancora attivo)*
 
-La procedura [NewsletterWarnInactive](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterWarnInactiveCommand.php) si occupa periodicamente di avvisare gli utenti iscritti alla newsletter, ma che non clicchino su alcun link da molto tempo, che la loro iscrizione sarà annullata, se non la confermano.
+La procedura `NewsletterWarnInactiveCommand` (da creare) si occuperà periodicamente di avvisare gli utenti iscritti alla newsletter, ma che non clicchino su alcun link da molto tempo, che la loro iscrizione sarà annullata, se non la confermano.
 
 **Vogliamo minimizzare l'invio di queste email**, che creano comunque "rumore" nella casella dell'utente e sono per lo più inviate come cortesia nei confronti di utenti che, per altro, o hanno abbandonato la mailbox in questione oppure non sono interessati alla newsletter.
 
@@ -131,33 +148,11 @@ A ognuno degli utenti selezionati, la procedura invia una email di avviso: "se n
 La procedura salva poi una entry relativa all'invio nella tabella `newsletter_expiring_warn`, di modo che l'utente non venga avvisato nuovamente alla prossima esecuzione.
 
 
-## Auto-annullamento dell'iscrizione
+## Auto-annullamento dell'iscrizione 🔧 *(pianificato, non ancora attivo)*
 
-La procedura [NewsletterUnsubscribeInactive](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterUnsubscribeInactiveCommand.php) si occupa periodicamente di estrarre tutti gli utenti che abbiano una entry nella tabella `newsletter_expiring_warn` più vecchia di [APP_NEWSLETTER_SUBSCRIPTION_EXPIRE_AFTER_WARN_MONTHS](https://github.com/TurboLabIt/TurboLab.it/blob/main/.env). Ognuno di questi utenti:
+La procedura `NewsletterUnsubscribeInactiveCommand` (da creare) si occuperà periodicamente di estrarre tutti gli utenti che abbiano una entry nella tabella `newsletter_expiring_warn` più vecchia di [APP_NEWSLETTER_SUBSCRIPTION_EXPIRE_AFTER_WARN_MONTHS](https://github.com/TurboLabIt/TurboLab.it/blob/main/.env). Ognuno di questi utenti:
 
 - viene dis-iscritto dalla newsletter
 - riceve una email che lo informa della dis-iscrizione e offre un link per ri-iscriversi
 
 Come parte della procedura di dis-iscrizione vengono inoltre eliminate tutte le righe relative dalle tabelle `newsletter_opener` e `newsletter_expiring_warn`.
-
-
-## Tecnologie utilizzate per il template HTML
-
-- il template della newsletter ([email/newsletter.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/email/newsletter.html.twig)) utilizza il CSS fornito da [📚 Foundation for Emails](https://get.foundation/emails.html)
-- il markup del template HTML è scritto in [📚 Inky](https://get.foundation/emails/docs/inky.html)
-- il CSS viene spostato *in-line* tramite il filtro `inline_css`, fornito da `twig/cssinliner-extra`
-- il post-processing ("building") di Inky in HTML viene svolto dal filtro Twig `inky_to_html`, fornito da `twig/inky-extra`
-
-
-## Spotlight per la versione web
-
-L'articolo pubblicato sul sito corrispondente a ogni newsletter richiede uno spotlight. La procedura di generazione sceglie automaticamente un'immagine fra quelle definitine in [Image::IDS_NEWSLETTER_SPOTLIGHT](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php).
-
-Tali immagini sono generate tramite AI:
-
-Caricare questa immagine:  https://turbolab.it/images/logo/turbolab.it.png
-
-> Genera l'immagine di un'ipotetica newsletter cartacea spedita dal sito "TurboLab.it". Come logo/titolo, usa l'immagine che ti allego.
-> Il tema della newsletter deve essere "Guide PC, Windows, Linux, Android e Bitcoin". Assicurati che siano presenti immagini di computer, laptop e tablet dall'aspetto moderno. Presta la MASSIMA ATTENZIONE a non distorcere i caratteri.
-> La newsletter è appoggiata sul tavolo di una scrivania da ufficio, con una luce calda e accogliente.
-> Le dimensioni complessive dell'immagine generata devono essere esattamente 1920x1080 pixel. L'immagine generata deve essere fotorealistica e ad alta definizione.
