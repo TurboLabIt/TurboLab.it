@@ -50,7 +50,7 @@ La condivisione sulle piattaforme esterne avviene tramite il comando [social-sha
 
 Non sono previsti parametri: credenziali ed endpoint vengono letti dal `.env` corrente.
 
-Il comando viene eseguito automaticamente tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
+Il comando viene eseguito automaticamente tramite [prod/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
 
 ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio dei messaggi di notte. L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
 
