@@ -61,7 +61,7 @@ In realtà, *Google Search Console* non segnala alcuna violazione. Inoltre, l'es
 
 ## Comando di generazione
 
-La Sitemap viene generata quotidianamente, in notturna, tramite [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron).
+La Sitemap viene generata quotidianamente, in notturna, tramite [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron).
 
 Il comando utilizzato è [scripts/sitemap-generate.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/sitemap-generate.sh), che a sua volta esegue [Command/SitemapGeneratorCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/SitemapGeneratorCommand.php).
 
