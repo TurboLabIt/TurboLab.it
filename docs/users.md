@@ -12,7 +12,7 @@ Il requisito è che gli utenti possano eseguire login/logout sia dal sito, sia d
 Per accedere alla tabella degli utenti dal sito:
 
 1. l'applicazione mappa la tabella `phpbb_users` tramite [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/PhpBB/User.php) e relativo [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/PhpBB/UserRepository.php)
-2. per evitare che le migration agiscano sulla tabella di phpBB (come avverrebbe con qualsiasi altra Entity), la tabella è esclusa tramite [config/packages/doctrine.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/doctrine.yaml) (parametro `schema_filter`)
+2. per evitare che le migration agiscano sulla tabella di phpBB (come avverrebbe con qualsiasi altra Entity), la tabella è esclusa tramite [config/packages/doctrine.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/doctrine.yaml) (parametro `schema_filter` + `schema_ignore_classes`)
 
 In una prima implementazione si era tentato di [usare una *view*](https://github.com/TurboLabIt/TurboLab.it/commit/15d60324d2027e404dcbb102a876295f4b5bb74a#diff-9e8d1f28092b733b6d0067fdf5c74d12980ec1ba992f9cd74d3259980aba02d7) al posto di accedere alla tabella `phpbb_users` direttamente. Ma non è possibile creare *foreign key* verso una view, e quindi l'elemento *Author* delle relazioni non era referenziabile con garanzia di *integrità referenziale*.
 
@@ -72,15 +72,15 @@ L'ideale per integrare la sessione utente di phpBB sul sito sarebbe [📚 phpBB3
 
 Facciamo allora affidamento sui cookie di phpBB (`_sid`, `_u` (e `_k`, se c'è)) e un [📚 custom authenticator Symfony](https://symfony.com/doc/current/security/custom_authenticator.html):
 
-2. [config/packages/security.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/security.yaml) definisce come `custom_authenticator` del *firewall* `tli_phpbb_cookies` l'autenticatore [Security/phpBBCookiesAuthenticator](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Security/phpBBCookiesAuthenticator.php)
-3. tale autenticatore si attiva solo per le route previste dal metodo `supports()`, come `app_home` oppure `app_article`. È dunque importante esplicitare lì tutte le route del sito nelle quali deve essere caricata la sessione utente (nelle route non specificate, l'utente risulterà loggato o non-loggato a seconda che sia stato rilevato come loggato on non-loggato in precedenza da una delle pagine gestite da `supports()`)
-4. quando l'autenticatore si attiva, prova a leggere i valori dai cookie di login
+1. [config/packages/security.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/security.yaml) definisce come `custom_authenticator` del *firewall* `tli_phpbb_cookies` l'autenticatore [Security/phpBBCookiesAuthenticator](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Security/phpBBCookiesAuthenticator.php)
+2. tale autenticatore si attiva solo per le route previste dal metodo `supports()`, come `app_home` oppure `app_article`. È dunque importante esplicitare lì tutte le route del sito nelle quali deve essere caricata la sessione utente (nelle route non specificate, l'utente risulterà loggato o non-loggato a seconda che sia stato rilevato come loggato on non-loggato in precedenza da una delle pagine gestite da `supports()`)
+3. quando l'autenticatore si attiva, prova a leggere i valori dai cookie di login
 
-Se è presente il cookie `_k` che phpBB scrive solo in caso venga spuntata l'opzione "Remember me" ➡ viene eseguita una query direttamente sulle tabelle di phpBB utilizzando i parametri tre valori dei cookie `_sid`, `_u` e `_k`.
+Se è presente il cookie `_k` che phpBB scrive solo in caso venga spuntata l'opzione "Remember me" ➡ viene eseguita una query direttamente sulle tabelle di phpBB utilizzando come parametri i tre valori dei cookie `_sid`, `_u` e `_k`.
 
 Se NON è presente il cookie `_k` ➡ viene letto il cookie `tli-login-no-remember-me-workaround` e, se i valori contenuti corrispondono a quelli presenti in `_sid` e `_u`, viene eseguita una query direttamente sulle tabelle di phpBB utilizzandoli come parametri di ricerca.
 
-Le query sono in [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/UserRepository.php). Se viene trovato un match, la funzione istanza e ritorna un oggetto [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/User.php) e l'utente viene autenticato.
+Le query sono in [UserRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/PhpBB/UserRepository.php). Se viene trovato un match, la funzione istanzia e ritorna un oggetto [Entity/User](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/PhpBB/User.php) e l'utente viene autenticato.
 
 ⚠️⚠️⚠️️ La limitazione è che, se l'utente esegue login da phpBB senza spuntare "Ricordami", non viene impostato né il cookie `_k`, né il cookie `tli-login-no-remember-me-workaround` ➡ Il sito non ha informazioni sufficienti per verificare le credenziali e istanziare la sessione utente ➡ **L'utente risulta loggato su phpBB, ma non sul sito** ([🪲 #90](https://github.com/TurboLabIt/TurboLab.it/issues/90), [🪲 #88](https://github.com/TurboLabIt/TurboLab.it/issues/88)).
 
@@ -91,7 +91,7 @@ Manteniamo dunque questa limitazione, alla luce del fatto che:
 - la issue non è bloccante (basta eseguire login di nuovo al sito una sola volta per essere loggati)
 - **consigliavamo già prima di attivare sempre "Ricordami" per evitare disconnessioni durante la navigazione**
 
-Per incoraggiare gli utenti a spuntare l'opzione "Remember me", [la casella è ora spuntata di default](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/forum/remember-me-checker.js).
+Per incoraggiare gli utenti a spuntare l'opzione "Remember me", [la casella è ora spuntata di default](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/forum.js) (`$("#autologin").prop("checked", true)` nell'entry point `forum`).
 
 
 ## Logout
