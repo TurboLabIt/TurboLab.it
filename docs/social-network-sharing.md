@@ -52,27 +52,31 @@ Non sono previsti parametri: credenziali ed endpoint vengono letti dal `.env` co
 
 Il comando viene eseguito automaticamente tramite [prod/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron). 🛑 È fondamentale assicurarsi che l'intervallo di esecuzione configurato nel cron sia lo stesso valorizzato nella costante [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php). In caso contrario, l'applicazione non può funzionare correttamente.
 
-ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio dei messaggi di notte. L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finsice alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
+ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzio" (*quiet hours*) e prevenire l'invio dei messaggi di notte. L'orario del silenzio **inizia a mezzanotte** (00:00:00) e finisce alle ore [ShareOnSocialCommand::QUIET_HOURS_END](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php).
 
 - se si tratta della prima esecuzione della mattina, al termine dell'orario del silenzio ➡ condivide tutti gli articoli pubblicati dall'inizio dell'orario del silenzio sino a ora
 - se si tratta di una regolare esecuzione periodica ➡ invia gli articoli pubblicati su TLI negli ultimi [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php) minuti.
 
 
-## Valutazione casi-limite esecuzioni regolari
+## Valutazione casi-limite
 
-| Pubblicato alle | Orario exec1 | Range exec1         | Risultato exec1 | Orario exec2 | Range exec2         | Risultato exec2 |
-|-----------------|--------------|---------------------|:---------------:|--------------|---------------------|:---------------:|
-| 11:59:59        | 12:00        | 11:50:00 - 11:59:59 |      HIT ✅      | 12:10        | 12:00:00 - 12:09:59 |      MISS ✅     |
-| 12:00:00        | 12:00        | 11:50:00 - 11:59:59 |      MISS ✅     | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      |
-| 12:00:01        | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      | 12:20        | 12:10:00 - 12:19:59 |      MISS ✅     |
-| 12:00:58        | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      | 12:20        | 12:10:00 - 12:19:59 |      MISS ✅     |
+L'idoneità di un articolo è valutata su un intervallo **semi-aperto**, con i secondi azzerati: `publishedAt >= lowLimit AND publishedAt < highLimit` (vedi [`ArticleRepository::findLatestForSocialSharing`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/Cms/ArticleRepository.php)), dove:
 
+- `highLimit` = orario del run;
+- `lowLimit` = `highLimit` − `EXEC_INTERVAL` (15 min). **Eccezione**: nel primo run del giorno (`08:00`) `lowLimit` = mezzanotte, per recuperare tutto ciò che è stato pubblicato durante le quiet hours.
 
-## Valutazione casi-limite prima esecuzione dopo quiet hours
+Escludere `highLimit` (`<`) evita che due run consecutivi condividano lo stesso articolo. Esiti nei casi-limite, con gli attuali `EXEC_INTERVAL` = 15 min e quiet hours `00:00`–`08:00` (`QUIET_HOURS_END` = 8):
 
-| Pubblicato alle | Orario exec1 | Range exec1         | Risultato exec1 | Orario exec2 | Range exec2         | Risultato exec2 |
-|-----------------|--------------|---------------------|:---------------:|--------------|---------------------|:---------------:|
-| 11:59:59        | 12:00        | 11:50:00 - 11:59:59 |      HIT ✅      | 12:10        | 12:00:00 - 12:09:59 |      MISS ✅     |
-| 12:00:00        | 12:00        | 11:50:00 - 11:59:59 |      MISS ✅     | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      |
-| 12:00:01        | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      | 12:20        | 12:10:00 - 12:19:59 |      MISS ✅     |
-| 12:00:58        | 12:10        | 12:00:00 - 12:09:59 |      HIT ✅      | 12:20        | 12:10:00 - 12:19:59 |      MISS ✅     |
+| Articolo pubblicato alle | Condiviso dal run | Note |
+|---|---|---|
+| `12:07:30` | `12:15` | caso normale: rientra in `[12:00:00, 12:15:00)` |
+| `12:00:00` (sul quarto d'ora) | `12:15` | `highLimit` è escluso → l'orario esatto va sempre al run *successivo* |
+| `12:14:59` | `12:15` | ultimo istante della finestra |
+| `12:15:00` (sul quarto d'ora) | `12:30` | come sopra: lo scatto esatto slitta al run successivo |
+| `00:00:00` (mezzanotte) | `08:00` (primo run) | incluso: il primo run copre `[00:00:00, 08:00:00)` |
+| `07:59:59` (quiet hours) | `08:00` (primo run) | tutto il pubblicato durante le quiet hours è recuperato dal primo run |
+| `08:00:00` (fine quiet hours) | `08:15` | escluso dal primo run (`< 08:00:00`), preso dal run delle `08:15` |
+| `23:44:59` | `23:45` (ultimo run) | ultimo istante coperto dall'ultimo run del giorno |
+| da `23:45:00` a `23:59:59` | 🛑 **nessuno** | l'ultimo run (`23:45`) arriva solo a `23:44:59`; il primo run del giorno dopo riparte da `00:00:00` |
+
+🛑 **Buco di copertura noto**: un articolo pubblicato negli ultimi 15 minuti prima di mezzanotte (`23:45:00`–`23:59:59`) non viene mai condiviso. Da rivedere se si modifica l'orario dei run o delle quiet hours.
