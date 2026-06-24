@@ -46,14 +46,14 @@ I file serviti direttamente da Nginx sono riconoscibile perché NON è presente 
 
 ## Percorso delle immagini su filesystem
 
-La cartella `public/immagini/`, in realtà, non esiste. Si tratta piuttosto di un symlink che punta a `var/uploaded-asset/images/cache/`. Tale file è creato da [scripts/deploy_moment_030.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/deploy_moment_030.sh) (eseguito al deploy e al cache-clear).
+La cartella `public/immagini/`, in realtà, non esiste. Si tratta piuttosto di un symlink che punta a `var/uploaded-assets/images/cache/`. Tale file è creato da [scripts/deploy_moment_030.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/deploy_moment_030.sh) (eseguito al deploy e al cache-clear).
 
-Di conseguenza, il reale percorso dal quale Nginx tenta di leggere l'URL `/immagini/med/2/titolo-articolo-7654.avif` è `var/uploaded-asset/images/cache/med/2/7654.avif`.
+Di conseguenza, il reale percorso dal quale Nginx tenta di leggere l'URL `/immagini/med/2/titolo-articolo-7654.avif` è `var/uploaded-assets/images/cache/med/2/7654.avif`.
 
 I percorsi su filesystem sono:
 
 1. originali: `var/uploaded-assets/images/originals/<imageFolderMod>/<id>.<formato>`. Non vengono esposti direttamente via web
-2. cache: `var/uploaded-assets/images/cache/med/<imageFolderMod>/<id>.<formato>`
+2. cache: `var/uploaded-assets/images/cache/<taglia>/<imageFolderMod>/<id>.<formato>` (dove `<taglia>` è `min`/`med`/`reg`/`max`)
 
 `<imageFolderMod>` è un numero. Si tratta di una sotto-cartella, fisicamente presente su file system, derivata dall'ID dell'immagine. Serve a suddividere blandamente le immagini in sotto-cartelle, per evitare che ci siano *centomila* file in una sola cartella.
 
@@ -68,7 +68,7 @@ Per il trasferimento del file al client, lo script PHP usa [X-Sendfile](https://
 
 Questo libera il processo PHP dall'onere di trasferire il file, che torna a essere totalmente a carico di Nginx (come è giusto che sia).
 
-X-Sendfile viene attivato SOLO quando il file-immagine è stato processato da PHP, e non quando la risposta arriva direttamente da Nginx. Per rendere manifesta la differenza, nei file serviti direttamente da Nginx NON è presente l'*header HTTP* `x-tli-xsent`, che è invece presente quando il file è stato gestito da PHP.
+X-Sendfile viene attivato SOLO quando il file-immagine è stato processato da PHP, e non quando la risposta arriva direttamente da Nginx (la differenza è osservabile dall'header `x-tli-xsent`, descritto sopra).
 
 
 ## Percorsi legacy
