@@ -20,7 +20,7 @@ D'altro canto, è bene capire che il presente documento è disponibile pubblicam
 
 ## Codice sorgente
 
-Al contrario dell'istanza di produzione, next.turbolab.it utilizza sempre il codice più aggiornato disponibile sul [repository GitHub](https://github.com/TurboLabIt/TurboLab.it).
+Al contrario dell'istanza di produzione, next.turbolab.it utilizza SEMPRE il codice più aggiornato disponibile sul [repository GitHub](https://github.com/TurboLabIt/TurboLab.it): è infatti attivo l'[autodeploy di Webstackup](https://github.com/TurboLabIt/webstackup/blob/master/script/php-pages/readme.md#how-to-autodeploy) che esegue automaticamente [deploy.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/deploy.sh) a ogni merge sul branch `master`.
 
 
 ## Dati di test
@@ -42,6 +42,6 @@ Di contro, è bene notare che le procedure automatiche **sovrascrivono** periodi
 Le email inviate dall'istanza di staging non arrivano a destinazione. Non è dunque possibile effettuare alcuna prova che riguardi l'invio di email.
 
 
-## Infrastruttura e setup server
+## 🔗 Vedi anche
 
-Vedi [docs/next-server.md](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/next-server.md)
+- [docs/next-server.md](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/next-server.md) — infrastruttura e setup del server di staging
