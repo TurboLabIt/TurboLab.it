@@ -26,8 +26,18 @@ La configurazione di "gateway-2" è identica a quella di "gateway-1", con le seg
 2. l'indirizzo IP di `proxy_pass` è quello di LAN del server che eroga next.turbolab.it
 
 
-## server finale
+## Server finale di staging
 
 Il gateway-2 si connette infine al server che eroga l'istanza di test del sito (`100 (next-tli)`).
 
 Su tale server è attivo l'[autodeploy di Webstackup](https://github.com/TurboLabIt/webstackup/blob/master/script/php-pages/readme.md#how-to-autodeploy) che esegue automaticamente [deploy.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/deploy.sh) a ogni merge sul branch `master`.
+
+
+## Attivazione server finale di staging
+
+- [ ] [Installazione del server (in un container LXC)](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/server.md)
+- [ ] [Attivare il catch-all delle email verso catchall-<env>@TLI](https://github.com/TurboLabIt/webstackup/blob/master/config/postfix/redirect-all-template.md)
+- [ ] Forzare l'ambiente su "staging": `echo "staging" > /var/www/turbolab.it/env && cat /var/www/turbolab.it/env`
+- [ ] Caricare il file privato `.env.staging.local`
+- [ ] Caricare il file privato `backup/next-phpbb-config.php` nel percorso `public/forum/config.php`
+- [ ] Eseguire l'import dei dati da produzione: `clear && bash scripts/autodeploy-download-import.sh`
