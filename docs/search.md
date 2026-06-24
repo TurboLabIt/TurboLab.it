@@ -9,11 +9,7 @@ Per l'integrazione in Symfony abbiamo installato:
 - [meilisearch/meilisearch-symfony](https://github.com/meilisearch/meilisearch-symfony/wiki/installation)
 - [symfony/serializer-pack](https://symfony.com/doc/current/serializer.html)
 
-L'indicizzazione inizia si avvia con [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/bashrc-dev.sh)
-(eseguito autmaticamente via [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron)).
-Da lì in poi, l'integrazione con Symfony aggiorna automaticamente l'indice al salvataggio delle entity [configurate](https://github.com/TurboLabIt/TurboLab.it/tree/main/config/packages/meilisearch.yaml).
-
-Al momento, è configurata solo l'indicizzazione dell'entity [Article](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Article.php).
+L'indicizzazione si avvia con [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/reindex.sh), eseguito in notturna via [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/cron). Durante il giorno, l'integrazione con Symfony aggiorna automaticamente l'indice al salvataggio delle entity [configurate](https://github.com/TurboLabIt/TurboLab.it/tree/main/config/packages/meilisearch.yaml) - al momento, è configurata solo l'indicizzazione dell'entity [Article](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Article.php).
 
 È necessario indicizzare plain-text, senza tag HTML. Per farlo, le procedure di indicizzazione invocano automaticamente
 [Serializer/ArticleSearchNormalizer.php](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Serializer/ArticleSearchNormalizer.php).
@@ -31,9 +27,10 @@ C'è un tool, [Meilisearch Version Migration Script](https://github.com/meilisea
 
 Come workaround:
 
-1. eseguire `webstackup` ➡ Meilisearch GUI ➡ Wipe
+1. eseguire `webstackup` ➡ `Meilisearch GUI` ➡ `Wipe`
 2. aggiornare la nuova API key mostrata a schermo nel file `/var/www/turbolab.it/.env.prod.local`
-3. lanciare [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/bashrc-dev.sh) per rigenerare gli indici
+3. lanciare [cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh) per il dump-env
+4. lanciare [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/reindex.sh) per rigenerare gli indici
 
 
 ## Documentazione Meilisearch
