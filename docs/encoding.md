@@ -87,6 +87,16 @@ Ci limitiamo dunque a:
 3. in visualizzazione: mostriamo il testo as-is
 
 
+## Implementazione
+
+L'ingresso in salvataggio è sempre [`TextProcessor`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/TextProcessor.php), con un metodo per strategia:
+
+- **Strategia 1** (titoli, tag): `processRawInputTitleForStorage()` — decodifica le entity (`HtmlProcessorBase::decode()`) e salva il testo grezzo
+- **Strategia 2** (body e abstract): `processRawInputBodyForStorage()` — passa l'HTML in `HTMLPurifier`, dentro [`HtmlProcessorForStorage`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/HtmlProcessorForStorage.php)
+
+La resa dell'**HTML** in visualizzazione è in [`HtmlProcessorForDisplay`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/HtmlProcessorForDisplay.php) (`processArticleBody`); per il **testo semplice**, l'encode-on-view è invece l'auto-escaping dei template (Twig). I nomi dei due processor (`...ForStorage` / `...ForDisplay`) rispecchiano il principio *sanitize on input, escape on output*.
+
+
 ## Articolo e test
 
 🔗 Esempio live su TLI: [Come svolgere test automatici su TurboLab.it](https://turbolab.it/1939)
