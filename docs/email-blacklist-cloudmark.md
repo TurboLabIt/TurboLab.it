@@ -19,3 +19,8 @@ Per richiedere lo sblocco, visitare l'URL indicato e compilare il form con i seg
 - *Comment*: `We run a double-optin only free service. We NEVER send an email to someone who didn't request it. Please unblock us ASAP. Thanks`
 
 ⚠ Al submit del form viene inviata una email al richiedente con oggetto `Confirm CSI IP Address Statistics Reset Request` e un link di conferma.
+
+
+## 🔗 Vedi anche
+
+- [Gestione newsletter](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/newsletter.md) — una delle email inviate dal server (via Postfix locale) e quindi colpite dal blocco
