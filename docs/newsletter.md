@@ -58,7 +58,7 @@ La pagina di anteprima non invia nessuna email, ma mostra soltanto il contenuto 
 
 ## Comando di invio
 
-La newsletter viene spedita periodicamente agli iscritti tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)).
+La newsletter viene spedita periodicamente agli iscritti tramite [prod/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron).
 
 Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/newsletter-send.sh), che a sua volta esegue [Command/NewsletterSendCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/NewsletterSendCommand.php).
 
@@ -77,7 +77,7 @@ Quando la mailbox collegata all'invio della newsletter (`newsletter@tli`) riceve
 1. un filtro impostato nella webmail inoltra il messaggio verso una casella dedicata su [gmx.com](https://www.gmx.com/)
 2. il comando [scripts/email-bounce-manager.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/email-bounce-manager.sh) (ovvero [Command/EmailBounceManagerCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/EmailBounceManagerCommand.php)) si collega alla casella GMX via IMAP, estrae gli indirizzi problematici e li dis-iscrive
 
-Tale comando viene eseguito quotidianamente via *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)), ma può anche essere lanciato manualmente.
+Tale comando viene eseguito quotidianamente via [prod/cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron), ma può anche essere lanciato manualmente.
 
 
 ## Tecnologie utilizzate per il template HTML
