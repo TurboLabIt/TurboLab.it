@@ -19,14 +19,14 @@ Sul sito, il codice di integrazione è in [base.html.twig](https://github.com/Tu
 
 ### Forum
 
-Sul forum, il codice di integrazione è generato dall'estensione ufficiale di phpBB: [Google Analytics](https://www.phpbb.com/customise/db/extension/googleanalytics/).
+Sul forum, il codice di integrazione è generato dall'estensione di phpBB: [Google Analytics](https://www.phpbb.com/customise/db/extension/googleanalytics/).
 
 Si configura da `ACP ➡ Impostazioni ➡ Google Analytics`.
 
 
 ## Pagina pubblica `/statistiche`
 
-La pagina [https://turbolab.it/statistiche](https://turbolab.it/statistiche) mostra in chiaro l'andamento del traffico del sito e del forum. **Oggi è sempre escluso**, dato che il giorno è ancora in corso e il dato risulterebbe artificialmente più basso. Dove ha senso, il confronto è con lo **stesso giorno della settimana di un anno fa** (52 settimane prima, in modo che il giorno della settimana coincida).
+La pagina [https://turbolab.it/statistiche](https://turbolab.it/statistiche) mostra pubblicamente l'andamento del traffico del sito e del forum. **"Oggi" è sempre escluso**, dato che il giorno è ancora in corso e il dato risulterebbe artificialmente più basso. Dove ha senso, il confronto è con lo **stesso giorno della settimana di un anno fa** (52 settimane prima, in modo che il giorno della settimana coincida).
 
 Alcune sezioni più sensibili sono **visibili solo ai membri dello staff** (utenti con `ROLE_EDITOR`).
 
@@ -36,10 +36,10 @@ I dati phpBB (utenti registrati, post nel forum, ecc.) sono letti via Doctrine.
 
 I file coinvolti:
 
-- Route + controller: [InfoController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/InfoController.php) ➡ `app_stats` ➡ `/statistiche` (rendering iniziale) e `app_stats_ajax` ➡ `/ajax/statistiche?days=N` (JSON per il cambio intervallo)
+- Route + controller: [InfoController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/InfoController.php) ➡ `app_stats` ➡ `/statistiche` (renderizza solo lo **scheletro** della pagina) e `app_stats_ajax` ➡ `/ajax/statistiche?days=N` (restituisce il JSON dei dati — usato sia al primo caricamento sia al cambio intervallo — con cache per-intervallo; omette le sezioni staff-only ai non-staff)
 - Service: [Service/GoogleAnalytics.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/GoogleAnalytics.php) — gli intervalli ammessi sono dichiarati nella costante `ALLOWED_RANGE_DAYS`; il service orchestra anche le chiamate ai repository phpBB
-- Template: [templates/info/stats.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/info/stats.html.twig) — i dati iniziali vengono passati al JS via un blocco `<script type="application/json" id="tli-stats-initial-data">`
-- Frontend: [assets/js/stats.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/stats.js) (entry [assets/stats.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/stats.js)) — i grafici sono renderizzati con [Chart.js](https://www.chartjs.org/) **bundled via Webpack/yarn** (`chart.js` è in `package.json`); il cambio intervallo aggiorna in-place le istanze `Chart` esistenti via `chart.data` + `chart.update()`
+- Template: [templates/info/stats.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/info/stats.html.twig) — solo lo scheletro (nessun dato GA inline); le card sensibili sono avvolte in `{% if CurrentUser.isEditor %}` per il gating staff-only
+- Frontend: [assets/js/stats.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/stats.js) (entry [assets/stats.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/stats.js)) — i grafici sono renderizzati con [Chart.js](https://www.chartjs.org/) **bundled via Webpack/yarn** (`chart.js` è in `package.json`); al primo caricamento esegue il fetch di `app_stats_ajax` e costruisce i grafici, al cambio intervallo li aggiorna in-place via `chart.data` + `chart.update()`
 
 
 ### Configurazione necessaria
@@ -130,6 +130,6 @@ Procedura passo-passo:
 
 Per forzare un refresh dopo aver corretto la configurazione, svuotare la cache:
 
-````
+````shell
 bash scripts/cache-clear.sh
 ````
