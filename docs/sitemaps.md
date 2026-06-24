@@ -2,7 +2,7 @@
 
 Gli URL dei contenuti di TurboLab.it (sito e forum) devono essere indicizzati all'interno di una [📚 Sitemap XML](https://www.sitemaps.org/protocol.html).
 
-Il protocollo Sitemap impone un limite massimo al numero di URL indicizzabili da ogni singolo file. Tale limite è inferiore al numero di URL presenti su TLI. Di conseguenza, è necessario suddividere gli URL in molteplici file, che saranno poi indicizzati a loro volta da una "Sitemap index file".
+Il protocollo Sitemap impone un limite massimo al numero di URL indicizzabili da ogni singolo file. Tale limite è inferiore al numero di URL presenti su TLI. Di conseguenza, è necessario suddividere gli URL in molteplici file, che saranno poi indicizzati a loro volta da un "Sitemap index file".
 
 **Quando si parla della "Sitemap di TLI" si fa riferimento a questo "Sitemap index file"**, non ai singoli file parziali.
 
@@ -36,8 +36,7 @@ Da [📚 SEO-Friendly Pagination: A Complete Best Practices Guide](https://www.s
 > While paginated URLs are technically indexable, they aren’t an SEO priority to spend crawl budget on.
 > As such, they don’t belong in your XML sitemap.
 
-Il relativo codice è dunque stato rimosso. In caso fosse necessario ripristinarlo, vedi [revision a040efc
-](https://github.com/TurboLabIt/TurboLab.it/blob/a040efcdb3f3fb75fef64560524f6354f8016938/src/Command/SitemapGeneratorCommand.php#L136)
+Il relativo codice è dunque stato rimosso. In caso fosse necessario ripristinarlo, vedi [revision a040efc](https://github.com/TurboLabIt/TurboLab.it/blob/a040efcdb3f3fb75fef64560524f6354f8016938/src/Command/SitemapGeneratorCommand.php#L136)
 
 
 ## Nessuna segnalazione (ping) ai motori
@@ -62,10 +61,10 @@ In realtà, *Google Search Console* non segnala alcuna violazione. Inoltre, l'es
 
 ## Comando di generazione
 
-La Sitemap viene generata quotidianamente tramite *cron* ([staging](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/staging/cron) | [prod](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron)).
+La Sitemap viene generata quotidianamente, in notturna, tramite [cron](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/prod/cron).
 
 Il comando utilizzato è [scripts/sitemap-generate.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/sitemap-generate.sh), che a sua volta esegue [Command/SitemapGeneratorCommand.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/SitemapGeneratorCommand.php).
 
 La procedura genera dapprima i file nella cartella temporanea `var/sitemaps_new/`. Solo se la generazione termina correttamente questa cartella sostituisce la "vera" `var/sitemaps/`.
 
-Se viene specificata l'opzione `--dry-run`, il comando genera i file nella cartella temporanea, ma poi non li sposta nella cartella accessibile tramite server web, lasciando dunque disponibile la copia precedente dei file.
+Se viene specificata l'opzione `--dry-run`, il comando genera i file nella cartella temporanea, ma poi non li sposta nella cartella finale, lasciando dunque disponibile la copia precedente dei file.
