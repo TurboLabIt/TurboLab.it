@@ -22,6 +22,9 @@ class UserRepository extends BasePhpBBRepository
         user_posts, user_colour, user_allow_massemail
     ';
 
+    protected ?array $arrPhpBBSessionConfig = null;
+
+
     public function __construct(protected array $arrConfig, ManagerRegistry $registry, private readonly ManagerRegistry $managerRegistry)
     {
         parent::__construct($arrConfig, $registry);
@@ -30,6 +33,9 @@ class UserRepository extends BasePhpBBRepository
 
     public function findOneByUserSidKey(int $userId, string $sessionId, string $sessionKey)
     {
+        // max_autologin_time is in DAYS; 0 = autologin keys never expire (phpBB default)
+        $maxAutologinDays = $this->getPhpBBSessionConfig()['max_autologin_time'];
+
         $sql = "
             SELECT
                 " . static::AUTHENTICATED_USER_FIELDS . "
@@ -51,10 +57,19 @@ class UserRepository extends BasePhpBBRepository
                 sessions_keys.key_id	= :sessionKey
         ";
 
+        // enforce the autologin-key lifetime only when the admin has configured one
+        if( $maxAutologinDays > 0 ) {
+            $sql .= " AND sessions_keys.last_login >= :minLastLogin";
+        }
+
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $userId, ParameterType::INTEGER);
         $stmt->bindValue('sessionId', $sessionId);
         $stmt->bindValue('sessionKey', md5($sessionKey) );
+
+        if( $maxAutologinDays > 0 ) {
+            $stmt->bindValue('minLastLogin', time() - ($maxAutologinDays * 86400), ParameterType::INTEGER);
+        }
 
         return $this->buildUserEntityFromSqlStatement($stmt);
     }
@@ -62,6 +77,9 @@ class UserRepository extends BasePhpBBRepository
 
     public function findOneByUserSid(int $userId, string $sessionId)
     {
+        // reject sessions idle longer than phpBB's session_length (deterministic equivalent of phpBB's own GC)
+        $minSessionTime = time() - $this->getPhpBBSessionConfig()['session_length'];
+
         $sql = "
             SELECT
                 " . static::AUTHENTICATED_USER_FIELDS . "
@@ -75,14 +93,41 @@ class UserRepository extends BasePhpBBRepository
                 users.user_id			= :userId AND
                 ## forum/includes/constants.php: USER_NORMAL, USER_FOUNDER
                 users.user_type			IN(0, 3) AND
-                sessions.session_id		= :sessionId
+                sessions.session_id		= :sessionId AND
+                sessions.session_time	>= :minSessionTime
         ";
 
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->bindValue('userId', $userId, ParameterType::INTEGER);
         $stmt->bindValue('sessionId', $sessionId);
+        $stmt->bindValue('minSessionTime', $minSessionTime, ParameterType::INTEGER);
 
         return $this->buildUserEntityFromSqlStatement($stmt);
+    }
+
+
+    /**
+     * phpBB's session_length (seconds) and max_autologin_time (days), read live from phpbb_config
+     * and cached per request. Drives the session/autologin expiry checks in the auth finders.
+     */
+    protected function getPhpBBSessionConfig() : array
+    {
+        if( $this->arrPhpBBSessionConfig !== null ) {
+            return $this->arrPhpBBSessionConfig;
+        }
+
+        $sql = "
+            SELECT config_name, config_value
+            FROM " . $this->getPhpBBTableName('config', false) . "
+            WHERE config_name IN ('session_length', 'max_autologin_time')
+        ";
+
+        $arrRows = $this->getEntityManager()->getConnection()->prepare($sql)->executeQuery()->fetchAllKeyValue();
+
+        return $this->arrPhpBBSessionConfig = [
+            'session_length'        => (int)($arrRows['session_length'] ?? 3600),
+            'max_autologin_time'    => (int)($arrRows['max_autologin_time'] ?? 0),
+        ];
     }
 
 
