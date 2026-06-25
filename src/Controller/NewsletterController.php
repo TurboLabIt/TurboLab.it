@@ -91,7 +91,8 @@ class NewsletterController extends BaseController
         $encryptedUserData = $this->request->query->get("opener");
 
         try {
-            $arrUserData = $this->encryptor->decrypt($encryptedUserData);
+            // allowLegacy: old opener links in already-sent emails were AES-CBC encrypted
+            $arrUserData = $this->encryptor->decrypt($encryptedUserData, allowLegacy: true);
             if( $arrUserData["scope"] != 'newsletterOpenerUrl' ) {
                 throw new Exception("Pretty Try (For a White Guy) | Invalid scope");
             }
@@ -108,7 +109,8 @@ class NewsletterController extends BaseController
     public function unsubscribe(NewsletterService $newsletter, string $encryptedSubscriberData) : Response
     {
         try {
-            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
+            // allowLegacy: old subscribe/unsubscribe links in already-sent emails were AES-CBC encrypted
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData, allowLegacy: true);
 
         } catch(EncryptionException) {
             return $this->unsubscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);
@@ -160,7 +162,8 @@ class NewsletterController extends BaseController
     public function subscribe(string $encryptedSubscriberData) : Response
     {
         try {
-            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
+            // allowLegacy: old subscribe/unsubscribe links in already-sent emails were AES-CBC encrypted
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData, allowLegacy: true);
 
         } catch(EncryptionException) {
             return $this->subscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);

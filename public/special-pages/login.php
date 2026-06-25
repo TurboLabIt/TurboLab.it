@@ -53,7 +53,7 @@ if( ($result["status"] ?? null) == LOGIN_SUCCESS && !$rememberMe ) {
             "id"            => $user->id(),
             "session_id"    => $user->session_id,
             "timestamp"     => (new DateTime())->modify('-1 minute')->format('Y-m-d H:i:s')
-        ], '../../');
+        ]);
 }
 
 

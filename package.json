@@ -7,11 +7,11 @@
         "odometer": ">=0.4.8"
     },
     "devDependencies": {
-        "@babel/core": ">=7.29.7",
-        "@babel/preset-env": ">=7.29.7",
-        "@symfony/webpack-encore": ">=6.0.0",
+        "@babel/core": ">=8.0.1",
+        "@babel/preset-env": ">=8.0.2",
+        "@symfony/webpack-encore": ">=7.1.0",
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^22.2.3",
+        "npm-check-updates": "^22.2.7",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.101.0",
         "sass-loader": ">=17.0",

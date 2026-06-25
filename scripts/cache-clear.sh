@@ -63,4 +63,15 @@ if [ "$APP_ENV" == "dev" ]; then
   ls -l --color=always ${PROJECT_DIR}vendor/turbolabit
 fi
 
+
+fxTitle "Locking down encryptor key files (www-data, 0600)..."
+# var/ above is chowned to *:www-data and chmod'd o=rX (world-readable) — re-lock the secret keys.
+# php-fpm runs as www-data, so we make it the owner and keep 0600 (no group/other access).
+if [ -d "${PROJECT_DIR}var/encryptor" ]; then
+  sudo chown www-data:www-data "${PROJECT_DIR}var/encryptor" -R
+  sudo chmod 0700 "${PROJECT_DIR}var/encryptor"
+  sudo find "${PROJECT_DIR}var/encryptor" -type f -name '*.key' -exec chmod 0600 {} +
+fi
+
+
 bash "${SCRIPT_DIR}phpbb-cache-clear.sh"

@@ -9,7 +9,7 @@ trait phpBBCookiesAuthenticatorTrait
 {
     const string COOKIE_BASENAME_PHPBB                          = 'turbocookie_2021_';
     const string COOKIE_NO_REMEMBER_ME_WORKAROUND               = 'tli-login-no-remember-me-workaround';
-    const string NO_REMEMBER_ME_WORKAROUND_ENCRYPTOR_KEY_PATH   = 'var/no-remember-me-cookie-secret.key';
+    const string NO_REMEMBER_ME_WORKAROUND_KEY_FILENAME         = 'no-remember-me-cookie-secret';
 
     // these routes don't need the User object
     const array AUTH_IGNORED_ROUTES = [
@@ -20,11 +20,11 @@ trait phpBBCookiesAuthenticatorTrait
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🚀 Main methods ***">
-    public function setNoRememberMeCookie(array $arrData, string $outputDirectoryPathPrepend = '') : static
+    public function setNoRememberMeCookie(array $arrData) : static
     {
         $cookieSecret =
             $this
-                ->primeNoRememberMeEncryptor($outputDirectoryPathPrepend)
+                ->primeNoRememberMeEncryptor()
                 ->encryptNoRememberMeCookieData($arrData);
 
         setcookie(
@@ -42,11 +42,11 @@ trait phpBBCookiesAuthenticatorTrait
     }
 
 
-    public function getNoRememberMeCookie(string $outputDirectoryPathPrepend = '') : ?array
+    public function getNoRememberMeCookie() : ?array
     {
         $arrCookieValue =
             $this
-                ->primeNoRememberMeEncryptor($outputDirectoryPathPrepend)
+                ->primeNoRememberMeEncryptor()
                 ->decryptNoRememberMeCookieData();
 
         foreach(["id", "session_id", "timestamp"] as $requiredKey) {
@@ -73,19 +73,14 @@ trait phpBBCookiesAuthenticatorTrait
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👷 Internal methods ***">
-    protected function primeNoRememberMeEncryptor(string $outputDirectoryPathPrepend = '') : static
+    protected function primeNoRememberMeEncryptor() : static
     {
-        $keyFilePath = $outputDirectoryPathPrepend . static::NO_REMEMBER_ME_WORKAROUND_ENCRYPTOR_KEY_PATH;
-
-        if( !file_exists($keyFilePath) ) {
-
-            $encryptionKey = md5(uniqid(rand(), true));
-            file_put_contents($keyFilePath, $encryptionKey);
-
-        } else {
-
-            $encryptionKey = file_get_contents($keyFilePath);
-        }
+        // CSPRNG key auto-provisioned at var/encryptor/<filename>.key (0600), generated once then read back.
+        // The var path is derived from THIS file's location (dirname(__DIR__, 2)), so it never depends on the CWD.
+        $encryptionKey = Encryptor::getSuperSecureKey(
+            dirname(__DIR__, 2) . '/var',
+            static::NO_REMEMBER_ME_WORKAROUND_KEY_FILENAME
+        );
 
         $this->encryptor = new Encryptor($encryptionKey);
 

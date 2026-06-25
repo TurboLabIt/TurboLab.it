@@ -80,7 +80,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
 
 
         // "no-remember me" workaround flow
-        $arrFallbackCookie = $this->getNoRememberMeCookie('../');
+        $arrFallbackCookie = $this->getNoRememberMeCookie();
         if(
             empty($arrFallbackCookie) ||
             $arrLoginData["sid"] != $arrFallbackCookie["session_id"] ||
