@@ -9021,21 +9021,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-encryptor.git",
-                "reference": "fda7c084b9ce1a54bb0dc7ff6a46c217912a3d78"
+                "reference": "b3c6554420bd8ef107c274eebed16c301977dea9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TurboLabIt/php-encryptor/zipball/fda7c084b9ce1a54bb0dc7ff6a46c217912a3d78",
-                "reference": "fda7c084b9ce1a54bb0dc7ff6a46c217912a3d78",
+                "url": "https://api.github.com/repos/TurboLabIt/php-encryptor/zipball/b3c6554420bd8ef107c274eebed16c301977dea9",
+                "reference": "b3c6554420bd8ef107c274eebed16c301977dea9",
                 "shasum": ""
             },
             "require": {
-                "ext-openssl": "*",
+                "ext-sodium": "*",
                 "php": "^8.2"
             },
             "require-dev": {
                 "phpunit/phpunit": "@stable",
                 "symfony/framework-bundle": "@stable"
+            },
+            "suggest": {
+                "ext-openssl": "Only to decrypt legacy (pre-v2) AES-256-CBC ciphertexts"
             },
             "default-branch": true,
             "type": "symfony-bundle",
@@ -9059,7 +9062,7 @@
                 "issues": "https://github.com/TurboLabIt/php-encryptor/issues",
                 "source": "https://github.com/TurboLabIt/php-encryptor/tree/main"
             },
-            "time": "2026-06-24T23:43:49+00:00"
+            "time": "2026-06-25T12:25:51+00:00"
         },
         {
             "name": "turbolabit/php-foreachable",

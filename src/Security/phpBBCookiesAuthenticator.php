@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 /**
@@ -24,7 +26,7 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
 {
     use phpBBCookiesAuthenticatorTrait;
 
-    public function __construct(protected Security $security, protected UserRepository $userRepository) {}
+    public function __construct(protected Security $security, protected UserRepository $userRepository, protected HttpClientInterface $httpClient, protected UrlGeneratorInterface $urlGenerator) {}
 
 
     /**
@@ -137,7 +139,49 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     }
 
 
-    public static function getSubscribedEvents() : array { return [ LogoutEvent::class => 'removeAllCookies']; }
+    public static function getSubscribedEvents() : array { return [ LogoutEvent::class => 'onLogout']; }
+
+
+    public function onLogout(LogoutEvent $event) : void
+    {
+        // 1) destroy the phpBB session server-side (DB); 2) clear the client cookies
+        $this->killPhpBBSessionServerSide($event->getRequest());
+        $this->removeAllCookies();
+    }
+
+
+    /**
+     * Calls the logout special page (which bootstraps phpBB and runs session_kill()) over HTTP,
+     * forwarding the current request's cookies, so phpBB destroys the session row in the DB.
+     * Best-effort: on failure the session still expires on its own (session_length / M1).
+     */
+    protected function killPhpBBSessionServerSide(Request $request) : void
+    {
+        $cookieHeader = $_SERVER['HTTP_COOKIE'] ?? '';
+        if( empty($cookieHeader) ) {
+            return;
+        }
+
+
+        $endpoint = $this->urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'ajax/logout/';
+
+        try {
+            $this->httpClient
+                ->request('POST', $endpoint, [
+                    'headers' => [
+                        'Cookie'        => $cookieHeader,
+                        // phpBB runs with browser_check=1: forward the user's UA so session_begin() accepts the session
+                        'User-Agent'    => (string)$request->headers->get('User-Agent', ''),
+                    ],
+                    'timeout'       => 3,
+                    'verify_peer'   => false,
+                    'verify_host'   => false,
+                ])
+                ->getStatusCode();
+
+        } catch(\Throwable) {}
+    }
+
 
     public function removeAllCookies() : static
     {
