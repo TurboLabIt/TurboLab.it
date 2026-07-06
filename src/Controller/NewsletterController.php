@@ -91,8 +91,9 @@ class NewsletterController extends BaseController
         $encryptedUserData = $this->request->query->get("opener");
 
         try {
-            // allowLegacy: old opener links in already-sent emails were AES-CBC encrypted
-            $arrUserData = $this->encryptor->decrypt($encryptedUserData, allowLegacy: true);
+            // security-audit.md #2: legacy AES-CBC tokens are refused (allowLegacy defaults to false) — they
+            // exposed a padding oracle. Old opener links in already-sent emails no longer decrypt (accepted).
+            $arrUserData = $this->encryptor->decrypt($encryptedUserData);
             if( $arrUserData["scope"] != 'newsletterOpenerUrl' ) {
                 throw new Exception("Pretty Try (For a White Guy) | Invalid scope");
             }
@@ -109,8 +110,9 @@ class NewsletterController extends BaseController
     public function unsubscribe(NewsletterService $newsletter, string $encryptedSubscriberData) : Response
     {
         try {
-            // allowLegacy: old subscribe/unsubscribe links in already-sent emails were AES-CBC encrypted
-            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData, allowLegacy: true);
+            // security-audit.md #2: legacy AES-CBC tokens are refused (allowLegacy defaults to false) — they
+            // exposed a padding oracle. Old subscribe/unsubscribe links in already-sent emails no longer decrypt.
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
 
         } catch(EncryptionException) {
             return $this->unsubscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);
@@ -162,8 +164,9 @@ class NewsletterController extends BaseController
     public function subscribe(string $encryptedSubscriberData) : Response
     {
         try {
-            // allowLegacy: old subscribe/unsubscribe links in already-sent emails were AES-CBC encrypted
-            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData, allowLegacy: true);
+            // security-audit.md #2: legacy AES-CBC tokens are refused (allowLegacy defaults to false) — they
+            // exposed a padding oracle. Old subscribe/unsubscribe links in already-sent emails no longer decrypt.
+            $arrDecodedSubscriberData = $this->encryptor->decrypt($encryptedSubscriberData);
 
         } catch(EncryptionException) {
             return $this->subscribeErrorResponse(static::ERROR_BAD_ACCESS_KEY);
