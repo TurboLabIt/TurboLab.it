@@ -1,24 +1,19 @@
-const Encore = require('@symfony/webpack-encore');
+import Encore from '@symfony/webpack-encore';
 
-// Manually configure the runtime environment if not already configured yet by the "encore" command.
-// It's useful when you use tools that rely on webpack.config.js file.
+// Manually configure the runtime environment if the "encore" command hasn't already done it
+// (useful for tools that read webpack.config.js directly).
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
 Encore
-    // directory where compiled assets will be stored
+    // where compiled assets are written, and the public path the web server serves them from
     .setOutputPath('public/build/')
-    // public path used by the web server to access the output path
     .setPublicPath('/build')
-    // only needed for CDN's or subdirectory deploy
-    //.setManifestKeyPrefix('build/')
 
     /*
-     * ENTRY CONFIG
-     *
-     * Each entry will result in one JavaScript file (e.g. app.js)
-     * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
+     * ENTRY CONFIG — each entry produces one JS file (e.g. app.js) plus, if that JS imports CSS,
+     * one CSS file (e.g. app.css). See docs/assets-frontend.md.
      */
     .addEntry('app', './assets/app.js')
     .addEntry('home', './assets/home.js')
@@ -31,52 +26,19 @@ Encore
     .addEntry('stats', './assets/stats.js')
     .addEntry('forum', './assets/forum.js')
 
-    // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    //.splitEntryChunks()
-
-    // will require an extra script tag for runtime.js
-    // but, you probably want this, unless you're building a single-page app
+    // single shared runtime.js chunk (recommended unless building a SPA)
     .enableSingleRuntimeChunk()
 
-    /*
-     * FEATURE CONFIG
-     *
-     * Enable & configure other features below. For a full
-     * list of features, see:
-     * https://symfony.com/doc/current/frontend.html#adding-more-features
-     */
     .cleanupOutputBeforeBuild()
-
-    // Displays build status system notifications to the user
-    // .enableBuildNotifications()
-
     .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
+    // hashed filenames in production only (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
-    // Minimal Babel config - no polyfills
+    // minimal @babel/preset-env: no polyfills, target ES-module-capable browsers
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = false;
-        config.targets = {
-            esmodules: true
-        };
+        config.targets = { esmodules: true };
     })
-
-    // enables Sass/SCSS support
-    //.enableSassLoader()
-
-    // uncomment if you use TypeScript
-    //.enableTypeScriptLoader()
-
-    // uncomment if you use React
-    //.enableReactPreset()
-
-    // uncomment to get integrity="..." attributes on your script & link tags
-    // requires WebpackEncoreBundle 1.4 or higher
-    //.enableIntegrityHashes(Encore.isProduction())
-
-    // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
 
     .copyFiles({
         from: './assets/images',
@@ -84,4 +46,12 @@ Encore
     })
 ;
 
-module.exports = Encore.getWebpackConfig();
+// Since Webpack Encore 7.0 the config is ESM-only and getWebpackConfig() returns a Promise.
+const config = await Encore.getWebpackConfig();
+
+// The asset entrypoints use extensionless relative imports (e.g. `import '…/js/foo'`). With
+// package.json "type":"module" webpack treats them as strict ESM and would demand fully-specified
+// paths; this keeps normal extension resolution working without touching every import.
+config.module.rules.push({ test: /\.m?js$/, resolve: { fullySpecified: false } });
+
+export default config;
