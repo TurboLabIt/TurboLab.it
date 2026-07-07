@@ -34,13 +34,31 @@
 
                         <div class="post-text mt-30">
 
-                            <p>Le informazioni aggiornate sono estrapolate "live" ad ogni caricamento della pagina.</p>
+                            {% if CurrentUser %}
 
-                            <table class="table table-striped table-hover">
-                                {% for label,value in ServerInfo %}
-                                    <tr><td>{{ label }}</td><td>{{ value }}</td></tr>
-                                {% endfor %}
-                            </table>
+                                <p>Le informazioni aggiornate sono estrapolate "live" a ogni caricamento della pagina.</p>
+
+                                <div class="tli-limited-visibility-warning">
+                                    <i class="fa-solid fa-lock"></i> Questa sezione è visibile solo agli utenti registrati
+                                </div>
+
+                                <table class="table table-striped table-hover">
+                                    {% for label,value in ServerInfo %}
+                                        <tr><td>{{ label }}</td><td>{{ value }}</td></tr>
+                                    {% endfor %}
+                                </table>
+
+                            {% else %}
+
+                                <p>
+                                    Per visualizzare i dettagli tecnici devi eseguire login.
+                                    Non hai ancora l'account?
+                                    <a href="{{ FrontendHelper.registerUrl }}"><i class="fa-solid fa-users"></i> Iscriviti ora (è gratis)</a>.
+                                </p>
+
+                                {% include 'user/login-form.html.twig' %}
+
+                            {% endif %}
 
                             <h3 class="mt-20">Sito irraggiungibile?</h3>
                             <p>Seguici sui social per essere informato quando il sito diviene irraggiungibile.</p>

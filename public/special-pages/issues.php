@@ -11,9 +11,7 @@ const THIS_SPECIAL_PAGE_PATH = "/issue-add-to-post/";
 require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
-if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1'])  ) {
-    tliHtmlResponse('This page is for internal use only', 403);
-}
+tliAssertLoopbackOnly();
 
 if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     tliHtmlResponse('This page requires the POST method', 405);
@@ -34,10 +32,14 @@ foreach([&$issueUrl, &$issueRemoteId, &$postId, &$userId] as &$var) {
 }
 
 
-$userId = (int)$userId;
-if($userId < 1 ) {
-    tliHtmlResponse('Invalid user ID', 400);
+foreach([$postId, $userId] as $idInput) {
+
+    if( preg_match('/^[1-9]+[0-9]*$/', $idInput) !== 1 ) {
+        tliHtmlResponse('Invalid parameter', 400);
+    }
 }
+
+$userId = (int)$userId;
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
 

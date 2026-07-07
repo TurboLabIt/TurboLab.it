@@ -8,9 +8,7 @@ const THIS_SPECIAL_PAGE_PATH = "/comments-topic-update/";
 require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
-if( !in_array($_SERVER['REMOTE_ADDR'] ?? null, ['127.0.0.1']) ) {
-    tliHtmlResponse('This page is for internal use only', 403);
-}
+tliAssertLoopbackOnly();
 
 if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     tliHtmlResponse('This page requires the POST method', 405);

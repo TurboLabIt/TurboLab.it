@@ -111,3 +111,15 @@ div.stellarnav.mobile.active ul {
 }
 
 .tli-contains-chevron .chevron.tli-chevron-rotated { transform: rotate(180deg); }
+
+
+.tli-limited-visibility-warning {
+    display: inline-block;
+    color: #8a6d00;
+    background: #fff8dc;
+    border: 1px solid #f1e2a0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}

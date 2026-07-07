@@ -92,6 +92,10 @@ while ($rowAttach = $db->sql_fetchrow($resultAttach)) {
 $db->sql_freeresult($resultAttach);
 
 
+// visibility is decided by post_visibility alone: soft-deleted posts are ITEM_DELETED, so ITEM_APPROVED already
+// excludes them. Do NOT re-add `post_delete_time = 0`: phpBB stamps post_delete_time/user on *every* visibility
+// transition (including approving a post out of the moderation queue), so it wrongly hid the approved first
+// comments of newly-registered users while they still showed in the forum.
 $sqlSelectPosts = '
     SELECT * FROM ' . POSTS_TABLE . ' AS posts
     LEFT JOIN ' . USERS_TABLE . ' AS users
@@ -101,7 +105,6 @@ $sqlSelectPosts = '
       post_id          != ' . $arrTopic["topic_first_post_id"] . ' AND
       forum_id          = ' . $commentsForumId . ' AND
       post_visibility   = ' . ITEM_APPROVED . ' AND
-      post_delete_time  = 0 AND
       sfs_reported      = 0
     ORDER BY post_time ASC
 ';
@@ -175,7 +178,7 @@ while( $arrPost = $db->sql_fetchrow($result) ) {
     <div class="post-comments-item">
         <div class="post">
             <h5 class="title" <?php echo $arrPost["tli_username_style"] ?>>
-                <span><?php echo $arrPost["username"] ?></span> <?php echo $arrPost["tli_rank_image"] ?>
+                <span><?php echo App\Service\HtmlProcessorBase::encode($arrPost["username"]) ?></span> <?php echo $arrPost["tli_rank_image"] ?>
                 <span class="tli-comment-date"><i class="fa-solid fa-calendar"></i> <?php echo $arrPost["tli_date"] ?></span>
             </h5>
             <div class="tli-comment-main-content"><?php echo $arrPost["tli_text"] ?></div>

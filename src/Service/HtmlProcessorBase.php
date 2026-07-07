@@ -21,6 +21,18 @@ abstract class HtmlProcessorBase
     }
 
 
+    public static function encode(?string $text) : ?string
+    {
+        // prevent double-encoding
+        $decodedText = static::decode($text);
+
+        if( empty($text) ) { return $text; }
+
+        $encodedText = htmlentities($decodedText, ENT_QUOTES, 'UTF-8');
+        return trim($encodedText);
+    }
+
+
     public function getLegacyEntities() : array
     {
         $arrAllEntities = get_html_translation_table(HTML_ENTITIES);

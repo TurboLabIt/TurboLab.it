@@ -60,6 +60,23 @@ function tliHtmlResponse(string $message, int $httpStatusCode) : never
 }
 
 
+// the REAL TCP peer that opened the connection, from nginx's real_ip module
+// ($realip_remote_addr), passed through as TLI_REAL_REMOTE_ADDR. Unlike $_SERVER['REMOTE_ADDR'], this is
+// NEVER rewritten from a client-supplied X-Forwarded-For, so it can't be spoofed by a request header.
+function tliRealClientIp() : ?string
+{
+    return $_SERVER['TLI_REAL_REMOTE_ADDR'] ?? null;
+}
+
+
+function tliAssertLoopbackOnly() : void
+{
+    if( tliRealClientIp() !== '127.0.0.1' ) {
+        tliHtmlResponse('This page is for internal use only', 403);
+    }
+}
+
+
 if( !defined('THIS_SPECIAL_PAGE_PATH') ) {
     tliHtmlResponse('Special page path is undefined', 500);
 }

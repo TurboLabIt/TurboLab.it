@@ -150,7 +150,8 @@ class UserRepository extends BasePhpBBRepository
             ON
                 `groups`.group_id = user_group.group_id
             WHERE
-                user_group.user_id = :userId;
+                user_group.user_id = :userId AND
+                user_group.user_pending = 0;
         ";
 
         $stmtGroups = $this->getEntityManager()->getConnection()->prepare($sqlGroups);

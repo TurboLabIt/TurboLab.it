@@ -69,17 +69,6 @@
     font-style: italic;
 }
 
-.tli-stats-staff-only {
-    display: inline-block;
-    color: #8a6d00;
-    background: #fff8dc;
-    border: 1px solid #f1e2a0;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 12px;
-    margin-bottom: 12px;
-}
-
 /* Top pages table */
 .tli-stats-toppages-grid {
     display: grid;

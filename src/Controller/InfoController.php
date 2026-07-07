@@ -34,12 +34,17 @@ class InfoController extends BaseController
     #[Route('/info', name: 'app_info')]
     public function info(ServerInfo $serverInfo) : Response
     {
+        // the stack versions are shown only to logged-in users — don't even
+        // compute them for anonymous visitors (crawlers included)
+        $currentUser = $this->getCurrentUser();
+
         return
             $this->render('info/info.html.twig', [
                 'metaTitle'         => 'Informazioni tecniche',
                 'activeMenu'        => null,
                 'FrontendHelper'    => $this->frontendHelper,
-                'ServerInfo'        => $serverInfo->getServerInfo(),
+                'CurrentUser'       => $currentUser,
+                'ServerInfo'        => $currentUser ? $serverInfo->getServerInfo() : [],
                 'IssueReportGuide'  => $this->factory->createArticle()->load(Article::ID_ISSUE_REPORT),
                 'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()
                     ->getItems(3)
