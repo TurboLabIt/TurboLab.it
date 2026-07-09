@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * The login form is rendered by Symfony but processed by a standalone phpBB special page, so a session-backed
  * Symfony CSRF token can't be validated there. Instead a single random token is placed in BOTH a `__Host-`
- * cookie (here) and the login form's hidden field (via the `login_csrf_token()` Twig function); login.php then
+ * cookie (here) and the login form's hidden field (via the `tli_login_csrf_token()` Twig function); login.php then
  * checks that the two match. Same-origin policy makes the pair unforgeable cross-site — an attacker can neither
  * read the victim's cookie (to copy it into a forged field) nor set that cookie.
  *
@@ -34,7 +34,7 @@ class LoginCsrf implements EventSubscriberInterface
 
     /**
      * The per-request token: reused from the cookie when present, otherwise freshly generated (and flagged so
-     * the response subscriber issues the cookie). Called by the `login_csrf_token()` Twig function.
+     * the response subscriber issues the cookie). Called by the `tli_login_csrf_token()` Twig function.
      */
     public function getToken() : string
     {

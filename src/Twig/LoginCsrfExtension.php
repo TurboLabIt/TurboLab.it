@@ -15,7 +15,7 @@ class LoginCsrfExtension extends AbstractExtension
     {
         // returns the double-submit token to render in the login form's hidden field (see App\Security\LoginCsrf)
         return [
-            new TwigFunction('login_csrf_token', [$this->loginCsrf, 'getToken']),
+            new TwigFunction('tli_login_csrf_token', [$this->loginCsrf, 'getToken']),
         ];
     }
 }
