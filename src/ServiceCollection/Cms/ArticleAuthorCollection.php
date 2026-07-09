@@ -1,6 +1,7 @@
 <?php
 namespace App\ServiceCollection\Cms;
 
+use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User as UserService;
 
@@ -44,6 +45,15 @@ class ArticleAuthorCollection extends BaseArticleCollection
     {
         $userEntity = $this->author->getEntity();
         $paginator = $this->getRepository()->findByAuthor($userEntity, $page) ?? [];
+        return $this->setEntities($paginator);
+    }
+
+
+    // every publishing status, drafts and KO included. Reserve it to editors (see AuthorContoller)
+    public function loadAll(?int $page = 1) : static
+    {
+        $userEntity = $this->author->getEntity();
+        $paginator = $this->getRepository()->findByAuthor($userEntity, $page, ArticleEntity::PUBLISHING_STATUSES) ?? [];
         return $this->setEntities($paginator);
     }
 

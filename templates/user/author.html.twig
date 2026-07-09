@@ -23,9 +23,9 @@
 
 {% block beforeArticleList %}
 
-    {% if Author.articlesPublishedNum > 0 %}
+    <div class="container">
 
-        <div class="container">
+        {% if Author.articlesPublishedNum > 0 %}
 
             <div class="tli-article-box">
                 <div class="row mt-10">
@@ -86,27 +86,47 @@
 
             </div>
 
-            {% if authorIsCurrentUser %}
+        {% endif %}
 
-                {% embed 'parts/alert-chalkboard.html.twig' %}
-                    {% block alertStyle %}mt-3 mb-0{% endblock %}
-                    {% block alertTitleStyle %}mb-2{% endblock %}
-                    {% block alertTitle %}Cerchi i tuoi ultimi articoli?{% endblock %}
-                    {% block alertBody%}
-                        <div class="text-center">
-                            Di seguito sono mostrati solo gli articoli con stato
-                            <span style="color: #1e7e34"><i class="fa-solid fa-book"></i> Pubblicato</span>.
-                        </div>
-                        <div class="text-center">
-                            Puoi trovare gli altri tuoi articoli alla pagina
-                            <a href="{{ path('app_article_new') }}"><i class="fa-solid fa-pen"></i> Nuovo
-                                articolo</a>.
-                        </div>
-                    {% endblock %}
-                {% endembed %}
+        {% if currentUserIsEditor and Articles.countTotalBeforePagination > 0 %}
 
-            {% endif%}
+            {% embed 'parts/alert-chalkboard.html.twig' %}
+                {% block alertStyle %}mt-3 mb-0{% endblock %}
+                {% block alertTitleStyle %}mb-2{% endblock %}
+                {% block alertTitle %}Vista da staff{% endblock %}
+                {% block alertBody%}
+                    <div class="text-center">
+                        In quanto editor, qui vedi <strong>tutti</strong> gli articoli di questo utente,
+                        comprese le bozze e gli articoli in revisione o KO.
+                    </div>
+                    <div class="text-center">
+                        Gli altri visitatori vedono solo gli articoli con stato
+                        <span style="color: #1e7e34"><i class="fa-solid fa-book"></i> Pubblicato</span>.
+                    </div>
+                {% endblock %}
+            {% endembed %}
 
-        </div>
-    {% endif %}
+        {% elseif authorIsCurrentUser %}
+
+            {% embed 'parts/alert-chalkboard.html.twig' %}
+                {% block alertStyle %}mt-3 mb-0{% endblock %}
+                {% block alertTitleStyle %}mb-2{% endblock %}
+                {% block alertTitle %}Cerchi i tuoi ultimi articoli?{% endblock %}
+                {% block alertBody%}
+                    <div class="text-center">
+                        Di seguito sono mostrati solo gli articoli con stato
+                        <span style="color: #1e7e34"><i class="fa-solid fa-book"></i> Pubblicato</span>.
+                    </div>
+                    <div class="text-center">
+                        Puoi trovare gli altri tuoi articoli alla pagina
+                        <a href="{{ path('app_article_new') }}"><i class="fa-solid fa-pen"></i> Nuovo
+                            articolo</a>.
+                    </div>
+                {% endblock %}
+            {% endembed %}
+
+        {% endif%}
+
+    </div>
+
 {% endblock %}

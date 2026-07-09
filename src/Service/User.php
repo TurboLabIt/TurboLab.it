@@ -223,6 +223,19 @@ class User extends BaseServiceEntity
     }
 
 
+    // every publishing status, drafts and KO included. Reserve it to editors (see AuthorContoller)
+    public function getArticles(?int $page = 1) : BaseArticleCollection
+    {
+        if( array_key_exists('all', $this->arrArticlesCollections) ) {
+            return $this->arrArticlesCollections['all'];
+        }
+
+        return
+            $this->arrArticlesCollections['all'] =
+                $this->factory->createArticleAuthorCollection($this)->loadAll($page);
+    }
+
+
     public function getArticlesLatestPublished() : BaseArticleCollection
     {
         if( array_key_exists('latest-published', $this->arrArticlesCollections) ) {

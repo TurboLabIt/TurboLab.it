@@ -197,7 +197,8 @@ class ArticleRepository extends BaseRepository
 
     public function countByAuthor(User $author, ?int $publishingStatus = null) : int
     {
-        if( empty($status) ) {
+        // ⚠️ PUBLISHING_STATUS_DRAFT is 0 => don't use empty() on it
+        if( $publishingStatus === null ) {
 
             return
                 $this->countFromSqlQuery(
@@ -208,7 +209,7 @@ class ArticleRepository extends BaseRepository
 
         return
             $this->countFromSqlQuery("
-                SELECT COUNT(DISTINCT article_id.article_author) FROM article_author
+                SELECT COUNT(DISTINCT article_author.article_id) FROM article_author
                 INNER JOIN article ON article_author.article_id = article.id
                 WHERE
                     user_id = :authorId AND
@@ -222,7 +223,9 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function findByAuthor(User $author, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    public function findByAuthor(
+        User $author, ?int $page = 1, array|int $publishingStatus = Article::PUBLISHING_STATUS_PUBLISHED
+    ) : ?\Doctrine\ORM\Tools\Pagination\Paginator
     {
         // we need to extract "having at least this author" first
         // otherwise, the call to getQueryBuilderComplete() would load ONLY "this author" in the articles,
@@ -241,7 +244,7 @@ class ArticleRepository extends BaseRepository
         $startAt = $this->itemsPerPage * ($page - 1);
 
         $query =
-            $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
+            $this->addWherePublishingStatus($qb, $publishingStatus, false)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();

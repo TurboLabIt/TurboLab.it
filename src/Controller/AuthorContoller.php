@@ -66,13 +66,15 @@ class AuthorContoller extends BaseController
         //
         $currentUser            = $this->getCurrentUser();
         $authorIsCurrentUser    = $user->getId() == $currentUser?->getId();
+        $currentUserIsEditor    = $currentUser?->isEditor() ?? false;
 
         if($authorIsCurrentUser) {
            $changeBioUrl = $this->factory->createArticle()->load(Article::ID_SIGN_ARTICLE)->getUrl();
         }
 
 
-        $authorArticles = $user->getArticlesPublished($page);
+        // editors see every article, regardless of the publishing status (🛡️ no-cache: logged-in users skip the cache)
+        $authorArticles = $currentUserIsEditor ? $user->getArticles($page) : $user->getArticlesPublished($page);
 
         try {
             $oPages =
@@ -110,6 +112,7 @@ class AuthorContoller extends BaseController
                 'FrontendHelper'        => $this->frontendHelper,
                 'Author'                => $user,
                 'authorIsCurrentUser'   => $authorIsCurrentUser,
+                'currentUserIsEditor'   => $currentUserIsEditor,
                 'changeBioUrl'          => $changeBioUrl ?? null,
                 'Articles'              => $authorArticles,
                 'Pages'                 => $authorArticles->count() > 0 ? $oPages : null,

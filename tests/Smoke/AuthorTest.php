@@ -1,6 +1,9 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Service\Cms\Article;
+use App\Service\Cms\Paginator;
+use App\Service\Factory;
 use App\Service\User;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -116,6 +119,73 @@ class AuthorTest extends BaseT
     {
         // 👀 https://turbolab.it/utenti/mao-mao-now
         $this->expect404('/utenti/mao-mao-now');
+    }
+
+
+    /**
+     * Editors browsing an author page get every article, regardless of the publishing status.
+     * Driven at the service layer: the phpBB-cookie authenticator can't be exercised over HTTP in tests.
+     * This also guards countByAuthor() against regressing to the all-statuses count when a status is given.
+     */
+    public function testAuthorArticlesLoadAllIncludesUnpublished()
+    {
+        // any draft will do: pick the most recently updated one (with at least one author)
+        $draftArticle   = null;
+        $author         = null;
+        foreach( static::getArticleCollection()->loadDrafts() as $candidateDraft ) {
+
+            $arrAuthors = $candidateDraft->getAuthors();
+            if( !empty($arrAuthors) ) {
+
+                $draftArticle   = $candidateDraft;
+                $author         = reset($arrAuthors);
+                break;
+            }
+        }
+
+        if( empty($draftArticle) ) {
+            $this->markTestSkipped('No draft article (with authors) in the database');
+        }
+
+        $this->assertSame(Article::PUBLISHING_STATUS_DRAFT, $draftArticle->getPublishingStatus());
+
+        $countAll       = $author->getArticles()->countTotalBeforePagination();
+        $countPublished = $author->getArticlesPublished()->countTotalBeforePagination();
+
+        // the author has at least one draft => the all-statuses listing must be bigger than the published-only one
+        $this->assertGreaterThan(
+            $countPublished, $countAll,
+            "The all-statuses listing must include unpublished articles (author: " . $author->getUsernameClean() . ")"
+        );
+
+        // same invariant on the counters (countByAuthor() used to ignore the requested status)
+        $this->assertSame($countAll, $author->getArticlesNum(false));
+        $this->assertGreaterThan($author->getArticlesPublishedNum(false), $author->getArticlesNum(false));
+
+        // the draft must actually be listed: drafts have no publishedAt => they sort last => search backwards
+        $factory        = static::getService(Factory::class);
+        $itemsPerPage   = static::getService(Paginator::class)->getItemsPerPageNum();
+        $totalPages     = max(1, (int)ceil($countAll / $itemsPerPage));
+
+        $foundOnPage = null;
+        for( $pageNum = $totalPages; $pageNum >= 1 && $foundOnPage === null; $pageNum-- ) {
+
+            $pageArticles = $factory->createArticleAuthorCollection($author)->loadAll($pageNum);
+            foreach($pageArticles as $article) {
+
+                if( $article->getId() == $draftArticle->getId() ) {
+
+                    $foundOnPage = $pageNum;
+                    break;
+                }
+            }
+        }
+
+        $this->assertNotNull(
+            $foundOnPage,
+            "Draft article " . $draftArticle->getId() . " not listed by loadAll() " .
+            "(author: " . $author->getUsernameClean() . ")"
+        );
     }
 
 
