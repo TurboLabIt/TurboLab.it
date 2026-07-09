@@ -17,15 +17,13 @@
             {% elseif (error ?? null) == constant('App\\Controller\\NewsletterController::ERROR_USER_NOT_FOUND') %}
 
                 <p>
-                    L'utente numero <samp>{{ SubscriberData.userId }}</samp>,
-                    associato all'indirizzo email <samp>{{ SubscriberData.email }}</samp>,
-                    non esiste.
+                    L'utente <samp>#{{ SubscriberData.userId }}</samp> non esiste.
                 </p>
 
             {% elseif (error ?? null) == constant('App\\Controller\\NewsletterController::ERROR_USER_IS_SUBSCRIBED') %}
 
                 <p>
-                    L'indirizzo email <samp>{{ SubscriberData.email }}</samp>
+                    L'indirizzo email <samp>{{ User.email }}</samp>
                     è già iscritto alla newsletter.
                 </p>
 

@@ -81,8 +81,17 @@ class NewsletterController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/open', name: 'app_newsletter_opener')]
     public function opener(NewsletterService $newsletter) : Response
     {
-        $goToUrl = $this->request->query->get("url");
-        $host    = parse_url((string)$goToUrl, PHP_URL_HOST);
+        $goToUrl = (string)$this->request->query->get("url");
+
+        // reject backslashes, control chars and "@" BEFORE parse_url(). Browsers normalize
+        // "\" ➡ "/" and read the part after "@" as the host, but parse_url() disagrees: "https://evil.com\@turbolab.it/"
+        // parses to host "turbolab.it" (passes the allowlist below) yet the browser navigates to evil.com. Our own
+        // opener URLs are plain internal links — no "@", no backslash, no control chars — so this rejects nothing real.
+        if( preg_match('#[\\\\@\x00-\x1F\x7F]#', $goToUrl) ) {
+            throw new BadRequestHttpException("Bad redirection URL");
+        }
+
+        $host = parse_url($goToUrl, PHP_URL_HOST);
         // prevent open redirection
         if( !in_array($host, UrlGenerator::INTERNAL_DOMAINS) ) {
             throw new BadRequestHttpException("Bad redirection hostname");
@@ -91,14 +100,13 @@ class NewsletterController extends BaseController
         $encryptedUserData = $this->request->query->get("opener");
 
         try {
-            // security-audit.md #2: legacy AES-CBC tokens are refused (allowLegacy defaults to false) — they
+            // legacy AES-CBC tokens are refused (allowLegacy defaults to false) — they
             // exposed a padding oracle. Old opener links in already-sent emails no longer decrypt (accepted).
             $arrUserData = $this->encryptor->decrypt($encryptedUserData);
-            if( $arrUserData["scope"] != 'newsletterOpenerUrl' ) {
-                throw new Exception("Pretty Try (For a White Guy) | Invalid scope");
-            }
 
-            $newsletter->confirmOpener($arrUserData["userId"]);
+            if( is_array($arrUserData) && !empty($arrUserData["userId"]) ) {
+                $newsletter->confirmOpener($arrUserData["userId"]);
+            }
 
         } catch(Exception) {}
 
