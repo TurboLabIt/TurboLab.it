@@ -75,3 +75,5 @@ fi
 
 
 bash "${SCRIPT_DIR}phpbb-cache-clear.sh"
+
+bash "${SCRIPT_DIR}reindex.sh"
