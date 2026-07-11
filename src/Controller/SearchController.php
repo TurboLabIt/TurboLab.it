@@ -29,7 +29,7 @@ class SearchController extends BaseController
 
         return
             $this->render('search/serp.html.twig', [
-                'metaTitle'         => empty($cleanTermToSearch) ? "Cerca su TurboLab.it" : "Risultati della ricerca per: $termToSearch",
+                'metaTitle'         => empty($termToSearch) ? "Cerca su TurboLab.it" : "Risultati della ricerca per: $termToSearch",
                 'metaRobots'        => 'noindex,follow',
                 'activeMenu'        => static::SECTION_SLUG,
                 'FrontendHelper'    => $this->frontendHelper,
