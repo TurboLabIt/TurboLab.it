@@ -12,7 +12,6 @@ Gli unici caratteri da trasformare in entity, **quando sono parte del contenuto 
 
 Questo è il set minimo: se non vengono trasformati in entity, il parser non è poi in grado di capire se costituiscano istruzioni di markup oppure testo. Ad esempio:
 
-- `il simbolo di minore in HTML si scrive &lt;` oppure `Barnes & Noble`
 - `<strong>` oppure `1 < 3 > 2`
 
 `"` (`&quot;`) e `'` (`&apos;`) devono essere trasformate in entity SOLO quando sono contenuto editoriale e dobbiamo stamparli all'interno di un attributo HTML. Questo, generalmente, avviene solo in visualizzazione: a database queste entity non devono figurare.
@@ -24,9 +23,7 @@ Rispettando queste specifiche, l'HTML generato supera la [validazione W3C](https
 
 La regola da seguire è:
 
-> the database should store the cleanest possible raw data
-
-> sanitize on input, escape on output
+> the database should store the cleanest possible raw data: sanitize on input, escape on output
 
 L'argomentazione è:
 
@@ -34,7 +31,7 @@ L'argomentazione è:
 
 Alla luce di questo, utilizziamo strategie differenti a seconda che il testo sia:
 
-1. **testo semplice** che non deve contenere HTML - ad esempio: titoli e tag
+1. **testo semplice** che non deve contenere tag HTML - ad esempio: titoli e tag
 2. **HTML vero e proprio** - ad esempio: abstract o body degli articoli
 
 
@@ -70,9 +67,7 @@ Applicando la stessa strategia di cui sopra, il testo verrà comunque salvato co
 
 > purify, view-as-is
 
-Qui non possiamo applicare la strategia precedente, perché abbiamo un misto di testo semplice e HTML. Solo il client conosce le semantiche "testo" oppure "tag HTML" di quanto POSTato.
-
-Ipotizzando un submit come questo:
+Qui non possiamo applicare la strategia precedente, perché abbiamo un misto di testo semplice e HTML. Solo il client conosce le semantiche "testo" oppure "tag HTML" di quanto POSTato:
 
 ````
 <p>Per mostrare un "messaggio" in \'JS\', si usa: <tt>&lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;</tt></p>
@@ -87,14 +82,30 @@ Ci limitiamo dunque a:
 3. in visualizzazione: mostriamo il testo as-is
 
 
-## Implementazione
+## Salvataggio
 
-L'ingresso in salvataggio è sempre [`TextProcessor`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/TextProcessor.php), con un metodo per strategia:
+L'ingresso in salvataggio è sempre [TextProcessor](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/TextProcessor.php), con un metodo dedicato a ogni strategia:
 
 - **Strategia 1** (titoli, tag): `processRawInputTitleForStorage()` — decodifica le entity (`HtmlProcessorBase::decode()`) e salva il testo grezzo
-- **Strategia 2** (body e abstract): `processRawInputBodyForStorage()` — passa l'HTML in `HTMLPurifier`, dentro [`HtmlProcessorForStorage`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/HtmlProcessorForStorage.php)
+- **Strategia 2** (body dell'articolo): `processRawInputBodyForStorage()` — passa l'HTML in `HTMLPurifier`, dentro [HtmlProcessorForStorage](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/HtmlProcessorForStorage.php)
 
-La resa dell'**HTML** in visualizzazione è in [`HtmlProcessorForDisplay`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/HtmlProcessorForDisplay.php) (`processArticleBody`); per il **testo semplice**, l'encode-on-view è invece l'auto-escaping dei template (Twig). I nomi dei due processor (`...ForStorage` / `...ForDisplay`) rispecchiano il principio *sanitize on input, escape on output*.
+
+## Visualizzazione
+
+I metodi PHP devono sempre ritornare il testo così-come-salvato. La gestione del rendering corretto è demandata a Twig:
+
+- **Strategia 1** (titoli, tag): nulla da fare se non invocare il campo (es.: `{{ Article.title }}`)
+- **Strategia 2** (body dell'articolo): utilizzare `|raw` per mostrare l'HTML `es.: {{ Article.bodyForDisplay|raw }}`
+
+---
+
+Eccezione: phpBB salva a database i titoli e nomi già encodati:
+
+````
+Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
+````
+
+I relativi metodi PHP ([Post->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Post.php), [User->getUsername()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/User.php)) devono quindi decodificarli esplicitamente prima di ritornare.
 
 
 ## Articolo e test
