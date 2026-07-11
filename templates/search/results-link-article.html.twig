@@ -13,12 +13,12 @@
             {% endif %}
             <div>
                 <div class="fs-5 fw-bold">
-                    <a href="{{ Article.url }}" target="_blank" class="text-decoration-none">{{ Article.titleWithFreshUpdatedAt|raw }}</a>
+                    <a href="{{ Article.url }}" target="_blank" class="text-decoration-none">{{ Article.titleWithFreshUpdatedAt }}</a>
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">
                     <i class="fa-solid fa-user-tie"></i> a cura di:
                     {% for Author in Article.Authors %}
-                        <a href="{{ Author.url }}" target="_blank" class="text-muted">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                        <a href="{{ Author.url }}" target="_blank" class="text-muted">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                     {% else %}
                         <em>&lt;sconosciuto&gt;</em>
                     {% endfor %}
@@ -30,7 +30,7 @@
                     {% endif %}
                 </div>
                 {% if Article.abstract is not empty %}
-                    <div class="small text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ Article.abstract|raw }}</div>
+                    <div class="small text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ Article.abstract }}</div>
                 {% endif %}
             </div>
         </div>

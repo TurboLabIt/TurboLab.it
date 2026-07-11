@@ -16,10 +16,10 @@
     <!-- SERP bodyMainContent START -->
     <div class="search-header">
         <div id="tli-search-container" class="container" data-url="{{ path('app_search') }}">
-            <h1 class="title">{{ metaTitle|raw }}</h1>
+            <h1 class="title">{{ metaTitle }}</h1>
             <div class="input-group">
                 <input type="text" id="tli-search-input" class="form-control form-control-lg" placeholder="windows 11 usb"
-                       value="{{ (termToSearch ?? null)|raw }}" required minlength="3">
+                       value="{{ (termToSearch ?? null) }}" required minlength="3">
                 <button class="btn btn-light btn-lg" type="button" id="tli-search-button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>

@@ -27,15 +27,13 @@ class SearchController extends BaseController
             return $this->redirectToRoute('app_search', ['termToSearch' => $legacyQueryStringParam], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $cleanTermToSearch = htmlspecialchars($termToSearch, ENT_QUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED | ENT_HTML5, 'UTF-8');
-
         return
             $this->render('search/serp.html.twig', [
-                'metaTitle'         => empty($cleanTermToSearch) ? "Cerca su TurboLab.it" : "Risultati della ricerca per: $cleanTermToSearch",
+                'metaTitle'         => empty($cleanTermToSearch) ? "Cerca su TurboLab.it" : "Risultati della ricerca per: $termToSearch",
                 'metaRobots'        => 'noindex,follow',
                 'activeMenu'        => static::SECTION_SLUG,
                 'FrontendHelper'    => $this->frontendHelper,
-                'termToSearch'      => $cleanTermToSearch,
+                'termToSearch'      => $termToSearch,
             ]);
     }
 

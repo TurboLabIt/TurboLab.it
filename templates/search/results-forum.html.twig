@@ -2,14 +2,14 @@
 
     <div>
         <h3>
-            <a href="{{ Article.url }}" target="_blank">{{ Article.titleWithFreshUpdatedAt|raw }}</a>
+            <a href="{{ Article.url }}" target="_blank">{{ Article.titleWithFreshUpdatedAt }}</a>
         </h3>
-        <div class="mb-2">{{ Article.abstract|raw }}</div>
+        <div class="mb-2">{{ Article.abstract }}</div>
         <div class="mb-2">
-            <a href="#" class="tli-link-article-bbcode" data-bbcode="[url={{ Article.shortUrl|raw }}]{{ Article.title|raw }}[/url]">
+            <a href="#" class="tli-link-article-bbcode" data-bbcode="[url={{ Article.shortUrl }}]{{ Article.title }}[/url]">
                 <strong style="color: tomato">Inserisci tag URL+titolo</strong>
             </a> |
-            <a href="#" class="tli-link-article-bbcode" data-bbcode="{{ Article.shortUrl|raw }}">
+            <a href="#" class="tli-link-article-bbcode" data-bbcode="{{ Article.shortUrl }}">
                 <strong style="color: tomato">Inserisci solo URL</strong>
             </a>
         </div>
