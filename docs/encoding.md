@@ -103,6 +103,8 @@ Eccezione: phpBB salva a database i titoli e nomi già encodati:
 
 ````
 Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
+
+TLITester&lt;img src=x onerror=alert(document.domain)&gt;
 ````
 
 I relativi metodi PHP ([Post->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Post.php), [User->getUsername()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/User.php)) devono quindi decodificarli esplicitamente prima di ritornare.
