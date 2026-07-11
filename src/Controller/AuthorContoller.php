@@ -89,17 +89,7 @@ class AuthorContoller extends BaseController
         }
 
 
-        if( $authorArticles->count() ) {
-
-            $metaTitle = "Articoli, guide e news a cura di " . $user->getFullNameForHTMLAttribute();
-
-        } else {
-
-            $metaTitle =
-                htmlspecialchars("Pagina dell'utente ", ENT_QUOTES | ENT_HTML5, 'UTF-8') .
-                    $user->getFullNameForHTMLAttribute();
-        }
-
+        $metaTitle  = "Articoli, guide e news a cura di " . $user->getFullName();
         $metaTitle .= $page < 2 ? '' : " - pagina $page";
 
         return

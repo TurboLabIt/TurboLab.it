@@ -35,16 +35,16 @@
                                         <a href="{{ Article.url }}">
                                             <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
                                                  width="420" height="250"
-                                                 class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}"
+                                                 class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}"
                                                  fetchpriority="high">
                                         </a>
                                     </div>
                                     <div class="trending-news-content">
-                                        <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
+                                        <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
                                     </div>
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            {{ Article.TopTagOrDefault.title|upper }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
@@ -53,7 +53,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -76,7 +76,7 @@
                                 {% for Article in ArticlesLatestMosaic1 %}
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            {{ Article.TopTagOrDefault.title|upper }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
@@ -85,7 +85,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -102,11 +102,11 @@
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      width="100" height="100"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -118,7 +118,7 @@
                                 {% for Article in ArticlesLatestMosaic2 %}
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            {{ Article.TopTagOrDefault.title|upper }}
                                         </a>
                                         <span class="tli-meta-slash"> · </span>
                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
@@ -127,7 +127,7 @@
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -144,11 +144,11 @@
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      width="100" height="100"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -183,7 +183,7 @@
 
                                     <div class="gallery_item gallery_item-style-2">
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Topic.url }}">{{ Topic.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Topic.url }}">{{ Topic.title }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -192,14 +192,14 @@
                                 {% for Article in ArticlesLatestSecurity %}
                                     <div class="tli-mosaic-post-meta">
                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                            {{ Article.TopTagOrDefault.title|upper }}
                                         </a>
                                         {% if Article.AuthorsNotSystem is not empty %}
                                             <span class="tli-meta-slash"> · </span>
                                             <span class="tli-meta-authors">
                                                 a cura di
                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </span>
                                         {% endif %}
@@ -216,11 +216,11 @@
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                      width="80" height="100"
-                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                     class="tli-uniform-mosaic-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                             </a>
                                         </div>
                                         <div class="gallery_item_content">
-                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
+                                            <h4 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h4>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -240,17 +240,17 @@
                         <div class="col-lg-6">
                             <div class="single-play-post-item">
                                 <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.reg) }}" loading="lazy"
-                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                     class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                 <div class="single-play-post-content">
                                     <div class="post-meta">
                                         <div class="meta-categories">
-                                            <a href="{{ Article.TopTagOrDefault.url }}">{{ Article.TopTagOrDefault.title|upper|raw }}</a>
+                                            <a href="{{ Article.TopTagOrDefault.url }}">{{ Article.TopTagOrDefault.title|upper }}</a>
                                         </div>
                                         <div class="meta-date">
                                             <span>{{ Article.publishedAt|friendlyDate }}</span>
                                         </div>
                                     </div>
-                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
+                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
                                 </div>
                             </div>
                         </div>
@@ -277,15 +277,15 @@
                                             <a href="{{ Article.url }}">
                                                 <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"  loading="lazy"
                                                      width="416" height="250"
-                                                     class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                     class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                             </a>
                                         </div>
                                         <div class="trending-news-content">
-                                            <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
+                                            <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
 
                                             <div class="tli-mosaic-post-meta">
                                                 <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                                    {{ Article.TopTagOrDefault.title|upper|raw }}
+                                                    {{ Article.TopTagOrDefault.title|upper }}
                                                 </a>
                                                 <span class="tli-meta-slash"> · </span>
                                                 <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
@@ -294,7 +294,7 @@
                                                     <span class="tli-meta-authors">
                                                         a cura di
                                                         {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </span>
                                                 {% endif %}
@@ -307,7 +307,7 @@
                                                 {% endif %}
                                             </div>
 
-                                            <p class="text"><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
+                                            <p class="text"><a href="{{ Article.url }}">{{ Article.abstract }}</a></p>
                                         </div>
                                     </div>
                                 </div>
@@ -324,18 +324,18 @@
                                                 <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}" loading="lazy"
                                                          width="416" height="250"
-                                                         class="tli-uniform-slider-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                         class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                                 </a>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6">
                                             <div class="trending-news-item">
                                                 <div class="trending-news-content">
-                                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h3>
+                                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
 
                                                     <div class="tli-mosaic-post-meta">
                                                         <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                                            {{ Article.TopTagOrDefault.title|upper|raw }}
+                                                            {{ Article.TopTagOrDefault.title|upper }}
                                                         </a>
                                                         <span class="tli-meta-slash"> · </span>
                                                         <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
@@ -344,7 +344,7 @@
                                                             <span class="tli-meta-authors">
                                                                 a cura di
                                                                 {% for Author in Article.AuthorsNotSystem %}
-                                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                                 {% endfor %}
                                                             </span>
                                                         {% endif %}
@@ -357,7 +357,7 @@
                                                         {% endif %}
                                                     </div>
 
-                                                    <p class="text"><a href="{{ Article.url }}">{{ Article.abstract|raw }}</a></p>
+                                                    <p class="text"><a href="{{ Article.url }}">{{ Article.abstract }}</a></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -382,14 +382,14 @@
                                     {% for Article in HalfArticlesMostViews %}
                                         <div class="tli-mosaic-post-meta">
                                             <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                                {{ Article.TopTagOrDefault.title|upper|raw }}
+                                                {{ Article.TopTagOrDefault.title|upper }}
                                             </a>
                                             <br>
                                             {% if Article.AuthorsNotSystem is not empty %}
                                                 <span class="tli-meta-authors">
                                                     a cura di
                                                     {% for Author in Article.AuthorsNotSystem %}
-                                                        <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                        <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
                                                 </span>
                                             {% endif %}
@@ -406,11 +406,11 @@
                                                 <a href="{{ Article.url }}">
                                                     <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.min) }}" loading="lazy"
                                                          width="80" height="100"
-                                                         class="tli-uniform-mosaic-image" alt="{{ Article.titleForHTMLAttribute|raw }}">
+                                                         class="tli-uniform-mosaic-image" alt="{{ Article.titleWithFreshUpdatedAt }}">
                                                 </a>
                                             </div>
                                             <div class="gallery_item_content">
-                                                <h4 class="title"><a href="{{ Article.url }}">{{ Article.title|raw }}</a></h4>
+                                                <h4 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h4>
                                             </div>
                                         </div>
                                     {% endfor %}

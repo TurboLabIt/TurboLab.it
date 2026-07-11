@@ -122,12 +122,6 @@ class Tag extends BaseCmsService
 
         return ucwords($title);
     }
-
-
-    public function getTitleForHTMLAttribute() : ?string
-    {
-        return $this->encodeTextForHTMLAttribute( $this->getNavTitle() );
-    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🕸️ URL ***">

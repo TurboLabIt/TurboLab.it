@@ -83,7 +83,7 @@ abstract class ArticleEditBaseController extends BaseController
         return $this->json([
             "message"       => "✅ OK! $okMessage - " . (new DateTime())->format('Y-m-d H:i:s'),
             "path"          => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
-            "title"         => $this->articleEditor->getTitleForHTMLAttribute(),
+            "title"         => $this->articleEditor->getTitle(),
             "strip"         => $this->twig->render('article/meta-strip.html.twig', $arrData),
             "views"         => $this->articleEditor->getViews(false),
             "commentsNum"   => $this->articleEditor->getCommentsNum(false),

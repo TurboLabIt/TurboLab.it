@@ -3,7 +3,7 @@
     <form id="tli-edit-file" action="{{ path('app_editor_file_update', {'fileId': File.id, 'articleId': Article.id}) }}" method="POST">
         <div class="mb-3">
             <label for="tli-file-title" class="form-label">Nome del file</label>
-            <input type="text" name="title" id="tli-file-title" class="form-control" value="{{ File.title|raw }}" required
+            <input type="text" name="title" id="tli-file-title" class="form-control" value="{{ File.title }}" required
                    maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}">
         </div>
 
@@ -14,7 +14,7 @@
                 {% for value,Item in Formats %}
                     <option value="{{ value }}" {% if value == File.format %}selected{% endif %}
                         {% if Item.externalOnly and File.isLocal %}class="external-only d-none"{% endif %}>
-                        {% if Item.top %}📌 {% endif %}{{ Item.label|raw }}
+                        {% if Item.top %}📌 {% endif %}{{ Item.label }}
                     </option>
                 {% endfor %}
                 <option>❓ Altro (non in lista)</option>
@@ -62,7 +62,7 @@
         <div class="mb-3 {% if File.isLocal %}d-none{% endif %}">
             <label for="tli-file-remote-url" class="form-label">URL remoto</label>
             <input type="text" name="remote-url" id="tli-file-remote-url" class="form-control"
-                   {% if not File.isLocal %}required{% endif %} value="{{ File.externalDownloadUrl|raw }}">
+                   {% if not File.isLocal %}required{% endif %} value="{{ File.externalDownloadUrl }}">
         </div>
         {% endif %}
 

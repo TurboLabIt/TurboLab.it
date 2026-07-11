@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 
-    <title>{% block metaTitle %}{{ (metaTitle ?? null)|raw }}{% endblock %}{% block metaTitleSuffix %}{{ metaTitleSuffix ?? null }}{% endblock %}</title>
+    <title>{% block metaTitle %}{{ metaTitle ?? null }}{% endblock %}{% block metaTitleSuffix %}{{ metaTitleSuffix ?? null }}{% endblock %}</title>
     <meta property="og:title" content="{{ block('metaTitle') }}">
     <meta name="twitter:title" content="{{ block('metaTitle') }}">
 
-    <meta name="description" content="{% block metaDescription %}{{ (metaDescription ?? null)|raw }}{% endblock %}">
+    <meta name="description" content="{% block metaDescription %}{{ metaDescription ?? null }}{% endblock %}">
     <meta property="og:description" content="{{ block('metaDescription') }}">
     <meta name="twitter:description" content="{{ block('metaDescription') }}">
 
@@ -343,7 +343,7 @@
                                                 <div class="gallery_item gallery_item-style-2 footer_gallery_item">
                                                     <div class="gallery_item_content">
                                                         <h4 class="title">
-                                                            <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
+                                                            <a href="{{ Article.url }}">{{ Article.title }}</a>
                                                         </h4>
                                                     </div>
                                                 </div>

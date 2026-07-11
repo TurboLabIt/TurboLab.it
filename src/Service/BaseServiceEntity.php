@@ -80,10 +80,7 @@ abstract class BaseServiceEntity
     public function getTitle() : ?string
     {
         // this will return: Come mostrare un "messaggio" con 'JS' – <script>alert("bòòm");</script>
-        $processing = $this->entity->getTitle();
-
-        // this will return: Come mostrare un "messaggio" con 'JS' - &lt;script&gt;alert("bòòm");&lt;/script&gt;
-        return htmlspecialchars((string) $processing, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+        return $this->entity->getTitle();
     }
 
 
@@ -102,15 +99,4 @@ abstract class BaseServiceEntity
 
     public function getCachedData(string $cacheKey) : mixed { return $this->entity->getCachedData($cacheKey); }
     //</editor-fold>
-
-
-    protected function encodeTextForHTMLAttribute(?string $html) : ?string
-    {
-        if( empty($html) ) {
-            return $html;
-        }
-
-        $processing = HtmlProcessorBase::decode($html);
-        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
 }

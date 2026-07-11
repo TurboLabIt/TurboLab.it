@@ -46,9 +46,9 @@
         <row>
             <columns>
                 <a href="{{ openerUrl }}{{ Article.url|url_encode }}">
-                    <h4 class="tli-article-title">{{ Article.title|raw }}</h4>
+                    <h4 class="tli-article-title">{{ Article.title }}</h4>
                     <img class="float-center" src="{{ Article.spotlightOrDefaultMetaUrl(ImageSizes.reg) }}" alt="Copertina">
-                    <p class="tli-article-abstract">{{ Article.abstract|raw }}</p>
+                    <p class="tli-article-abstract">{{ Article.abstract }}</p>
                 </a>
             </columns>
         </row>
@@ -66,9 +66,9 @@
         <row>
             <columns>
                 <a href="{{ Videos|first.url }}">
-                    <h4 class="tli-article-title">{{ Videos|first.title|raw }}</h4>
+                    <h4 class="tli-article-title">{{ Videos|first.title }}</h4>
                     <img class="float-center"
-                         src="{{ Videos|first.thumbnails.high.url }}" alt="{{ Videos|first.title|raw }}">
+                         src="{{ Videos|first.thumbnails.high.url }}" alt="{{ Videos|first.title }}">
                 </a>
             </columns>
         </row>
@@ -80,7 +80,7 @@
                 <ul>
                     {% for Video in Videos %}
                         {% if not loop.first %}
-                            <li><a href="{{ Video.url }}">▶️ {{ Video.title|raw }}</a></li>
+                            <li><a href="{{ Video.url }}">▶️ {{ Video.title }}</a></li>
                         {% endif %}
                     {% endfor %}
                 </ul>
@@ -107,7 +107,7 @@
                 <ul>
                     {% for Topic in Topics %}
                         <li>
-                            <a href="{{ openerUrl }}{{ Topic.url|url_encode }}">{{ Topic.title|raw }}</a>
+                            <a href="{{ openerUrl }}{{ Topic.url|url_encode }}">{{ Topic.title }}</a>
                             {{ Topic.postNum }} messaggi{% if Topic.postNum == 1 %}o{% endif %}
                         </li>
                     {% endfor %}

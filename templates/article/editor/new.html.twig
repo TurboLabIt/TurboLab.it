@@ -67,7 +67,7 @@
                                     {% block alertTitle %}Prima di cominciare a scrivere...{% endblock %}
                                     {% block alertBody%}
                                         <a href="{{ ArticleHowTo.url }}">
-                                            Per favore, leggi sempre la guida "{{ ArticleHowTo.title|raw }}"
+                                            Per favore, leggi sempre la guida "{{ ArticleHowTo.title }}"
                                         </a>
                                     {% endblock %}
                                 {% endembed %}
@@ -225,7 +225,7 @@
                                         <tbody>
                                         {% for Article in CurrentUserPublishedArticles %}
                                             <tr>
-                                                <td><a href="{{ Article.url }}">{{ Article.title|raw }}</a></td>
+                                                <td><a href="{{ Article.url }}">{{ Article.title }}</a></td>
                                                 <td><small>{{ Article.publishedAtRecencyLabel }}</small></td>
                                                 <td>{{ Article.PublishedAt|date('d/m/Y H:i') }}</td>
                                                 <td>{{ Article.views }}</td>
@@ -319,13 +319,13 @@
                                             {% include 'article/publishing-status.html.twig' %}
 
                                             <div style="margin-bottom: 5px; font-weight: bold">
-                                                <a href="{{ Article.url }}">{{ Article.title|raw }}</a>
+                                                <a href="{{ Article.url }}">{{ Article.title }}</a>
                                             </div>
 
                                             <div>
                                                 di
                                                 {% for Author in Article.Authors %}
-                                                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                                 <i class="fa-regular fa-clock"></i> {{ Article.updatedAt|friendlyDate }}
                                             </div>

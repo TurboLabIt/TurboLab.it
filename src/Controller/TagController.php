@@ -87,7 +87,7 @@ class TagController extends BaseController
             return $this->redirect($lastPageUrl);
         }
 
-        $metaTitle  = $tag->getTitleForHTMLAttribute() . ': articoli, guide e news';
+        $metaTitle  = $tag->getNavTitle() . ': articoli, guide e news';
         $metaTitle .= $page < 2 ? '' : " - pagina $page";
 
         return
@@ -95,7 +95,7 @@ class TagController extends BaseController
                 'cmsId'             => $tag->getId(),
                 'cmsType'           => $tag->getClass(),
                 'metaTitle'         => $metaTitle,
-                'metaDescription'   => $metaTitle,
+                'metaDescription'   => 'Articoli, guide, notizie che riguardano ' . $tag->getNavTitle(),
                 'metaCanonicalUrl'  => $tag->getUrl($page),
                 'metaPageImageUrl'  => $tag->getSpotlightOrDefaultMetaUrlFromArticles(Image::SIZE_MAX),
                 'activeMenu'        => $tag->getActiveMenu(),

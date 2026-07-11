@@ -13,8 +13,8 @@
     }
 ]' %}
 {
-    "short_name": "{{ siteName|raw }}",
-    "name": "{{ siteName|raw }} | {{ siteHeadline|raw }}",
+    "short_name": "{{ siteName }}",
+    "name": "{{ siteName }} | {{ siteHeadline }}",
     "icons": [
         {
             "src": "/images/logo/2013/ttt-512px-maskable-tiny.png",
@@ -53,31 +53,31 @@
             "short_name": "Prima Pagina",
             "description": "Apri la Home Page",
             "url": "/?source=pwa",
-            "icons": {{ shortcutIcons|raw }}
+            "icons": {{ shortcutIcons }}
         },
         {
             "name": "Ultime notizie tech",
             "short_name": "News",
             "description": "Leggi le ultime notizie di tecnologia",
             "url": "/news?source=pwa",
-            "icons": {{ shortcutIcons|raw }}
+            "icons": {{ shortcutIcons }}
         },
         {
             "name": "Nuovi messaggi (forum)",
             "short_name": "Forum",
             "description": "La community di TurboLab.it",
             "url": "/forum/search.php?search_id=unreadposts&source=pwa",
-            "icons": {{ shortcutIcons|raw }}
+            "icons": {{ shortcutIcons }}
         },
         {
             "name": "Scrivi nuovo articolo",
             "short_name": "Scrivi",
             "description": "Inserisci un nuovo articolo",
             "url": "/scrivi?source=pwa",
-            "icons": {{ shortcutIcons|raw }}
+            "icons": {{ shortcutIcons }}
         }
     ],
-    "description": "{{ siteHeadline|raw }}",
+    "description": "{{ siteHeadline }}",
     "orientation": "portrait",
     "lang": "it",
     "dir": "ltr"

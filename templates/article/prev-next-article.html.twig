@@ -11,9 +11,9 @@
 
                 <img class="d-block mx-auto mb-3" loading="lazy"
                      src="{{ Article.spotlightOrDefaultUrl(ImageSizes.med) }}"
-                     alt="{{ Article.titleForHTMLAttribute|raw }}">
+                     alt="{{ Article.titleWithFreshUpdatedAt }}">
 
-                <span class="fs-4 tli-prev-next-article-title">{{ Article.title|raw }}</span>
+                <span class="fs-4 tli-prev-next-article-title">{{ Article.title }}</span>
             </a>
 
         </div>

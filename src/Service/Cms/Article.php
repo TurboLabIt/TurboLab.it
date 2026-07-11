@@ -467,28 +467,17 @@ class Article extends BaseCmsService
     }
 
 
-    public function getTitleForHTMLAttribute() : ?string
-    {
-        return $this->encodeTextForHTMLAttribute( $this->getTitleWithFreshUpdatedAt() );
-    }
-
-
     public function getAbstract() : ?string
     {
-        if( $this->isListable() ) {
-            return $this->entity->getAbstract();
+        if( !$this->isListable() ) {
+            return null;
         }
 
-        return null;
-    }
+        // this returns: <p>Per mostrare un "messaggio" in \'JS\', si usa: <tt>&lt;script&gt;alert(&quot;bòòm&quot;);&lt;/script&gt;</tt></p>
+        $text = (string)$this->entity->getAbstract();
 
-
-    public function getAbstractForHTMLAttribute() : ?string
-    {
-        $processing = $this->getAbstract();
-        $processing = strip_tags((string) $processing);
-        $processing = HtmlProcessorBase::decode($processing);
-        return htmlspecialchars($processing, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim( strip_tags($text) );
+        return HtmlProcessorBase::decode($text);
     }
 
 

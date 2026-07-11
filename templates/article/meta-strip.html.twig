@@ -5,7 +5,7 @@
             <li>
                 <i class="fa-solid fa-user-tie"></i> a cura di:
                 {% for Author in Article.Authors %}
-                    <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
                 {% else %}
                     <em>&lt;sconosciuto&gt;</em>
                 {% endfor %}
@@ -71,7 +71,7 @@
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
             {% block alertTitle %}
-                Tu, {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo
+                Tu, {{ CurrentUser.username }}, hai pieno accesso all'articolo
             {% endblock %}
             {% block alertBodyStyle %}{% endblock %}
             {% block alertBody %}
@@ -103,7 +103,7 @@
         {% embed 'parts/alert-chalkboard.html.twig' %}
 
             {% block alertTitle %}
-                Tu, {{ CurrentUser.username|raw }}, hai pieno accesso all'articolo
+                Tu, {{ CurrentUser.username }}, hai pieno accesso all'articolo
             {% endblock %}
             {% block alertBodyStyle %}{% endblock %}
             {% block alertBody %}

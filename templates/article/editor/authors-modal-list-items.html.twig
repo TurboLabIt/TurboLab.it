@@ -10,7 +10,7 @@
                 {% if Author.avatarUrl is not empty %}
 
                     <img src="{{ Author.avatarUrl }}" width="48" class="tli-article-editor-author-avatar"
-                         alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+                         alt="Avatar (immagine di profilo) di {{ Author.fullName }}">
 
                 {% else %}
 
@@ -21,7 +21,7 @@
             </div>
 
             <a href="{{ Author.url }}" class="ml-5" target="_blank">
-                {% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName|raw }}
+                {% if Author.id == app.user.id %}<strong>TU!</strong>{% endif%} {{ Author.fullName }}
                 <br>
                 <small>
                     {% if Author.isSystem %}

@@ -68,32 +68,30 @@ class User extends BaseServiceEntity
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👔 User name ***">
-    public function getUsername() : string { return $this->entity->getUsername(); }
+    public function getUsername() : string
+    {
+        // this returns: TLITester&lt;img src=x onerror=alert(document.domain)&gt;
+        $username = $this->entity->getUsername();
+        return HtmlProcessorBase::decode($username);
+    }
+
 
     public function getUsernameClean() : string { return $this->entity->getUsernameClean(); }
 
+
     public function getFullName() : string
     {
-        $username = $this->getUsername();
-        $usernameDecoded = HtmlProcessorBase::decode($username);
-        $usernameEncoded = htmlspecialchars($usernameDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
+        $usernameDecoded = $this->getUsername();
 
         $personName = $this->loadAdditionalFields()['pf_tli_fullname'] ?? null;
 
         if( empty($personName) ) {
-            return $usernameEncoded;
+            return $usernameDecoded;
         }
 
         $personNameDecoded = HtmlProcessorBase::decode($personName);
-        $personNameEncoded = htmlspecialchars($personNameDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
 
-        return "$usernameEncoded ($personNameEncoded)";
-    }
-
-
-    public function getFullNameForHTMLAttribute() : ?string
-    {
-        return $this->encodeTextForHTMLAttribute( $this->getFullName() );
+        return "$usernameDecoded ($personNameDecoded)";
     }
     //</editor-fold>
 
@@ -138,9 +136,8 @@ class User extends BaseServiceEntity
         }
 
         $bioDecoded = HtmlProcessorBase::decode($bio);
-        $bioEncoded = htmlspecialchars($bioDecoded, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
 
-        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bioEncoded);
+        $bio = str_ireplace(['turbolab'], ['TurboLab.it'], $bioDecoded);
         return str_ireplace(['turbolab.it.it'], ['TurboLab.it'], $bio);
     }
 

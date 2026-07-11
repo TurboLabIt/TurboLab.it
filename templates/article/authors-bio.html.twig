@@ -10,7 +10,7 @@
             <a href="{{ Author.url }}">
                 {% if Author.avatarUrl is not empty %}
                     <img src="{{ Author.avatarUrl }}" width="128" loading="lazy"
-                         alt="Avatar (immagine di profilo) di {{ Author.fullNameForHTMLAttribute|raw }}">
+                         alt="Avatar (immagine di profilo) di {{ Author.fullName }}">
                 {% else %}
                     <i class="fa-solid fa-user-tie fa-2xl" style="color: #deddda; font-size: 100px;"></i>
                 {% endif %}
@@ -20,7 +20,7 @@
         <div class="col-md-10">
 
             <p class="tli-author-bio-name">
-                <a href="{{ Author.url }}">{{ Author.fullName|raw }}</a><br>
+                <a href="{{ Author.url }}">{{ Author.fullName }}</a><br>
                 <span class="tli-author-articles-counter">
                     <a href="{{ Author.url }}">
                         <i class="fa-solid fa-flask-vial"></i> {{ Author.articlesPublishedNum }}
@@ -32,7 +32,7 @@
             <p>
                 <a href="{{ Author.url }}">
                     {% if Author.bio is not empty %}
-                        {{ Author.bio|raw }}
+                        {{ Author.bio }}
                     {% else %}
                         <em>Questo autore non ha ancora compilato la propria presentazione.</em>
                     {% endif %}

@@ -1,16 +1,14 @@
 {% extends 'archive/index.html.twig' %}
 
-{% block metaDescription %}Articoli, guide, notizie che riguardano {{ Tag.navTitle|raw }}{% endblock %}
-
 {% block breadcrumb %}
 
     {% if currentPage < 2 %}
 
-        <li class="breadcrumb-item active">Tag "{{ Tag.navTitle|raw }}"</li>
+        <li class="breadcrumb-item active">Tag "{{ Tag.navTitle }}"</li>
 
     {% else %}
 
-        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag "{{ Tag.navTitle|raw }}"</a></li>
+        <li class="breadcrumb-item"><a href="{{ Tag.url }}">Tag "{{ Tag.navTitle }}"</a></li>
         {{ parent() }}
 
     {% endif %}

@@ -61,23 +61,23 @@
                                 {% embed 'parts/alert-chalkboard.html.twig' %}
 
                                     {% block alertTitle %}
-                                        Tu, {{ CurrentUser.username|raw }}, puoi modificare questo articolo!
+                                        Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
                                     {% endblock %}
 
                                     {% block alertBodyStyle %}{% endblock %}
                                     {% block alertBody %}
                                         <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
-                                        <div><strong>Prima di cominciare a scrivere</strong>, ri-leggi sempre la guida "<a href="{{ ArticleHowTo.url }}">{{ ArticleHowTo.title|raw }}</a>".</div>
+                                        <div><strong>Prima di cominciare a scrivere</strong>, ri-leggi sempre la guida "<a href="{{ ArticleHowTo.url }}">{{ ArticleHowTo.title }}</a>".</div>
                                     {% endblock %}
 
                                 {% endembed %}
 
                                 <textarea class="title form-control" data-tli-editable-id="title"
-                                          maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}">{{ Article.title|raw }}</textarea>
+                                          maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}">{{ Article.title }}</textarea>
 
                             {% else %}
 
-                                <h1 class="title">{{ Article.titleWithFreshUpdatedAt|raw }}</h1>
+                                <h1 class="title">{{ Article.titleWithFreshUpdatedAt }}</h1>
 
                             {% endif %}
 
@@ -238,14 +238,14 @@
 
 {% endblock %}
 
-{% block licenseWorkName %}{{ Article.title|raw }}{% endblock %}
+{% block licenseWorkName %}{{ Article.title }}{% endblock %}
 
 {% block licenseWorkAuthor %}
 
     {% if Article.AuthorsNotSystem is not empty %}
         by <span property="cc:attributionName">
             {% for Author in Article.AuthorsNotSystem %}
-                <a href="{{ Author.url }}">{{ Author.username|raw }}</a>{% if not loop.last %}, {% endif %}
+                <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
             {% endfor %}
         </span>
     {% endif %}

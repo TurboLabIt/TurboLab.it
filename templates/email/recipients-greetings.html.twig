@@ -2,7 +2,7 @@
     <columns>
         Ciao
         {% for Recipient in To %}
-            {{ Recipient.name|raw }}{% if not loop.last %}, {% endif %}
+            {{ Recipient.name }}{% if not loop.last %}, {% endif %}
         {% endfor %} 👋🏻
     </columns>
 </row>

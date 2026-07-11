@@ -49,7 +49,7 @@
                             <select class="form-select form-select-sm tli-link-file-url-format" required>
                                 <option value="">-- scegli --</option>
                                 {% for value, Item in Formats %}
-                                    <option value="{{ value }}">{% if Item.top %}📌 {% endif %}{{ Item.label|raw }}</option>
+                                    <option value="{{ value }}">{% if Item.top %}📌 {% endif %}{{ Item.label }}</option>
                                 {% endfor %}
                             </select>
                         </div>

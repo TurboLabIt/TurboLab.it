@@ -11,21 +11,21 @@
 
                     <span class="tli-tag-clickable-label">
                         {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
-                        {{ Tag.navTitle|raw }}
+                        {{ Tag.navTitle }}
                     </span>
 
                 {% else %}
 
                     <a href="{{ Tag.url }}" {% block linkTargetBlank %}target="_blank"{% endblock %}>
                         {% for fa in Tag.fontAwesomeIcon %}<i class="{{ fa }}"></i>{% endfor %}
-                        {{ Tag.navTitle|raw }}
+                        {{ Tag.navTitle }}
                     </a>
 
                 {% endif %}
 
             {% else %}
 
-                🆕 CREA e associa il tag: {{ Tag.navTitle|raw }}
+                🆕 CREA e associa il tag: {{ Tag.navTitle }}
 
             {% endif %}
 
