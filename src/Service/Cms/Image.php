@@ -446,10 +446,10 @@ class Image extends BaseCmsService
 
     public function getTitle(): ?string
     {
-        $title = parent::getTitle();
+        $title = (string)parent::getTitle();
 
         foreach(ImageEntity::getFormats() as $format) {
-            $title = rtrim($title, ".$format");
+            $title = rtrim($title, ".$format" );
         }
 
         if( empty($title) ) {
