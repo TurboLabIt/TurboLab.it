@@ -5,6 +5,7 @@ use App\Entity\PhpBB\Post as PostEntity;
 use App\Repository\PhpBB\PostRepository;
 use App\Service\BaseServiceEntity;
 use App\Service\Factory;
+use App\Service\HtmlProcessorBase;
 use App\Service\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,8 +22,9 @@ class Post extends BaseServiceEntity
 
     public function getTitle() : ?string
     {
-        // this will return: Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
-        return $this->getEntity()->getTitle();
+        // this returns: Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
+        $text = parent::getTitle();
+        return HtmlProcessorBase::decode($text);
     }
 
 

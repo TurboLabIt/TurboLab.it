@@ -31,8 +31,9 @@ class Topic extends BaseServiceEntity
 
     public function getTitle() : ?string
     {
-        // this will return: Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
-        return $this->getEntity()->getTitle();
+        // this returns: Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi dalla newsletter&quot;
+        $text = parent::getTitle();
+        return HtmlProcessorBase::decode($text);
     }
 
 

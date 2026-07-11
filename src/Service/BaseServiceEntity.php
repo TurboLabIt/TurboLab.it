@@ -79,7 +79,7 @@ abstract class BaseServiceEntity
     //<editor-fold defaultstate="collapsed" desc="*** 🔖 Title ***">
     public function getTitle() : ?string
     {
-        // this will return: Come mostrare un "messaggio" con 'JS' – <script>alert("bòòm");</script>
+        // this returns: Come mostrare un "messaggio" con 'JS' – <script>alert("bòòm");</script>
         return $this->entity->getTitle();
     }
 
