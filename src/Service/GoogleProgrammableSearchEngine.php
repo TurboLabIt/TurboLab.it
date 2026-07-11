@@ -62,7 +62,7 @@ class GoogleProgrammableSearchEngine
 
             return $response->toArray();
 
-        } catch(\Exception $ex) {
+        } catch(\Exception) {
 
             $statusCode = $response->getStatusCode();
             $arrResponse = $response->toArray(false);

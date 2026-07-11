@@ -184,8 +184,6 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $currentFileItem    = count($this->arrSections["site"][$lastSiteFileIndex]);
         $currentFileIndex   = $lastSiteFileIndex;
 
-        $oNow = new DateTime();
-
         /** @var Tag $tag */
         foreach($this->tagCollection as $tag) {
 

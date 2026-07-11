@@ -9,8 +9,6 @@ use App\Service\Cms\Tag;
 use App\Service\FrontendHelper;
 use App\Service\HtmlProcessorForDisplay;
 use App\Service\HtmlProcessorForStorage;
-use App\Service\Mailer;
-use App\Service\User;
 use App\Service\Views;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

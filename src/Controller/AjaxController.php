@@ -21,15 +21,11 @@ class AjaxController extends BaseController
         $siteUrl = $this->request->getSchemeAndHttpHost();
         $siteUrl = rtrim($siteUrl, '/');
 
-        // $originUrl is no longer used below
         $originUrl = $this->request->request->get('originUrl') ?? $siteUrl;
         if( stripos($originUrl, $siteUrl) !== 0 ) {
             throw new InvalidArgumentException('Origin page is not valid');
         }
 
-        if( empty($originUrl) ) {
-            $originUrl = '/';
-        }
 
         $userEntity = $this->getUser();
 

@@ -4,7 +4,6 @@ namespace App\ServiceCollection\Cms;
 use App\Entity\Cms\Image as ImageEntity;
 use App\Service\Cms\Image;
 use App\Service\Cms\Image as ImageService;
-use App\ServiceCollection\BaseServiceEntityCollection;
 
 
 /**

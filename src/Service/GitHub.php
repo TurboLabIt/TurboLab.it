@@ -46,7 +46,6 @@ class GitHub
                 'json' => $arrPayload,
             ]);
 
-        $statusCode = $response->getStatusCode();
         return $response->toArray();
     }
 }

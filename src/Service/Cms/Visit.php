@@ -2,7 +2,6 @@
 namespace App\Service\Cms;
 
 use App\Entity\Cms\Visit as VisitEntity;
-use App\Entity\PhpBB\User as UserEntity;
 use App\Service\Factory;
 use App\Service\User;
 use DateTime;

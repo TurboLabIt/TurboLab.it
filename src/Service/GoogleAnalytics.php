@@ -133,7 +133,6 @@ class GoogleAnalytics
         $totPvCur = $totPvLy = $totAuCur = $totAuLy = $totRuNew = $totNlNew = $totFpCur = $totFpLy = $totApCur = $totApLy = 0;
 
         $cursor = $start;
-        $i = 0;
         while( $cursor <= $end ) {
 
             $curKey = $cursor->format('Y-m-d');
@@ -219,7 +218,6 @@ class GoogleAnalytics
             $totApLy  += $apLy;
 
             $cursor = $cursor->modify('+1 day');
-            $i++;
         }
 
         return [
