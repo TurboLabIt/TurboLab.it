@@ -100,8 +100,8 @@ class AuthorTest extends BaseT
 
         $crawler = $this->fetchDomNode($url);
 
-        // H1
-        $this->authorNameAsH1Checker($author, $crawler, "Pagina dell&apos;utente tecniconapoletano");
+        // H1 — the no-articles branch was removed; every author page now uses the "a cura di" heading
+        $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di tecniconapoletano");
 
         $html = $this->fetchHtml($url);
 
@@ -227,8 +227,9 @@ class AuthorTest extends BaseT
 
         $crawler = $this->fetchDomNode($url);
 
-        //
-        $authorName = $author->getFullNameForHTMLAttribute();
+        // getFullNameForHTMLAttribute() was removed (encode-at-source retired); the name is auto-escaped on
+        // render, so compare against the escaped form (the checker re-encodes quotes to match).
+        $authorName = htmlspecialchars($author->getFullName(), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $this->authorNameAsH1Checker($author, $crawler, "Articoli, guide e news a cura di $authorName");
     }
 

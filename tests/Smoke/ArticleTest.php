@@ -198,8 +198,11 @@ class ArticleTest extends BaseT
         $this->assertNotEmpty($title, $assertFailureMessage);
         $this->assertNoLegacyEntities($title);
 
+        // getTitleWithFreshUpdatedAt() now returns the RAW title; the <h1> is auto-escaped on render.
+        // The DomCrawler serializes & < > as entities (quotes stay raw), matching htmlspecialchars(ENT_NOQUOTES).
+        $titleAsRendered = htmlspecialchars($title, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
         $H1FromCrawler = $crawler->filter('article h1')->html();
-        $this->assertStringStartsWith($title, $H1FromCrawler, $assertFailureMessage);
+        $this->assertStringStartsWith($titleAsRendered, $H1FromCrawler, $assertFailureMessage);
 
         if( $expectedH1 !== null ) {
             $this->assertStringStartsWith($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);

@@ -45,7 +45,9 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
 
         $this->assertStringContainsStringIgnoringCase('modificato gli autori', $html);
 
-        $this->assertStringContainsStringIgnoringCase($article->getTitle(), $html);
+        // the title is auto-escaped in the email HTML now; decode so the raw getTitle() matches
+        // (encoding-agnostic — a double-encoded title would NOT survive a single decode, so this also guards it)
+        $this->assertStringContainsStringIgnoringCase($article->getTitle(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $this->assertStringContainsStringIgnoringCase('autori aggiunti', $html);
         $this->assertStringNotContainsStringIgnoringCase('autori rimossi', $html);
@@ -53,7 +55,7 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
         $this->assertStringContainsStringIgnoringCase('<li>frency</li>', $html);
         $this->assertStringContainsStringIgnoringCase('<li>crazy.cat</li>', $html);
 
-        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), $html);
+        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $mailer
             ->block(false)
@@ -94,7 +96,9 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
 
         $this->assertStringContainsStringIgnoringCase('modificato gli autori', $html);
 
-        $this->assertStringContainsStringIgnoringCase($article->getTitle(), $html);
+        // the title is auto-escaped in the email HTML now; decode so the raw getTitle() matches
+        // (encoding-agnostic — a double-encoded title would NOT survive a single decode, so this also guards it)
+        $this->assertStringContainsStringIgnoringCase($article->getTitle(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $this->assertStringContainsStringIgnoringCase('autori rimossi', $html);
         $this->assertStringNotContainsStringIgnoringCase('autori aggiunti', $html);
@@ -105,7 +109,7 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
             }
         }
 
-        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), $html);
+        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $mailer
             ->block(false)
@@ -159,7 +163,9 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
 
         $this->assertStringContainsStringIgnoringCase('modificato gli autori', $html);
 
-        $this->assertStringContainsStringIgnoringCase($article->getTitle(), $html);
+        // the title is auto-escaped in the email HTML now; decode so the raw getTitle() matches
+        // (encoding-agnostic — a double-encoded title would NOT survive a single decode, so this also guards it)
+        $this->assertStringContainsStringIgnoringCase($article->getTitle(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $this->assertStringContainsStringIgnoringCase('autori aggiunti', $html);
         $this->assertStringContainsStringIgnoringCase('autori rimossi', $html);
@@ -170,7 +176,7 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
             }
         }
 
-        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), $html);
+        $this->assertStringContainsStringIgnoringCase($currentUser->getUsername(), html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
         $mailer
             ->block(false)

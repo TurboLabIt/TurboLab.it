@@ -126,7 +126,7 @@ class ArticleEditorTest extends BaseT
                         Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&amp;O AppBuster.
                         END_OF_TEXTBLOCK,
                     'abstract-output'       => <<<'END_OF_TEXTBLOCK'
-                        Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&amp;O AppBuster.
+                        Le app presenti nelle versioni più recenti di Windows sono sempre di più, sono spesso criticate, apprezzate, non utilizzate (dai tradizionalisti come me), in ogni caso ormai fanno parte del sistema operativo e se proprio ne vogliamo/possiamo farne a meno, dobbiamo procedere con la loro rimozione per liberare spazio sul disco fisso. Quando la cosa va a ripetersi ad ogni reinstallazione, o grosso aggiornamento periodico, diventa necessario trovare un automatismo che ci aiuti in questa operazione. Avevamo visto alcune modalità di rimozione in un precedente articolo, oggi conosceremo O&O AppBuster.
                         END_OF_TEXTBLOCK,
                     'body-stored'           => static::getTestAssetContent('article-oo-body-stored.html'),
                     'body-output'           => static::getTestAssetContent('article-oo-body-output.html'),
@@ -144,7 +144,7 @@ class ArticleEditorTest extends BaseT
                         Questo è un articolo <em>di prova 🧪</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code> 🫆
                         END_OF_TEXTBLOCK,
                     'abstract-output'       => <<<'END_OF_TEXTBLOCK'
-                        Questo è un articolo <em>di prova 🧪</em>, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto &amp; verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: <code>@ &amp; òàùèéì # § |!"£$%&amp;/()=?^ &lt; &gt; "double-quoted" 'single quoted' \ / | » fine</code> 🫆
+                        Questo è un articolo di prova 🧪, utilizzato dai test automatici per svolgere un "collaudo" dell'impianto & verificare che il sistema funzioni correttamente. Questa serie di caratteri va gestita con particolare attenzione: @ & òàùèéì # § |!"£$%&/()=?^ < > "double-quoted" 'single quoted' \ / | » fine 🫆
                         END_OF_TEXTBLOCK,
                     'body-stored'           => static::getTestAssetContent('article-quality-test-body-stored.html'),
                     'body-output'           => static::getTestAssetContent('article-quality-test-body-output.html'),
@@ -167,9 +167,11 @@ class ArticleEditorTest extends BaseT
         $this->assertNoEntities($entityTitle);
         $this->assertEquals( trim($arrTestData['title-stored']), $entityTitle );
 
+        // getTitle() now returns the RAW title — display safety moved to Twig auto-escape on output
+        // (see docs/security-audit.md #19 / raw-removal). Rendered-escaping is covered by the smoke test.
         $editorTitle = $editor->getTitle();
         $this->assertNoLegacyEntities($editorTitle);
-        $this->assertEquals( trim($arrTestData['title-output']), $editorTitle);
+        $this->assertEquals( trim($arrTestData['title-stored']), $editorTitle);
     }
 
 
