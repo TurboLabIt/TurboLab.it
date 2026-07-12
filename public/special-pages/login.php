@@ -20,19 +20,12 @@ const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
 require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
-// CSRF check. The same random token lives in both the __Host- cookie
-// (set by Symfony) and the form's hidden field, sent together by the same-origin AJAX POST; a cross-site
-// attacker can neither read nor set that cookie, so it can't produce a matching pair. Cookie name mirrors
-// App\Security\LoginCsrf::COOKIE_NAME.
-//
-// Skipped when the REAL TCP peer is loopback (local test harness / internal calls): a cross-site CSRF attack
-// always originates from a remote browser, never from 127.0.0.1, so loopback can't be a CSRF vector. The check
-// uses tliRealClientIp() ($realip_remote_addr), NOT REMOTE_ADDR, so it can't be spoofed via X-Forwarded-For (cf. #5).
-if( tliRealClientIp() !== '127.0.0.1' ) {
-    $csrfCookie = $_COOKIE['__Host-tli_login_csrf'] ?? '';
-    if( $csrfCookie === '' || !hash_equals($csrfCookie, $_POST['_csrf_token'] ?? '') ) {
-        tliHtmlResponse('Sessione scaduta 🔄 Ricarica la pagina e riprova', 403);
-    }
+// ajaxOnly (CSRF defense)
+if(
+    tliRealClientIp() !== '127.0.0.1' &&
+    ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'XMLHttpRequest'
+) {
+    tliHtmlResponse('This page can only be requested via AJAX', 400);
 }
 
 
