@@ -95,7 +95,8 @@ L'ingresso in salvataggio è sempre [TextProcessor](https://github.com/TurboLabI
 I metodi PHP devono sempre ritornare il testo così-come-salvato. La gestione del rendering corretto è demandata a Twig:
 
 - **Strategia 1** (titoli, tag): nulla da fare se non invocare il campo (es.: `{{ Article.title }}`)
-- **Strategia 2** (body dell'articolo): utilizzare `|raw` per mostrare l'HTML `es.: {{ Article.bodyForDisplay|raw }}`
+- **Strategia 2** (HTML *sanitizzato*/fidato): usare `|raw` per mostrare l'HTML — es. `{{ Article.bodyForDisplay|raw }}`. `|raw` va usato **solo** su HTML sanitizzato/fidato — corpo dell'articolo (`bodyForDisplay`), corpo/abstract dei *badge* (set fisso *admin-seeded*), regole forum (`mainText`, corpo sanitizzato di un articolo), `content:encoded` (CDATA) del feed RSS — e **mai** su testo utente grezzo
+- **Caso ibrido — abstract**: è memorizzato come HTML (Strategia 2) ma **mostrato come testo semplice** (meta description, liste). [Article::getAbstract()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Article.php) fa `strip_tags` + `decode`, quindi si invoca **senza** `|raw` (`{{ Article.abstract }}`, auto-escape come la Strategia 1)
 
 ---
 
@@ -107,7 +108,7 @@ Commenti a &quot;Ricevere &quot;TurboLab.it&quot; via email: Come dis/iscriversi
 TLITester&lt;img src=x onerror=alert(document.domain)&gt;
 ````
 
-I relativi metodi PHP ([Post->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Post.php), [User->getUsername()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/User.php)) devono quindi decodificarli esplicitamente prima di ritornare.
+L'esempio sopra è, rispettivamente, il titolo di un *topic* (i commenti a un articolo) e uno username. I relativi metodi PHP ([Topic->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Topic.php) e [Post->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Post.php), [User->getUsername()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/User.php)) devono quindi decodificarli esplicitamente prima di ritornare.
 
 
 ## Articolo e test
