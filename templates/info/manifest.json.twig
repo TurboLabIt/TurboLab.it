@@ -53,28 +53,28 @@
             "short_name": "Prima Pagina",
             "description": "Apri la Home Page",
             "url": "/?source=pwa",
-            "icons": {{ shortcutIcons }}
+            "icons": {{ shortcutIcons|raw }}
         },
         {
             "name": "Ultime notizie tech",
             "short_name": "News",
             "description": "Leggi le ultime notizie di tecnologia",
             "url": "/news?source=pwa",
-            "icons": {{ shortcutIcons }}
+            "icons": {{ shortcutIcons|raw }}
         },
         {
             "name": "Nuovi messaggi (forum)",
             "short_name": "Forum",
             "description": "La community di TurboLab.it",
             "url": "/forum/search.php?search_id=unreadposts&source=pwa",
-            "icons": {{ shortcutIcons }}
+            "icons": {{ shortcutIcons|raw }}
         },
         {
             "name": "Scrivi nuovo articolo",
             "short_name": "Scrivi",
             "description": "Inserisci un nuovo articolo",
             "url": "/scrivi?source=pwa",
-            "icons": {{ shortcutIcons }}
+            "icons": {{ shortcutIcons|raw }}
         }
     ],
     "description": "{{ siteHeadline }}",
