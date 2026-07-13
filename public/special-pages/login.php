@@ -21,10 +21,7 @@ require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
 
 
 // ajaxOnly (CSRF defense)
-if(
-    tliRealClientIp() !== '127.0.0.1' &&
-    ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'XMLHttpRequest'
-) {
+if( ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'XMLHttpRequest' ) {
     tliHtmlResponse('This page can only be requested via AJAX', 400);
 }
 
