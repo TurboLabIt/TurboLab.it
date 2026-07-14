@@ -1,11 +1,15 @@
 {
     "type": "module",
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^7.3.0",
+        "@popperjs/core": "^2.11.8",
+        "bootstrap": "^5.3.8",
         "chart.js": ">=4.5.1",
         "ckeditor5": ">=48.3.0",
         "jquery-is-in-viewport": ">=1.0.5",
         "js-cookie": ">=3.0.8",
-        "odometer": ">=0.4.8"
+        "odometer": ">=0.4.8",
+        "slick-carousel": "^1.8.1"
     },
     "devDependencies": {
         "@babel/core": ">=8.0.1",

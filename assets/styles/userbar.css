@@ -4,6 +4,21 @@
     color: black;
     top: 0px;
     z-index: 998;
+    /* reserve the height of the loaded (anonymous) bar so the AJAX swap
+       doesn't push the page down (CLS); re-measure if the bar text changes */
+    min-height: 64px;
+}
+
+@media (max-width: 1199.98px) {
+    #tli-userbar-load-target {
+        min-height: 88px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #tli-userbar-load-target {
+        min-height: 136px;
+    }
 }
 
 #tli-userbar.user-logged {

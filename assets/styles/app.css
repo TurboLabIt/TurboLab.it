@@ -12,6 +12,27 @@ body {
     padding-bottom: 0px;
 }
 
+/* CLS guard: give every FA icon a fixed advance width (like FA's own .fa-fw)
+   so text doesn't re-wrap when the icon font arrives and glyphs gain width */
+i[class*="fa-"] {
+    display: inline-block;
+    width: 1.25em;
+    text-align: center;
+}
+
+/* CLS guard: reserve the menubar's final height. The bar is built after first
+   paint (stellarnav mobile toggle = 54px; desktop menu wraps to 2 rows = 128px
+   while the container is <1400px wide; from 1400px it fits one row) */
+.header-menubar {
+    min-height: 54px;
+}
+
+@media (min-width: 992px) and (max-width: 1399.98px) {
+    .header-menubar {
+        min-height: 128px;
+    }
+}
+
 .logo img, .footer-logo img {
     all: revert;
     width: 360px;

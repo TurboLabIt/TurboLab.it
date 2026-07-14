@@ -8,6 +8,9 @@ userBarTarget.load(userbarLoadingUrl, { originUrl: window.location.href }, funct
     let userbar = jQuery('#tli-userbar');
     if( userbar.hasClass('user-anonymous') ) {
         userBarTarget.css('position', 'sticky');
+    } else {
+        // the logged bar is shorter than the reserved min-height: release it
+        userBarTarget.css('min-height', '0');
     }
 });
 

@@ -218,7 +218,7 @@
     font-weight: 600;
     line-height: 1.1;
     letter-spacing: -.01em;
-    font-family: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Heebo', 'Heebo Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 }
 
 .tli-stats-headline-range {
