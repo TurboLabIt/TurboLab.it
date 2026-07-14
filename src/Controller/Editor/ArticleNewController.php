@@ -75,7 +75,7 @@ class ArticleNewController extends ArticleEditBaseController
     {
         $this->loginRequired();
 
-        //$this->validateCsrfToken();
+        $this->validateCsrfToken();
 
         $newArticleTitle = $this->request->request->get(static::TITLE_FIELD_NAME);
 

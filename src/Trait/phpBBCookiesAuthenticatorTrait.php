@@ -12,9 +12,7 @@ trait phpBBCookiesAuthenticatorTrait
     const string NO_REMEMBER_ME_WORKAROUND_KEY_FILENAME         = 'no-remember-me-cookie-secret';
 
     // these routes don't need the User object
-    const array AUTH_IGNORED_ROUTES = [
-        'app_file', 'app_newsletter', 'app_tag_legacy'
-    ];
+    const array AUTH_IGNORED_ROUTES = ['app_newsletter', 'app_tag_legacy'];
 
     protected Encryptor $encryptor;
 

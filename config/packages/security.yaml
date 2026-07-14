@@ -17,7 +17,13 @@ security:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
         tli_phpbb_cookies:
-            lazy: true
+            # stateless: the phpBB cookies are the only source of truth and the authenticator
+            # re-runs on every request (see supports()), so persisting the token in the Symfony
+            # session added nothing — and it broke CSRF: ContextListener::refreshUser() re-loaded
+            # the user WITHOUT phpBB groups, "user has changed" deauthenticated non-founder staff
+            # on every request and the MIGRATE strategy wiped the CSRF token storage each time.
+            # See https://github.com/TurboLabIt/TurboLab.it/issues/56
+            stateless: true
             provider: app_user_provider
             custom_authenticator: App\Security\phpBBCookiesAuthenticator
             logout:
