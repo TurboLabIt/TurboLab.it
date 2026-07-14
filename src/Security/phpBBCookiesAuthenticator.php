@@ -38,18 +38,6 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
     {
         $route = $request->attributes->get('_route');
 
-        if( str_starts_with($route, 'app_image') || str_starts_with($route, 'app_feed') ) {
-            return false;
-        }
-
-        if( str_starts_with($route, 'app_') && str_ends_with($route, '_page_0-1') ) {
-            return false;
-        }
-
-        if( str_starts_with($route, 'app_') && str_ends_with($route, '_shorturl') ) {
-            return false;
-        }
-
         return !in_array($route, static::AUTH_IGNORED_ROUTES);
     }
 
