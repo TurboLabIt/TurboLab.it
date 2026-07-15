@@ -1,5 +1,7 @@
 body {
     background-color: lightgray;
+    /* no double-tap-to-zoom (accidental zoom) */
+    touch-action: manipulation;
 }
 
 .tli-readable-text {
