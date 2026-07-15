@@ -47,6 +47,12 @@ i[class*="fa-"] {
     padding-bottom: 0px;
 }
 
+
+.trending-news-item .trending-news-content .title,
+.single-play-post-item .single-play-post-content .title {
+    font-weight: 600;
+}
+
 .title {
     text-transform: none;
 }
