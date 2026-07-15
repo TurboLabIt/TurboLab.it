@@ -21,16 +21,6 @@
 /*===========================
     1. COMMON css
 ===========================*/
-/* Heebo is loaded async from base.html.twig (no render-blocking @import).
-   Metric-matched local fallback (values from @capsizecss/metrics, Heebo vs Arial)
-   so the swap to the web font doesn't shift the layout. */
-@font-face {
-  font-family: "Heebo Fallback";
-  src: local("Arial");
-  size-adjust: 99.89%;
-  ascent-override: 104.9%;
-  descent-override: 42.14%;
-  line-gap-override: 0%; }
 html,
 body {
   height: 100%; }
@@ -44,7 +34,7 @@ body {
   box-sizing: border-box; }
 
 body {
-  font-family: "Heebo", "Heebo Fallback", sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-weight: 300;
   font-size: 15px;
   color: #515A60;
@@ -93,7 +83,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Heebo", "Heebo Fallback", sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-weight: 500;
   color: #222;
   margin: 0px 0 15px;

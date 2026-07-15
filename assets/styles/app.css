@@ -21,15 +21,15 @@ i[class*="fa-"] {
 }
 
 /* CLS guard: reserve the menubar's final height. The bar is built after first
-   paint (stellarnav mobile toggle = 54px; desktop menu wraps to 2 rows = 128px
-   while the container is <1400px wide; from 1400px it fits one row) */
+   paint (stellarnav mobile toggle = 54px; the desktop menu occupies 2 rows
+   while the container is <1400px wide — ~118px with the system font stack) */
 .header-menubar {
     min-height: 54px;
 }
 
 @media (min-width: 992px) and (max-width: 1399.98px) {
     .header-menubar {
-        min-height: 128px;
+        min-height: 118px;
     }
 }
 

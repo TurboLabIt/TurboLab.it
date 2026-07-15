@@ -56,14 +56,6 @@
         {# Font Awesome solid webfont: preload so icons render at (or right after) first paint #}
         <link rel="preload" href="{{ asset('build/fonts/fa-solid-900.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-        {# Heebo: async load (media=print + onload) so it never blocks rendering.
-           app.css provides the metric-matched "Heebo Fallback" to avoid layout shift on swap #}
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap"
-              media="print" onload="this.media='all'">
-        <noscript>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap">
-        </noscript>
 
         {# Bootstrap is bundled (yarn) into app.css/app.js #}
         {{ inline_css('build/app.css') }}
