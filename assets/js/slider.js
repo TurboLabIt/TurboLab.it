@@ -1,15 +1,16 @@
 import 'slick-carousel/slick/slick.min.js';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import '../styles/slider-custom-arrows.css';
 
 
 jQuery('.tli-slick-slider').slick({
     slidesToShow: 1,
     slidesToScroll: 1,
-    dots: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 3000,
+    dots: true,
+    infinite: false,
+    autoplay: false,
+    //autoplaySpeed: 3000,
     arrows: true,
     prevArrow: '<span class="prev"><i class="fa fa-angle-left"></i></span>',
     nextArrow: '<span class="next"><i class="fa fa-angle-right"></i></span>',
@@ -20,6 +21,14 @@ jQuery('.tli-slick-slider').slick({
             breakpoint: 768,
             settings: {
                 arrows: false,
+                slidesToShow: 1
+            },
+        },
+        {
+            breakpoint: 576,
+            settings: {
+                arrows: false,
+                slidesToShow: 1,
             }
         }
     ]

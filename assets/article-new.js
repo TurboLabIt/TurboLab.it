@@ -2,7 +2,6 @@ import './styles/article-new.css';
 
 //import $ from 'jQuery';
 import './js/slider';
-import './styles/slider-custom-arrows.css';
 
 
 function showNewArticleForm()
