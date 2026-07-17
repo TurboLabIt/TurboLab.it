@@ -5,9 +5,6 @@
     {{ parent() }}
     {{ inline_css('build/article.css') }}
 
-    {# <link rel="preload" href="{{ asset('build/article.css') }}"
-        as="style" onload="this.onload=null;this.rel='stylesheet'"> #}
-
     {% if Article.isEditable %}
         <link rel="stylesheet" href="{{ asset('build/article-edit.css') }}">
     {% endif %}
