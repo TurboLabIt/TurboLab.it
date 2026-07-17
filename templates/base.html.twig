@@ -174,9 +174,11 @@
 
     {% include 'ads/clickio/sticky-leaderboard.html.twig' %}
 
-    {% block bodyMainContent %}{% endblock %}
+    <main>
+        {% block bodyMainContent %}{% endblock %}
 
-    {% include '@TurboLabItPaginator/pagination-bootstrap.html.twig' %}
+        {% include '@TurboLabItPaginator/pagination-bootstrap.html.twig' %}
+    </main>
 
     {% include 'user/login-modal.html.twig' %}
 

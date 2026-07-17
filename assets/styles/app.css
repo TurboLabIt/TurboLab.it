@@ -55,6 +55,15 @@ i[class*="fa-"] {
     font-weight: 600;
 }
 
+.single-play-post-item .single-play-post-content .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    color: #fff;
+}
+
 .title {
     text-transform: none;
 }
@@ -151,4 +160,47 @@ div.stellarnav.mobile.active ul {
     padding: 4px 10px;
     font-size: 12px;
     margin-bottom: 12px;
+}
+
+
+.post-load-btn a {
+    background: #0a6cc9;
+    border-color: #0a6cc9;
+}
+
+
+.stellarnav > ul > li > a.active {
+    color: #0a6cc9;
+}
+
+
+.post-layout-top-content .post-categories .categories-share ul li {
+    color: #6c757d;
+}
+
+
+.about-author-content nav ol li,
+.about-author-content nav ol li a {
+    color: #6c757d;
+}
+
+
+.post-reader-text.post-reader-text-2 .post-reader-prev span {
+    color: #6c757d;
+}
+
+
+code {
+    color: #ab296a;
+}
+
+
+.tli-mosaic-post-meta {
+    color: #6c757d;
+}
+
+
+.single-play-post-content .post-meta .meta-categories a {
+    display: inline-block;
+    padding: 6px 0;
 }
