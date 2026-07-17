@@ -1,9 +1,3 @@
-//===== Prealoder
-
-jQuery(window).on('load', function (event) {
-    jQuery('.preloader').delay(500).fadeOut(500);
-});
-
 //===== Sticky
 
 jQuery(window).on('scroll', function (event) {

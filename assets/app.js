@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Font Awesome as CSS + self-hosted webfonts
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-import './styles/newspark/preloader.css';
 import './styles/newspark/stellarnav.css';
 import './styles/newspark/default.css';
 import './styles/newspark/style.css';
