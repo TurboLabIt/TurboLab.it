@@ -1913,10 +1913,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-free@npm:^7.3.0":
-  version: 7.3.0
-  resolution: "@fortawesome/fontawesome-free@npm:7.3.0"
-  checksum: 10c0/f7f401e4736fcff1ace455f83d16b3c5fe97f3daaa8ca48710649dbae7b6aeaee5f2fda6a66e4675475e68b1241541638c5ca0ad65ca148a69df8bd5cdb229c3
+"@fortawesome/fontawesome-free@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@fortawesome/fontawesome-free@npm:7.3.1"
+  checksum: 10c0/85b70ea64e69b9635ff0b949871acaaf0e6c6fd41860b8a78a5067123a42dd71144f7f7feea7aee013a485166ee8bf8ee3aafb15146dc0f55512d07015adddee
   languageName: node
   linkType: hard
 
@@ -5035,7 +5035,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:>=8.0.1"
     "@babel/preset-env": "npm:>=8.0.2"
-    "@fortawesome/fontawesome-free": "npm:^7.3.0"
+    "@fortawesome/fontawesome-free": "npm:^7.3.1"
     "@popperjs/core": "npm:^2.11.8"
     "@symfony/webpack-encore": "npm:>=7.1.0"
     bootstrap: "npm:^5.3.8"
