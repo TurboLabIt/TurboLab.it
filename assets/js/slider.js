@@ -1,8 +1,7 @@
-// ⚠️ requires: <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-// ⚠️ requires: <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-// ⚠️ requires: <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+import 'slick-carousel/slick/slick.min.js';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
-//import $ from 'jquery';
 
 jQuery('.tli-slick-slider').slick({
     slidesToShow: 1,

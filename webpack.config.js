@@ -54,4 +54,10 @@ const config = await Encore.getWebpackConfig();
 // paths; this keeps normal extension resolution working without touching every import.
 config.module.rules.push({ test: /\.m?js$/, resolve: { fullySpecified: false } });
 
+// slick-carousel is a jQuery plugin that does `require('jquery')` internally, but jQuery is loaded as a
+// CDN global (see base.html.twig), not a bundled package. Map that import to the global `jQuery` so slick
+// binds to the same instance the rest of the site uses — and so Yarn PnP doesn't try to resolve a package
+// that isn't installed.
+config.externals = { ...(config.externals ?? {}), jquery: 'jQuery' };
+
 export default config;

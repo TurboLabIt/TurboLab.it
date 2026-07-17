@@ -9,10 +9,6 @@
     <link rel="preload" href="{{ asset('build/article-new.css') }}"
           as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
 {% endblock %}
 
 
@@ -363,8 +359,6 @@
 {% endblock %}
 
 {% block javascripts %}
-
-    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
     {{ parent() }}
     {{ encore_entry_script_tags('article-new') }}
