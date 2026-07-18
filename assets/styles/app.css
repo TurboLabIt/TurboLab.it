@@ -49,6 +49,18 @@ i[class*="fa-"] {
     padding-bottom: 0px;
 }
 
+@media (min-width: 1200px) {
+    .all-post-area {
+        padding-top: 215px;
+    }
+}
+
+@media (min-width: 1400px) and (max-width: 1599.98px) {
+    .all-post-area {
+        padding-top: 245px;
+    }
+}
+
 
 .trending-news-item .trending-news-content .title,
 .single-play-post-item .single-play-post-content .title {
@@ -142,10 +154,6 @@ div.stellarnav.mobile.active ul {
     margin-left: 3px;
     vertical-align: text-bottom;
     text-decoration: none !important;
-}
-
-.tli-social-icons .icon-wrapper {
-    max-width: 64px;
 }
 
 .tli-contains-chevron .chevron.tli-chevron-rotated { transform: rotate(180deg); }
