@@ -1,0 +1,38 @@
+{% set shareUrl      = shareUrl      ?? Article.shortUrl ?? app.request.uri %}
+{% set shareTitle    = shareTitle    ?? Article.title    ?? '' %}
+{% set shareAbstract = shareAbstract ?? Article.abstract ?? '' %}
+{% set shareEmoji    = shareEmoji    ?? (Article is not defined ? '⭐' : (Article.isNews ? '📰' : '📕')) %}
+
+{% set messageTitle = (shareEmoji ~ ' ' ~ shareTitle)|trim %}
+{% set titleAndUrl  = (messageTitle ~ ' ' ~ shareUrl)|trim|url_encode %}
+
+{% set ShareChannels = [
+    { name: 'Facebook',    icon: 'facebook.svg',  color: '#0866ff', class: 'tli-share-featured', url: 'https://www.facebook.com/sharer/sharer.php?u=' ~ shareUrl|url_encode },
+    { name: 'X', icon: 'x-twitter.svg', color: '#000000', url: 'https://x.com/intent/post?url=' ~ shareUrl|url_encode ~ '&text=' ~ messageTitle|url_encode },
+    { name: 'WhatsApp',    icon: 'whatsapp.svg',  color: '#25d366', class: 'tli-share-desktop', url: 'https://web.whatsapp.com/send?text=' ~ titleAndUrl },
+    { name: 'WhatsApp',    icon: 'whatsapp.svg',  color: '#25d366', class: 'tli-share-mobile',  url: 'whatsapp://send?text=' ~ titleAndUrl },
+    { name: 'Telegram',    icon: 'telegram.svg',  color: '#26A5E4', url: 'https://t.me/share/url?url=' ~ shareUrl|url_encode ~ '&text=' ~ messageTitle|url_encode },
+    { name: 'LinkedIn',    icon: 'linkedin.svg',  color: '#0A66C2', url: 'https://www.linkedin.com/feed/?shareActive=true&text=' ~ titleAndUrl },
+    { name: 'Reddit',      icon: 'reddit.svg',    color: '#FF4500', url: 'https://www.reddit.com/submit?url=' ~ shareUrl|url_encode ~ '&title=' ~ messageTitle|url_encode },
+    { name: 'Teams',       icon: 'teams.svg',     color: '#6264A7', url: 'https://teams.microsoft.com/share?href=' ~ shareUrl|url_encode ~ '&msgText=' ~ messageTitle|url_encode },
+    { name: 'Slack',       icon: 'slack.svg',     color: '#4A154B', blank: false, label: 'Apri Slack', url: 'slack://open' },
+    { name: 'Email',       icon: 'email.svg',     color: '#c10000', blank: false, label: 'Segnala via email',
+      url: 'mailto:?subject=' ~ ('[TLI] ' ~ shareEmoji ~ ' Segnalazione: ' ~ shareTitle)|url_encode ~ '&body=' ~ ((shareAbstract ~ ' ' ~ shareUrl)|trim)|url_encode }
+] %}
+
+<div class="tli-social-share mb-20">
+
+    {% for Channel in ShareChannels %}
+
+        {% set label = Channel.label ?? ('Condividi su ' ~ Channel.name) %}
+
+        <a href="{{ Channel.url }}" {% if Channel.blank ?? true %}target="_blank" rel="noopener nofollow"{% endif %}
+           style="background: {{ Channel.color }}" {% if Channel.class is defined %}class="{{ Channel.class }}"{% endif %}
+           title="{{ label }}" aria-label="{{ label }}">
+            <img src="{{ asset('build/images/social-icons/' ~ Channel.icon) }}" alt="" width="24" height="24">
+            <span class="tli-share-full">{{ label }}</span>
+        </a>
+
+    {% endfor %}
+
+</div>

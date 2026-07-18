@@ -85,7 +85,7 @@
                         </div>
 
                         {% if Article.isPublished %}
-                            <div class="sharethis-inline-share-buttons mb-20"></div>
+                            {% include 'parts/social-share.html.twig' %}
                         {% endif %}
 
 
@@ -114,7 +114,7 @@
                                     Se ti è piaciuto questo articolo, condividilo sui social! Grazie!
                                 </h4>
 
-                                <div class="sharethis-inline-share-buttons mb-20"></div>
+                                {% include 'parts/social-share.html.twig' %}
 
                             {% endif %}
 

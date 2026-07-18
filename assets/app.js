@@ -8,6 +8,8 @@ import './styles/newspark/stellarnav.css';
 import './styles/newspark/default.css';
 import './styles/newspark/style.css';
 import './styles/app.css';
+import './styles/social-share.css';
+import './styles/social-follow-us-on.css';
 import './styles/userbar.css';
 import './styles/glow.css';
 import './styles/footer.css';
@@ -22,4 +24,5 @@ import './js/form-submit-to-path'
 import './js/userbar';
 import './js/visit-on-load';
 import './js/chevron';
-import './js/economics';
+import './js/economics'
+import './js/social-share';

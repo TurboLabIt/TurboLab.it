@@ -63,7 +63,7 @@
                             <h3 class="mt-20">Sito irraggiungibile?</h3>
                             <p>Seguici sui social per essere informato quando il sito diviene irraggiungibile.</p>
 
-                            {% embed 'parts/social-icons.html.twig' with {'SocialLinks': FrontendHelper.InCaseOfDownSocialLinks} only %}
+                            {% embed 'parts/social-follow-us.html.twig' with {'SocialLinks': FrontendHelper.InCaseOfDownSocialLinks} only %}
                                 {% block socialIconsTitle %}{% endblock %}
                             {% endembed %}
 

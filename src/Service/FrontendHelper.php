@@ -44,45 +44,33 @@ class FrontendHelper
 
     public function getFollowUsLinks() : array
     {
-        return array_merge( $this->getOwnFollowUsPages(), $this->getSocialMediaPages() );
-    }
-
-
-    public function getOwnFollowUsPages() : array
-    {
-        return [
-            $this->buildLink(
-                "Forum e newsletter", $this->getRegisterUrl(), false,
-                '/images/social-icons/email.svg', 'fa-solid fa-user-group'
-            ),
-            $this->buildLink(
-                "Feed RSS", $this->urlGenerator->generate('app_feed'), false,
-                '/images/social-icons/rss.svg', 'fa fa-square-rss'
-            ),
-        ];
-    }
-
-
-    public function getSocialMediaPages() : array
-    {
-        return [
-            'youtube'   => $this->buildLink("YouTube", 'https://www.youtube.com/c/turbolabit?sub_confirmation=1'),
-            'telegram'  => $this->buildLink("Telegram", 'https://t.me/turbolab'),
-            'facebook'  => $this->buildLink("Facebook", 'https://www.facebook.com/TurboLab.it'),
-            'x'         => $this->buildLink(
-                        "X (Twitter)", 'https://twitter.com/TurboLabIt', true,
-                            '/images/social-icons/x-twitter.svg', 'fab fa-x-twitter'
-                            ),
-            'github'    => $this->buildLink("GitHub", 'https://github.com/TurboLabIt/'),
-            'linkedin'  => $this->buildLink("LinkedIn", 'https://linkedin.com/company/turbolabit')
-        ];
+        return
+            [
+                "register"  => $this->buildLink(
+                    "Forum e newsletter", $this->getRegisterUrl(), false,
+                    'build/images/social-icons/email.svg', 'fa-solid fa-user-group'
+                ),
+                "rss"       => $this->buildLink(
+                    "Feed RSS", $this->urlGenerator->generate('app_feed'), false,
+                    'build/images/social-icons/rss.svg', 'fa fa-square-rss'
+                ),
+                'youtube'   => $this->buildLink("YouTube", 'https://www.youtube.com/c/turbolabit?sub_confirmation=1'),
+                'telegram'  => $this->buildLink("Telegram", 'https://t.me/turbolab'),
+                'facebook'  => $this->buildLink("Facebook", 'https://www.facebook.com/TurboLab.it'),
+                'x'         => $this->buildLink(
+                    "X (Twitter)", 'https://twitter.com/TurboLabIt', true,
+                    'build/images/social-icons/x-twitter.svg', 'fab fa-x-twitter'
+                ),
+                'github'    => $this->buildLink("GitHub", 'https://github.com/TurboLabIt/'),
+                'linkedin'  => $this->buildLink("LinkedIn", 'https://linkedin.com/company/turbolabit')
+            ];
     }
 
 
     public function getInCaseOfDownSocialLinks() : array
     {
         return
-            array_intersect_key($this->getSocialMediaPages(), array_flip([
+            array_intersect_key($this->getFollowUsLinks(), array_flip([
                 'telegram', 'facebook', 'x'
             ]));
     }
@@ -167,7 +155,7 @@ class FrontendHelper
 
         return [
             'name'          => $name,
-            'icon'          => $iconFileName ?? ( '/images/social-icons/' . mb_strtolower($name) . '.svg' ),
+            'icon'          => $iconFileName ?? ( 'build/images/social-icons/' . mb_strtolower($name) . '.svg' ),
             "fa"            => $faIcon,
             "url"           => $url,
             "blank"         => $blank,

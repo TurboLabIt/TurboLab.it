@@ -1,0 +1,96 @@
+.tli-social-share {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+@media (min-width: 768px) {
+
+    .tli-social-share {
+        flex-wrap: nowrap;
+    }
+}
+
+.tli-social-share a {
+    flex-shrink: 0;
+}
+
+.tli-social-share a.tli-share-featured {
+    flex-shrink: 1;
+    min-width: 40px;
+    overflow: hidden;
+}
+
+.tli-social-share a.tli-share-active,
+.tli-social-share a.tli-share-featured:hover,
+.tli-social-share a.tli-share-featured:focus-visible {
+    flex-shrink: 0;
+}
+
+.tli-social-share a {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 50rem;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.15s ease-in-out, padding 0.25s ease, flex-shrink 0.25s ease;
+}
+
+.tli-social-share a img {
+    cursor: pointer;
+}
+
+.tli-social-share a:hover,
+.tli-social-share a:focus-visible {
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.tli-social-share a .tli-share-full {
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.25s ease, margin-left 0.25s ease, opacity 0.25s ease;
+}
+
+.tli-social-share a.tli-share-featured,
+.tli-social-share a:hover,
+.tli-social-share a:focus-visible {
+    padding: 5px 18px 5px 8px;
+}
+
+.tli-social-share a.tli-share-featured .tli-share-full,
+.tli-social-share a:hover .tli-share-full,
+.tli-social-share a:focus-visible .tli-share-full {
+    max-width: 250px;
+    margin-left: 6px;
+    opacity: 1;
+}
+
+.tli-social-share a:hover {
+    transition: transform 0.15s ease-in-out, padding 0.25s ease 0.15s, flex-shrink 0.25s ease 0.15s;
+}
+
+.tli-social-share a:hover .tli-share-full {
+    transition: max-width 0.25s ease 0.15s, margin-left 0.25s ease 0.15s, opacity 0.25s ease 0.15s;
+}
+
+.tli-social-share .tli-share-mobile {
+    display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+
+    .tli-social-share .tli-share-desktop {
+        display: none;
+    }
+
+    .tli-social-share .tli-share-mobile {
+        display: inline-flex;
+    }
+}

@@ -127,3 +127,4 @@ phpstan.neon
 /public/images/logo/favicon.ico
 /public/images/logo/turbolab.it.png
 /public/immagini
+/assets/images/social-icons

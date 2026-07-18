@@ -15,11 +15,13 @@
         "@babel/core": ">=8.0.1",
         "@babel/preset-env": ">=8.0.2",
         "@symfony/webpack-encore": ">=7.1.0",
+        "bootstrap-icons": "1.13.1",
         "file-loader": ">=6.2.0",
         "npm-check-updates": "^22.2.9",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.101.0",
         "sass-loader": ">=17.0",
+        "simple-icons": "16.26.0",
         "webpack": ">=5.108.4",
         "webpack-cli": "7.2.1",
         "webpack-notifier": ">=1.15.0"
@@ -27,10 +29,11 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "dev-server": "encore dev-server",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "dev-server": "yarn build:icons && encore dev-server",
+        "dev": "yarn build:icons && encore dev",
+        "watch": "yarn build:icons && encore dev --watch",
+        "build": "yarn build:icons && encore production --progress",
+        "build:icons": "node scripts/build-social-icons.mjs"
     },
     "packageManager": "yarn@4.17.1"
 }
