@@ -123,7 +123,8 @@ class YouTubeChannelApi
                 "id"            => $oneVideoItem->id->videoId,
                 "source"        => 'youtube',
                 "url"           => "https://www.youtube.com/watch?v=" . $oneVideoItem->id->videoId,
-                "embedUrl"      => "https://www.youtube-nocookie.com/embed/" . $oneVideoItem->id->videoId . "?rel=0&enablejsapi=1&autoplay=1",
+                // no autoplay=1 here: the URL ends up in browser session history and would restart the video on back/restore
+                "embedUrl"      => "https://www.youtube-nocookie.com/embed/" . $oneVideoItem->id->videoId . "?rel=0&enablejsapi=1",
                 "title"         => trim($oneVideoItem->snippet->title),
                 "abstract"      => trim($oneVideoItem->snippet->description),
                 "thumbnails"    => $oneVideoItem->snippet->thumbnails,
