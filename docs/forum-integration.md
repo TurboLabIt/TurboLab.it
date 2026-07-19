@@ -1,11 +1,11 @@
 # [Integrazione fra sito e forum](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md)
 
-Per generare i file necessari all'integrazione fra il sito e phpBB è sufficiente eseguire [scripts/cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh) (che a sua volta invoca `phpbb-cache-clear.sh`).
+Per generare i file necessari all'integrazione fra il sito e phpBB è sufficiente eseguire [scripts/cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh).
 
 
 ## Estensioni phpBB custom
 
-Le estensioni phpBB sviluppate per TurboLab.it vivono in [src/Forum/ext-turbolabit/](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Forum/ext-turbolabit); un unico symlink (`public/forum/ext/turbolabit` ➡ `src/Forum/ext-turbolabit`, creato da [phpbb-cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/phpbb-cache-clear.sh)) le espone tutte a phpBB:
+Le estensioni phpBB sviluppate per TurboLab.it vivono in [src/Forum/ext-turbolabit/](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Forum/ext-turbolabit); un unico symlink (`public/forum/ext/turbolabit` ➡ `src/Forum/ext-turbolabit`, creato da [cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh)) le espone tutte a phpBB:
 
 - **forumintegration** — inietta nel forum le personalizzazioni del sito: per esempio l'header/menu e il footer del sito attorno alle pagine del forum, pulsanti extra sui post, pulsante per inserire il link a un articolo, ...
 - **httpsonimg** — forza l'HTTPS sulle immagini ospitate su una whitelist di domini

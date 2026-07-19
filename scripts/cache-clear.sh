@@ -19,7 +19,7 @@ if [ "$APP_ENV" == "dev" ]; then
   fxLink ${PROJECT_DIR}config/custom/php-custom-cli.ini /etc/php/${PHP_VER}/cli/conf.d/95-turbolab.it-cli.ini
   sudo rm -f /etc/php/${PHP_VER}/fpm/conf.d/30-webstackup-opcache.ini
 
-  fxTitle "Removing composer stuff..."
+  fxTitle "Removing composer stuff to trigger an update..."
   sudo rm -rf ${PROJECT_DIR}.env.local.php ${PROJECT_DIR}vendor ${PROJECT_DIR}composer.lock
 
   source "${WEBSTACKUP_SCRIPT_DIR}account/bashrc-dev-patch.sh"
@@ -29,6 +29,14 @@ fi
 
 ### SYMFONY console cache:clear ###
 wsuSourceFrameworkScript cache-clear "$@"
+
+
+if [ "$APP_ENV" != "dev" ]; then
+
+    fxTitle "Re-stop nginx and PHP ${PHP_VER} FPM to deal with the forum..."
+    sudo service nginx stop
+    sudo service php${PHP_VER}-fpm stop
+fi
 
 
 fxTitle "Setting up the images cache folder..."
@@ -41,6 +49,39 @@ sudo chmod ug=rwX,o=rX ${PROJECT_DIR}var -R
 
 fxTitle "Setting up HTMLpurifier cache folder..."
 sudo chmod 775 "${PROJECT_DIR}vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer" -R
+
+fxTitle "Locking down encryptor key files (www-data, 0600)..."
+# var/ above is chowned to *:www-data and chmod'd o=rX (world-readable) — re-lock the secret keys.
+# PHP ${PHP_VER} FPM runs as www-data, so we make it the owner and keep 0600 (no group/other access).
+if [ -d "${PROJECT_DIR}var/encryptor" ]; then
+  sudo chown www-data:www-data "${PROJECT_DIR}var/encryptor" -R
+  sudo chmod 0700 "${PROJECT_DIR}var/encryptor"
+  sudo find "${PROJECT_DIR}var/encryptor" -type f -name '*.key' -exec chmod 0600 {} +
+fi
+
+
+fxTitle "Setting forum base owner and permissions..."
+sudo chown webstackup:www-data ${WEBROOT_DIR}forum -R
+sudo chmod ug=rwX,o=rX ${WEBROOT_DIR}forum -R
+
+fxTitle "ext/turbolabit link..."
+# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/forum-integration.md
+sudo rm -rf "${WEBROOT_DIR}forum/ext/turbolabit"
+fxLink "${PROJECT_DIR}src/Forum/ext-turbolabit" "${WEBROOT_DIR}forum/ext/turbolabit"
+
+fxTitle "Granting writing permission to the ForumIntegrationBuilder output folder..."
+sudo chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
+sudo chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
+
+## GENERATING THE EXT FILES FROM TWIG
+wsuSymfony console ForumIntegrationBuilder
+
+
+fxTitle "🧹 Deleting the forum cache folder..."
+sudo rm -rf "${WEBROOT_DIR}forum/cache/production"
+
+fxTitle "💬 Clearing phpBB cache via phpBB CLI..."
+bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
 
 
 if [ "$APP_ENV" == "dev" ]; then
@@ -61,19 +102,13 @@ if [ "$APP_ENV" == "dev" ]; then
   fxLink ${PROJECT_DIR}../php-packages/php-symfony-paginator ${PROJECT_DIR}vendor/turbolabit/paginatorbundle
   echo ""
   ls -l --color=always ${PROJECT_DIR}vendor/turbolabit
+
+else
+
+  fxTitle "Final restart of PHP ${PHP_VER} FPM and nginx..."
+  sudo service php${PHP_VER}-fpm restart
+  sudo service nginx restart
 fi
 
-
-fxTitle "Locking down encryptor key files (www-data, 0600)..."
-# var/ above is chowned to *:www-data and chmod'd o=rX (world-readable) — re-lock the secret keys.
-# php-fpm runs as www-data, so we make it the owner and keep 0600 (no group/other access).
-if [ -d "${PROJECT_DIR}var/encryptor" ]; then
-  sudo chown www-data:www-data "${PROJECT_DIR}var/encryptor" -R
-  sudo chmod 0700 "${PROJECT_DIR}var/encryptor"
-  sudo find "${PROJECT_DIR}var/encryptor" -type f -name '*.key' -exec chmod 0600 {} +
-fi
-
-
-bash "${SCRIPT_DIR}phpbb-cache-clear.sh"
 
 bash "${SCRIPT_DIR}reindex.sh"
