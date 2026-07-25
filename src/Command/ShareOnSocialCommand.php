@@ -319,8 +319,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $buttonLabel    = $arrParams["cta"];
 
         try {
-            $messageHtml =
-                "<b>$emoji <a href=\"$url\">$title</a></b>";
+            $messageHtml = $this->buildTelegramArticleMessageHtml($emoji, $url, $title);
 
             $this->telegram
                 ->setMessageButtons([[
@@ -342,6 +341,23 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         }
 
         return $this;
+    }
+
+
+    /**
+     * Compose the Telegram channel message (parse_mode=HTML). The dynamic parts (article/video
+     * title and URL) are HTML-escaped so a crafted title cannot break out of the anchor and inject
+     * its own markup into the official channel post — phishing under our brand, or a broken message
+     * that the Telegram API rejects (security-audit #29). htmlspecialchars() emits exactly < > & "
+     * as &lt; &gt; &amp; &quot;, which are the four entities TelegramMessenger::messageEncoder()
+     * preserves, so the escaping survives to Telegram as literal text instead of being decoded back
+     * into live markup. The structural <b>/<a> tags stay intact because they are not user input.
+     */
+    protected function buildTelegramArticleMessageHtml(string $emoji, string $url, string $title) : string
+    {
+        $safeUrl    = htmlspecialchars($url, ENT_QUOTES);
+        $safeTitle  = htmlspecialchars($title, ENT_QUOTES);
+        return "<b>$emoji <a href=\"$safeUrl\">$safeTitle</a></b>";
     }
 
 
@@ -427,10 +443,12 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
     protected function sendAlert(string $serviceName, Exception $ex, string $title, string $url) : static
     {
+        // escape the dynamic parts: the exception message can echo attacker-controlled input and
+        // the whole thing is sent to Telegram with parse_mode=HTML (same class of bug as #29).
         $message =
             "<b>ShareOnSocial error on $serviceName</b>" . PHP_EOL .
-            "<code>" . $ex->getMessage() . "</code>" . PHP_EOL .
-            "URL: $url";
+            "<code>" . htmlspecialchars($ex->getMessage(), ENT_QUOTES) . "</code>" . PHP_EOL .
+            "URL: " . htmlspecialchars($url, ENT_QUOTES);
 
         if( $this->isDevOrTest() ) {
 
