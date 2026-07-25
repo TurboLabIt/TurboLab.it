@@ -55,17 +55,33 @@ abstract class ArticleEditBaseController extends BaseController
                 ->sendIfHasToRecipients();
 
         if($sent) {
-            $jsonOkMessage .= ". 📨 Email di notifica inviata a " .
-                implode(', ', array_map(fn($recipient) => $recipient->getName(), $mailer->getTo()));
+            $jsonOkMessage .= ". 📨 Email di notifica inviata a " . $this->formatRecipientNames($mailer->getTo());
         }
 
         $arrCc = $mailer->getCc();
         if( $sent && !empty($arrCc) ) {
-            $jsonOkMessage .= " (e in CC a te, " .
-                implode(', ', array_map(fn($recipient) => $recipient->getName(), $arrCc)) . ")";
+            $jsonOkMessage .= " (e in CC a te, " . $this->formatRecipientNames($arrCc) . ")";
         }
 
         return $this;
+    }
+
+
+    /**
+     * Comma-join recipient display names, HTML-escaped. Those names are decoded phpBB usernames
+     * (User::getUsername() runs HtmlProcessorBase::decode(), so stored-encoded markup comes back
+     * live) and this message is rendered by the editor status bar with jQuery .html() — so an
+     * unescaped username such as `<img src=x onerror=…>` would execute in the publishing editor's
+     * session (security-audit #30; phpBB's validate_username forbids quotes but not angle brackets).
+     *
+     * @param \Symfony\Component\Mime\Address[] $recipients
+     */
+    protected function formatRecipientNames(array $recipients) : string
+    {
+        return implode(', ', array_map(
+            fn($recipient) => htmlspecialchars($recipient->getName(), ENT_QUOTES),
+            $recipients
+        ));
     }
 
 
