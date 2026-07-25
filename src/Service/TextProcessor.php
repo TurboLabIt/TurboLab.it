@@ -40,8 +40,11 @@ class TextProcessor
         $processing = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($processing);
         $processing = $this->htmlProcessor->fixFormattingErrors($processing);
         $processing = $this->htmlProcessor->purify($processing);
-        $processing = $this->htmlProcessor->removeAltAttribute($processing);
 
+        // No alt-stripping step here: processArticleBody() rebuilds every <img> as a placeholder
+        // without an alt (HTMLPurifier only ever emits an empty alt="" on images, and it is
+        // discarded on rebuild). Never regex-rewrite the purified HTML to remove alt — that was the
+        // root cause of security-audit finding #26 (it deleted across tag boundaries).
         $processing = $this->htmlProcessor->processArticleBody($processing);
 
         $finalHtml  = $this->cleanTextBeforeStorage($processing);

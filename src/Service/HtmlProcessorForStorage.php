@@ -95,16 +95,6 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     }
 
 
-    public function removeAltAttribute(?string $text) : string
-    {
-        if( empty($text) ) {
-            return $text;
-        }
-
-        return preg_replace('/\s*alt\s*=\s*([\'"]).*?\1/i', '', $text);
-    }
-
-
     public function processArticleBody(string $body) : string
     {
         $domDoc = $this->parseHTML($body);
