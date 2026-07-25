@@ -43,6 +43,9 @@ class Image extends BaseCmsService
     const string WIDTH  = 'width';
     const string HEIGHT = 'height';
 
+    // reject originals whose width OR height exceeds this many pixels
+    const int RESOLUTION_MAX = 12000;
+
     const string WATERMARK_FILEPATH     = 'images/logo/turbolab.it.png';
     const int WATERMARK_WIDTH_PERCENT   = 25;
     const int WATERMARK_OPACITY         = 100;
