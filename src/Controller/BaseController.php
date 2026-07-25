@@ -132,6 +132,21 @@ abstract class BaseController extends AbstractController
     }
 
 
+    /**
+     * Build a cache key namespaced per controller. The view caches (author/tag/article/…) share the
+     * one autowired pool, so a key built straight from URL segments lets different pages collide:
+     * an author named "windows-10" and the "windows-10" tag both produced "windows-10/$page" and
+     * poisoned each other's entry (security-audit #31 — Symfony's reserved-char check that would
+     * reject the "/" runs inside an assert(), compiled out in prod with zend.assertions=-1). The
+     * literal namespace prefix keeps controllers' keys distinct; "." also replaces the reserved "/"
+     * so the resulting key is valid.
+     */
+    protected function buildViewCacheKey(string $namespace, int|string ...$parts) : string
+    {
+        return $namespace . '.' . implode('.', $parts);
+    }
+
+
     protected function ajaxOnly() : void
     {
         if( $this->isDevOrTest() ) {

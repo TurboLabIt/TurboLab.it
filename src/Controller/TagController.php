@@ -34,8 +34,11 @@ class TagController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
+        // namespaced so it can't collide with an author whose username equals this tag's slug-id (#31)
+        $cacheKey = $this->buildViewCacheKey('tag', $tagSlugDashId, $page);
+
         $buildHtmlResult =
-            $this->cache->get("$tagSlugDashId/$page", function(ItemInterface $cacheItem) use($tagSlugDashId, $page) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($tagSlugDashId, $page) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $page);
 

@@ -35,8 +35,11 @@ class AuthorContoller extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
+        // namespaced, so it can't collide with a tag whose slug-id equals this username (#31)
+        $cacheKey = $this->buildViewCacheKey('author', $usernameClean, $page);
+
         $buildHtmlResult =
-            $this->cache->get("$usernameClean/$page", function(ItemInterface $cacheItem) use($usernameClean, $page) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($usernameClean, $page) {
 
                 $buildHtmlResult = $this->buildHtml($usernameClean, $page);
 

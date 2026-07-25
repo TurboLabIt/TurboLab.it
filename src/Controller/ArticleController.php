@@ -23,8 +23,10 @@ class ArticleController extends BaseController
             return is_string($buildHtmlResult) ? new Response($buildHtmlResult) : $buildHtmlResult;
         }
 
+        $cacheKey = $this->buildViewCacheKey('article', $tagSlugDashId, $articleSlugDashId);
+
         $buildHtmlResult =
-            $this->cache->get("$tagSlugDashId/$articleSlugDashId", function(ItemInterface $cacheItem) use($tagSlugDashId, $articleSlugDashId) {
+            $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($tagSlugDashId, $articleSlugDashId) {
 
                 $buildHtmlResult = $this->buildHtml($tagSlugDashId, $articleSlugDashId);
 
