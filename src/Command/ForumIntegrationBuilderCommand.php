@@ -154,12 +154,34 @@ class ForumIntegrationBuilderCommand extends AbstractBaseCommand
         $artPrivacyPolicy = $this->factory->createArticle()->load(Article::ID_PRIVACY_POLICY);
 
         return array_merge($this->getBaseParams(), [
-            'mainText' => $htmlRulesProcessed,
+            // CMS content written here lands in phpBB's template tree, which phpBB compiles as Twig
+            // (autoescape off, no sandbox) — so template delimiters must be neutralized first, or a
+            // `{{ … }}`/`{% … %}` in the body/title runs as SSTI on the anonymous registration page
+            // (security-audit #27). The body is already sanitized HTML (emitted with |raw); the
+            // title is raw text, so it is HTML-escaped here and emitted with |raw too.
+            'mainText' => $this->neutralizeTwigDelimiters($htmlRulesProcessed),
             'PrivacyPolicy' => [
                 'url'   => $artPrivacyPolicy->getUrl(),
-                'title' => $artPrivacyPolicy->getTitle()
+                'title' => $this->neutralizeTwigDelimiters(
+                    htmlspecialchars($artPrivacyPolicy->getTitle(), ENT_QUOTES, 'UTF-8')
+                )
             ],
         ]);
+    }
+
+
+    /**
+     * Neutralize Twig template delimiters in CMS content before it is written into phpBB's template
+     * tree. phpBB compiles those files as Twig with autoescape off and no SandboxExtension, so a
+     * `{{ … }}` or `{% … %}` coming from an article body/title would be EXECUTED — SSTI reachable
+     * from the anonymous registration page (security-audit #27). Encoding the braces to HTML
+     * entities means phpBB's Twig lexer never sees a delimiter, while the browser still renders a
+     * literal `{` / `}` to the reader. Every Twig delimiter contains a `{` or `}`, so encoding both
+     * covers `{{`, `}}`, `{%`, `%}`, `{#` and `#}`.
+     */
+    protected function neutralizeTwigDelimiters(string $text) : string
+    {
+        return strtr($text, ['{' => '&#123;', '}' => '&#125;']);
     }
 
 
