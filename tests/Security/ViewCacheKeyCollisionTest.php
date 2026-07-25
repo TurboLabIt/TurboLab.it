@@ -1,9 +1,8 @@
 <?php
 namespace App\Tests\Security;
 
-use App\Controller\ArticleController;
 use App\Controller\AuthorContoller;
-use App\Controller\TagController;
+use App\Controller\BaseController;
 use App\Tests\BaseT;
 use ReflectionClass;
 use ReflectionMethod;
@@ -22,29 +21,31 @@ use Symfony\Contracts\Cache\ItemInterface;
  * and poisoned each other's cached HTML. (Symfony's reserved-char check that would reject the "/"
  * runs inside an assert(), compiled out in prod with zend.assertions=-1, so the raw keys passed.)
  *
- * Fix: BaseController::buildViewCacheKey() namespaces the key per controller (author. / tag. /
- * article.) and drops the reserved "/". These tests invoke the real key-builders and prove the
- * collision is gone; the negative control reproduces the original poisoning so the assertions can't
- * pass vacuously.
+ * Fix: the view controllers now build their key inline via BaseController::buildViewCacheKey(), which
+ * namespaces per controller (author. / tag. / article.) and drops the reserved "/". These tests
+ * exercise that shared builder; the negative control reproduces the original poisoning so the
+ * assertions can't pass vacuously.
  *
  * NB: controllers bypass the cache entirely when isCachable() is false (dev/test), so the collision
  * lives purely in the key strings — hence this unit-level guard rather than an HTTP test.
  */
 class ViewCacheKeyCollisionTest extends BaseT
 {
-    /** Invoke a controller's protected cache-key builder without booting the controller. */
-    private function invokeKeyBuilder(string $class, string $method, array $args) : string
+    /** Invoke the shared BaseController::buildViewCacheKey() without booting a controller. */
+    private function buildViewCacheKey(string $namespace, int|string ...$parts) : string
     {
-        $instance = (new ReflectionClass($class))->newInstanceWithoutConstructor();
-        return (new ReflectionMethod($class, $method))->invokeArgs($instance, $args);
+        // BaseController is abstract; use a concrete subclass that inherits the method
+        $instance = (new ReflectionClass(AuthorContoller::class))->newInstanceWithoutConstructor();
+        return (new ReflectionMethod(BaseController::class, 'buildViewCacheKey'))
+            ->invokeArgs($instance, [$namespace, ...$parts]);
     }
 
 
     public function testAuthorAndTagPagesGetDistinctCacheKeysForSameUrlSegment() : void
     {
         // "windows-10" is both a valid username and the slug-id of the Windows tag.
-        $authorKey = $this->invokeKeyBuilder(AuthorContoller::class, 'getPageCacheKey', ['windows-10', 1]);
-        $tagKey    = $this->invokeKeyBuilder(TagController::class,    'getPageCacheKey', ['windows-10', 1]);
+        $authorKey = $this->buildViewCacheKey('author', 'windows-10', 1);
+        $tagKey    = $this->buildViewCacheKey('tag', 'windows-10', 1);
 
         $this->assertNotSame($authorKey, $tagKey,
             'Author and tag pages must not share a cache key (#31).');
@@ -62,9 +63,9 @@ class ViewCacheKeyCollisionTest extends BaseT
         // {}()/\@: are reserved by Symfony's CacheItem::validateKey(); the old "/" only slipped
         // through because that check runs inside an assert().
         $keys = [
-            $this->invokeKeyBuilder(AuthorContoller::class,  'getPageCacheKey',   ['windows-10', 2]),
-            $this->invokeKeyBuilder(TagController::class,     'getPageCacheKey',   ['windows-10', 2]),
-            $this->invokeKeyBuilder(ArticleController::class, 'buildViewCacheKey', ['article', 'windows-10', 'guida-123']),
+            $this->buildViewCacheKey('author',  'windows-10', 2),
+            $this->buildViewCacheKey('tag',     'windows-10', 2),
+            $this->buildViewCacheKey('article', 'windows-10', 'guida-123'),
         ];
 
         foreach ($keys as $key) {
