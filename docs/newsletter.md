@@ -28,10 +28,6 @@ Le priorità principali nella gestione della newsletter sono:
 - offrire a quanti più utenti possibile l'occasione di ricevere la newsletter almeno una volta, di modo che possano valutare se interessa
 - **NO SPAM**! Chi non vuole la newsletter non deve riceverla, senza ostacoli o ritardi
 
-La newsletter viene generata sul server di TurboLab.it, ma **inviata** agli iscritti tramite il servizio esterno [SMTP2Go](https://www.smtp2go.com/) (transport `newsletter` in [mailer.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/mailer.yaml), configurato tramite `MAILER_DSN_NEWSLETTER`).
-
-In origine si inviava direttamente dall'SMTP del server (per non dipendere da terzi, risparmiare sui costi e non condividere gli indirizzi degli iscritti), ma si è rivelato impossibile ottenere un buon tasso di *delivery*. Dopo un tentativo con [Postmark](https://postmarkapp.com/), la scelta attuale è SMTP2Go.
-
 
 ## Iscrizione alla newsletter
 
@@ -68,6 +64,17 @@ Il comando utilizzato è [scripts/newsletter-send.sh](https://github.com/TurboLa
 - **⚠⚠** `bash scripts/newsletter-send.sh --real-recipients --send-messages`: invia la newsletter a tutti gli iscritti
 
 Se viene specificata l'opzione `--dry-run`, il comando non invia nessuna mail, ma simula solo l'esecuzione della procedura.
+
+
+## Invio (SMTP)
+
+La newsletter viene inviata agli iscritti tramite il servizio esterno [SMTP2Go](https://www.smtp2go.com/) (transport `newsletter` in [mailer.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/packages/mailer.yaml), configurato tramite `MAILER_DSN_NEWSLETTER`).
+
+---
+
+Per un periodo si è usato [Postmark](https://postmarkapp.com/), abbandonato dopo che ha silenziosamente smesso di inviare per un certo periodo di tempo.
+
+In origine, si inviava direttamente dall'SMTP del server (per non dipendere da terzi, risparmiare sui costi e non condividere gli indirizzi degli iscritti), e questo sarebbe ancora oggi il metodo preferito. Ma si è rivelato impossibile ottenere un tasso di *delivery* accettabile: nonostante SPF, DKIM, DMARC, PTR e nessuna presenza in blacklist, è chiaro che questa modalità è divenuta impossibile.
 
 
 ## Gestione email con errori (bounce)
