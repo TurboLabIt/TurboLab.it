@@ -43,13 +43,15 @@
     {% include 'ads/clickio/header.html.twig' %}
 
     <!-- Google Analytics (GA4) Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMZ19KGXP8"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-BMZ19KGXP8', {'anonymize_ip': true});
-    </script>
+    {% if hasAnalytics is not defined or hasAnalytics %}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMZ19KGXP8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-BMZ19KGXP8', {'anonymize_ip': true});
+        </script>
+    {% endif %}
 
     {% block stylesheets %}
 

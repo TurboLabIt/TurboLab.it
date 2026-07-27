@@ -148,6 +148,8 @@ class NewsletterController extends BaseController
         $newsletter->unsubscribeUser($this->user);
 
         return $this->render('newsletter/unsubscribe.html.twig', [
+            "hasAds"            => false,
+            "hasAnalytics"      => false,
             "activeMenu"        => 'newsletter',
             "FrontendHelper"    => $this->frontendHelper,
             "User"              => $this->user
@@ -159,6 +161,8 @@ class NewsletterController extends BaseController
     {
         return
             $this->render('newsletter/unsubscribe.html.twig', [
+                "hasAds"            => false,
+                "hasAnalytics"      => false,
                 "activeMenu"        => 'newsletter',
                 "FrontendHelper"    => $this->frontendHelper,
                 "error"             => $errorConstant,
@@ -208,6 +212,8 @@ class NewsletterController extends BaseController
         $this->entityManager->flush();
 
         return $this->render('newsletter/subscribe.html.twig', [
+            "hasAds"            => false,
+            "hasAnalytics"      => false,
             "activeMenu"        => 'newsletter',
             "FrontendHelper"    => $this->frontendHelper,
             "User"              => $this->user
@@ -219,6 +225,8 @@ class NewsletterController extends BaseController
     {
         return
             $this->render('newsletter/subscribe.html.twig', [
+                "hasAds"            => false,
+                "hasAnalytics"      => false,
                 "activeMenu"        => 'newsletter',
                 "FrontendHelper"    => $this->frontendHelper,
                 "error"             => $errorConstant,
