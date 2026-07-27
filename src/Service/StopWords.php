@@ -1,8 +1,6 @@
 <?php
 namespace App\Service;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
@@ -10,7 +8,8 @@ class StopWords
 {
     const string FILENAME = 'stopwords-it';
 
-    protected static array $arrStopWords = [];
+    // compiled once per process: one alternation regex matching every stopword
+    protected static ?string $regex = null;
 
 
     public function __construct(protected ProjectDir $projectDir) {}
@@ -18,125 +17,41 @@ class StopWords
 
     public function removeFromSting(string $text) : string
     {
-        $this->deleteStaleCacheFiles();
-
-        //
-        $processedStringCacheFilePath   = $this->getProcessedStringCacheFilePath();
-        $processedStringCacheAdapter    = $this->getCacheAdapter($processedStringCacheFilePath);
-        $processedStringCacheItem       = $processedStringCacheAdapter->getItem($text);
-        $cachedValue                    = $processedStringCacheItem->get();
-        if( !empty($cachedValue) ) {
-            return $cachedValue;
-        }
-
-        //
-        $this->loadDictionaryArray();
-
-        //
+        $text = trim($text);
+        // Single pass over one combined `\b(w1|w2|…)\b` regex
+        $text = preg_replace($this->getRegex(), '', $text);
         $text = trim($text);
 
-        foreach(static::$arrStopWords as $stopword) {
-
-            $regex = '/\b' . $stopword . '\b/iu';
-            $textClean = preg_replace($regex, '', $text);
-            $text = $textClean;
-        }
-
-        $text = trim($text);
-
-        // remove double spaces
-        $text = preg_replace("/ {2,}/", ' ', $text);
-
-        $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
-        if( !file_exists($processedStringCacheFilePath) ) {
-            $this->getCacheAdapter($processedStringCacheFilePath)->warmUp([static::FILENAME => 'init']);
-        }
-
-        $processedStringCacheItem->set($text);
-        $processedStringCacheAdapter->save($processedStringCacheItem);
-
-        return $text;
+        // collapse the double spaces left where words were removed
+        return preg_replace('/ {2,}/', ' ', $text);
     }
 
 
-    protected function deleteStaleCacheFiles()
+    protected function getRegex() : string
     {
-        $sourceFilePath = $this->getSourceFilePath();
-        $sourceFileModTime = filemtime($sourceFilePath);
-
-        $wordsCacheFilePath = $this->getWordsCacheFilePath();
-        $wordsCacheFileModTime = file_exists($wordsCacheFilePath) ? filemtime($wordsCacheFilePath) : 0;
-
-        if( $wordsCacheFileModTime > 0 && $sourceFileModTime >= $wordsCacheFileModTime ) {
-
-            $this->getCacheAdapter($wordsCacheFileModTime)->clear();
-
-            $processedStringCacheFilePath = $this->getProcessedStringCacheFilePath();
-            $this->getCacheAdapter($processedStringCacheFilePath)->clear();
-
-            unlink($wordsCacheFilePath);
-        }
-    }
-
-
-    protected function getSourceFilePath() : string
-        { return $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt"; }
-
-
-    protected function getWordsCacheFilePath() : string
-    {
-        return
-            $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_map.cache']);
-    }
-
-
-    protected function getProcessedStringCacheFilePath() : string
-    {
-        return
-            $this->projectDir->createVarDirFromFilePath(['cache', static::FILENAME, static::FILENAME . '_processed.cache']);
-    }
-
-
-    public function getCacheAdapter(string $cacheFilePath) : PhpArrayAdapter
-    {
-        $symfonyCacheDirPath = $this->projectDir->getVarDir('cache');
-
-        // 📚 https://symfony.com/doc/current/components/cache/adapters/php_array_cache_adapter.html
-        return new PhpArrayAdapter($cacheFilePath, new FilesystemAdapter(static::FILENAME, 0, $symfonyCacheDirPath));
-    }
-
-
-    protected function loadDictionaryArray() : void
-    {
-        if( !empty(static::$arrStopWords) ) {
-            return;
+        if( static::$regex !== null ) {
+            return static::$regex;
         }
 
-        $cacheFilePath = $this->getWordsCacheFilePath();
-        if( file_exists($cacheFilePath) ) {
+        $sourceFilePath = $this->projectDir->getProjectDir(['assets', 'dictionaries']) . static::FILENAME . ".txt";
+        $arrStopWords   = array_unique( explode(PHP_EOL, file_get_contents($sourceFilePath)) );
 
-            static::$arrStopWords = $this->getCacheAdapter($cacheFilePath)->getItem(static::FILENAME)->get();
-            return;
-        }
-
-        //
-        $fileContent = file_get_contents( $this->getSourceFilePath() );
-        static::$arrStopWords = array_unique( explode(PHP_EOL, $fileContent) );
-        foreach(static::$arrStopWords as $key => $value) {
+        $arrCleanStopWords = [];
+        foreach($arrStopWords as $value) {
 
             $value = trim($value);
 
+            // skip blank lines and "##" comment lines
             if( empty($value) || mb_substr($value, 0, 2) == '##' ) {
-
-                unset(static::$arrStopWords[$key]);
                 continue;
             }
 
-            static::$arrStopWords[$key] = $value;
+            $arrCleanStopWords[] = $value;
         }
 
-        usort(static::$arrStopWords, fn($a, $b) => mb_strlen($b) - mb_strlen($a));
+        // longest-first, so the alternation prefers the longest match at any position (e.g. "una" over "un")
+        usort($arrCleanStopWords, fn($a, $b) => mb_strlen($b) - mb_strlen($a));
 
-        $this->getCacheAdapter($cacheFilePath)->warmUp([static::FILENAME => static::$arrStopWords]);
+        return static::$regex = '/\b(' . implode('|', $arrCleanStopWords) . ')\b/iu';
     }
 }
