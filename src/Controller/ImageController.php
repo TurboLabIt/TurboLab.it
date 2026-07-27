@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Exception\ImageLogicException;
 use App\Exception\ImageNotFoundException;
 use App\Service\Cms\Image;
+use App\Service\Factory;
 use App\Service\FrontendHelper;
 use App\ServiceCollection\Cms\ImageCollection;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,10 @@ class ImageController extends BaseController
     const string SECTION_SLUG = "immagini";
 
 
-    public function __construct(protected Image $image, protected ImageCollection $imageCollection) {}
+    public function __construct(protected Image $image, protected ImageCollection $imageCollection, Factory $factory)
+    {
+        $this->factory = $factory;
+    }
 
 
     #[Route('/' . self::SECTION_SLUG . '/{size<[a-z]+>}/{imageFolderMod}/{slugDashId<[^/]*-[1-9]+[0-9]*>}.{format<[^/]+>}', name: 'app_image')]
@@ -122,13 +126,16 @@ class ImageController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/orfane', name: 'app_image_orphans')]
     public function orphans(ImageCollection $images, FrontendHelper $frontendHelper) : Response
     {
-        $count = $images->loadOrphans()->count();
+        $currentUser = $this->getCurrentUser();
+
+        $count = $currentUser ? $images->loadOrphans()->count() : 0;
         $count = number_format($count, 0, ',', '.');
 
         return $this->render('image/orphans.html.twig', [
             'metaTitle'         => 'Immagini orfane',
             'activeMenu'        => null,
             'FrontendHelper'    => $frontendHelper,
+            'CurrentUser'       => $currentUser,
             'Images'            => $images,
             'num'               => $count,
         ]);

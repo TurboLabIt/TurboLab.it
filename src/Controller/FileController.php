@@ -71,37 +71,44 @@ class FileController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/da-controllare', name: 'app_file_need-fixing')]
     public function needFixing(ProjectDir $projectDir, FrontendHelper $frontendHelper, FileCollection $files) : Response
     {
-        $filePathUnused     = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
-        $txtJson            = file_get_contents($filePathUnused);
-        $arrAttachedUnused  = json_decode($txtJson, true);
+        $currentUser = $this->getCurrentUser();
 
-        $orphans = $files->loadOrphans();
+        $arrData = [
+            'metaTitle'         => 'File da controllare',
+            'activeMenu'        => null,
+            'FrontendHelper'    => $frontendHelper,
+            'CurrentUser'       => $currentUser,
+        ];
 
-        $filePathMissingOnFilesystem= $projectDir->getVarDirFromFilePath(File::MISSING_ON_FILESYSTEM_FILE_NAME);
-        $txtJson                    = file_get_contents($filePathMissingOnFilesystem);
-        $arrMissingOnFilesystem     = json_decode($txtJson, true);
+        if( $currentUser ) {
 
-        $filePathMissingOnDatabase  = $projectDir->getVarDirFromFilePath(File::MISSING_ON_DATABASE_FILE_NAME);
-        $txtJson                    = file_get_contents($filePathMissingOnDatabase);
-        $arrMissingOnDatabase       = json_decode($txtJson, true);
+            $filePathUnused     = $projectDir->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
+            $arrAttachedUnused  = json_decode(file_get_contents($filePathUnused), true);
 
-        return $this->render('file/need-fixing.html.twig', [
-            'metaTitle'                 => 'File da controllare',
-            'activeMenu'                => null,
-            'FrontendHelper'            => $frontendHelper,
-            //
-            'AttachedUnused'            => $arrAttachedUnused,
-            'numAttachedUnused'         => number_format(count($arrAttachedUnused), 0, ',', '.'),
-            'dateAttachedUnusedList'    => new DateTime('@' . filemtime($filePathUnused)),
-            //
-            'Orphans'                   => $files,
-            'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),
-            //
-            'MissingOnFilesystem'       => $arrMissingOnFilesystem,
-            'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
-            //
-            'MissingOnDatabase'         => $arrMissingOnDatabase,
-            'numMissingOnDatabase'      => number_format(count($arrMissingOnDatabase), 0, ',', '.')
-        ]);
+            $orphans = $files->loadOrphans();
+
+            $filePathMissingOnFilesystem= $projectDir->getVarDirFromFilePath(File::MISSING_ON_FILESYSTEM_FILE_NAME);
+            $arrMissingOnFilesystem     = json_decode(file_get_contents($filePathMissingOnFilesystem), true);
+
+            $filePathMissingOnDatabase  = $projectDir->getVarDirFromFilePath(File::MISSING_ON_DATABASE_FILE_NAME);
+            $arrMissingOnDatabase       = json_decode(file_get_contents($filePathMissingOnDatabase), true);
+
+            $arrData += [
+                'AttachedUnused'            => $arrAttachedUnused,
+                'numAttachedUnused'         => number_format(count($arrAttachedUnused), 0, ',', '.'),
+                'dateAttachedUnusedList'    => new DateTime('@' . filemtime($filePathUnused)),
+                //
+                'Orphans'                   => $files,
+                'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),
+                //
+                'MissingOnFilesystem'       => $arrMissingOnFilesystem,
+                'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
+                //
+                'MissingOnDatabase'         => $arrMissingOnDatabase,
+                'numMissingOnDatabase'      => number_format(count($arrMissingOnDatabase), 0, ',', '.')
+            ];
+        }
+
+        return $this->render('file/need-fixing.html.twig', $arrData);
     }
 }
