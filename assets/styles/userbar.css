@@ -29,3 +29,18 @@
     background: linear-gradient(to right, orangered, orange);
     padding: 20px;
 }
+
+.tli-user-logout button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    vertical-align: baseline;
+    color: #17222B;
+    cursor: pointer;
+    transition: all 0.3s ease-out 0s;
+}
+
+.tli-user-logout button:hover {
+    color: #1091FF;
+}
