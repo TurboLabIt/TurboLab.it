@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const require = createRequire(import.meta.url);
-const OUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../assets/images/social-icons');
+const OUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'images/social-icons');
 
 const SI_LICENSE = '<!-- Glyph: Simple Icons - https://simpleicons.org (CC0; brands are trademarks of their owners) -->';
 const FA_LICENSE = '<!-- Glyph: Font Awesome Free - https://fontawesome.com/license/free (Icons: CC BY 4.0) -->';

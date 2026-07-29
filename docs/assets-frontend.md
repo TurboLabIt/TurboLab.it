@@ -70,7 +70,7 @@ La barra di condivisione degli articoli è 100% first-party: nessun servizio est
 - JS: [assets/js/social-share.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/social-share.js) — gestisce l'espansione dei pulsanti, con logiche adeguate per prevenire il CLS
 - CSS: [assets/styles/social-share.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/social-share.css)
 
-Le icone (disco nel colore del brand + glifo bianco) non sono file committati, ma sono generati da [scripts/build-social-icons.mjs](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/build-social-icons.mjs) e scritti in `assets/images/social-icons/` (gitignored), da cui Encore le copia in `public/build/` con hash. `yarn build:icons` è agganciato automaticamente a `dev`, `watch` e `build`. Le stesse icone servono anche la sezione "Seguici" ([FrontendHelper](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/FrontendHelper.php)) e il player YouTube della home.
+Le icone (disco nel colore del brand + glifo bianco) non sono file committati, ma sono generati da [assets/build-social-icons.mjs](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/build-social-icons.mjs) e scritti in `assets/images/social-icons/` (gitignored), da cui Encore le copia in `public/build/` con hash. `yarn build:icons` è agganciato automaticamente a `dev`, `watch` e `build`. Le stesse icone servono anche la sezione "Seguici" ([FrontendHelper](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/FrontendHelper.php)) e il player YouTube della home.
 
 I glifi provengono da tre pacchetti Yarn, perché nessuno da solo copre tutto:
 
