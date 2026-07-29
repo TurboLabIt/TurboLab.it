@@ -37,6 +37,7 @@
     font: inherit;
     vertical-align: baseline;
     color: #17222B;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease-out 0s;
 }
