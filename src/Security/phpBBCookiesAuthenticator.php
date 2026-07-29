@@ -61,6 +61,19 @@ class phpBBCookiesAuthenticator extends AbstractAuthenticator implements EventSu
             return null;
         }
 
+        // "u" is a phpBB user_id later fed to int-typed repository methods; a non-numeric or
+        // out-of-range value would raise an uncaught TypeError ➡ 500 on nearly every route.
+        // Validate it as a real positive int here and
+        // treat a malformed id as "no login data", so the request falls back to anonymous.
+        $userId = filter_var($arrLoginData["u"], FILTER_VALIDATE_INT);
+        if( $userId === false || $userId < 1 ) {
+
+            $this->removeNoRememberMeCookie();
+            return null;
+        }
+
+        $arrLoginData["u"] = $userId;
+
         // "remember me" flow
         if( !empty($arrLoginData["k"]) ) {
 
