@@ -31,9 +31,12 @@
                         <a href="{{ User.url }}"><i class="fa-solid fa-list"></i> La tua pagina di Autore</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('app_logout') }}">
-                            <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Esci (logout)
-                        </a>
+                        <form method="post" action="{{ path('app_logout') }}" class="tli-user-logout d-inline">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                            <button type="submit" class="btn btn-link p-0 border-0 align-baseline">
+                                <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Esci (logout)
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>

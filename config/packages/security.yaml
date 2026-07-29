@@ -28,6 +28,7 @@ security:
             custom_authenticator: App\Security\phpBBCookiesAuthenticator
             logout:
                 path: app_logout
+                enable_csrf: true
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
