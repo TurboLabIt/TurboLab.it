@@ -17,13 +17,13 @@
         "@symfony/webpack-encore": ">=7.2.0",
         "bootstrap-icons": "1.13.1",
         "file-loader": ">=6.2.0",
-        "npm-check-updates": "^22.2.9",
+        "npm-check-updates": "^23.0.0",
         "raw-loader": ">=4.0.2",
         "sass": ">=1.102.0",
         "sass-loader": ">=17.0",
         "simple-icons": "16.27.1",
-        "webpack": ">=5.109.0",
-        "webpack-cli": "7.2.1",
+        "webpack": ">=5.109.2",
+        "webpack-cli": "7.2.2",
         "webpack-notifier": ">=1.15.0"
     },
     "license": "UNLICENSED",
@@ -33,7 +33,7 @@
         "dev": "yarn build:icons && encore dev",
         "watch": "yarn build:icons && encore dev --watch",
         "build": "yarn build:icons && encore production --progress",
-        "build:icons": "node scripts/build-social-icons.mjs"
+        "build:icons": "node assets/build-social-icons.mjs"
     },
-    "packageManager": "yarn@4.17.1"
+    "packageManager": "yarn@4.18.0"
 }

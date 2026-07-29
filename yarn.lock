@@ -2145,9 +2145,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@symfony/webpack-encore@npm:>=7.1.0":
-  version: 7.1.0
-  resolution: "@symfony/webpack-encore@npm:7.1.0"
+"@symfony/webpack-encore@npm:>=7.2.0":
+  version: 7.2.0
+  resolution: "@symfony/webpack-encore@npm:7.2.0"
   dependencies:
     "@kocal/friendly-errors-webpack-plugin": "npm:^3.0.0"
     babel-loader: "npm:^10.0.0"
@@ -2191,6 +2191,7 @@ __metadata:
     vue-loader: ^17.0.0
     webpack: ^5.82
     webpack-cli: ^6.0.0 || ^7.0.0
+    webpack-dev-server: ^5.1.0 || ^6.0.0
     webpack-notifier: ^1.15.0
   peerDependenciesMeta:
     "@babel/core":
@@ -2266,8 +2267,8 @@ __metadata:
     webpack-notifier:
       optional: true
   bin:
-    encore: bin/encore.js
-  checksum: 10c0/0d3767b4ecde89184b6c9e27f0d78042c1a97e1b865623b9a249161bae0613dd30fe5633f3fb2b9d5936b30389094557b9731c82b42a5c41d9e3a307cb1037bf
+    encore: dist/bin/encore.js
+  checksum: 10c0/c48db85423564de2b7682d710d6f0992c7bed86edd1a24a5918a348c49a6ab999a5b02a6ebb3be47faa5e4bca4e0a95cb423bc39e046983ebfa6ade18519d132
   languageName: node
   linkType: hard
 
@@ -5028,7 +5029,7 @@ __metadata:
     "@babel/preset-env": "npm:>=8.0.2"
     "@fortawesome/fontawesome-free": "npm:^7.3.1"
     "@popperjs/core": "npm:^2.11.8"
-    "@symfony/webpack-encore": "npm:>=7.1.0"
+    "@symfony/webpack-encore": "npm:>=7.2.0"
     bootstrap: "npm:^5.3.8"
     bootstrap-icons: "npm:1.13.1"
     chart.js: "npm:>=4.5.1"
@@ -5041,7 +5042,7 @@ __metadata:
     raw-loader: "npm:>=4.0.2"
     sass: "npm:>=1.102.0"
     sass-loader: "npm:>=17.0"
-    simple-icons: "npm:16.27.0"
+    simple-icons: "npm:16.27.1"
     slick-carousel: "npm:^1.8.1"
     webpack: "npm:>=5.109.0"
     webpack-cli: "npm:7.2.1"
@@ -5160,10 +5161,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-icons@npm:16.27.0":
-  version: 16.27.0
-  resolution: "simple-icons@npm:16.27.0"
-  checksum: 10c0/3aa84668358e5de876ef6d42fe8c359216f127d30ad146224e19540caf7504288374619ff8c634fabbbb180c53f4f401e62842290e2e2917a459b288077bc6a5
+"simple-icons@npm:16.27.1":
+  version: 16.27.1
+  resolution: "simple-icons@npm:16.27.1"
+  checksum: 10c0/0f06df66db137f59db3f99f6da6b0fde4d9c4cea3b85a38fa4584dc1d3ed487dd11f3c8d9f0d71cfe2da246400651921e9d87c8921d786da2acdf1d7c2950cb1
   languageName: node
   linkType: hard
 
