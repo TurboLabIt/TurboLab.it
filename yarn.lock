@@ -3139,13 +3139,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.24.2":
-  version: 5.24.3
-  resolution: "enhanced-resolve@npm:5.24.3"
+"enhanced-resolve@npm:^5.24.4":
+  version: 5.24.5
+  resolution: "enhanced-resolve@npm:5.24.5"
   dependencies:
     graceful-fs: "npm:^4.2.4"
     tapable: "npm:^2.3.3"
-  checksum: 10c0/907a1c4b35901539613e080c77274e354f668da3124f7e0f595e6efed46e730c732049f500b771d2657a1f16a4a220b9852e475884b1951b6e4f1389f0d58bb1
+  checksum: 10c0/76c32ce5485ecea0ef808c9289bc6f7c49ce85142943598d89a23a846f2909556d3dc6db97a007442a48c185baad5514c1c76d20a2656497f9511d13ccfab73b
   languageName: node
   linkType: hard
 
@@ -4532,13 +4532,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-check-updates@npm:^22.2.9":
-  version: 22.2.9
-  resolution: "npm-check-updates@npm:22.2.9"
+"npm-check-updates@npm:^23.0.0":
+  version: 23.0.0
+  resolution: "npm-check-updates@npm:23.0.0"
   bin:
     ncu: build/cli.js
     npm-check-updates: build/cli.js
-  checksum: 10c0/eab83aa114680c512b981bb70251d0d751d9cd49155438a060644d3361b7f64cecac585a033aa1844fef8c20a8a182d4f777adc9d081da30b2c6affd2a2c8670
+  checksum: 10c0/e1d5b1e3654f0a4c13dfb767d05afe26946e5f9734dfa42ce99d4178f3a6287926efda9273f2a1de3185473d33aa503f90b997cc2403c2c819f55e97106941bd
   languageName: node
   linkType: hard
 
@@ -5037,15 +5037,15 @@ __metadata:
     file-loader: "npm:>=6.2.0"
     jquery-is-in-viewport: "npm:>=1.0.5"
     js-cookie: "npm:>=3.0.8"
-    npm-check-updates: "npm:^22.2.9"
+    npm-check-updates: "npm:^23.0.0"
     odometer: "npm:>=0.4.8"
     raw-loader: "npm:>=4.0.2"
     sass: "npm:>=1.102.0"
     sass-loader: "npm:>=17.0"
     simple-icons: "npm:16.27.1"
     slick-carousel: "npm:^1.8.1"
-    webpack: "npm:>=5.109.0"
-    webpack-cli: "npm:7.2.1"
+    webpack: "npm:>=5.109.2"
+    webpack-cli: "npm:7.2.2"
     webpack-notifier: "npm:>=1.15.0"
   languageName: unknown
   linkType: soft
@@ -5560,9 +5560,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:7.2.1":
-  version: 7.2.1
-  resolution: "webpack-cli@npm:7.2.1"
+"webpack-cli@npm:7.2.2":
+  version: 7.2.2
+  resolution: "webpack-cli@npm:7.2.2"
   dependencies:
     "@discoveryjs/json-ext": "npm:^1.1.0"
     commander: "npm:^14.0.3"
@@ -5592,7 +5592,7 @@ __metadata:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 10c0/52097d4c7f11b05f1328ea96ea464951a5723fb9ebb4c83f3e2a0510930cbc2a0ff1956be2e08ec0a0723a6b633eb9af22f4722a9ffee69ca7676da1c4237838
+  checksum: 10c0/f46b732710d175fc0a63230783c0a3cfd6e99a576d3b80fdd1fff3197851565d938c10be4d74076c2d9846297331aea763b7b5ff0e04a1934bc7fbda6f875724
   languageName: node
   linkType: hard
 
@@ -5648,9 +5648,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:>=5.109.0":
-  version: 5.109.0
-  resolution: "webpack@npm:5.109.0"
+"webpack@npm:>=5.109.2":
+  version: 5.109.2
+  resolution: "webpack@npm:5.109.2"
   dependencies:
     "@types/estree": "npm:^1.0.8"
     "@types/json-schema": "npm:^7.0.15"
@@ -5660,7 +5660,7 @@ __metadata:
     acorn: "npm:^8.16.0"
     browserslist: "npm:^4.28.1"
     chrome-trace-event: "npm:^1.0.2"
-    enhanced-resolve: "npm:^5.24.2"
+    enhanced-resolve: "npm:^5.24.4"
     es-module-lexer: "npm:^2.1.0"
     eslint-scope: "npm:5.1.1"
     events: "npm:^3.2.0"
@@ -5677,7 +5677,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/c12a8c2f5f7ac588bd47299124b94938fadecdba8b73de156296af98f3bf57c68b3c42c53551bb373d49b974d613c010d2693c2287f9a6b87869184ddf5aab8f
+  checksum: 10c0/524b8afe327a2452ed1d12340cf40fc9d6c65cb72108efeb704cce55ed93b8532be23e5179bbc3f537003b8de204fab0753a0050239bfcb4871cc8a2b3c1a723
   languageName: node
   linkType: hard
 
