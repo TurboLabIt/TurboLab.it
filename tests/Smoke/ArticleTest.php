@@ -230,9 +230,9 @@ class ArticleTest extends BaseT
                     'keyword'   => 'crypto'
                 ],
                 [
-                    // this one carries two badges via its tags
+                    // this one carries two badges (criptovalute + sponsor) via its tags
                     'Article'   => $arrKoArticles->get(4064),
-                    'keyword'   => 'crypto'
+                    'keyword'   => 'differenze chiave'
                 ]
             ];
 
@@ -268,8 +268,10 @@ class ArticleTest extends BaseT
         $this->assertStringNotContainsString($arrData['keyword'], $html, 'A KO article is visible! URL: ##' . $url . '##');
         $this->assertStringContainsString('articolo non disponibile', $html);
 
-        // badges belong to the article content: they must follow it and stay hidden to whoever can't read it
+        // badges and authors bio belong to the article content:
+        // they must follow it and stay hidden to whoever can't read it
         $this->assertStringNotContainsString('tli-badge-', $html, 'The badges of a KO article are visible! URL: ##' . $url . '##');
+        $this->assertStringNotContainsString('tli-article-authors-bio', $html, 'The authors bio of a KO article is visible! URL: ##' . $url . '##');
 
 
         $shortUrl = $article->getShortUrl();

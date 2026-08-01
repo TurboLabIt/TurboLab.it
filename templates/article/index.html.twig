@@ -132,9 +132,11 @@
 
                     </div>
 
-                    <div id="tli-article-authors-bio" class="tli-article-box mt-30 container">
-                        {% include 'article/authors-bio.html.twig' %}
-                    </div>
+                    {% if Article.isReadable %}
+                        <div id="tli-article-authors-bio" class="tli-article-box mt-30 container">
+                            {% include 'article/authors-bio.html.twig' %}
+                        </div>
+                    {% endif %}
 
                     <div class="post-reader-text post-reader-text-2 post-reader-text-3 pt-50">
                         <div class="row">
