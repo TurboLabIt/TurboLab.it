@@ -56,6 +56,7 @@ class ArticleNewController extends ArticleEditBaseController
             'CurrentUserInReviewArticles'   => $currentUser?->getArticlesInReview(),
             'CurrentUserPublishedArticles'  => $currentUser?->getArticlesLatestPublished(),
             'CurrentUserKoArticles'         => $currentUser?->getArticlesKo(),
+            'currentUserIsEditor'           => $currentUser?->isEditor() ?? false,
             'SideArticlesSlices'            => $arrSideArticlesSlices,
             'Views'                         => $this->frontendHelper->getViews()->get(['bozze', 'finiti']),
             //
@@ -93,7 +94,10 @@ class ArticleNewController extends ArticleEditBaseController
 
         $newArticleFormat = $this->request->request->get(static::FORMAT_FIELD_NAME);
 
-        if( $newArticleFormat == Article::FORMAT_ACTION_SPONSOR ) {
+        if(
+            $this->getCurrentUser()?->isEditor() &&
+            $newArticleFormat == Article::FORMAT_ACTION_SPONSOR
+        ) {
 
             $newArticleFormat = Article::FORMAT_NEWS;
             $newArticleAuthor = $this->factory->createUser()->load(User::ID_SYSTEM);

@@ -154,6 +154,7 @@
                                                 </label>
                                             </div>
 
+                                            {% if currentUserIsEditor %}
                                             <div class="form-check form-check-inline d-none">
                                                 <input class="form-check-input" type="radio" name="{{ formatFieldName }}"
                                                        id="{{ formatFieldName }}-{{ formatActionSponsor }}" value="{{ formatActionSponsor }}"
@@ -162,6 +163,7 @@
                                                     <i class="fa-solid fa-bullhorn"></i> Sponsor
                                                 </label>
                                             </div>
+                                            {% endif %}
 
                                         </div>
                                     </div>
