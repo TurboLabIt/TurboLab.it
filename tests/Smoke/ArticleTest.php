@@ -214,7 +214,7 @@ class ArticleTest extends BaseT
     {
         if( empty(static::$arrKoArticles) ) {
 
-            $arrKoArticles = static::getArticleCollection()->load([2380, 353, 1779]);
+            $arrKoArticles = static::getArticleCollection()->load([2380, 353, 1779, 4064]);
 
             $arrData = [
                 [
@@ -227,6 +227,11 @@ class ArticleTest extends BaseT
                 ],
                 [
                     'Article'   => $arrKoArticles->get(1779),
+                    'keyword'   => 'crypto'
+                ],
+                [
+                    // this one carries two badges via its tags
+                    'Article'   => $arrKoArticles->get(4064),
                     'keyword'   => 'crypto'
                 ]
             ];
@@ -262,6 +267,9 @@ class ArticleTest extends BaseT
 
         $this->assertStringNotContainsString($arrData['keyword'], $html, 'A KO article is visible! URL: ##' . $url . '##');
         $this->assertStringContainsString('articolo non disponibile', $html);
+
+        // badges belong to the article content: they must follow it and stay hidden to whoever can't read it
+        $this->assertStringNotContainsString('tli-badge-', $html, 'The badges of a KO article are visible! URL: ##' . $url . '##');
 
 
         $shortUrl = $article->getShortUrl();
