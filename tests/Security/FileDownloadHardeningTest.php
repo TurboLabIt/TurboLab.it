@@ -2,6 +2,7 @@
 namespace App\Tests\Security;
 
 use App\Entity\Cms\File as FileEntity;
+use App\Service\Cms\Article;
 use App\Service\Factory;
 use App\Tests\BaseT;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -162,6 +163,12 @@ class FileDownloadHardeningTest extends BaseT
     /**
      * Create a real LOCAL file (committed DB row + bytes in var/uploaded-assets/files/{id}.{format}) via the
      * production upload path, then pin the on-disk extension to exactly $format. Returns the new file id.
+     *
+     * The file is attached to the quality-test article — as the real upload endpoints do, which always add the
+     * upload to the article being edited. A file hanging on nothing is invisible since security-audit #45
+     * (visibility is inherited from the articles), so an unattached fixture would 401 here and test the gate
+     * instead of the delivery hardening this class is about. The junction is removed with the file
+     * (orphanRemoval on File::$articles).
      */
     private function createLocalFileFixture(string $format, string $bytes) : int
     {
@@ -177,6 +184,11 @@ class FileDownloadHardeningTest extends BaseT
             ->createFromUploadedFile($uploaded, self::FIXTURE_TITLE_PREFIX . $format . '-' . uniqid());
 
         $fileId = $editor->getId();
+
+        $factory->createArticleEditor()->load(Article::ID_QUALITY_TEST)
+            ->addFiles([$editor], $factory->getCurrentUserAsAuthor());
+
+        static::getEntityManager()->flush();
 
         // guessExtension() may resolve to something other than $format ⇒ force it (load() primes previousFilePath,
         // so save() renames {id}.{guessed} → {id}.{format} on disk)

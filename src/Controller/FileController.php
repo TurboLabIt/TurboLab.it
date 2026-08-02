@@ -19,7 +19,7 @@ class FileController extends BaseController
     #[Route('/' . self::SECTION_SLUG . '/{fileId<[1-9]+[0-9]*>}', name: 'app_file')]
     public function index(int $fileId, Visit $visit) : Response
     {
-        $file = $this->factory->createFile()->load($fileId);
+        $file = $this->factory->createFile()->load($fileId)->enforceCanView();
 
         $user = $this->getCurrentUserAsAuthor();
         $visit->visit($file, $user);

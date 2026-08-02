@@ -17,6 +17,13 @@ class FileSentinel extends BaseSentinel
     }
 
 
+    public function canView(?File $file = null) : bool
+    {
+        $file = $file ?? $this->file;
+        return $file->isVisitable() || $this->canEdit($file) || $this->canEditAnyArticle($file);
+    }
+
+
     public function canEdit(?File $file = null) : bool
     {
         $file           = $file ?? $this->file;
@@ -34,6 +41,38 @@ class FileSentinel extends BaseSentinel
     {
         $file = $file ?? $this->file;
         return array_key_exists($this->getCurrentUser()?->getId() ?? -1, $file->getAuthors());
+    }
+
+
+    /**
+     * canEdit() only knows about the authors of the *file*, so a co-author who didn't upload it would be
+     * locked out of the very draft they are writing. Whoever can edit an article the file hangs on can
+     * download it too.
+     */
+    protected function canEditAnyArticle(?File $file = null) : bool
+    {
+        $file = $file ?? $this->file;
+
+        foreach($file->getArticles() as $article) {
+
+            if( $this->factory->createArticleSentinel($article)->canEdit() ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public function enforceCanView(?File $file = null, string $errorMessage = "You're not authorized to download this file") : static
+    {
+        $file = $file ?? $this->file;
+
+        if( empty( $this->canView($file) ) ) {
+            throw new AccessDeniedException($errorMessage);
+        }
+
+        return $this;
     }
 
 

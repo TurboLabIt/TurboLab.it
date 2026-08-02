@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 class FileEditController extends ArticleEditBaseController
@@ -199,6 +200,10 @@ class FileEditController extends ArticleEditBaseController
             $fileEditor = $this->factory->createFileEditor()->load($fileId);
 
             $arrUsedBy = $fileEditor->getArticles();
+
+            if( !array_key_exists($articleId, $arrUsedBy) ) {
+                throw new AccessDeniedException("Questo file non è collegato all'articolo indicato");
+            }
 
             // this file is linked by 0 or 1 article ➡ delete the file directly
             if( count($arrUsedBy) < 2 ) {

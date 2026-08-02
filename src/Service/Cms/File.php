@@ -69,6 +69,15 @@ class File extends BaseCmsService
         $this->factory->createFileSentinel($this)->enforceCanEdit();
         return $this;
     }
+
+
+    public function isReadable() : bool { return $this->factory->createFileSentinel($this)->canView(); }
+
+    public function enforceCanView() : static
+    {
+        $this->factory->createFileSentinel($this)->enforceCanView();
+        return $this;
+    }
     //</editor-fold>
 
 
@@ -161,6 +170,20 @@ class File extends BaseCmsService
         }
 
         return $this->arrArticles;
+    }
+
+
+    // A file has no publishing status of its own: it inherits visibility from the articles it's attached to
+    public function isVisitable() : bool
+    {
+        foreach($this->getArticles() as $article) {
+
+            if( $article->isVisitable() ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
