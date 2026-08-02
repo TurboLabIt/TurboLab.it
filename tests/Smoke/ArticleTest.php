@@ -231,7 +231,7 @@ class ArticleTest extends BaseT
                 ],
                 [
                     // this one carries two badges (criptovalute + sponsor) via its tags
-                    'Article'   => $arrKoArticles->get(4064),
+                    'Article'   => $arrKoArticles->get(Article::ID_REMOVED),
                     'keyword'   => 'differenze chiave'
                 ]
             ];
