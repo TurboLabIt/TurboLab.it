@@ -21,7 +21,7 @@
         "raw-loader": ">=4.0.2",
         "sass": ">=1.102.0",
         "sass-loader": ">=17.0",
-        "simple-icons": "16.27.1",
+        "simple-icons": "16.28.0",
         "webpack": ">=5.109.2",
         "webpack-cli": "7.2.2",
         "webpack-notifier": ">=1.15.0"
