@@ -70,6 +70,10 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             '<br/>'				=> '<p></p>',
             '<br />'			=> '<p></p>',
 
+            // must run before the <h2><strong> rule below, so that <h2><b> is collapsed too
+            '<b>'               => '<strong>',
+            '</b>'              => '</strong>',
+
             '<h2><strong>'		=> '<h2>',
             '</strong></h2>'	=> '</h2>',
 
@@ -279,41 +283,35 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $iframesToProcess[] = $iframe;
         }
 
-        $arrRegex = [
-            '/(?<=(\/embed\/))([a-z0-9_-]+)/i',
-            '/(?<=(\/watch\?v=))([a-z0-9_-]+)/i'
-        ];
+        $regex = '/(?<=(\/embed\/))([a-z0-9_-]+)/i';
 
         /** @var DOMElement $iframe */
         foreach($iframesToProcess as $iframe) {
 
-            foreach($arrRegex as $regex) {
+            $url = $iframe->getAttribute("src");
 
-                $url = $iframe->getAttribute("src");
+            $arrMatches = [];
+            preg_match($regex, $url, $arrMatches);
 
-                $arrMatches = [];
-                preg_match($regex, $url, $arrMatches);
-
-                if( !empty($arrMatches[0]) ) {
-
-                    $placeholderText = '==###youtube::code::' . $arrMatches[0] . '###==';
-
-                    // Create a new text node with the placeholder
-                    $placeholderNode = $domDoc->createTextNode($placeholderText);
-
-                    // Get the parent of the iframe
-                    $parentNode = $iframe->parentNode;
-
-                    //// Ensure parentNode exists
-                    if( !$parentNode ) {
-                        continue;
-                    }
-
-                    // Replace the iframe with the new text node
-                    $parentNode->replaceChild($placeholderNode, $iframe);
-                    break;
-                }
+            if( empty($arrMatches[0]) ) {
+                continue;
             }
+
+            $placeholderText = '==###youtube::code::' . $arrMatches[0] . '###==';
+
+            // Create a new text node with the placeholder
+            $placeholderNode = $domDoc->createTextNode($placeholderText);
+
+            // Get the parent of the iframe
+            $parentNode = $iframe->parentNode;
+
+            //// Ensure parentNode exists
+            if( !$parentNode ) {
+                continue;
+            }
+
+            // Replace the iframe with the new text node
+            $parentNode->replaceChild($placeholderNode, $iframe);
         }
 
         return $this;
