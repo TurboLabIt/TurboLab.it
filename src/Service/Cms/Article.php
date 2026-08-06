@@ -104,7 +104,6 @@ class Article extends BaseCmsService
     public function getEntity() : ?ArticleEntity { return $this->entity ?? null; }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 👮🏻 Special access ***">
     public function isListable() : bool { return $this->factory->createArticleSentinel($this)->canList(); }
 
@@ -112,7 +111,6 @@ class Article extends BaseCmsService
 
     public function isEditable() : bool { return $this->factory->createArticleSentinel($this)->canEdit(); }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Publishing ***">
     public function isVisitable() : bool { return in_array($this->getPublishingStatus(), static::PUBLISHING_STATUSES_VISIBLE); }
@@ -174,6 +172,11 @@ class Article extends BaseCmsService
 
     public function getFormat() : string { return $this->entity->getFormat(); }
     //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🐦‍🔥 Special features ***">
+    public function isAllowExtendedHtml() : bool { return $this->entity->isAllowExtendedHtml(); }
+    //</editor-fold>
+
 
     //<editor-fold defaultstate="collapsed" desc="*** 🖼️ Images ***">
     public function getImages() : array
@@ -536,7 +539,6 @@ class Article extends BaseCmsService
 
     public function getSlug() : ?string { return $this->factory->getArticleUrlGenerator()->buildSlug($this); }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 📛 Badges ***">
     public function getBadges() : array

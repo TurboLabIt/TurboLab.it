@@ -150,6 +150,13 @@ class ArticleEditor extends Article
         $this->entity->setCommentsTopicNeedsUpdate($status);
         return $this;
     }
+
+
+    public function allowExtendedHtml(bool $allow = true) : static
+    {
+        $this->entity->allowExtendedHtml($allow);
+        return $this;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👥 Authors ***">

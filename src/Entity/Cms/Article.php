@@ -45,6 +45,9 @@ class Article extends BaseCmsEntity
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?Image $spotlight = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    protected ?bool $allowExtendedHtml = false;
+
     #[ORM\OneToMany(targetEntity: ArticleAuthor::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]
     protected Collection $authors;
@@ -130,6 +133,15 @@ class Article extends BaseCmsEntity
     public function setSpotlight(?Image $spotlight) : static
     {
         $this->spotlight = $spotlight;
+        return $this;
+    }
+
+
+    public function isAllowExtendedHtml() : bool { return $this->allowExtendedHtml; }
+
+    public function allowExtendedHtml(bool $allow = true) : static
+    {
+        $this->allowExtendedHtml = $allow;
         return $this;
     }
 
