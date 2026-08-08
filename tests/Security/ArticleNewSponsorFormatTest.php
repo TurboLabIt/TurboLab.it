@@ -83,14 +83,8 @@ class ArticleNewSponsorFormatTest extends BaseT
             '): the finding #42 gate broke the feature for who is entitled to use it'
         );
 
-        $location = rtrim( (string)$response->headers->get('Location'), '/' );
-        $this->assertMatchesRegularExpression('/-(\d+)$/', $location, "Unexpected redirect target: $location");
-        preg_match('/-(\d+)$/', $location, $arrMatches);
-
-        $articleId = (int)$arrMatches[1];
-        $this->arrCreatedArticleIds[] = $articleId;
-
-        $conn = $this->getConnection();
+        $articleId  = $this->extractCreatedArticleId();
+        $conn       = $this->getConnection();
 
         $this->assertSame(
             Article::FORMAT_NEWS, (int)$conn->fetchOne("SELECT format FROM article WHERE id = ?", [$articleId]),
@@ -106,6 +100,39 @@ class ArticleNewSponsorFormatTest extends BaseT
         $this->assertNotFalse(
             $conn->fetchOne("SELECT 1 FROM article_tag WHERE article_id = ? AND tag_id = ?", [$articleId, Tag::ID_SPONSOR]),
             'The sponsor article did not get the Sponsor tag'
+        );
+    }
+
+
+    public function testSponsorArticleGetsTheExtendedHtmlAllowance() : void
+    {
+        $crawler = $this->loginAndOpenTheNewArticlePage(User::ID_DEFAULT_ADMIN);
+        $this->submitNewArticle($crawler, Article::FORMAT_ACTION_SPONSOR);
+
+        $this->assertTrue(static::$client->getResponse()->isRedirect(), 'The sponsor POST of an EDITOR did not create an article');
+        $articleId = $this->extractCreatedArticleId();
+
+        $this->assertSame(
+            1, (int)$this->getConnection()->fetchOne("SELECT allow_extended_html FROM article WHERE id = ?", [$articleId]),
+            'A sponsor article created by an EDITOR did not get allow_extended_html: ArticleNewController::submit() ' .
+            'is no longer calling allowExtendedHtml() in the sponsor branch, so tables and <h3> will be purified away'
+        );
+    }
+
+
+    public function testPlainArticleDoesNotGetTheExtendedHtmlAllowance() : void
+    {
+        // same editor, same endpoint: only the sponsor pseudo-format may unlock the extended tags
+        $crawler = $this->loginAndOpenTheNewArticlePage(User::ID_DEFAULT_ADMIN);
+        $this->submitNewArticle($crawler, Article::FORMAT_NEWS);
+
+        $this->assertTrue(static::$client->getResponse()->isRedirect(), 'A plain news POST of an EDITOR did not create an article');
+        $articleId = $this->extractCreatedArticleId();
+
+        $this->assertSame(
+            0, (int)$this->getConnection()->fetchOne("SELECT allow_extended_html FROM article WHERE id = ?", [$articleId]),
+            'SECURITY REGRESSION: an ordinary article got allow_extended_html. The extended tag allowlist must be ' .
+            'reachable only through the sponsor branch, or every author can use tables and "artistic" layouts'
         );
     }
 
@@ -130,13 +157,13 @@ class ArticleNewSponsorFormatTest extends BaseT
                 (session_id, session_user_id, session_last_visit, session_start, session_time,
                  session_ip, session_browser, session_forwarded_for, session_page, session_autologin)
             VALUES (?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), '127.0.0.1', 'phpunit', '', 'index.php', 1)",
-            [static::FAKE_PHPBB_SID, $userId]
+            [self::FAKE_PHPBB_SID, $userId]
         );
 
         $conn->executeStatement(
             "REPLACE INTO " . $this->forumTable('sessions_keys') . " (key_id, user_id, last_ip, last_login)
             VALUES (MD5(?), ?, '127.0.0.1', UNIX_TIMESTAMP())",
-            [static::FAKE_PHPBB_RAW_KEY, $userId]
+            [self::FAKE_PHPBB_RAW_KEY, $userId]
         );
 
         $this->arrForgedUserIds[] = $userId;
@@ -144,8 +171,8 @@ class ArticleNewSponsorFormatTest extends BaseT
         $cookieBasename = phpBBCookiesAuthenticator::COOKIE_BASENAME_PHPBB;
         $cookieJar      = static::$client->getCookieJar();
         $cookieJar->set( new Cookie($cookieBasename . 'u',   (string)$userId) );
-        $cookieJar->set( new Cookie($cookieBasename . 'sid', static::FAKE_PHPBB_SID) );
-        $cookieJar->set( new Cookie($cookieBasename . 'k',   static::FAKE_PHPBB_RAW_KEY) );
+        $cookieJar->set( new Cookie($cookieBasename . 'sid', self::FAKE_PHPBB_SID) );
+        $cookieJar->set( new Cookie($cookieBasename . 'k',   self::FAKE_PHPBB_RAW_KEY) );
 
         $crawler = static::$client->request('GET', '/scrivi');
         $this->assertResponseIsSuccessful("GET /scrivi failed for the forged login of user $userId");
@@ -178,7 +205,7 @@ class ArticleNewSponsorFormatTest extends BaseT
         $csrfToken = $crawler->filter('input[name="' . BaseController::CSRF_TOKEN_PARAM_NAME . '"]')->attr('value');
         $this->assertNotEmpty($csrfToken);
 
-        $title = static::TITLE_PREFIX . ': ' . bin2hex(random_bytes(4));
+        $title = self::TITLE_PREFIX . ': ' . bin2hex(random_bytes(4));
 
         static::$client->request('POST', '/scrivi/salva', [
             ArticleNewController::TITLE_FIELD_NAME  => $title,
@@ -187,6 +214,22 @@ class ArticleNewSponsorFormatTest extends BaseT
         ]);
 
         return $title;
+    }
+
+
+    /**
+     * Reads the new article's id off the redirect Location and registers it for tearDown.
+     */
+    private function extractCreatedArticleId() : int
+    {
+        $location = rtrim( (string)static::$client->getResponse()->headers->get('Location'), '/' );
+        $this->assertMatchesRegularExpression('/-(\d+)$/', $location, "Unexpected redirect target: $location");
+        preg_match('/-(\d+)$/', $location, $arrMatches);
+
+        $articleId = (int)$arrMatches[1];
+        $this->arrCreatedArticleIds[] = $articleId;
+
+        return $articleId;
     }
 
 
@@ -207,18 +250,18 @@ class ArticleNewSponsorFormatTest extends BaseT
 
         // a FAILED run can create an article before the failing assertion (e.g. a POST that should have been
         // rejected goes through instead): sweep by title so red runs don't leak rows
-        $conn->executeStatement("DELETE FROM article WHERE title LIKE ?", [static::TITLE_PREFIX . '%']);
+        $conn->executeStatement("DELETE FROM article WHERE title LIKE ?", [self::TITLE_PREFIX . '%']);
 
         foreach($this->arrForgedUserIds as $userId) {
 
             $conn->executeStatement(
                 "DELETE FROM " . $this->forumTable('sessions') . " WHERE session_id = ? AND session_user_id = ?",
-                [static::FAKE_PHPBB_SID, $userId]
+                [self::FAKE_PHPBB_SID, $userId]
             );
 
             $conn->executeStatement(
                 "DELETE FROM " . $this->forumTable('sessions_keys') . " WHERE key_id = MD5(?) AND user_id = ?",
-                [static::FAKE_PHPBB_RAW_KEY, $userId]
+                [self::FAKE_PHPBB_RAW_KEY, $userId]
             );
         }
 
