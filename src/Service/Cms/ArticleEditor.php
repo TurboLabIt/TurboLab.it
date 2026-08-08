@@ -62,7 +62,7 @@ class ArticleEditor extends Article
 
     public function setBody(string $body) : static
     {
-        $cleanBody = $this->textProcessor->processRawInputBodyForStorage($body);
+        $cleanBody = $this->textProcessor->processRawInputBodyForStorage($body, $this->isAllowExtendedHtml());
         $this->entity->setBody($cleanBody);
 
         $spotlightId = $this->textProcessor->getSpotlightId();

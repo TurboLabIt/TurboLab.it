@@ -102,6 +102,8 @@ class ArticleNewController extends ArticleEditBaseController
             $newArticleFormat = Article::FORMAT_NEWS;
             $newArticleAuthor = $this->factory->createUser()->load(User::ID_SYSTEM);
 
+            $this->articleEditor->allowExtendedHtml();
+
             $this->articleEditor->setTags([
                 $this->factory->createTag()->load(Tag::ID_SPONSOR),
                 $this->factory->createTag()->load(Tag::ID_GAMES),

@@ -27,6 +27,9 @@ import {
     PasteFromOffice,
     RemoveFormat,
     Strikethrough,
+    Table,
+    TableCaption,
+    TableToolbar,
     // required for custom plugins
     Plugin
 } from 'ckeditor5';
@@ -49,16 +52,19 @@ import TliFormatPlugin from "./ckeditor-plugins/format";
 import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
 
 
-const LICENSE_KEY = $('#tli-article-body').data('ckeditor-license-key');
+const $articleBody = $('#tli-article-body');
+const LICENSE_KEY = $articleBody.data('ckeditor-license-key');
+const ALLOW_EXTENDED_HTML = $articleBody.data('allow-extended-html') === true;
 
 const editorConfig = {
     toolbar: {
         items: [
             'save', '|',
-            'heading2', 'paragraph', '|',
+            'heading2', ...(ALLOW_EXTENDED_HTML ? ['heading3'] : []), 'paragraph', '|',
             'bold', 'italic', 'strikethrough', 'tliIstruzioni', 'tliUpdate', 'removeFormat', '|',
             'tliLinkArticle', 'tliLinkFile', 'link', 'tliyoutube', '|',
-            /*'codeBlock',*/ 'bulletedList', 'numberedList', '|',
+            /*'codeBlock',*/ 'bulletedList', 'numberedList',
+            ...(ALLOW_EXTENDED_HTML ? ['insertTable'] : []), '|',
             'undo', 'redo', '|',
             'findAndReplace', /*'fullscreen'*/ '|',
             'tliFormat', '|',
@@ -89,6 +95,7 @@ const editorConfig = {
         PasteFromOffice,
         RemoveFormat,
         Strikethrough,
+        ...(ALLOW_EXTENDED_HTML ? [Table, TableCaption, TableToolbar] : []),
         // ---- TLI plugins ---- \\
         TliSavePlugin,
         TliUpdatePlugin,
@@ -119,6 +126,13 @@ const editorConfig = {
     },
     placeholder: 'Digita qui il testo del tuo articolo',
     translations: [translations],
+    // Read only when the Table plugins are loaded (ALLOW_EXTENDED_HTML)
+    table: {
+        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'toggleTableCaption'],
+        // emit a real <caption> inside <table>. The default is <figcaption> inside <figure class="table">,
+        // which the server-side allowlist doesn't have, so the caption text would end up loose in the body.
+        tableCaption: { useCaptionElement: true }
+    },
     // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html
     image: {
         toolbar: ['tliWatermark']
@@ -126,6 +140,9 @@ const editorConfig = {
     heading: {
         options: [
             { model: 'heading2', view: 'h2', title: 'Titolo', class: 'ck-heading_heading2' },
+            ...(ALLOW_EXTENDED_HTML
+                ? [{ model: 'heading3', view: 'h3', title: 'Sottotitolo', class: 'ck-heading_heading3' }]
+                : []),
             { model: 'paragraph', title: 'Testo normale', class: 'ck-heading_paragraph' }
         ]
     }

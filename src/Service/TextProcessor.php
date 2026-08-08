@@ -33,13 +33,13 @@ class TextProcessor
      * @see ArticleEditor
      * @see ArticleEditorTest
      */
-    public function processRawInputBodyForStorage(string $body) : string
+    public function processRawInputBodyForStorage(string $body, bool $allowExtendedHtml = false) : string
     {
         $processing = $this->cleanTextBeforeStorage($body);
 
         $processing = $this->htmlProcessor->convertLegacyEntitiesToUtf8Chars($processing);
         $processing = $this->htmlProcessor->fixFormattingErrors($processing);
-        $processing = $this->htmlProcessor->purify($processing);
+        $processing = $this->htmlProcessor->purify($processing, $allowExtendedHtml);
 
         // No alt-stripping step here: processArticleBody() rebuilds every <img> as a placeholder
         // without an alt (HTMLPurifier only ever emits an empty alt="" on images, and it is

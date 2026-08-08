@@ -11,24 +11,40 @@ use HTMLPurifier_Config;
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 class HtmlProcessorForStorage extends HtmlProcessorBase
 {
+    // What any article may contain. Intentionally minimal: no h3, no tables, no "artistic" layouts
+    const string ALLOWED_TAGS = 'p,a[href],strong,em,s,ol,ul,li,h2,code,ins,img[src],iframe[src]';
+
+    // Unlocked per-article by Article::isAllowExtendedHtml()
+    // tfoot is listed for completeness: CKEditor has no footer concept and will never produce one
+    const string ALLOWED_TAGS_EXTENDED =
+        'h3,table,thead,tbody,tfoot,tr,th[colspan][rowspan],td[colspan][rowspan],caption';
+
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
     protected array $fileIds = [];
-    protected HTMLPurifier $htmlPurifier;
+
+    /** @var array<string, HTMLPurifier> one instance per allowlist, built on first use */
+    protected array $arrHtmlPurifiers = [];
 
 
-    public function purify(?string $text) : string
+    public function purify(?string $text, bool $allowExtendedHtml = false) : string
     {
         if( empty($text) ) {
             return $text;
         }
 
-        if( empty($this->htmlPurifier) ) {
+        // never memoize a single purifier here: the allowlist is per-article!
+        $purifierKey = $allowExtendedHtml ? 'extended' : 'base';
+
+        if( !isset($this->arrHtmlPurifiers[$purifierKey]) ) {
+
+            $allowedTags =
+                static::ALLOWED_TAGS . ( $allowExtendedHtml ? ',' . static::ALLOWED_TAGS_EXTENDED : '' );
 
             $tliPurifierConfig = HTMLPurifier_Config::createDefault();
             $tliPurifierConfig->set('Core.Encoding', 'UTF-8');
-            $tliPurifierConfig->set('HTML.Allowed', 'p,a[href],strong,em,s,ol,ul,li,h2,h3,code,ins,img[src],iframe[src]');
+            $tliPurifierConfig->set('HTML.Allowed', $allowedTags);
 
             // When enabled, HTML Purifier will treat any elements that contain only non-breaking spaces as well as
             //   regular whitespace as empty, and remove them when %AutoForamt.RemoveEmpty is enabled.
@@ -49,13 +65,13 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('HTML.SafeIframe', true);
             $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
 
-            $this->htmlPurifier = new HTMLPurifier($tliPurifierConfig);
+            $this->arrHtmlPurifiers[$purifierKey] = new HTMLPurifier($tliPurifierConfig);
         }
 
         // all the quotes in non-attributes will be decoded
         // input:  This is a &quot;Tag&quot;: <img src="image.png">, but 100 &gt; 1
         // output: This is a "Tag": <img src="image.png" alt="" />, but 100 &gt; 1
-        return $this->htmlPurifier->purify($text);
+        return $this->arrHtmlPurifiers[$purifierKey]->purify($text);
     }
 
 

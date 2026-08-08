@@ -100,7 +100,8 @@
 
                             <div id="tli-article-body"
                                  class="post-text mb-20 tli-article-body {% if Article.isEditable %}form-control{% endif %}"
-                                 {% if Article.isEditable %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"{% endif %}>
+                                 {% if Article.isEditable %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"
+                                 data-allow-extended-html="{{ Article.isAllowExtendedHtml ? 'true' : 'false' }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
 
