@@ -65,6 +65,40 @@
     border-radius: 2px;
 }
 
+/* Tabelle (<table>) */
+.tli-article-main-content table {
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 1em auto;
+    font-size: 17px;
+}
+
+.tli-article-main-content th,
+.tli-article-main-content td {
+    border: 1px solid #C2C5C7;
+    padding: 0.4em 0.6em;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+.tli-article-main-content th {
+    background: #E4E5E6;
+    font-weight: 600;
+}
+
+.tli-article-main-content caption {
+    padding-bottom: 0.4em;
+    font-size: 16px;
+    color: #6c757d;
+    text-align: left;
+}
+
+.tli-article-main-content td img,
+.tli-article-main-content th img {
+    max-width: 100%;
+}
+
 /* reset links to default look... */
 .alert a, .tli-file-download a, #tli-article-body a, .ck.ck-content.ck-editor__editable a {
     all: revert;

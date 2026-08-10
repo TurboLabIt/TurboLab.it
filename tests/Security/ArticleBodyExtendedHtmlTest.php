@@ -19,7 +19,7 @@ use App\Tests\BaseT;
  */
 class ArticleBodyExtendedHtmlTest extends BaseT
 {
-    private const string BODY_H3    = '<h3>Sottotitolo</h3>';
+    private const string BODY_H3    = '<h3>Tre</h3><h4>Quattro</h4><h5>Cinque</h5><h6>Sei</h6>';
     private const string BODY_TABLE =
         '<table border="1" class="pricing"><caption>Listino</caption>' .
         '<thead><tr><th>Piano</th><th>Prezzo</th></tr></thead>' .
@@ -31,7 +31,9 @@ class ArticleBodyExtendedHtmlTest extends BaseT
     {
         $body = $this->processBody(self::BODY_H3 . self::BODY_TABLE, false);
 
-        $this->assertStringNotContainsString('<h3', $body, 'An ordinary article kept an <h3>');
+        foreach(['<h3', '<h4', '<h5', '<h6'] as $heading) {
+            $this->assertStringNotContainsString($heading, $body, "An ordinary article kept a $heading>");
+        }
 
         foreach(['<table', '<thead', '<tbody', '<tr', '<th', '<td', '<caption'] as $tag) {
             $this->assertStringNotContainsString(
@@ -47,7 +49,12 @@ class ArticleBodyExtendedHtmlTest extends BaseT
     {
         $body = $this->processBody(self::BODY_H3 . self::BODY_TABLE, true);
 
-        foreach(['<h3>Sottotitolo</h3>', '<caption>Listino</caption>', '<th>Piano</th>', '<td>Base</td>', 'colspan="2"'] as $expected) {
+        $expectations = [
+            '<h3>Tre</h3>', '<h4>Quattro</h4>', '<h5>Cinque</h5>', '<h6>Sei</h6>',
+            '<caption>Listino</caption>', '<th>Piano</th>', '<td>Base</td>', 'colspan="2"'
+        ];
+
+        foreach($expectations as $expected) {
             $this->assertStringContainsString(
                 $expected, $body,
                 "A sponsored article lost \"$expected\": the extended allowlist no longer covers the whole " .
@@ -63,15 +70,16 @@ class ArticleBodyExtendedHtmlTest extends BaseT
     public function testExtendedTagsDoNotUnlockEverythingElse() : void
     {
         $body = $this->processBody(
-            '<div>div</div><blockquote>quote</blockquote><h4>h4</h4><u>u</u><script>alert(1)</script>' .
+            '<div>div</div><blockquote>quote</blockquote><h1>h1</h1><u>u</u><script>alert(1)</script>' .
             '<table class="pricing" border="1" onclick="alert(1)"><tr><td style="color:red">cell</td></tr></table>',
             true
         );
 
-        foreach(['<div', '<blockquote', '<h4', '<u>', '<script', 'onclick', 'style=', 'class=', 'border='] as $forbidden) {
+        // h1 stays out at both levels: the page already has one, the article title
+        foreach(['<div', '<blockquote', '<h1', '<u>', '<script', 'onclick', 'style=', 'class=', 'border='] as $forbidden) {
             $this->assertStringNotContainsString(
                 $forbidden, $body,
-                "allowExtendedHtml let \"$forbidden\" through: it must add table markup and <h3>, nothing else"
+                "allowExtendedHtml let \"$forbidden\" through: it must add table markup and h3-h6, nothing else"
             );
         }
     }

@@ -46,7 +46,7 @@ class Article extends BaseCmsEntity
     protected ?Image $spotlight = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    protected ?bool $allowExtendedHtml = false;
+    protected bool $allowExtendedHtml = false;
 
     #[ORM\OneToMany(targetEntity: ArticleAuthor::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => 'ASC'])]

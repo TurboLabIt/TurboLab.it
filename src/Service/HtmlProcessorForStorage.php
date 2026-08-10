@@ -4,6 +4,7 @@ namespace App\Service;
 use App\Service\Cms\UrlGenerator;
 use DOMDocument;
 use DOMElement;
+use DOMXPath;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 
@@ -16,8 +17,13 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
     // Unlocked per-article by Article::isAllowExtendedHtml()
     // tfoot is listed for completeness: CKEditor has no footer concept and will never produce one
+    // h6 is the floor: HTML has no h7+, and HTMLPurifier warns "Element 'h7' is not supported" if listed
     const string ALLOWED_TAGS_EXTENDED =
-        'h3,table,thead,tbody,tfoot,tr,th[colspan][rowspan],td[colspan][rowspan],caption';
+        'h3,h4,h5,h6,table,thead,tbody,tfoot,tr,th[colspan][rowspan],td[colspan][rowspan],caption';
+
+    // Formatting that never means anything inside a heading, which is emphatic by itself. <s> is
+    // deliberately NOT here: strikethrough is semantic, not decoration
+    const array HEADING_NOISE_TAGS = ['strong', 'em'];
 
     protected UrlGenerator $urlGenerator;
     protected ?int $spotlightId = null;
@@ -63,7 +69,9 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('Attr.DefaultImageAlt', '');
 
             $tliPurifierConfig->set('HTML.SafeIframe', true);
-            $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
+            // YouTube only. Vimeo used to be allowed here but nothing ever turned it into a placeholder,
+            // so an embed would have been stored as a raw third-party iframe — and the DB has never held one
+            $tliPurifierConfig->set('URI.SafeIframeRegexp', '%^(https?:)?//www\.youtube(?:-nocookie)?\.com/embed/%');
 
             $this->arrHtmlPurifiers[$purifierKey] = new HTMLPurifier($tliPurifierConfig);
         }
@@ -86,12 +94,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             '<br/>'				=> '<p></p>',
             '<br />'			=> '<p></p>',
 
-            // must run before the <h2><strong> rule below, so that <h2><b> is collapsed too
             '<b>'               => '<strong>',
             '</b>'              => '</strong>',
-
-            '<h2><strong>'		=> '<h2>',
-            '</strong></h2>'	=> '</h2>',
 
             '<i>'               => '<em>',
             '</i>'              => '</em>',
@@ -124,6 +128,8 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
 
         return
             $this
+                ->unwrapSingleHeadingLists($domDoc)
+                ->unwrapHeadingFormatting($domDoc)
                 ->removeLinksFromImages($domDoc)
                 ->removeExternalImages($domDoc)
                 ->imagesFromUrlToPlaceholder($domDoc)
@@ -131,6 +137,73 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
                 ->YouTubeIframesFromUrlToPlaceholder($domDoc)
                 ->extractAbstract($domDoc)
                 ->renderDomDocAsHTML($domDoc);
+    }
+
+
+    /**
+     * Word exports a *numbered* heading as a heading wrapped in its own one-item list, so a run of them
+     * becomes N separate lists that all restart at "1.". Keep the heading, drop the list around it.
+     */
+    protected function unwrapSingleHeadingLists(DOMDocument $domDoc) : static
+    {
+        $xpath      = new DOMXPath($domDoc);
+        $arrItems   = $xpath->query(
+            '//*[(self::ol or self::ul) and count(*) = 1]/li[count(*) = 1 and (h2 or h3 or h4 or h5 or h6)]'
+        );
+
+        /** @var DOMElement $li */
+        foreach( iterator_to_array($arrItems) as $li ) {
+
+            $heading = $xpath->query('h2|h3|h4|h5|h6', $li)->item(0);
+
+            // the list item must hold the heading and nothing else, or unwrapping would lose text
+            if( $heading === null || trim($li->textContent) !== trim($heading->textContent) ) {
+                continue;
+            }
+
+            $list = $li->parentNode;
+            $list->parentNode?->replaceChild($heading, $list);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * A heading is already emphatic, so bold and italics inside it say nothing — not around the whole of it
+     * (Word and Google Docs both emit that) and not around part of it either. The text is kept, only the
+     * formatting element is dropped, at any nesting depth: <h2><a><strong>x</strong></a></h2> keeps its link.
+     *
+     * @see self::HEADING_NOISE_TAGS for what is deliberately left alone
+     */
+    protected function unwrapHeadingFormatting(DOMDocument $domDoc) : static
+    {
+        $xpath = new DOMXPath($domDoc);
+
+        $noiseTest = implode( ' or ', array_map(fn(string $tag) : string => "self::$tag", static::HEADING_NOISE_TAGS) );
+
+        $arrNoiseNodes = $xpath->query(
+            '//*[self::h2 or self::h3 or self::h4 or self::h5 or self::h6]//*[' . $noiseTest . ']'
+        );
+
+        // nested noise (<strong><em>x</em></strong>) is handled by itself: unwrapping the outer element
+        // leaves the inner one in place, and it is already in this (static) list
+        /** @var DOMElement $noiseNode */
+        foreach( iterator_to_array($arrNoiseNodes) as $noiseNode ) {
+
+            $parent = $noiseNode->parentNode;
+            if( $parent === null ) {
+                continue;
+            }
+
+            while( $noiseNode->firstChild ) {
+                $parent->insertBefore($noiseNode->firstChild, $noiseNode);
+            }
+
+            $parent->removeChild($noiseNode);
+        }
+
+        return $this;
     }
 
 
