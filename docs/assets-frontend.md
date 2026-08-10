@@ -27,6 +27,13 @@ Struttura di assets/:
 - `themes/2024 newspark/` — archivio originale del tema acquistato, conservato come riferimento
 
 
+### article.css: agganciare al corpo dell'articolo, non al wrapper
+
+`build/article.css` è caricato anche da pagine che **non** mostrano un articolo: `/scrivi` (`templates/article/editor/new.html.twig`) e `/info`. Entrambe usano il wrapper `.tli-article-main-content` della pagina articolo e ci mettono dentro tabelle Bootstrap (`.table`, `.table-sm`, `thead.table-primary`).
+
+Le regole che stilizzano il contenuto redazionale (tabelle, heading, ...) vanno quindi agganciate a `#tli-article-body` — più `.ck.ck-content.ck-editor__editable` quando devono valere anche in editing — e **mai** a `.tli-article-main-content`. Agosto 2026 il CSS delle tabelle degli articoli era scritto sul wrapper: sovrascriveva Bootstrap e rendeva illeggibili gli elenchi articoli di `/scrivi` (bordo su ogni cella, header grigio al posto di `table-primary`, e `overflow-wrap: anywhere` che spezzava "Modificato" in "Mod ifica to").
+
+
 ## Asset del tema - public/assets/
 
 La cartella [public/assets/](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/assets) contiene alcune risorse del tema Newspark che non possono essere gestite via Webpack. Sono caricate con `<script>` diretti in fondo a `base.html.twig`:

@@ -65,16 +65,19 @@
     border-radius: 2px;
 }
 
-/* Tabelle (<table>) */
-.tli-article-main-content table {
+/* Tables */
+#tli-article-body table,
+.ck.ck-content.ck-editor__editable table {
     width: 100%;
     border-collapse: collapse;
     margin: 1em 0;
     font-size: 17px;
 }
 
-.tli-article-main-content th,
-.tli-article-main-content td {
+#tli-article-body th,
+#tli-article-body td,
+.ck.ck-content.ck-editor__editable th,
+.ck.ck-content.ck-editor__editable td {
     border: 1px solid #C2C5C7;
     padding: 0.4em 0.6em;
     text-align: left;
@@ -82,26 +85,30 @@
     overflow-wrap: anywhere;
 }
 
-.tli-article-main-content th {
+#tli-article-body th,
+.ck.ck-content.ck-editor__editable th {
     background: #E4E5E6;
     font-weight: 600;
 }
 
-.tli-article-main-content caption {
+#tli-article-body caption,
+.ck.ck-content.ck-editor__editable caption {
     padding-bottom: 0.4em;
     font-size: 16px;
     color: #6c757d;
     text-align: left;
 }
 
-.tli-article-main-content td img,
-.tli-article-main-content th img {
+#tli-article-body td img,
+#tli-article-body th img,
+.ck.ck-content.ck-editor__editable td img,
+.ck.ck-content.ck-editor__editable th img {
     max-width: 100%;
 }
 
 @media (max-width: 767.98px) {
 
-    .tli-article-main-content table {
+    #tli-article-body table {
         display: block;
         width: 100%;
         overflow-x: auto;
@@ -115,14 +122,13 @@
         background-attachment: local, local, scroll, scroll;
     }
 
-    .tli-article-main-content th,
-    .tli-article-main-content td {
+    #tli-article-body th,
+    #tli-article-body td {
         overflow-wrap: normal;
         min-width: 5em;
     }
 
-    /* let the scroll shadow through the header row too */
-    .tli-article-main-content th {
+    #tli-article-body th {
         background: rgba(228, 229, 230, 0.55);
     }
 }
