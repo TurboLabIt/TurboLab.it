@@ -6,6 +6,12 @@ fxHeader "🔍 Reindex"
 
 ## 📚 https://github.com/meilisearch/meilisearch-symfony/wiki/index-data-into-meilisearch#indexing-manually
 
+fxTitle "Checking Meilisearch..."
+curl -fsS -m 10 http://127.0.0.1:7700/health
+if [ "$?" -ne 0 ]; then
+  fxCatastrophicError "Meilisearch is not responding on ##http://127.0.0.1:7700##. Check ##systemctl status meilisearch##"
+fi
+
 fxTitle "Creating the index..."
 wsuSymfony console meili:create
 

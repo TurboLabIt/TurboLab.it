@@ -19,16 +19,31 @@ L'indicizzazione si avvia con [reindex.sh](https://github.com/TurboLabIt/TurboLa
 
 L'aggiornamento di Meilisearch avviene tramite apt, insieme al resto.
 
-Il formato dei dati di ogni versione è però compatibile solo con quella specifica versione: provando ad avviare la nuova versione del servizio con i dati vecchi, si ottiene un errore critico (il servizio non riparte):
+Il formato dei dati è però legato alla versione dell'engine: avviando la nuova versione sui dati vecchi si ottiene un errore critico e **il servizio non riparte**. Con `Restart=on-failure` nel unit file (default), il risultato è un crash-loop infinito e la ricerca va in 500 finché qualcuno non se ne accorge:
 
-> Your database version (1.21.0) is incompatible with your current engine version (1.22.0).
+> Your database version (1.49.0) is incompatible with your current engine version (1.52.0).
 
-C'è un tool, [Meilisearch Version Migration Script](https://github.com/meilisearch/meilisearch-migration), che dovrebbe fare la migrazione, ma richiede che i dati siano salvati in una cartella diversa da quella utilizzata attualmente dall'installer.
+Per intercettare la cosa, [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/reindex.sh) interroga `/health` prima di indicizzare e si ferma con `fxCatastrophicError` (exit 1) se il servizio non risponde: senza questo controllo i comandi `meili:*` fallirebbero uno per uno e lo script terminerebbe comunque con successo, nascondendo il problema nel log del cron.
 
-Come workaround:
+Per questo `/etc/meilisearch.toml` ([webstackup: config/meilisearch/config.toml](https://github.com/TurboLabIt/webstackup/blob/master/config/meilisearch/config.toml)) contiene:
+
+```toml
+upgrade_db = true
+```
+
+Con questa opzione l'engine migra il database in-place al primo avvio, senza dump e **senza toccare le API key**: `MEILISEARCH_API_KEY` resta valida, non c'è nulla da aggiornare nei file `.env*`. La migrazione 1.49 ➡ 1.52 (458 MB, 3.864 documenti) ha richiesto 20 ms. Quando non c'è niente da migrare l'opzione è un no-op, quindi può restare attiva in permanenza.
+
+Due avvertenze:
+
+- l'opzione è stata stabilizzata solo in **Meilisearch 1.51** (prima era `--experimental-dumpless-upgrade`) e non è documentata come chiave del file di configurazione. Il parser TOML è strict: su un engine più vecchio il servizio rifiuta di avviarsi con `unknown field upgrade_db`. Va aggiunta solo su box con engine ≥ 1.51.
+- `install.sh` scarica `config.toml` da GitHub **al momento dell'installazione**: modificarlo nel repo webstackup vale solo per le installazioni nuove, sui box già in piedi va aggiunto a mano in `/etc/meilisearch.toml`.
+
+---
+
+Il vecchio workaround resta valido come ultima risorsa (l'indice è derivato: [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/reindex.sh) lo ricostruisce da MySQL), ma non dovrebbe più servire:
 
 1. eseguire `webstackup` ➡ `Meilisearch GUI` ➡ `Wipe`
-2. aggiornare la nuova API key mostrata a schermo nel file `/var/www/turbolab.it/.env.prod.local`
+2. aggiornare la nuova API key mostrata a schermo nel file `/var/www/turbolab.it/.env.prod.local` — le API key di default sono **casuali per database**, quindi un wipe le invalida sempre
 3. lanciare [cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh) per il dump-env
 4. lanciare [reindex.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/reindex.sh) per rigenerare gli indici
 
