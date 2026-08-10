@@ -51,6 +51,7 @@ import TliWatermark from "./ckeditor-plugins/watermark";
 import TliFormatPlugin from "./ckeditor-plugins/format";
 import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
 import TliTablePasteGuard from "./ckeditor-plugins/table-paste-guard";
+import TliAdvisePlugin from "./ckeditor-plugins/advise";
 
 
 const $articleBody = $('#tli-article-body');
@@ -69,7 +70,7 @@ const editorConfig = {
             'undo', 'redo', '|',
             'findAndReplace', /*'fullscreen'*/ '|',
             'tliFormat', '|',
-            'tliPublishingStatus'
+            'tliAdvise', 'tliPublishingStatus'
         ],
         shouldNotGroupWhenFull: true
     },
@@ -107,7 +108,8 @@ const editorConfig = {
         TliLinkFile,
         TliWatermark,
         TliFormatPlugin,
-        TliDataUriUpload
+        TliDataUriUpload,
+        TliAdvisePlugin
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {

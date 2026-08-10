@@ -2,12 +2,8 @@
 //import * as bootstrap from 'bootstrap';
 
 
-jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
-
-    event.preventDefault();
-
-    let endpoint    = jQuery(this).data('tli-modal-url');
-
+export default function openAjaxModal(endpoint)
+{
     let modalFrame  = jQuery('#tli-ajax-modal');
 
     let targetTitle = modalFrame.find('.modal-title');
@@ -34,4 +30,11 @@ jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
             targetTitle.html('ERRORE');
             targetBody.html(jqXHR.responseText);
         });
+}
+
+
+jQuery(document).on('click', '[data-tli-modal-url]',  function(event) {
+
+    event.preventDefault();
+    openAjaxModal( jQuery(this).data('tli-modal-url') );
 });

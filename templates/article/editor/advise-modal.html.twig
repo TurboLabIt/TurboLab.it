@@ -1,0 +1,40 @@
+<div class="modal-body">
+
+    {% if arrAdvice is empty %}
+
+        <div class="alert alert-success mb-0">
+            ✅ <strong>Tutto a posto!</strong> La verifica automatica non ha rilevato niente di strano.
+        </div>
+
+    {% else %}
+
+        {% for advice in arrAdvice %}
+
+            <div class="alert alert-{{ advice.level }} {{ loop.last ? 'mb-0' }}">
+
+                <h5 class="alert-heading">🔎 {{ advice.title }}</h5>
+
+                <p>{{ advice.message }}</p>
+
+                <ul class="mb-0">
+                    {% for match in advice.arrMatches %}
+                        <li class="mb-2">
+                            <q>{{ match.excerpt }}</q>
+                            {% if match.url %}
+                                <br><small class="text-muted text-break">🔗 {{ match.url }}</small>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+</div>

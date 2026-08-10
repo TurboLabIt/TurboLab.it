@@ -2,6 +2,7 @@
 namespace App\Controller\Editor;
 
 use App\Exception\TopicHasRepliesException;
+use App\Service\Cms\ArticleAdvisor;
 use App\Service\Cms\ArticleEditor;
 use App\Service\Cms\ArticlePlanner;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -55,6 +56,23 @@ class ArticleEditorController extends ArticleEditBaseController
                         Per favore, presta attenzione a non creare articoli duplicati.
                     '))
                 );
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    #[Route('/ajax/editor/article/{articleId<[1-9]+[0-9]*>}/advise', name: 'app_editor_article_advise', methods: ['GET'])]
+    public function advise(int $articleId, ArticleAdvisor $articleAdvisor) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+
+            return $this->json([
+                "title" => "🔬 Verifica articolo",
+                "body"  => $this->twig->render('article/editor/advise-modal.html.twig', [
+                    "arrAdvice" => $articleAdvisor->advise($this->articleEditor)
+                ])
+            ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }

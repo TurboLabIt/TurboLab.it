@@ -14,6 +14,9 @@ const ArticleContentEditable = {
     },
     showWarningIfChanged() {
         showWarningIfChanged();
+    },
+    hasUnsavedChanges() {
+        return detectUnsavedChanges();
     }
 };
 
@@ -35,7 +38,7 @@ function cacheTextHashForComparison()
 }
 
 
-function showWarningIfChanged()
+function detectUnsavedChanges()
 {
     let fastHashedHtml  = fastHash16ElementHtml( TITLE_FIELD.val() );
     let editableId      = TITLE_FIELD.data('tli-editable-id');
@@ -49,7 +52,13 @@ function showWarningIfChanged()
         differenceFound = fastHashedHtml != window[editableId];
     }
 
-    if(differenceFound) {
+    return differenceFound;
+}
+
+
+function showWarningIfChanged()
+{
+    if( detectUnsavedChanges() ) {
 
         StatusBar.setUnsaved();
 
