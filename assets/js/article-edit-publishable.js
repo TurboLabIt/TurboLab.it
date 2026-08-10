@@ -1,6 +1,11 @@
 //import $ from 'jquery';
 import StatusBar from './article-edit-statusbar';
 import ArticleMeta from "./article-edit-meta";
+import ArticleAdvise from "./article-edit-advise";
+
+
+// (admin) Bloccato/rimosso — mirrors PublishingStatusesTrait::PUBLISHING_STATUS_KO
+const PUBLISHING_STATUS_KO = 7;
 
 
 const ArticlePublishable = {
@@ -50,7 +55,15 @@ function setPublishingStatus(status, onSuccessCallback)
 
             StatusBar.setSaved(json.message);
             ArticleMeta.update(json);
-            onSuccessCallback();
+
+            if( typeof onSuccessCallback === 'function' ) {
+                onSuccessCallback();
+            }
+
+            // every status except "Bloccato/rimosso" implies content worth checking
+            if( status != PUBLISHING_STATUS_KO ) {
+                ArticleAdvise.run();
+            }
 
         }, 'json')
 

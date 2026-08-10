@@ -1,6 +1,5 @@
 import { Plugin, ButtonView } from 'ckeditor5';
-import ArticleContentEditable from './../article-edit-contenteditable';
-import openAjaxModal from './../modal-ajax';
+import ArticleAdvise from './../article-edit-advise';
 
 
 export default class TliAdvisePlugin extends Plugin {
@@ -18,15 +17,7 @@ export default class TliAdvisePlugin extends Plugin {
             });
 
             view.on('execute', () => {
-
-                // the check runs server-side on the saved article: verifying a stale copy would mislead
-                if( ArticleContentEditable.hasUnsavedChanges() ) {
-
-                    alert("⚠️ Ci sono modifiche non salvate.\n\nSalva l'articolo (Ctrl+S), poi avvia la verifica.");
-                    return;
-                }
-
-                openAjaxModal( jQuery('article').attr('data-advise-url') );
+                ArticleAdvise.run();
             });
 
             return view;
