@@ -67,9 +67,9 @@
 
 /* Tabelle (<table>) */
 .tli-article-main-content table {
-    max-width: 100%;
+    width: 100%;
     border-collapse: collapse;
-    margin: 1em auto;
+    margin: 1em 0;
     font-size: 17px;
 }
 
