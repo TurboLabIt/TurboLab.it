@@ -50,6 +50,7 @@ import TliLinkFile from "./ckeditor-plugins/link-file";
 import TliWatermark from "./ckeditor-plugins/watermark";
 import TliFormatPlugin from "./ckeditor-plugins/format";
 import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
+import TliTablePasteGuard from "./ckeditor-plugins/table-paste-guard";
 
 
 const $articleBody = $('#tli-article-body');
@@ -60,7 +61,7 @@ const editorConfig = {
     toolbar: {
         items: [
             'save', '|',
-            'heading2', ...(ALLOW_EXTENDED_HTML ? ['heading3'] : []), 'paragraph', '|',
+            'heading2', ...(ALLOW_EXTENDED_HTML ? ['heading3', 'heading4', 'heading5', 'heading6'] : []), 'paragraph', '|',
             'bold', 'italic', 'strikethrough', 'tliIstruzioni', 'tliUpdate', 'removeFormat', '|',
             'tliLinkArticle', 'tliLinkFile', 'link', 'tliyoutube', '|',
             /*'codeBlock',*/ 'bulletedList', 'numberedList',
@@ -95,7 +96,7 @@ const editorConfig = {
         PasteFromOffice,
         RemoveFormat,
         Strikethrough,
-        ...(ALLOW_EXTENDED_HTML ? [Table, TableCaption, TableToolbar] : []),
+        ...(ALLOW_EXTENDED_HTML ? [Table, TableCaption, TableToolbar] : [TliTablePasteGuard]),
         // ---- TLI plugins ---- \\
         TliSavePlugin,
         TliUpdatePlugin,
@@ -141,7 +142,12 @@ const editorConfig = {
         options: [
             { model: 'heading2', view: 'h2', title: 'Titolo', class: 'ck-heading_heading2' },
             ...(ALLOW_EXTENDED_HTML
-                ? [{ model: 'heading3', view: 'h3', title: 'Sottotitolo', class: 'ck-heading_heading3' }]
+                ? [
+                    { model: 'heading3', view: 'h3', title: 'Sottotitolo',    class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'Sottotitolo H4', class: 'ck-heading_heading4' },
+                    { model: 'heading5', view: 'h5', title: 'Sottotitolo H5', class: 'ck-heading_heading5' },
+                    { model: 'heading6', view: 'h6', title: 'Sottotitolo H6', class: 'ck-heading_heading6' }
+                  ]
                 : []),
             { model: 'paragraph', title: 'Testo normale', class: 'ck-heading_paragraph' }
         ]
