@@ -99,6 +99,34 @@
     max-width: 100%;
 }
 
+@media (max-width: 767.98px) {
+
+    .tli-article-main-content table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        background:
+            linear-gradient(to right, #fff 40%, rgba(255, 255, 255, 0)) left center,
+            linear-gradient(to left, #fff 40%, rgba(255, 255, 255, 0)) right center,
+            linear-gradient(to right, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0)) left center,
+            linear-gradient(to left, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0)) right center;
+        background-repeat: no-repeat;
+        background-size: 44px 100%, 44px 100%, 22px 100%, 22px 100%;
+        background-attachment: local, local, scroll, scroll;
+    }
+
+    .tli-article-main-content th,
+    .tli-article-main-content td {
+        overflow-wrap: normal;
+        min-width: 5em;
+    }
+
+    /* let the scroll shadow through the header row too */
+    .tli-article-main-content th {
+        background: rgba(228, 229, 230, 0.55);
+    }
+}
+
 /* reset links to default look... */
 .alert a, .tli-file-download a, #tli-article-body a, .ck.ck-content.ck-editor__editable a {
     all: revert;
