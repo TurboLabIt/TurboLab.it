@@ -90,6 +90,9 @@ class TextProcessor
         'menu' => 'menu',
     ];
 
+    /** Editorial proper nouns, enforced by enforceHouseCapitalization() — lowercase form => house form */
+    const array HOUSE_CAPITALIZED_WORDS = ['internet' => 'Internet'];
+
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;
     protected array $fileIds = [];
@@ -190,7 +193,10 @@ class TextProcessor
      *    start/whitespace/tag/«/"/(: never after a dot (gettext .po files) nor inside paths and URLs;
      *  - three curated word lists fix wrong accents (ACCENT_MISSPELLED_WORDS), missing accents
      *    (ACCENT_MISSING_WORDS) and the vowel+apostrophe surrogate habit (ACCENT_SURROGATE_WORDS),
-     *    each fix inheriting the case pattern of what the author typed (PERCHE' → PERCHÉ).
+     *    each fix inheriting the case pattern of what the author typed (PERCHE' → PERCHÉ);
+     *  - editorial proper nouns get their capital (HOUSE_CAPITALIZED_WORDS: internet → Internet),
+     *    but only between strong prose delimiters and never inside <code> — see
+     *    enforceHouseCapitalization() for the exact contract.
      */
     protected function fixAccentSurrogates(string $text) : string
     {
@@ -203,7 +209,43 @@ class TextProcessor
             $text, static::ACCENT_MISSPELLED_WORDS + static::ACCENT_MISSING_WORDS, false
         );
 
-        return $this->fixMisspelledWords($text, static::ACCENT_SURROGATE_WORDS, true);
+        $text = $this->fixMisspelledWords($text, static::ACCENT_SURROGATE_WORDS, true);
+
+        return $this->enforceHouseCapitalization($text);
+    }
+
+
+    /**
+     * Editorial house-capitalization (Internet is a proper noun), applied ONLY when the word is
+     * strongly delimited by prose: start/whitespace/tag/«/"/( on the left, whitespace/tag/closing
+     * punctuation on the right — the dot counts only when not followed by a letter, so internet.org
+     * stays. URL segments (/internet-security/), paths (\internet explorer) and suffixed tokens can
+     * never match, and <code> spans are skipped whole: "digita internet" must stay exactly as typed.
+     * Only the all-lowercase form is corrected; INTERNET &co are left to the author. The elision
+     * (l'internet) is a deliberate miss: a leading apostrophe may be a quote, not an article.
+     */
+    protected function enforceHouseCapitalization(string $text) : string
+    {
+        $regEx =
+            '/(^|[>\s«"(])(' . implode('|', array_keys(static::HOUSE_CAPITALIZED_WORDS)) . ')' .
+            '(?=$|[\s<»)!?;:,"…]|\.(?!\p{L}))/u';
+
+        $arrChunks = preg_split('~(<code\b[^>]*>.*?</code>)~s', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+        foreach($arrChunks as $i => $chunk) {
+
+            if( str_starts_with($chunk, '<code') ) {
+                continue;
+            }
+
+            $arrChunks[$i] = preg_replace_callback(
+                $regEx,
+                fn(array $arrMatches) : string => $arrMatches[1] . static::HOUSE_CAPITALIZED_WORDS[ $arrMatches[2] ],
+                $chunk
+            );
+        }
+
+        return implode('', $arrChunks);
     }
 
 

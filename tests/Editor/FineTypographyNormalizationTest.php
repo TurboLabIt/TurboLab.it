@@ -285,6 +285,44 @@ class FineTypographyNormalizationTest extends BaseT
     }
 
 
+    public static function houseCapitalizationProvider() : array
+    {
+        return [
+            // Internet is a proper noun: fixed whenever strongly delimited by prose
+            'internet in prose'          => ["naviga su internet in sicurezza", "naviga su Internet in sicurezza"],
+            'internet at the start'      => ["internet è nato nel 1969", "Internet è nato nel 1969"],
+            'internet before comma'      => ["prima internet, poi il resto", "prima Internet, poi il resto"],
+            'internet sentence-final'    => ["serve la connessione a internet.", "serve la connessione a Internet."],
+            'internet at text end'       => ["naviga meglio su internet", "naviga meglio su Internet"],
+            'quoted with «»'             => ["disse: «internet è libero»", "disse: «Internet è libero»"],
+
+            // ...and never in functional contexts, where the case is meaningful
+            'URL segment stays'          => ["vedi example.com/internet-security/ ora", "vedi example.com/internet-security/ ora"],
+            'domain stays (dot+letter)'  => ["il progetto internet.org di Facebook", "il progetto internet.org di Facebook"],
+            'path stays (backslash)'     => ["apri C:\\programmi\\internet explorer ora", "apri C:\\programmi\\internet explorer ora"],
+            'inside <code> stays'        => ["digita <code>internet</code> e invio", "digita <code>internet</code> e invio"],
+            'INTERNET caps stays'        => ["INTERNET EXPLORER 11 addio", "INTERNET EXPLORER 11 addio"],
+            "l'internet stays (elision)" => ["l'internet delle cose cresce", "l'internet delle cose cresce"],
+        ];
+    }
+
+
+    #[DataProvider('houseCapitalizationProvider')]
+    public function testHouseCapitalizationIsEnforcedOnlyBetweenProseDelimiters(string $input, string $expected) : void
+    {
+        $probe = bin2hex(random_bytes(4));
+
+        /** @var ArticleEditor $editor */
+        $editor = static::getService(Factory::class)->createArticleEditor();
+        $editor
+            ->setTitle("$input $probe")
+            ->setBody("<p>$input</p>");
+
+        $this->assertSame("$expected $probe", $editor->getTitle());
+        $this->assertSame("<p>$expected</p>", $editor->getBody());
+    }
+
+
     /**
      * The abstract is extracted from the first paragraph mid-chain, BEFORE the body's second cleaning
      * pass: it must receive the same normalization, or it would keep the fine typography and the E'
