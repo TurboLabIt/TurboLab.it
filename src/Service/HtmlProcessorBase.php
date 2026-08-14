@@ -51,7 +51,14 @@ abstract class HtmlProcessorBase
     }
 
 
-    public function replaceUndesiredHtmlEntities(?string $text) : ?string
+    /**
+     * $entityEncodeReplacements: when the input is raw HTML still to be purified, the replacement for a
+     * quote-family char must be its entity (&apos;/&quot;) — a raw " dropped inside a double-quoted
+     * attribute would break the tag at string level. HTMLPurifier then decodes those entities wherever
+     * they sit in text. On plain text (titles) or on already-purified HTML, pass false: the DB must
+     * store the raw char, never the entity (see docs/encoding.md).
+     */
+    public function replaceUndesiredHtmlEntities(?string $text, bool $entityEncodeReplacements = true) : ?string
     {
         if( empty($text) ) {
             return $text;
@@ -59,14 +66,17 @@ abstract class HtmlProcessorBase
 
         $arrEntities = [
             // convert single-quote entity from HTML4 to HTML5;
-            '&#039;' => '&apos;',
+            '&#039;' => $entityEncodeReplacements ? '&apos;' : "'",
         ];
 
         foreach(Dictionary::FINE_TYPOGRAPHY_CHARS as $fineChar => $standardChar) {
 
             $fineEntityHtml5    = htmlentities($fineChar, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $fineEntityHtml4    = htmlentities($fineChar, ENT_QUOTES | ENT_HTML401, 'UTF-8');
-            $standardChar       = htmlentities($standardChar, ENT_QUOTES | ENT_HTML5 , 'UTF-8');
+
+            if($entityEncodeReplacements) {
+                $standardChar = htmlentities($standardChar, ENT_QUOTES | ENT_HTML5 , 'UTF-8');
+            }
 
             $arrEntities[$fineEntityHtml5]  = $standardChar;
             $arrEntities[$fineEntityHtml4]  = $standardChar;
