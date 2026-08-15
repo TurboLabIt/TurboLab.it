@@ -90,8 +90,15 @@ class TextProcessor
         'menu' => 'menu',
     ];
 
-    /** Editorial proper nouns, enforced by enforceHouseCapitalization() — lowercase form => house form */
-    const array HOUSE_CAPITALIZED_WORDS = ['internet' => 'Internet'];
+    /**
+     * Editorial proper nouns, enforced by enforceHouseCapitalization() — lowercase form => house form.
+     * natale is deliberately absent: it is also the adjective "native" (città natale), a semantic
+     * homograph no delimiter can tell apart. pasqua's only lowercase use ("come una pasqua") never
+     * occurs in tech prose.
+     */
+    const array HOUSE_CAPITALIZED_WORDS = [
+        'internet' => 'Internet', 'pasqua' => 'Pasqua', 'ferragosto' => 'Ferragosto', 'capodanno' => 'Capodanno',
+    ];
 
     protected ?int $spotlightId = null;
     protected ?string $abstract = null;

@@ -303,6 +303,16 @@ class FineTypographyNormalizationTest extends BaseT
             'inside <code> stays'        => ["digita <code>internet</code> e invio", "digita <code>internet</code> e invio"],
             'INTERNET caps stays'        => ["INTERNET EXPLORER 11 addio", "INTERNET EXPLORER 11 addio"],
             "l'internet stays (elision)" => ["l'internet delle cose cresce", "l'internet delle cose cresce"],
+
+            // Pasqua is a proper noun too; natale is NOT in the list — it is also the adjective
+            // "native" (città natale), and a silent fix would corrupt correct Italian
+            'pasqua holiday'             => ["il giveaway di pasqua è attivo", "il giveaway di Pasqua è attivo"],
+            'ferragosto'                 => ["le offerte di ferragosto 2026", "le offerte di Ferragosto 2026"],
+            'capodanno'                  => ["entro capodanno, promette Google", "entro Capodanno, promette Google"],
+            'capodanno cinese'           => ["per il capodanno cinese arriva lo sconto", "per il Capodanno cinese arriva lo sconto"],
+            'uovo di pasqua'             => ["un uovo di pasqua digitale", "un uovo di Pasqua digitale"],
+            'natale stays (homograph)'   => ["torna nella sua città natale", "torna nella sua città natale"],
+            'buon natale stays (not opted in)' => ["buon natale e felice 2027", "buon natale e felice 2027"],
         ];
     }
 
