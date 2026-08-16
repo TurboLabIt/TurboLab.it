@@ -31,7 +31,12 @@ Struttura di assets/:
 
 `build/article.css` è caricato anche da pagine che **non** mostrano un articolo: `/scrivi` (`templates/article/editor/new.html.twig`) e `/info`. Entrambe usano il wrapper `.tli-article-main-content` della pagina articolo e ci mettono dentro tabelle Bootstrap (`.table`, `.table-sm`, `thead.table-primary`).
 
-Le regole che stilizzano il contenuto redazionale (tabelle, heading, ...) vanno quindi agganciate a `#tli-article-body` — più `.ck.ck-content.ck-editor__editable` quando devono valere anche in editing — e **mai** a `.tli-article-main-content`. Agosto 2026 il CSS delle tabelle degli articoli era scritto sul wrapper: sovrascriveva Bootstrap e rendeva illeggibili gli elenchi articoli di `/scrivi` (bordo su ogni cella, header grigio al posto di `table-primary`, e `overflow-wrap: anywhere` che spezzava "Modificato" in "Mod ifica to").
+Le regole che stilizzano il contenuto redazionale (tabelle, heading, blocchi di codice, ...) vanno quindi agganciate a `#tli-article-body` — più `.ck.ck-content.ck-editor__editable` quando devono valere anche in editing — e **mai** a `.tli-article-main-content`. Agosto 2026 il CSS delle tabelle degli articoli era scritto sul wrapper: sovrascriveva Bootstrap e rendeva illeggibili gli elenchi articoli di `/scrivi` (bordo su ogni cella, header grigio al posto di `table-primary`, e `overflow-wrap: anywhere` che spezzava "Modificato" in "Mod ifica to").
+
+
+### Evidenziazione del codice (highlight.js)
+
+I blocchi `<pre><code class="language-*">` degli articoli sono evidenziati client-side da highlight.js, inserito nell'entry `article`: core + sole lingue di `HtmlProcessorForStorage::ALLOWED_CODE_LANGUAGES`, mai autodetection — un blocco senza classe resta com'è. Il modulo è `js/article-code-highlight.js`; il tema (`github.css`) porta solo i colori dei token, perché sfondo e padding del blocco restano quelli di `article.css` (specificità maggiore). In editing non si evidenzia nulla: il div è di CKEditor.
 
 
 ## Asset del tema - public/assets/

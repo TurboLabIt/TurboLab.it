@@ -87,6 +87,36 @@ abstract class HtmlProcessorBase
     }
 
 
+    /**
+     * Runs $fxProcessChunk on everything BUT the <pre>…</pre> blocks: code is whitespace- and
+     * character-significant, so the text fixers (double-space collapse, accent fixes, legacy
+     * formatting repairs) must leave it byte-identical. HTMLPurifier is NOT one of these callers:
+     * sanitization always sees the whole document, or <pre> content would bypass it.
+     */
+    public function applyOutsidePreBlocks(string $text, callable $fxProcessChunk) : string
+    {
+        if( stripos($text, '<pre') === false ) {
+            return $fxProcessChunk($text);
+        }
+
+        $arrChunks = preg_split('~(<pre\b.*?</pre>)~is', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if( $arrChunks === false ) {
+            return $fxProcessChunk($text);
+        }
+
+        foreach($arrChunks as $i => $chunk) {
+
+            if( preg_match('~^<pre\b~i', $chunk) === 1 ) {
+                continue;
+            }
+
+            $arrChunks[$i] = $fxProcessChunk($chunk);
+        }
+
+        return implode('', $arrChunks);
+    }
+
+
     public function parseHTML(string $text) : DOMDocument|bool
     {
         $domDoc = new DOMDocument();

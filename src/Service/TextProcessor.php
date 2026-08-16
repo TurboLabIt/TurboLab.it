@@ -172,11 +172,16 @@ class TextProcessor
         // Remove null bytes
         $processing = str_replace("\0", "", $text);
 
-        // replace "fine typography" with their corresponding base equivalents
+        // replace "fine typography" with their corresponding base equivalents — <pre> included, on
+        // purpose: curly quotes and nbsp inside code are paste damage, and a command must still work
+        // when the reader copies it from the page
         $processing = $this->htmlProcessor->replaceUndesiredHtmlEntities($processing, $entityEncodeReplacements);
 
-        // no double-spaces
-        $processing = $this->removeDoubleChars($processing);
+        // no double-spaces — except in <pre>, where whitespace is the indentation
+        $processing = $this->htmlProcessor->applyOutsidePreBlocks(
+            $processing,
+            fn(string $chunk) : string => $this->removeDoubleChars($chunk)
+        );
 
         return trim($processing);
     }
@@ -203,22 +208,27 @@ class TextProcessor
      *    each fix inheriting the case pattern of what the author typed (PERCHE' → PERCHÉ);
      *  - editorial proper nouns get their capital (HOUSE_CAPITALIZED_WORDS: internet → Internet),
      *    but only between strong prose delimiters and never inside <code> — see
-     *    enforceHouseCapitalization() for the exact contract.
+     *    enforceHouseCapitalization() for the exact contract;
+     *  - <pre> blocks are skipped whole: an inline <code> is prose wearing a monospace chrome, but a
+     *    code block is real code, where velocita may be an identifier and E'...' a PostgreSQL string.
      */
     protected function fixAccentSurrogates(string $text) : string
     {
-        $text = preg_replace('/(^|[>\s«"(])E\'(?=\s)/u', '$1È', $text);
+        return $this->htmlProcessor->applyOutsidePreBlocks($text, function(string $chunk) : string {
 
-        $text = preg_replace('/\bp[òó]\'?(?!\p{L})/u', "po'", $text);
-        $text = preg_replace('/(^|[>\s«"(])po(?![\'\p{L}\p{N}_])/u', "$1po'", $text);
+            $chunk = preg_replace('/(^|[>\s«"(])E\'(?=\s)/u', '$1È', $chunk);
 
-        $text = $this->fixMisspelledWords(
-            $text, static::ACCENT_MISSPELLED_WORDS + static::ACCENT_MISSING_WORDS, false
-        );
+            $chunk = preg_replace('/\bp[òó]\'?(?!\p{L})/u', "po'", $chunk);
+            $chunk = preg_replace('/(^|[>\s«"(])po(?![\'\p{L}\p{N}_])/u', "$1po'", $chunk);
 
-        $text = $this->fixMisspelledWords($text, static::ACCENT_SURROGATE_WORDS, true);
+            $chunk = $this->fixMisspelledWords(
+                $chunk, static::ACCENT_MISSPELLED_WORDS + static::ACCENT_MISSING_WORDS, false
+            );
 
-        return $this->enforceHouseCapitalization($text);
+            $chunk = $this->fixMisspelledWords($chunk, static::ACCENT_SURROGATE_WORDS, true);
+
+            return $this->enforceHouseCapitalization($chunk);
+        });
     }
 
 

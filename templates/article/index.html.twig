@@ -102,7 +102,8 @@
                             <div id="tli-article-body"
                                  class="post-text mb-20 tli-article-body {% if Article.isEditable %}form-control{% endif %}"
                                  {% if Article.isEditable %}data-ckeditor-license-key="{{ ckeditorLicenseKey }}"
-                                 data-allow-extended-html="{{ Article.isAllowExtendedHtml ? 'true' : 'false' }}"{% endif %}>
+                                 data-allow-extended-html="{{ Article.isAllowExtendedHtml ? 'true' : 'false' }}"
+                                 data-code-languages="{{ CodeLanguages|json_encode|e('html_attr') }}"{% endif %}>
                                 {{ Article.bodyForDisplay|raw }}
                             </div>
 

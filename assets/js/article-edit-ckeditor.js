@@ -52,11 +52,31 @@ import TliFormatPlugin from "./ckeditor-plugins/format";
 import TliDataUriUpload from "./ckeditor-plugins/data-uri-upload";
 import TliTablePasteGuard from "./ckeditor-plugins/table-paste-guard";
 import TliAdvisePlugin from "./ckeditor-plugins/advise";
+import TliCodicePlugin from "./ckeditor-plugins/codice";
 
 
 const $articleBody = $('#tli-article-body');
 const LICENSE_KEY = $articleBody.data('ckeditor-license-key');
 const ALLOW_EXTENDED_HTML = $articleBody.data('allow-extended-html') === true;
+
+// ids come from the server (HtmlProcessorForStorage::ALLOWED_CODE_LANGUAGES via data attribute),
+// so the dropdown can never offer a language the purifier would strip on save. They double as
+// highlight.js ids: the stored class drives the highlighting on display (article-code-highlight.js).
+// An id without a label here falls back to the id itself.
+const CODE_LANGUAGES = $articleBody.data('code-languages') || [];
+const CODE_LANGUAGE_LABELS = {
+    bash:       'Bash / shell',
+    dos:        'Prompt dei comandi (batch)',
+    powershell: 'PowerShell',
+    ini:        'File di configurazione (ini)',
+    xml:        'HTML / XML',
+    css:        'CSS',
+    javascript: 'JavaScript',
+    php:        'PHP',
+    python:     'Python',
+    sql:        'SQL',
+    json:       'JSON'
+};
 
 const editorConfig = {
     toolbar: {
@@ -65,7 +85,7 @@ const editorConfig = {
             'heading2', ...(ALLOW_EXTENDED_HTML ? ['heading3', 'heading4', 'heading5', 'heading6'] : []), 'paragraph', '|',
             'bold', 'italic', 'strikethrough', 'tliIstruzioni', 'tliUpdate', 'removeFormat', '|',
             'tliLinkArticle', 'tliLinkFile', 'link', 'tliyoutube', '|',
-            /*'codeBlock',*/ 'bulletedList', 'numberedList',
+            'tliCodice', 'bulletedList', 'numberedList',
             ...(ALLOW_EXTENDED_HTML ? ['insertTable'] : []), '|',
             'undo', 'redo', '|',
             'findAndReplace', /*'fullscreen'*/ '|',
@@ -109,7 +129,8 @@ const editorConfig = {
         TliWatermark,
         TliFormatPlugin,
         TliDataUriUpload,
-        TliAdvisePlugin
+        TliAdvisePlugin,
+        TliCodicePlugin
     ],
     balloonToolbar: ['tliIstruzioni', '|', 'bold', 'italic',  'removeFormat', '|', 'link'],
     fullscreen: {
@@ -129,6 +150,16 @@ const editorConfig = {
     },
     placeholder: 'Digita qui il testo del tuo articolo',
     translations: [translations],
+    // "Testo semplice" is the default: no class emitted, no highlighting — byte-identical to what
+    // the DB stores for a plain block. Explicit class on the others: never rely on CKEditor defaults
+    codeBlock: {
+        languages: [
+            { language: 'plaintext', label: 'Testo semplice', class: '' },
+            ...CODE_LANGUAGES.map(id => (
+                { language: id, label: CODE_LANGUAGE_LABELS[id] || id, class: 'language-' + id }
+            ))
+        ]
+    },
     // Read only when the Table plugins are loaded (ALLOW_EXTENDED_HTML)
     table: {
         contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'toggleTableCaption'],

@@ -12,8 +12,21 @@ use HTMLPurifier_Config;
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 class HtmlProcessorForStorage extends HtmlProcessorBase
 {
-    // What any article may contain. Intentionally minimal: no h3, no tables, no "artistic" layouts
-    const string ALLOWED_TAGS = 'p,a[href],strong,em,s,ol,ul,li,h2,code,ins,img[src],iframe[src]';
+    // What any article may contain. Intentionally minimal: no h3, no tables, no "artistic" layouts.
+    // pre (code blocks) is byte-significant: every text fixer skips it — see applyOutsidePreBlocks().
+    // class stays code-only, and Attr.AllowedClasses caps its values to the language-* set below
+    const string ALLOWED_TAGS = 'p,a[href],strong,em,s,ol,ul,li,h2,code[class],pre,ins,img[src],iframe[src]';
+
+    /**
+     * Languages a code block may declare (class="language-*" on the <code> inside <pre>),
+     * highlighted client-side by highlight.js on the article page. The ids ARE highlight.js ids.
+     * The editor dropdown is built from this very list (CodeLanguages Twig global → data attribute),
+     * so it can never offer a language the purifier would then strip on save. The default, "none",
+     * is spelled as no class at all: language-plaintext is deliberately absent.
+     */
+    const array ALLOWED_CODE_LANGUAGES = [
+        'bash', 'dos', 'powershell', 'ini', 'xml', 'css', 'javascript', 'php', 'python', 'sql', 'json',
+    ];
 
     // Unlocked per-article by Article::isAllowExtendedHtml()
     // tfoot is listed for completeness: CKEditor has no footer concept and will never produce one
@@ -52,6 +65,14 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('Core.Encoding', 'UTF-8');
             $tliPurifierConfig->set('HTML.Allowed', $allowedTags);
 
+            // global cap on class values — reachable only through code[class], the sole [class] in
+            // the allowlist: anything but a whitelisted language-* is dropped, and an emptied class
+            // attribute is removed with it
+            $tliPurifierConfig->set('Attr.AllowedClasses', array_map(
+                fn(string $language) : string => 'language-' . $language,
+                static::ALLOWED_CODE_LANGUAGES
+            ));
+
             // When enabled, HTML Purifier will treat any elements that contain only non-breaking spaces as well as
             //   regular whitespace as empty, and remove them when %AutoForamt.RemoveEmpty is enabled.
             $tliPurifierConfig->set('AutoFormat.RemoveEmpty.RemoveNbsp', true);
@@ -86,36 +107,39 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
     public function fixFormattingErrors(string $text) : string
     {
         // legacy code from https://github.com/TurboLabIt/tli1-sasha-grey/blob/master/website/www/include/func_tli_textprocessor.php
+        // These are prose repairs: inside <pre> they would corrupt code (a block opening with >> would become »)
+        return $this->applyOutsidePreBlocks($text, function(string $chunk) : string {
 
-        $processing = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $text);
+            $processing = preg_replace('/(<img [^>]*>)/i', '</p><p>\\0</p><p>', $chunk);
 
-        $arrReplace = [
-            '<br>'				=> '<p></p>',
-            '<br/>'				=> '<p></p>',
-            '<br />'			=> '<p></p>',
+            $arrReplace = [
+                '<br>'				=> '<p></p>',
+                '<br/>'				=> '<p></p>',
+                '<br />'			=> '<p></p>',
 
-            '<b>'               => '<strong>',
-            '</b>'              => '</strong>',
+                '<b>'               => '<strong>',
+                '</b>'              => '</strong>',
 
-            '<i>'               => '<em>',
-            '</i>'              => '</em>',
+                '<i>'               => '<em>',
+                '</i>'              => '</em>',
 
-            '"<code>'           => '<code>',
-            '</code>"'          => '</code>',
+                '"<code>'           => '<code>',
+                '</code>"'          => '</code>',
 
-            '«<code>'           => '<code>',
-            '</code>»'          => '</code>',
+                '«<code>'           => '<code>',
+                '</code>»'          => '</code>',
 
-            '<p><p>'            => '<p>',
-            '</p></p>'          => '</p>',
+                '<p><p>'            => '<p>',
+                '</p></p>'          => '</p>',
 
-            '>&gt;&gt;'			=> '>&raquo;',
-            '::hamburger::'		=> '≡',
-            '::vdots::'			=> '⋮',
-            '::hdots::'			=> '⋯'
-        ];
+                '>&gt;&gt;'			=> '>&raquo;',
+                '::hamburger::'		=> '≡',
+                '::vdots::'			=> '⋮',
+                '::hdots::'			=> '⋯'
+            ];
 
-        return str_ireplace( array_keys($arrReplace), $arrReplace, $processing);
+            return str_ireplace( array_keys($arrReplace), $arrReplace, $processing);
+        });
     }
 
 

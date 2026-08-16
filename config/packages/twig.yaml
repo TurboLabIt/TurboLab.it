@@ -15,6 +15,7 @@ twig:
         websiteTwitterHandle: '%env(APP_TWITTER_HANDLE)%'
         ckeditorLicenseKey: '%env(CKEDITOR_LICENSE_KEY)%'
         ImageSizes: !php/const 'App\Service\Cms\Image::SIZES'
+        CodeLanguages: !php/const 'App\Service\HtmlProcessorForStorage::ALLOWED_CODE_LANGUAGES'
 
 when@test:
     twig:

@@ -52,6 +52,28 @@
     padding: .15em;
 }
 
+/* Codice (<pre>) */
+#tli-article-body pre,
+.ck.ck-content.ck-editor__editable pre {
+    background-color: hsla(0, 0%, 78%, .3);
+    border: 1px solid #C2C5C7;
+    border-radius: 2px;
+    margin: 1em 0;
+    padding: 0.75em 1em;
+    font-size: 17px;
+    line-height: 1.45;
+    tab-size: 4;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+#tli-article-body pre code,
+.ck.ck-content.ck-editor__editable pre code {
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
 /* Update (<ins>) */
 .tli-article-main-content ins {
     display: block;
