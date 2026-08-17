@@ -56,7 +56,23 @@ class ArticleController extends BaseController
             return $this->redirect($articleRealUrl, Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $articleHowTo = $article->isEditable() ? $this->factory->createArticle()->load(Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT) : null;
+
+        $isEditable = $article->isEditable();
+
+        if( $isEditable ) {
+
+            $idAuthorGuideInsert =
+                match( $article->getFormat() ) {
+                    Article::FORMAT_ARTICLE => Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT,
+                    Article::FORMAT_NEWS    => Article::ID_AUTHOR_GUIDE_NEWS_INSERT
+                };
+
+            $authorGuideInsert = $this->factory->createArticle()->load($idAuthorGuideInsert);
+
+        } else {
+
+            $authorGuideInsert = null;
+        }
 
         $sentinel = $this->factory->createArticleSentinel($article);
 
@@ -79,8 +95,8 @@ class ArticleController extends BaseController
                     Article::FORMAT_NEWS    => 'Notizia, segnalazione'
                 ],
                 'Article'               => $article,
-                'ArticleHowTo'          => $articleHowTo,
-                'FileFormats'           => $article->isEditable() ? $this->factory->createFileCollection()->getFormats() : null,
+                'AuthorGuideInsert'     => $authorGuideInsert,
+                'FileFormats'           => $isEditable ? $this->factory->createFileCollection()->getFormats() : null,
                 // the following guides are required by article/files.html.twig
                 'BitTorrentGuide'       => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
                 'EmuleGuide'            => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE),

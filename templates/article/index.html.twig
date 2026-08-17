@@ -59,13 +59,17 @@
                                 {% embed 'parts/alert-chalkboard.html.twig' %}
 
                                     {% block alertTitle %}
-                                        Tu, {{ CurrentUser.username }}, puoi modificare questo articolo!
+                                        Tu, {{ CurrentUser.username }}, puoi modificare
+                                        {% if Article.isNews %}questa notizia{% else %}questo articolo{% endif %}!
                                     {% endblock %}
 
                                     {% block alertBodyStyle %}{% endblock %}
                                     {% block alertBody %}
                                         <div>Ti basta cliccare sul testo (titolo, corpo, ...) e scrivere, come se fosse un documento di Word.</div>
-                                        <div><strong>Prima di cominciare a scrivere</strong>, ri-leggi sempre la guida "<a href="{{ ArticleHowTo.url }}">{{ ArticleHowTo.title }}</a>".</div>
+                                        <div>
+                                            <strong>Prima di cominciare a scrivere</strong>, ri-leggi sempre la guida
+                                            <a href="{{ AuthorGuideInsert.url }}" target="_blank">{{ AuthorGuideInsert.title }}</a>
+                                        </div>
                                     {% endblock %}
 
                                 {% endembed %}
