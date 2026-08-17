@@ -49,7 +49,7 @@ class ArticleNewController extends ArticleEditBaseController
             'metaCanonicalUrl'              => $this->generateUrl('app_article_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
             'activeMenu'                    => '',
             'FrontendHelper'                => $this->frontendHelper,
-            'ArticleHowTo'                  => $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE),
+            'ArticleHowTo'                  => $this->factory->createArticle()->load(Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT),
             'currentUserUrl'                => $currentUser?->getUrl(),
             'currentUserArticlesNum'        => $currentUser?->getArticlesNum(),
             'CurrentUserDraftArticles'      => $currentUser?->getArticlesDraft(),

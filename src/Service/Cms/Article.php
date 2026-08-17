@@ -28,24 +28,29 @@ class Article extends BaseCmsService
     const string TLI_CLASS              = ArticleEntity::TLI_CLASS;
     const string NOT_FOUND_EXCEPTION    = ArticleNotFoundException::class;
 
-    const int ID_FORUM_IMAGES       = 24;       // 👀 https://turbolab.it/24
-    const int ID_HOW_TO_JOIN        = 28;       // 👀 https://turbolab.it/28
-    const int ID_ABOUT_US           = 40;       // 👀 https://turbolab.it/40
-    const int ID_HOW_TO_WRITE       = 46;       // 👀 https://turbolab.it/46
-    const int ID_ISSUE_REPORT       = 49;       // 👀 https://turbolab.it/49
-    const int ID_FORUM_RULES        = 161;      // 👀 https://turbolab.it/161
-    const int ID_PUBLISH_NEWS       = 222;      // 👀 https://turbolab.it/222
-    const int ID_NEWSLETTER         = 402;      // 👀 https://turbolab.it/402
-    const int ID_PRIVACY_POLICY     = 617;      // 👀 https://turbolab.it/617
-    const int ID_COOKIE_POLICY      = 681;      // 👀 https://turbolab.it/681
-    const int ID_DONATIONS          = 1126;     // 👀 https://turbolab.it/1126
-    const int ID_PUBLISH_ARTICLE    = 3990;     // 👀 https://turbolab.it/3990
-    const int ID_SIGN_ARTICLE       = 2329;     // 👀 https://turbolab.it/2329
-    const int ID_BITTORRENT_GUIDE   = 669;      // 👀 https://turbolab.it/669
-    const int ID_QUALITY_TEST       = 1939;     // 👀 https://turbolab.it/1939
-    const int ID_EMULE_GUIDE        = 3020;     // 👀 https://turbolab.it/3020
-    const int ID_POLICY_AI          = 4524;     // 👀 https://turbolab.it/4524
-    const int ID_REMOVED            = 4064;     // 👀 https://turbolab.it/4064
+    const int ID_FORUM_IMAGES                   = 24;       // 👀 https://turbolab.it/24
+    const int ID_HOW_TO_JOIN                    = 28;       // 👀 https://turbolab.it/28
+    const int ID_ABOUT_US                       = 40;       // 👀 https://turbolab.it/40
+    const int ID_ISSUE_REPORT                   = 49;       // 👀 https://turbolab.it/49
+    const int ID_FORUM_RULES                    = 161;      // 👀 https://turbolab.it/161
+    const int ID_NEWSLETTER                     = 402;      // 👀 https://turbolab.it/402
+    const int ID_PRIVACY_POLICY                 = 617;      // 👀 https://turbolab.it/617
+    const int ID_COOKIE_POLICY                  = 681;      // 👀 https://turbolab.it/681
+    const int ID_DONATIONS                      = 1126;     // 👀 https://turbolab.it/1126
+    const int ID_BITTORRENT_GUIDE               = 669;      // 👀 https://turbolab.it/669
+    const int ID_QUALITY_TEST                   = 1939;     // 👀 https://turbolab.it/1939
+    const int ID_EMULE_GUIDE                    = 3020;     // 👀 https://turbolab.it/3020
+    const int ID_REMOVED                        = 4064;     // 👀 https://turbolab.it/4064
+
+    // writing/insert guides for authors
+    const int ID_AUTHOR_GUIDE_SIGN_ARTICLES     = 2329;     // 👀 https://turbolab.it/2329
+    const int ID_AUTHOR_GUIDE_POLICY_AI         = 4524;     // 👀 https://turbolab.it/4524
+    const int ID_AUTHOR_GUIDE_SPOTLIGHT         = 4831;     // 👀 https://turbolab.it/4831
+    const int ID_AUTHOR_GUIDE_NEWS_WRITE        = 26;       // 👀 https://turbolab.it/26
+    const int ID_AUTHOR_GUIDE_NEWS_INSERT       = 222;      // 👀 https://turbolab.it/222
+    const int ID_AUTHOR_GUIDE_ARTICLE_WRITE     = 46;       // 👀 https://turbolab.it/46
+    const int ID_AUTHOR_GUIDE_ARTICLE_INSERT    = 3990;     // 👀 https://turbolab.it/3990
+
 
     use AuthorableTrait, PublishingStatusesTrait, ArticleFormatsTrait, CommentsTopicStatusesTrait, VisitableServiceTrait;
 

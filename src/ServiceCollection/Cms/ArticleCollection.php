@@ -136,8 +136,16 @@ class ArticleCollection extends BaseArticleCollection
     {
         $this->loadComplete([
             Article::ID_ABOUT_US, Article::ID_ISSUE_REPORT, Article::ID_FORUM_IMAGES, Article::ID_HOW_TO_JOIN,
-            Article::ID_HOW_TO_WRITE, Article::ID_PUBLISH_NEWS, Article::ID_PUBLISH_ARTICLE, Article::ID_SIGN_ARTICLE,
-            Article::ID_POLICY_AI
+
+            // general writing
+            Article::ID_AUTHOR_GUIDE_SIGN_ARTICLES, Article::ID_AUTHOR_GUIDE_POLICY_AI,
+            Article::ID_AUTHOR_GUIDE_SPOTLIGHT,
+
+            // news writing
+            Article::ID_AUTHOR_GUIDE_NEWS_WRITE, Article::ID_AUTHOR_GUIDE_NEWS_INSERT,
+
+            // article writing
+            Article::ID_AUTHOR_GUIDE_ARTICLE_WRITE, Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT,
         ]);
 
         $this->filterIfNotEmptyResult( fn(Article $article) => $article->isPublished() );

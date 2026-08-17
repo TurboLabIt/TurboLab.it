@@ -72,7 +72,7 @@ class AuthorContoller extends BaseController
         $currentUserIsEditor    = $currentUser?->isEditor() ?? false;
 
         if($authorIsCurrentUser) {
-           $changeBioUrl = $this->factory->createArticle()->load(Article::ID_SIGN_ARTICLE)->getUrl();
+           $changeBioUrl = $this->factory->createArticle()->load(Article::ID_AUTHOR_GUIDE_SIGN_ARTICLES)->getUrl();
         }
 
 

@@ -56,7 +56,7 @@ class ArticleController extends BaseController
             return $this->redirect($articleRealUrl, Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $articleHowTo = $article->isEditable() ? $this->factory->createArticle()->load(Article::ID_PUBLISH_ARTICLE) : null;
+        $articleHowTo = $article->isEditable() ? $this->factory->createArticle()->load(Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT) : null;
 
         $sentinel = $this->factory->createArticleSentinel($article);
 
