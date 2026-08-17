@@ -263,8 +263,23 @@ class FineTypographyNormalizationTest extends BaseT
             'onestà stays'                => ["l'onestà paga sempre", "l'onestà paga sempre"],
             'Maestà stays'                => ["Sua Maestà arriva", "Sua Maestà arriva"],
 
+            // the wrong elision un' + masculine word drops the apostrophe, the word stays as typed
+            "un'altro"                    => ["serve un'altro tentativo", "serve un altro tentativo"],
+            "Un'altro capitalized"        => ["Un'altro problema emerge", "Un altro problema emerge"],
+            "UN'ALTRO all caps"           => ["MAI UN'ALTRO ERRORE", "MAI UN ALTRO ERRORE"],
+            "un'account"                  => ["creare un'account privato", "creare un account privato"],
+            "un'eCommerce keeps casing"   => ["aprire un'eCommerce oggi", "aprire un eCommerce oggi"],
+            "d'un'altro"                  => ["il fascino d'un'altro tempo", "il fascino d'un altro tempo"],
+            "un'altra stays (feminine)"   => ["serve un'altra prova", "serve un'altra prova"],
+            "un'ottima stays (feminine)"  => ["un'ottima idea davvero", "un'ottima idea davvero"],
+            "un'utile stays (epicene)"    => ["un'utile opzione in più", "un'utile opzione in più"],
+            "un'AI stays (feminine)"      => ["parlare con un'AI locale", "parlare con un'AI locale"],
+            "qualcun'altro stays (out of scope)" => ["lo dirà qualcun'altro", "lo dirà qualcun'altro"],
+            "un' altro stays (stray space, out of contract)" => ["serve un' altro tentativo", "serve un' altro tentativo"],
+
             // the rules compose
             'all together'                => ["E' un pò perchè stà lì", "È un po' perché sta lì"],
+            'elision composes'            => ["E' un'altro pò di lavoro", "È un altro po' di lavoro"],
         ];
     }
 

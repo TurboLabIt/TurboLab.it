@@ -91,6 +91,27 @@ class TextProcessor
     ];
 
     /**
+     * Masculine words that can never follow the elided article: un'altro is always un altro.
+     * Only gender-locked entries are allowed — words with ANY feminine or epicene reading stay out
+     * (un'utente/un'assistente/un'ospite are legitimate for a woman, un'utile opzione and
+     * un'eseguibile <sostantivo femminile> are legitimate epicene adjectives). The fix drops the
+     * apostrophe and keeps the following word exactly as typed (un'eCommerce → un eCommerce), so
+     * the list needs no replacement values. The spaced variant (un' altro) is out of contract.
+     */
+    const array ELISION_MASCULINE_WORDS = [
+        // corpus-verified errors (2013-2026 archive scan)
+        'account', 'acquisto', 'adattatore', 'alert', 'allagamento', 'altro', 'ambiente', 'apparecchio',
+        'approccio', 'articolo', 'assaggio', 'asteroide', 'attacco', 'attimo', 'aumento', 'automatismo',
+        'ecommerce', 'effetto', 'elenco', 'elevato', 'episodio', 'errore', 'esborso', 'espediente',
+        'exchange', 'identificativo', 'impatto', 'indicatore', 'ingresso', 'interesse', 'investimento',
+        'invio', 'occhio', 'ordinamento', 'orecchio', 'ottimo', 'output', 'unico',
+
+        // never seen in the corpus, listed as insurance: the classic un' slips in tech prose
+        'accesso', 'aggiornamento', 'amico', 'antivirus', 'avvio', 'esempio', 'indirizzo',
+        'obiettivo', 'oggetto', 'ordine', 'ultimo', 'uomo',
+    ];
+
+    /**
      * Editorial proper nouns, enforced by enforceHouseCapitalization() — lowercase form => house form.
      * natale is deliberately absent: it is also the adjective "native" (città natale), a semantic
      * homograph no delimiter can tell apart. pasqua's only lowercase use ("come una pasqua") never
@@ -203,6 +224,9 @@ class TextProcessor
      *  - the word po' (truncation of "poco") is rebuilt from any misspelling: pò, pó, even bare po.
      *    Lowercase only — Po capitalized may be the river — and the bare form only after
      *    start/whitespace/tag/«/"/(: never after a dot (gettext .po files) nor inside paths and URLs;
+     *  - the wrong elision un'altro loses its apostrophe when the next word is in the gender-locked
+     *    ELISION_MASCULINE_WORDS list; the article keeps its case (UN'ALTRO → UN ALTRO), the word
+     *    stays byte-identical, and qualcun'altro/nessun'altro are out of reach behind the boundary;
      *  - three curated word lists fix wrong accents (ACCENT_MISSPELLED_WORDS), missing accents
      *    (ACCENT_MISSING_WORDS) and the vowel+apostrophe surrogate habit (ACCENT_SURROGATE_WORDS),
      *    each fix inheriting the case pattern of what the author typed (PERCHE' → PERCHÉ);
@@ -220,6 +244,11 @@ class TextProcessor
 
             $chunk = preg_replace('/\bp[òó]\'?(?!\p{L})/u', "po'", $chunk);
             $chunk = preg_replace('/(^|[>\s«"(])po(?![\'\p{L}\p{N}_])/u', "$1po'", $chunk);
+
+            $chunk = preg_replace(
+                '/\b(un)\'(?=(?:' . implode('|', static::ELISION_MASCULINE_WORDS) . ')(?![\'\p{L}\p{N}_]))/iu',
+                '$1 ', $chunk
+            );
 
             $chunk = $this->fixMisspelledWords(
                 $chunk, static::ACCENT_MISSPELLED_WORDS + static::ACCENT_MISSING_WORDS, false
