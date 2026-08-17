@@ -175,7 +175,7 @@ class Article extends BaseCmsService
     //<editor-fold defaultstate="collapsed" desc="*** 🗞️ Format ***">
     public function isNews() : bool { return $this->entity->getFormat() == static::FORMAT_NEWS; }
 
-    public function getFormat() : string { return $this->entity->getFormat(); }
+    public function getFormat() : ?int { return $this->entity->getFormat(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🐦‍🔥 Special features ***">
