@@ -123,6 +123,11 @@ phpstan.neon
 ###< phpunit/phpunit ###
 
 
+## AI
+/CLAUDE.md
+/.claude/
+
+
 ## TurboLab.it
 /public/images/logo/apple-touch-icon.png
 /public/images/logo/favicon.ico
