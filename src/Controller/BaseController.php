@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\AjaxOnlyException;
 use App\Exception\NotImplementedException;
 use App\Service\Cms\Paginator;
@@ -45,6 +46,16 @@ abstract class BaseController extends AbstractController
         $this->request = $requestStack->getCurrentRequest();
     }
 
+
+    /**
+     * Narrows Symfony's ?UserInterface: phpBBCookiesAuthenticator is the only authenticator,
+     * so the token can only ever hold a phpBB User entity (App\Service\User is getCurrentUser()).
+     */
+    protected function getUser() : ?UserEntity
+    {
+        $user = parent::getUser();
+        return $user instanceof UserEntity ? $user : null;
+    }
 
     protected function getCurrentUser() : ?User { return $this->factory->getCurrentUser(); }
 

@@ -217,7 +217,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
             $arrDataSource[] = [
                 'filepath'      => $filepath,
                 'filename'      => basename($filepath),
-                'lastModified'  => DateTime::createFromFormat('U', filemtime($filepath))->format('Y-m-d H:i:s'),
+                'lastModified'  => DateTime::createFromFormat('U', (string)filemtime($filepath))->format('Y-m-d H:i:s'),
             ];
         }
 

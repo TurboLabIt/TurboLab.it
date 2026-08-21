@@ -27,7 +27,6 @@ class AjaxController extends BaseController
         }
 
 
-        /** @var ?\App\Entity\PhpBB\User $userEntity */
         $userEntity = $this->getUser();
 
         if( empty($userEntity) ) {

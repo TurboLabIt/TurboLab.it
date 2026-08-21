@@ -64,7 +64,8 @@ class ArticleController extends BaseController
             $idAuthorGuideInsert =
                 match( $article->getFormat() ) {
                     Article::FORMAT_ARTICLE => Article::ID_AUTHOR_GUIDE_ARTICLE_INSERT,
-                    Article::FORMAT_NEWS    => Article::ID_AUTHOR_GUIDE_NEWS_INSERT
+                    Article::FORMAT_NEWS    => Article::ID_AUTHOR_GUIDE_NEWS_INSERT,
+                    default                 => null
                 };
 
             $authorGuideInsert = $this->factory->createArticle()->load($idAuthorGuideInsert);

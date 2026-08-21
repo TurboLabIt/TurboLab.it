@@ -83,9 +83,7 @@ class Factory
         }
 
         $entity = $this->security->getUser();
-        $userId = $entity?->getId();
-
-        if( empty($userId) ) {
+        if( !($entity instanceof UserEntity) || empty($entity->getId()) ) {
             return null;
         }
 

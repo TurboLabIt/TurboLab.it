@@ -64,7 +64,6 @@ class NewsletterController extends BaseController
             $newsletter->loadTestTopics();
         }
 
-        /** @var ?\App\Entity\PhpBB\User $entityCurrentUser */
         $entityCurrentUser = $this->getUser();
         $userId = $entityCurrentUser?->getId() ?? User::ID_SYSTEM;
         $user   = $currentUser->load($userId);
