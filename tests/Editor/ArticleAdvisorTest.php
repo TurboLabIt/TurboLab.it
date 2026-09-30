@@ -1,14 +1,19 @@
 <?php
 namespace App\Tests\Editor;
 
+use App\Controller\Editor\ArticleEditorController;
+use App\Service\Cms\Article;
 use App\Service\Cms\ArticleAdvisor;
 use App\Service\Factory;
 use App\Tests\BaseT;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
  * The "Verifica" toolbar button (app_editor_article_advise) runs ArticleAdvisor over the saved
- * article and reports soft warnings. First check: leftover references to Google Docs
+ * article and reports soft warnings; every publishing-status change runs it too, quietly (the modal
+ * opens only when there is advice). First check: leftover references to Google Docs
  * ("docs.google.com/document/"), whether visible as text or hidden in a link's href — the classic
  * residue of drafting an article in a shared document. Each occurrence must come with an excerpt
  * the author can use to locate it, and an auto-linked URL (<a href="URL">URL</a>) must count once.
@@ -120,5 +125,43 @@ class ArticleAdvisorTest extends BaseT
         $this->assertStringContainsString('docs.google.com/document/d/42', $excerpt);
         $this->assertStringContainsString('…', $excerpt);
         $this->assertLessThan(220, mb_strlen($excerpt));
+    }
+
+
+    /**
+     * The automatic check opens the modal only if the endpoint reports adviceNum > 0: a clean article must
+     * say 0 (no "Tutto a posto!" modal nobody asked for), a flagged one its count. Without the key, the
+     * automatic check would fall silent for good, and without any error to notice.
+     */
+    public function testEndpointReportsTheAdviceCount() : void
+    {
+        static::loginAsSystem();
+
+        $arrFlagged = $this->advise('<p>Vedi <a href="https://docs.google.com/document/d/1/edit">la bozza</a></p>');
+        $this->assertNotEmpty($arrFlagged);
+
+        foreach([[], $arrFlagged] as $arrAdvice) {
+
+            $json = $this->callAdviseEndpoint($arrAdvice);
+            $this->assertSame(count($arrAdvice), $json["adviceNum"] ?? null);
+            $this->assertNotEmpty($json["body"]);
+        }
+    }
+
+
+    // same trick as FileDownloadPublicationGateTest: the stateless firewall drops loginAsSystem() on a real
+    // HTTP call, so push a Request and call the action directly. System authors the quality-test article
+    protected function callAdviseEndpoint(array $arrAdvice) : array
+    {
+        $advisor = $this->createStub(ArticleAdvisor::class);
+        $advisor->method('advise')->willReturn($arrAdvice);
+
+        $articleId = Article::ID_QUALITY_TEST;
+        static::getService('request_stack')->push( Request::create("/ajax/editor/article/$articleId/advise") );
+
+        $response = static::getService(ArticleEditorController::class)->advise($articleId, $advisor);
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode(), (string)$response->getContent());
+
+        return json_decode($response->getContent(), true);
     }
 }

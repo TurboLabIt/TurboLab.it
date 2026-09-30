@@ -62,7 +62,7 @@ function setPublishingStatus(status, onSuccessCallback)
 
             // every status except "Bloccato/rimosso" implies content worth checking
             if( status != PUBLISHING_STATUS_KO ) {
-                ArticleAdvise.run();
+                ArticleAdvise.runQuiet();
             }
 
         }, 'json')

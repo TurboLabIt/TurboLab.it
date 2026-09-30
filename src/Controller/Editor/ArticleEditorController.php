@@ -67,11 +67,15 @@ class ArticleEditorController extends ArticleEditBaseController
         try {
             $this->loadArticleEditor($articleId);
 
+            $arrAdvice = $articleAdvisor->advise($this->articleEditor);
+
             return $this->json([
-                "title" => "🔬 Verifica articolo",
-                "body"  => $this->twig->render('article/editor/advise-modal.html.twig', [
-                    "arrAdvice" => $articleAdvisor->advise($this->articleEditor)
-                ])
+                "title"     => "🔬 Verifica articolo",
+                "body"      => $this->twig->render('article/editor/advise-modal.html.twig', [
+                    "arrAdvice" => $arrAdvice
+                ]),
+                // the automatic check after a publishing-status change opens the modal only when this is > 0
+                "adviceNum" => count($arrAdvice)
             ]);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
