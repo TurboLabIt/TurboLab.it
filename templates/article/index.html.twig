@@ -96,7 +96,11 @@
 
                         {% include 'article/badges.html.twig' %}
 
-                        {% include 'article/files.html.twig' %}
+                        <div id="tli-downloadable-files" class="container">
+                            {% include 'article/files.html.twig' %}
+                        </div>
+
+                        {% include 'article/editor/button-add-file.html.twig' %}
 
 
                         {% if Article.isReadable %}

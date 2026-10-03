@@ -321,11 +321,30 @@ abstract class BaseT extends WebTestCase
                 $this->browse($href);
                 $this->assertResponseIsSuccessful();
 
-                // article or tag
-            } elseif(
-                static::getService(ArticleUrlGenerator::class)->isUrl($href) ||
-                static::getService(TagUrlGenerator::class)->isUrl($href)
-            ) {
+                // article
+            } elseif( static::getService(ArticleUrlGenerator::class)->isUrl($href) ) {
+
+                /** @var ArticleUrlGenerator $articleUrlGenerator */
+                $articleUrlGenerator    = static::getService(ArticleUrlGenerator::class);
+                $articleId              = $articleUrlGenerator->extractIdFromUrl($href);
+                $shortUrlPath           = $articleUrlGenerator->generateShortUrlFromId($articleId, UrlGeneratorInterface::ABSOLUTE_PATH);
+
+                // short URL (/1939): a permanent redirect to the canonical URL, which must then load
+                if( parse_url($href, PHP_URL_PATH) == $shortUrlPath ) {
+
+                    $this->browse($href);
+                    $this->assertResponseRedirects(
+                        static::getArticle($articleId)->getUrl(), Response::HTTP_MOVED_PERMANENTLY, "Failing URL: " . $href
+                    );
+
+                    $href = static::$client->getResponse()->headers->get('Location');
+                }
+
+                $this->fetchHtml($href);
+
+                // tag
+            } elseif( static::getService(TagUrlGenerator::class)->isUrl($href) ) {
+
                 $this->fetchHtml($href);
             }
         }

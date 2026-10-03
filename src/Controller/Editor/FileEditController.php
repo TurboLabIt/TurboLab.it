@@ -21,39 +21,6 @@ class FileEditController extends ArticleEditBaseController
     protected FileEditor $fileEditor;
 
 
-    #[Route('/ajax/editor/files/upload', name: 'app_file_edit-upload', methods: ['POST'])]
-    public function upload(#[MapQueryParameter] int $articleId) : JsonResponse|Response
-    {
-        try {
-            $this->loadArticleEditor($articleId);
-
-            $uploadedFiles = $this->request->files->get('files', []);
-
-            $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
-
-            $files =
-                (new FileEditorCollection($this->factory))
-                    ->setFromUpload($uploadedFiles, $currentUserAsAuthor);
-
-            $this->articleEditor->addFiles($files, $currentUserAsAuthor);
-
-            // there is no need to save() the article here
-            $this->factory->getEntityManager()->flush();
-
-            return $this->render('article/files.html.twig', [
-                'Article'           => $this->articleEditor,
-                'BitTorrentGuide'   => $this->factory->createArticle()->load(Article::ID_BITTORRENT_GUIDE),
-                'EmuleGuide'        => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE)
-            ]);
-
-        } catch(UniqueConstraintViolationException $ex) {
-
-            return $this->buildDuplicateTitleResponse($ex);
-
-        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
-    }
-
-
     #[Route('/ajax/editor/files/upload-from-modal', name: 'app_file_edit-upload_from_modal', methods: ['POST'])]
     public function uploadFromModal(#[MapQueryParameter] int $articleId) : JsonResponse|Response
     {

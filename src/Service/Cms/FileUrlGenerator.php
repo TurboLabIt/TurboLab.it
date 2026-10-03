@@ -40,7 +40,7 @@ class FileUrlGenerator extends UrlGenerator
         $url = $this->removeDomainFromUrl($url);
 
         $arrMatches = [];
-        $match = preg_match('/^\/scarica\/([1-9]+[0-9])*$/', $url, $arrMatches);
+        $match = preg_match('/^\/scarica\/([1-9][0-9]*)$/', $url, $arrMatches);
         if( $match === 1 ) {
 
             $id = end($arrMatches);

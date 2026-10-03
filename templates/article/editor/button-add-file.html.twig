@@ -1,0 +1,14 @@
+{% if Article.isEditable %}
+
+    <div class="container mb-20">
+        <button type="button" class="tli-file-add">
+            <span class="tli-file-add-label"><i class="fa-solid fa-file-circle-plus"></i> Carica file scaricabile o URL</span>
+            <span class="tli-file-add-drop-label"><i class="fa-solid fa-cloud-arrow-up"></i> Rilascia qui per caricare</span>
+            <span class="tli-file-add-uploading-label">
+                <i class="fa-solid fa-spinner fa-spin-pulse"></i> <span class="tli-file-add-uploading-text"></span>
+            </span>
+        </button>
+        <div class="tli-file-error tli-file-add-error d-none" role="alert"></div>
+    </div>
+
+{% endif %}

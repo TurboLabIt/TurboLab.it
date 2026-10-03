@@ -1,78 +1,136 @@
-<div id="tli-downloadable-files" class="container">
+{% if Article.isReadable and Article.Files is not empty %}
 
-    {% if Article.isReadable and Article.Files is not empty %}
+    {% for File in Article.Files %}
 
-        {% for File in Article.Files %}
+        {% if Article.isEditable %}
+            {# the server deletes a file used only by this article, otherwise it just detaches it #}
+            {% set OtherArticlesNum = File.Articles|length - 1 %}
+        {% endif %}
 
-            <div class="d-flex align-items-start mb-20 tli-file-download">
+        <div class="mb-20 tli-file-download"
+            {% if Article.isEditable %}
+                data-detach-from-article-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}"
+                data-file-url="{{ File.url }}"
+            {% endif %}
+            >
 
-                <span class="d-flex align-items-center"
-                    {% if Article.isEditable %}
-                        data-detach-from-article-url="{{ path('app_file_edit-detach_from_article', {'fileId': File.id, 'articleId': Article.id}) }}"
-                    {% endif %}
-                    >
+            <div class="d-flex align-items-center">
 
-                    <a href="{{ File.url }}" target="_blank">
-                        <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
-                    </a>
+                <a href="{{ File.url }}" target="_blank">
+                    <i class="fa-solid fa-download fa-2xl" style="color: #A3BF60;"></i>
+                </a>
 
-                    <span class="ml-10">
-                        <a href="{{ File.url }}" target="_blank"
-                           class="tli-download-text-link"><span>{{ File.title }}</span></a>
+                <span class="ml-10">
+                    <a href="{{ File.url }}" target="_blank"
+                       class="tli-download-text-link"><span>{{ File.title }}</span></a>
 
-                        {% for OS in File.Compatibilities %}
-                            <i class="fa-brands fa-{{ OS.slug }}" title="Compatibile con {{ OS.name }}"
-                               {% if OS.color is not empty %}style="color: {{ OS.color }};"{% endif %}></i>
-                        {% endfor %}
+                    {% for OS in File.Compatibilities %}
+                        <i class="fa-brands fa-{{ OS.slug }}" title="Compatibile con {{ OS.name }}"
+                           {% if OS.color is not empty %}style="color: {{ OS.color }};"{% endif %}></i>
+                    {% endfor %}
 
-                        <br>
+                    <br>
 
-                        <span class="tli-author-articles-counter">
+                    <span class="tli-author-articles-counter">
 
-                            {% if File.format is not empty %}Formato: <code>{{ File.format }}</code>{% endif %}
-                            {% if File.format is not empty and File.sizeLabel is not empty %} | {% endif %}
-                            {% if File.sizeLabel is not empty %}{{ File.sizeLabel }}{% endif %}
-                            {% if File.format is not empty or File.sizeLabel is not empty %}<br>{% endif %}
+                        {% if File.format is not empty %}Formato: <code>{{ File.format }}</code>{% endif %}
+                        {% if File.format is not empty and File.sizeLabel is not empty %} | {% endif %}
+                        {% if File.sizeLabel is not empty %}{{ File.sizeLabel }}{% endif %}
+                        {% if File.format is not empty or File.sizeLabel is not empty %}<br>{% endif %}
 
-                            <i class="fa-solid fa-flask-vial"></i>
-                            Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
+                        <i class="fa-solid fa-flask-vial"></i>
+                        Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
 
-                            {% if File.isBitTorrent %}
+                        {% if File.isBitTorrent %}
 
-                                <i class="fa-solid fa-circle-nodes" style="color: darkgreen"></i>
-                                <a href="{{ BitTorrentGuide.url }}">Necessario BitTorrent</a>
+                            <i class="fa-solid fa-circle-nodes" style="color: darkgreen"></i>
+                            <a href="{{ BitTorrentGuide.url }}">Necessario BitTorrent</a>
 
-                            {% elseif File.isEmule %}
+                        {% elseif File.isEmule %}
 
-                                <i class="fa-brands fa-sticker-mule" style="color: saddlebrown"></i>
-                                <a href="{{ EmuleGuide.url }}">Necessario eMule</a>
+                            <i class="fa-brands fa-sticker-mule" style="color: saddlebrown"></i>
+                            <a href="{{ EmuleGuide.url }}">Necessario eMule</a>
 
-                            {% elseif File.isExternal %}
+                        {% elseif File.isExternal %}
 
-                                <i class="fa-solid fa-person-walking-dashed-line-arrow-right" style="color: #FFD43B;"></i>
-                                File fornito da un sito esterno
+                            <i class="fa-solid fa-person-walking-dashed-line-arrow-right" style="color: #FFD43B;"></i>
+                            File fornito da un sito esterno
 
-                            {% endif %}
-
-                        </span>
+                        {% endif %}
 
                     </span>
 
-                    {% if File.isEditable %}
-                        <i class="fa-solid fa-file-pen fa-xl tli-open-edit-file" style="color: #74C0FC;"
-                            data-tli-modal-url="{{ path('app_file_edit-get_modal', {'fileId': File.id, 'articleId': Article.id}) }}"></i>
-                    {% endif %}
-
-                    {% if Article.isEditable %}
-                        <i class="fa-solid fa-trash-can fa-xl tli-delete-file" style="color: #b0b0b0;"></i>
-                    {% endif %}
-
                 </span>
+
+                {% if Article.isEditable %}
+                    <span class="tli-file-actions">
+
+                        {% if File.isEditable %}
+                            <button type="button" class="tli-file-action tli-open-edit-file"
+                                    title="Modifica titolo e dettagli del file"
+                                    data-tli-modal-url="{{ path('app_file_edit-get_modal', {'fileId': File.id, 'articleId': Article.id}) }}">
+                                <i class="fa-solid fa-pen"></i><span>Modifica</span>
+                            </button>
+                        {% endif %}
+
+                        {% if OtherArticlesNum > 0 %}
+                            <button type="button" class="tli-file-action tli-delete-file"
+                                    title="Scollega il file da questo articolo: resta disponibile negli altri articoli che lo usano">
+                                <i class="fa-solid fa-link-slash"></i><span>Scollega</span>
+                            </button>
+                        {% else %}
+                            <button type="button" class="tli-file-action tli-delete-file"
+                                    title="Elimina il file da TurboLab.it">
+                                <i class="fa-solid fa-trash-can"></i><span>Elimina</span>
+                            </button>
+                        {% endif %}
+
+                    </span>
+                {% endif %}
 
             </div>
 
-        {% endfor %}
+            {% if Article.isEditable %}
+                <div class="tli-file-delete-confirm d-none">
 
-    {% endif %}
+                    <p>
+                        {% if OtherArticlesNum > 0 %}
+                            <strong>«{{ File.title }}»</strong> verrà scollegato da questo articolo, ma resterà disponibile
+                            {% if OtherArticlesNum == 1 %}nell'altro articolo che lo usa{% else %}negli altri {{ OtherArticlesNum }} articoli che lo usano{% endif %}.
+                        {% else %}
+                            <strong>«{{ File.title }}»</strong> verrà eliminato definitivamente da TurboLab.it.
+                        {% endif %}
+                    </p>
 
-</div>
+                    {# the frontend fills in how many links the body still has to this file #}
+                    <p class="tli-file-delete-confirm-links d-none">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span class="tli-file-links-num-text"></span>
+                        {% if OtherArticlesNum > 0 %}
+                            altrimenti il file tornerà collegato a questo articolo al prossimo salvataggio.
+                        {% else %}
+                            altrimenti chi legge troverà un download che non funziona.
+                        {% endif %}
+                    </p>
+
+                    <p class="tli-file-error tli-file-delete-error d-none"></p>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary tli-file-delete-cancel">Annulla</button>
+                        <button type="button" class="btn btn-sm btn-danger tli-file-delete-ok">
+                            {% if OtherArticlesNum > 0 %}
+                                <i class="fa-solid fa-link-slash"></i> Sì, scollega
+                            {% else %}
+                                <i class="fa-solid fa-trash-can"></i> Sì, elimina
+                            {% endif %}
+                        </button>
+                    </div>
+
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}

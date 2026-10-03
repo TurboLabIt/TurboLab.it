@@ -96,6 +96,137 @@
 }
 
 
+#tli-downloadable-files .tli-file-download {
+    padding: 10px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    transition: background-color .2s, border-color .2s;
+}
+
+#tli-downloadable-files .tli-file-download.tli-file-confirming {
+    background-color: #fff5f5;
+    border-color: #f1aeb5;
+}
+
+.tli-file-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 4px;
+    margin-left: auto;
+    padding-left: 10px;
+}
+
+.tli-file-confirming .tli-file-actions {
+    visibility: hidden;
+}
+
+.tli-file-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    border-radius: .375rem;
+    background-color: transparent;
+    color: #6c757d;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    transition: background-color .15s, border-color .15s, color .15s;
+}
+
+.tli-open-edit-file:hover, .tli-open-edit-file:focus-visible {
+    background-color: #e7f1ff;
+    border-color: #b6d4fe;
+    color: #0a58ca;
+}
+
+.tli-delete-file:hover, .tli-delete-file:focus-visible {
+    background-color: #f8d7da;
+    border-color: #f1aeb5;
+    color: #b02a37;
+}
+
+.tli-file-delete-confirm {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f1aeb5;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.tli-file-delete-confirm p {
+    margin-bottom: 8px;
+    color: #212529;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.tli-file-delete-confirm .tli-file-delete-confirm-links {
+    color: #997404;
+}
+
+.tli-file-error, .tli-file-delete-confirm .tli-file-error {
+    color: #b02a37;
+    white-space: pre-line;
+}
+
+.tli-file-add {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed #adb5bd;
+    border-radius: .5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color .2s, border-color .2s, color .2s;
+}
+
+.tli-file-add:hover, .tli-file-add:focus-visible {
+    background-color: #e9ecef;
+    border-color: #6c757d;
+    color: #343a40;
+}
+
+.tli-file-add > span {
+    pointer-events: none;
+}
+
+.tli-file-add-drop-label, .tli-file-add-uploading-label,
+.tli-file-add-dragover .tli-file-add-label, .tli-file-add-uploading .tli-file-add-label {
+    display: none;
+}
+
+.tli-file-add-dragover .tli-file-add-drop-label, .tli-file-add-uploading .tli-file-add-uploading-label {
+    display: inline;
+}
+
+.tli-file-add.tli-file-add-dragover {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+    color: #0a58ca;
+}
+
+.tli-file-add.tli-file-add-uploading {
+    cursor: progress;
+}
+
+.tli-file-add-error {
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+@media (max-width: 575.98px) {
+
+    .tli-file-action span {
+        display: none;
+    }
+}
+
+
 body.tli-article-deleted {
     background-color: #f8d7da !important;
 }

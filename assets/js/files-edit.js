@@ -2,71 +2,20 @@
 import Validator from './validator';
 
 
-$(document).on('click', '.tli-file-upload',  function(event) {
-    $(this).siblings('input[type="file"]').click();
-});
-
-
-$(document).on('change', 'input[type="file"].tli-file-uploader', function() {
-
-    const files = this.files;
-    if (files.length === 0) {
-        return;
-    }
-
-    let thisInputFile = $(this);
-
-    const saveUrl = thisInputFile.data('save-url');
-    if( !Validator.isSameOriginHttpsUrl(saveUrl) ) {
-        return;
-    }
-
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files[]', files[i]);
-    }
-
-    $.ajax({
-        url: saveUrl,
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-
-            let target = $('#tli-downloadable-files');
-            target.fadeOut('slow', function() {
-                target
-                    // response is trusted server-rendered HTML for the downloadable-files
-                    // section; the Validator guard ensures it came from our origin.
-                    .html(response)
-                    .fadeIn('slow', function() {
-                        target.get(0).scrollIntoView({behavior: 'smooth'});
-                    });
-            });
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-
-            alert(jqXHR.responseText);
-        },
-        complete: function() {
-
-            thisInputFile.val('');
-        }
-    });
-});
-
-
-$(document).on('click', '.tli-file-button-ok',  function(event) {
+// a submit (not a click on the button) also catches Enter in a field, which would otherwise post the form natively
+$(document).on('submit', '#tli-edit-file', function(event) {
 
     event.preventDefault();
 
-    let form = $('#tli-edit-file');
+    let form = $(this);
 
     const formUrl = form.attr('action');
     if( !Validator.isSameOriginHttpsUrl(formUrl) ) {
         return;
     }
+
+    let errorBox    = form.find('.tli-edit-file-error').addClass('d-none').empty();
+    let submitBtn   = $('.tli-file-button-ok').prop('disabled', true);
 
     $.ajax({
         url: formUrl,
@@ -87,46 +36,114 @@ $(document).on('click', '.tli-file-button-ok',  function(event) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
 
-            let errorMessage = jqXHR.responseText ?? null;
-            if( errorMessage && errorMessage != '' ) {
+            errorBox
+                .text(jqXHR.responseText || 'Errore durante il salvataggio')
+                .removeClass('d-none');
+        },
+        complete: function() {
 
-                alert(errorMessage);
-                return false;
-            }
+            submitBtn.prop('disabled', false);
         }
     });
 });
 
 
-$(document).on('click', '#tli-downloadable-files .tli-delete-file', function(e) {
+$(document).on('click', '#tli-downloadable-files .tli-delete-file', function() {
 
-    e.preventDefault();
-    if( !confirm('Sei sicuro di voler eliminare questo file?') ) {
-        return false;
+    let fileRow     = $(this).closest('.tli-file-download');
+    const linksNum  = countFileLinksInArticleBody( fileRow.data('file-url') );
+
+    fileRow.find('.tli-file-delete-confirm-links')
+        .toggleClass('d-none', linksNum == 0)
+        .find('.tli-file-links-num-text')
+        .text(
+            linksNum == 1
+                ? "Il testo dell'articolo contiene ancora un link a questo file: ricordati di rimuoverlo,"
+                : "Il testo dell'articolo contiene ancora " + linksNum + " link a questo file: ricordati di rimuoverli,"
+        );
+
+    fileRow.find('.tli-file-delete-error').addClass('d-none').empty();
+
+    fileRow
+        .addClass('tli-file-confirming')
+        .find('.tli-file-delete-confirm').removeClass('d-none')
+        .find('.tli-file-delete-cancel').trigger('focus');
+});
+
+
+$(document).on('click', '#tli-downloadable-files .tli-file-delete-cancel', function() {
+    closeDeleteConfirm( $(this).closest('.tli-file-download') );
+});
+
+
+$(document).on('keydown', '#tli-downloadable-files .tli-file-delete-confirm', function(event) {
+
+    if( event.key === 'Escape' ) {
+        closeDeleteConfirm( $(this).closest('.tli-file-download') );
     }
+});
 
-    let fileContainer = $(this).closest('.tli-file-download');
-    fileContainer
-        .removeClass('d-flex')
-        .fadeOut();
 
-    let deleteUrl = $(this).closest('[data-detach-from-article-url]').data('detach-from-article-url');
+$(document).on('click', '#tli-downloadable-files .tli-file-delete-ok', function() {
+
+    let fileRow     = $(this).closest('.tli-file-download');
+    let buttons     = fileRow.find('.tli-file-delete-confirm button').prop('disabled', true);
+    let errorBox    = fileRow.find('.tli-file-delete-error').addClass('d-none').empty();
 
     $.ajax({
-        url: deleteUrl,
+        url: fileRow.data('detach-from-article-url'),
         type: 'DELETE',
+        success: function() {
+
+            fileRow.slideUp(function() {
+                fileRow.remove();
+            });
+        },
         error: function(jqXHR, textStatus, errorThrown) {
 
-            fileContainer.fadeIn(function(){
-                fileContainer.addClass('d-flex');
-            });
+            errorBox
+                .text(jqXHR.responseText || "Errore durante l'eliminazione")
+                .removeClass('d-none');
 
-            let errorMessage = jqXHR.responseText ?? null;
-            if( errorMessage && errorMessage != '' ) {
-
-                alert(errorMessage);
-                return false;
-            }
+            buttons.prop('disabled', false);
         }
     });
 });
+
+
+function closeDeleteConfirm(fileRow)
+{
+    fileRow
+        .removeClass('tli-file-confirming')
+        .find('.tli-file-delete-confirm').addClass('d-none');
+
+    fileRow.find('.tli-delete-file').trigger('focus');
+}
+
+
+/**
+ * Saving the article re-attaches every file its body links to, and a deleted file leaves a dead link behind:
+ * the delete confirmation warns about both. Counted on the live editor data, unsaved changes included
+ */
+function countFileLinksInArticleBody(fileUrl)
+{
+    const editable = document.querySelector('.ck-editor__editable');
+    if( !editable || !editable.ckeditorInstance || !fileUrl ) {
+        return 0;
+    }
+
+    const filePath  = new URL(fileUrl, location.href).pathname;
+    const body      = new DOMParser().parseFromString(editable.ckeditorInstance.getData(), 'text/html');
+
+    return [...body.querySelectorAll('a[href]')].filter(function(link) {
+
+        try {
+            const linkUrl = new URL(link.getAttribute('href'), location.href);
+            return linkUrl.host == location.host && linkUrl.pathname == filePath;
+
+        } catch(e) {
+            return false;
+        }
+
+    }).length;
+}

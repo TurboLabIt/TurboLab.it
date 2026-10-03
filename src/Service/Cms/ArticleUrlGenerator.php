@@ -55,10 +55,10 @@ class ArticleUrlGenerator extends UrlGenerator
 
         // short URL: https://turbolab.it/1939
         $arrMatches = [];
-        $match = preg_match('/^\/[1-9]+[0-9]*$/', $url, $arrMatches);
+        $match = preg_match('/^\/([1-9][0-9]*)$/', $url, $arrMatches);
         if( $match === 1 ) {
 
-            $id = reset($arrMatches);
+            $id = end($arrMatches);
             return (int)$id;
         }
 
