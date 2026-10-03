@@ -197,19 +197,19 @@ class Image extends BaseCmsService
     }
 
 
-    public function getBuiltFileName() : string
+    public function getBuiltFileName(?string $format = null) : string
     {
         $fileName = $this->getOriginalFileName();
-        return pathinfo($fileName, PATHINFO_FILENAME) . "." . static::$buildFileExtension;
+        return pathinfo($fileName, PATHINFO_FILENAME) . "." . ($format ?? static::$buildFileExtension);
     }
 
 
-    protected function getBuiltFilePath(string $size, bool $createBuildFolder) : string
+    protected function getBuiltFilePath(string $size, bool $createBuildFolder, ?string $format = null) : string
     {
         $this->checkSize($size);
 
         $imageFolderMod     = $this->getFolderMod();
-        $fileName           = $this->getBuiltFileName();
+        $fileName           = $this->getBuiltFileName($format);
         $relativeFilePath   = static::UPLOADED_IMAGES_FOLDER_NAME . "/cache/$size/$imageFolderMod/$fileName";
         return
             $createBuildFolder

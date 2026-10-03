@@ -57,6 +57,8 @@ I percorsi su filesystem sono:
 
 `<imageFolderMod>` è un numero. Si tratta di una sotto-cartella, fisicamente presente su file system, derivata dall'ID dell'immagine. Serve a suddividere blandamente le immagini in sotto-cartelle, per evitare che ci siano *centomila* file in una sola cartella.
 
+La cache contiene una copia per ogni combinazione taglia/formato effettivamente richiesta (AVIF per il web, PNG per `og:image` e newsletter, ...), e Nginx serve direttamente qualsiasi file vi trovi. Per questo, quando si cambia la posizione del watermark o si elimina l'immagine, [ImageEditor::clearCached()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/ImageEditor.php) rimuove le copie di **tutte** le taglie in **tutti** i formati. Il deploy, invece, svuota l'intera cache ([scripts/cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh)).
+
 
 ## X-Sendfile
 

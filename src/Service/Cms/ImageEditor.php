@@ -141,11 +141,15 @@ class ImageEditor extends Image
 
     public function clearCached() : static
     {
+        // every format, not just the one of the current request: the cache holds whatever was requested
+        // (AVIF on the web, PNG for og:image/newsletter, ...), and nginx serves any leftover file directly
         foreach(static::SIZES as $size) {
+            foreach(ImageEntity::getFormats() as $format) {
 
-            $filePath = $this->getBuiltFilePath($size, false);
-            if( file_exists($filePath) ) {
-                unlink($filePath);
+                $filePath = $this->getBuiltFilePath($size, false, $format);
+                if( file_exists($filePath) ) {
+                    unlink($filePath);
+                }
             }
         }
 
