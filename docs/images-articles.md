@@ -18,7 +18,7 @@ Questo è il tipo di immagine che richiede il maggior numero di elaborazioni. I 
 
 Il flusso è il seguente:
 
-1. l'autore sceglie il file-immagine dal proprio PC e lo carica all'interno dell'articolo. L'autore deve caricare il file alla massima risoluzione di cui dispone, senza applicare watermark, in uno dei formati supportati (elencati in [Entity/Image::getFormats()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Image.php))
+1. l'autore sceglie il file-immagine dal proprio PC e lo carica all'interno dell'articolo. L'autore deve caricare il file alla massima risoluzione di cui dispone, senza applicare watermark, in uno dei formati supportati (elencati in [Entity/Image::getUploadFormats()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Image.php)). La GIF è accettata solo in ingresso: il server ne usa **il primo fotogramma**, quindi una GIF animata viene mostrata come immagine statica
 2. il server di TurboLab.it riceve il file e lo ri-salva (per motivi di sicurezza). Questo è considerato "**l'Originale**". A questo file non devono essere apportate altre modifiche
 3. tramite PHP, il server processa il file originale e ne deriva molteplici copie, ognuna con un set di dimensioni diverse (elencate in [Service/Image::SIZE_DIMENSIONS](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php))
 4. le copie elaborate vengono ri-compresse nel miglior formato grafico disponibile | attualmente: **AVIF**, che offre una compressione superiore ed [è supportato](https://caniuse.com/avif) da tutti i browser web moderni

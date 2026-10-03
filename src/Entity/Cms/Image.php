@@ -25,6 +25,7 @@ class Image extends BaseCmsEntity
     const string FORMAT_PNG     = 'png';
     const string FORMAT_WEBP    = 'webp';
     const string FORMAT_AVIF    = 'avif';
+    const string FORMAT_GIF     = 'gif';
 
     use TitleableEntityTrait, HashableEntityTrait;
     // overwrite to remove "unique"
@@ -64,15 +65,23 @@ class Image extends BaseCmsEntity
 
     public static function getFormats() : array
     {
-        // from best to worst
+        // the formats images are built (served) in, from best to worst
         return [static::FORMAT_AVIF, static::FORMAT_WEBP, static::FORMAT_PNG, static::FORMAT_JPG];
+    }
+
+
+    public static function getUploadFormats() : array
+    {
+        // the formats an original can be stored in. GIF is upload-only: GD reads just its first frame,
+        // so an animated GIF is served as a still image, built in one of getFormats()
+        return [...static::getFormats(), static::FORMAT_GIF];
     }
 
     public function getFormat() : ?string { return $this->format; }
 
     public function setFormat(string $format) : static
     {
-        if( !in_array($format, static::getFormats() ) ) {
+        if( !in_array($format, static::getUploadFormats() ) ) {
             throw new InvalidEnumException("Invalid image format");
         }
 

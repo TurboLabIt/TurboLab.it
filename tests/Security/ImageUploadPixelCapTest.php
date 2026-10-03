@@ -27,6 +27,10 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  *
  * NB: 12001×1 etc. are a few KB in memory — an over-cap *dimension*, not a real memory bomb — so
  * these fixtures exercise the guard cheaply.
+ *
+ * GIF (upload-only, first frame only): getimagesize() reads the logical screen, not the frames. The cap
+ * still bounds build() because GD decodes only the first frame and refuses a frame that overflows the
+ * screen — see testGdRefusesGifFrameLargerThanTheLogicalScreen().
  */
 class ImageUploadPixelCapTest extends BaseT
 {
@@ -56,10 +60,23 @@ class ImageUploadPixelCapTest extends BaseT
     }
 
 
-    private function upload(int $width, int $height) : void
+    private function makeGif(int $width, int $height) : string
     {
-        $path = $this->makePng($width, $height);
-        $file = new UploadedFile($path, basename($path), 'image/png', null, true /* test mode */);
+        $path = tempnam(sys_get_temp_dir(), 'tli_imgcap_') . '.gif';
+        $this->tmpFiles[] = $path;
+
+        $image = imagecreate($width, $height);
+        imagecolorallocate($image, 0, 0, 0);
+        imagegif($image, $path);
+
+        return $path;
+    }
+
+
+    private function upload(int $width, int $height, bool $asGif = false) : void
+    {
+        $path = $asGif ? $this->makeGif($width, $height) : $this->makePng($width, $height);
+        $file = new UploadedFile($path, basename($path), $asGif ? 'image/gif' : 'image/png', null, true /* test mode */);
 
         // real upload entry point; the guard throws before anything is persisted or moved
         static::getService(Factory::class)->createImageEditor()->createFromUploadedFile($file);
@@ -83,6 +100,40 @@ class ImageUploadPixelCapTest extends BaseT
     {
         $this->expectException(UnprocessableEntityHttpException::class);
         $this->upload(1, Image::RESOLUTION_MAX + 1);
+    }
+
+
+    public function testUploadRejectsGifWiderThanCap() : void
+    {
+        $this->expectException(UnprocessableEntityHttpException::class);
+        $this->upload(Image::RESOLUTION_MAX + 1, 1, true);
+    }
+
+
+    public function testGdRefusesGifFrameLargerThanTheLogicalScreen() : void
+    {
+        // 61 bytes: a 10x10 logical screen carrying a single 20000x20000 frame
+        $gif =
+            'GIF89a' . pack('vvCCC', 10, 10, 0, 0, 0) .                                         // logical screen, no global color table
+            "\x2C" . pack('vvvvC', 0, 0, 20000, 20000, 0x80) . "\x00\x00\x00\xFF\xFF\xFF" .     // frame + 2-color local color table
+            "\x02\x01\x2C\x00" .                                                                // LZW data: clear code + end of information
+            "\x3B";
+
+        $path = tempnam(sys_get_temp_dir(), 'tli_imgcap_') . '.gif';
+        $this->tmpFiles[] = $path;
+        file_put_contents($path, $gif);
+
+        // the upload guard only sees the 10x10 screen...
+        [$width, $height] = getimagesize($path);
+        $this->assertSame([10, 10], [$width, $height]);
+
+        $assertWithinPixelCap = new ReflectionMethod(ImageEditor::class, 'assertWithinPixelCap');
+        $editor = static::getService(Factory::class)->createImageEditor();
+        $this->assertSame($editor, $assertWithinPixelCap->invoke($editor, $path));
+
+        // ...so the frame must be refused by GD (imagecreatefromstring() is what Imagine runs in build()),
+        // not allocated. An animation-aware decoder such as Imagick does allocate it: it needs its own guard
+        $this->assertFalse( @imagecreatefromstring($gif) );
     }
 
 

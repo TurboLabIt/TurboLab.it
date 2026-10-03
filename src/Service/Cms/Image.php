@@ -46,6 +46,9 @@ class Image extends BaseCmsService
     // reject originals whose width OR height exceeds this many pixels
     const int RESOLUTION_MAX = 12000;
 
+    // the titles of uploaded images start as the file name: getTitle() drops the trailing extension(s), eg: "foto.jpg.png"
+    const string REGEX_TITLE_FILE_EXTENSION = '/(\.(avif|webp|png|jpe?g|gif|svg))+$/i';
+
     const string WATERMARK_FILEPATH     = 'images/logo/turbolab.it.png';
     const int WATERMARK_WIDTH_PERCENT   = 25;
     const int WATERMARK_OPACITY         = 100;
@@ -236,8 +239,11 @@ class Image extends BaseCmsService
         // 📚 https://github.com/php-imagine/Imagine
         $phpImagine = (new Imagine())->open($originalFilePath);
 
-        list($iwidth, $iheight) = getimagesize($originalFilePath);
-        $ratio = $iwidth / $iheight;
+        // the size GD decoded, not getimagesize(): on a GIF the latter is the logical screen, but GD
+        // decodes only the first frame, which can be smaller
+        $iwidth     = $phpImagine->getSize()->getWidth();
+        $iheight    = $phpImagine->getSize()->getHeight();
+        $ratio      = $iwidth / $iheight;
 
         $width  = static::SIZE_DIMENSIONS[$size][static::WIDTH];
         $height = static::SIZE_DIMENSIONS[$size][static::HEIGHT];
@@ -450,10 +456,7 @@ class Image extends BaseCmsService
     public function getTitle(): ?string
     {
         $title = (string)parent::getTitle();
-
-        foreach(ImageEntity::getFormats() as $format) {
-            $title = rtrim($title, ".$format" );
-        }
+        $title = trim( preg_replace(static::REGEX_TITLE_FILE_EXTENSION, '', $title) );
 
         if( empty($title) ) {
             $title = 'image';
