@@ -65,14 +65,14 @@ class ImageUploadGifTest extends BaseT
         $path = $this->tmpPath();
         imagegif($gd, $path);
 
-        $this->uploadBuildAndCheck($path, 'grafico.gif', 'grafico', [200, 100], [0, 128, 0]);
+        $this->uploadBuildAndCheck($path, 'grafico.gif', 'grafico', false, [200, 100], [0, 128, 0]);
     }
 
 
     public function testAnimatedGifIsServedAsItsFirstFrame() : void
     {
         $path = $this->makeAnimatedGif(200, 100, [[200, 100, 0, 0, self::RED], [200, 100, 0, 0, self::BLUE]]);
-        $this->uploadBuildAndCheck($path, 'animazione.gif', 'animazione', [200, 100], [255, 0, 0]);
+        $this->uploadBuildAndCheck($path, 'animazione.gif', 'animazione', true, [200, 100], [255, 0, 0]);
     }
 
 
@@ -81,11 +81,13 @@ class ImageUploadGifTest extends BaseT
         // a legal GIF: frame #1 is a 100x100 square inside a 400x200 canvas. getimagesize() reports the
         // canvas, GD decodes just the frame: sizing the build on the canvas would stretch the square 2:1
         $path = $this->makeAnimatedGif(400, 200, [[100, 100, 150, 50, self::RED], [400, 200, 0, 0, self::BLUE]]);
-        $this->uploadBuildAndCheck($path, 'riquadro.gif', 'riquadro', [100, 100], [255, 0, 0]);
+        $this->uploadBuildAndCheck($path, 'riquadro.gif', 'riquadro', true, [100, 100], [255, 0, 0]);
     }
 
 
-    private function uploadBuildAndCheck(string $path, string $fileName, string $expectedTitle, array $expectedSize, array $expectedRgb) : void
+    private function uploadBuildAndCheck(
+        string $path, string $fileName, string $expectedTitle, bool $expectedAnimated, array $expectedSize, array $expectedRgb
+    ) : void
     {
         // lossless, so the pixel check can be exact
         Image::setBuildFormat(ImageEntity::FORMAT_PNG);
@@ -98,6 +100,12 @@ class ImageUploadGifTest extends BaseT
             $this->assertStringEndsWith('.gif', $image->getOriginalFilePath());
             $this->assertFileExists( $image->getOriginalFilePath() );
             $this->assertSame($expectedTitle, $image->getTitle());
+            $this->assertSame($expectedAnimated, $image->isAnimated());
+            $this->assertSame(
+                (int)$expectedAnimated,
+                (int)static::getEntityManager()->getConnection()->fetchOne('SELECT animated FROM image WHERE id = ?', [$image->getId()]),
+                'The animated flag must be persisted'
+            );
 
             $built = imagecreatefromstring( $image->getContent(Image::SIZE_MED) );
             $this->assertSame('image/png', $image->getBuiltImageMimeType());

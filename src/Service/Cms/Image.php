@@ -470,6 +470,8 @@ class Image extends BaseCmsService
 
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
+    public function isAnimated() : bool { return $this->entity->isAnimated(); }
+
     public function getTempOrder() : int { return $this->tempOrder; }
 
     public function setTempOrder(int $tempOrder) : static

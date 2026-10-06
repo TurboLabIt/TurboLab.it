@@ -36,6 +36,9 @@ class Image extends BaseCmsEntity
     #[ORM\Column(length: 5)]
     protected ?string $format = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    protected bool $animated = false;
+
     #[ORM\Column(type: Types::SMALLINT, options: ['unsigned' => true, 'default' => Image::WATERMARK_BOTTOM_LEFT])]
     protected int $watermarkPosition = self::WATERMARK_BOTTOM_LEFT;
 
@@ -86,6 +89,15 @@ class Image extends BaseCmsEntity
         }
 
         $this->format = $format;
+        return $this;
+    }
+
+
+    public function isAnimated() : bool { return $this->animated; }
+
+    public function setAnimated(bool $animated) : static
+    {
+        $this->animated = $animated;
         return $this;
     }
 
