@@ -132,7 +132,7 @@ class ImageUploadPixelCapTest extends BaseT
         $this->assertSame($editor, $assertWithinPixelCap->invoke($editor, $path));
 
         // ...so the frame must be refused by GD (imagecreatefromstring() is what Imagine runs in build()),
-        // not allocated. An animation-aware decoder such as Imagick does allocate it: it needs its own guard
+        // not allocated. The upload itself now rejects such a file too: see ImageUploadAnimationLimitsTest
         $this->assertFalse( @imagecreatefromstring($gif) );
     }
 

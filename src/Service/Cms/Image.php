@@ -46,6 +46,12 @@ class Image extends BaseCmsService
     // reject originals whose width OR height exceeds this many pixels
     const int RESOLUTION_MAX = 12000;
 
+    // animated images (all frames are decoded and processed at once): max width OR height, max number of frames,
+    // and max total pixels (canvas width x height x frames) = ~7 GB of RAM when building them (measured: ~13 MB/MP)
+    const int RESOLUTION_MAX_ANIMATED   = 4096;
+    const int ANIMATED_FRAMES_MAX       = 1860;
+    const int ANIMATED_PIXEL_BUDGET     = 500_000_000;
+
     // the titles of uploaded images start as the file name: getTitle() drops the trailing extension(s), eg: "foto.jpg.png"
     const string REGEX_TITLE_FILE_EXTENSION = '/(\.(avif|webp|png|jpe?g|gif|svg))+$/i';
 

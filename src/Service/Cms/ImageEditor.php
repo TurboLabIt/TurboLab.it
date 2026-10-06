@@ -45,6 +45,11 @@ class ImageEditor extends Image
         // reject oversized originals BEFORE storing/decoding them (decompression-bomb guard, #32)
         $this->assertWithinPixelCap( $file->getPathname() );
 
+        // ...the same, frame by frame, and the animation limits. Counting stops right after the frame cap
+        $format = (string)$file->guessExtension();
+        $frames = ImageFrames::read($file->getPathname(), $format, static::ANIMATED_FRAMES_MAX + 1);
+        $this->assertWithinAnimationLimits($frames);
+
         $hash = hash_file('md5', $file->getPathname() );
 
         // handle "no-watermark" in filename
@@ -59,13 +64,11 @@ class ImageEditor extends Image
             $filename = 'image-' . (new DateTime())->format('Y-m-d H:i:s') . '-' . rand(0, PHP_INT_MAX);
         }
 
-        $format = $file->guessExtension();
-
         $this
             ->setTitle($filename)
             ->entity
                 ->setFormat($format)
-                ->setAnimated( $this->isAnimatedFile($file->getPathname(), $format) )
+                ->setAnimated( $frames->isAnimated() )
                 ->setHash($hash);
 
         $this->save();
@@ -107,170 +110,49 @@ class ImageEditor extends Image
 
 
     /**
-     * Whether the file holds more than one frame. Only the container structure is read, never the pixels:
-     * this runs on untrusted uploads, before anything decodes them (see assertWithinPixelCap()).
+     * Reject a file whose frames overflow its canvas (a malformed file, or a "decompression bomb" hiding a huge
+     * frame behind a small declared size), and an animated image beyond the animation limits. Like
+     * assertWithinPixelCap(), this reads the file structure only, before anything decodes the pixels.
      */
-    protected function isAnimatedFile(string $filePath, string $format) : bool
+    protected function assertWithinAnimationLimits(ImageFrames $frames) : static
     {
-        $handle = fopen($filePath, 'rb');
-        if( $handle === false ) {
-            return false;
+        if( $frames->frameOutsideCanvas ) {
+            throw new UnprocessableEntityHttpException(
+                "L'immagine è malformata: uno dei suoi fotogrammi esce dai bordi dell'immagine stessa"
+            );
         }
 
-        try {
-            return match($format) {
-                ImageEntity::FORMAT_GIF     => $this->countGifFrames($handle, 2) > 1,
-                ImageEntity::FORMAT_WEBP    => $this->isAnimatedWebp($handle),
-                ImageEntity::FORMAT_PNG     => $this->isAnimatedPng($handle),
-                ImageEntity::FORMAT_AVIF    => $this->isAnimatedAvif($handle),
-                default                     => false
-            };
-
-        } finally {
-            fclose($handle);
-        }
-    }
-
-
-    /**
-     * Walks the GIF blocks, skipping the LZW data sub-block by sub-block, until $stopAt frames are found
-     * 📚 https://www.w3.org/Graphics/GIF/spec-gif89a.txt
-     *
-     * @param resource $handle
-     */
-    protected function countGifFrames($handle, int $stopAt) : int
-    {
-        // header (6 bytes) + logical screen descriptor (7), then the optional global color table
-        $header = fread($handle, 13);
-        if( strlen($header) < 13 || !str_starts_with($header, 'GIF') ) {
-            return 0;
+        if( !$frames->isAnimated() ) {
+            return $this;
         }
 
-        $this->skipGifColorTable($handle, ord($header[10]));
+        $width  = $frames->canvasWidth;
+        $height = $frames->canvasHeight;
 
-        $frames = 0;
-        while( $frames < $stopAt && ($block = fread($handle, 1)) !== false && $block !== '' ) {
-
-            if( $block == "\x2C" ) {
-
-                // image descriptor: left, top, width, height (2 bytes each) + packed fields
-                $descriptor = fread($handle, 9);
-                if( strlen($descriptor) < 9 ) {
-                    break;
-                }
-
-                $frames++;
-                $this->skipGifColorTable($handle, ord($descriptor[8]));
-                // LZW minimum code size, then the data sub-blocks
-                fseek($handle, 1, SEEK_CUR);
-                $this->skipGifSubBlocks($handle);
-
-            } elseif( $block == "\x21" ) {
-
-                // extension: label, then its sub-blocks
-                fseek($handle, 1, SEEK_CUR);
-                $this->skipGifSubBlocks($handle);
-
-            } else {
-
-                // 0x3B trailer, or garbage
-                break;
-            }
+        if( $width > static::RESOLUTION_MAX_ANIMATED || $height > static::RESOLUTION_MAX_ANIMATED ) {
+            throw new UnprocessableEntityHttpException(
+                "L'immagine animata è troppo grande: {$width}x{$height}px. Il massimo per le immagini animate è " .
+                static::RESOLUTION_MAX_ANIMATED . "x" . static::RESOLUTION_MAX_ANIMATED . "px"
+            );
         }
 
-        return $frames;
-    }
-
-
-    /** @param resource $handle */
-    protected function skipGifColorTable($handle, int $packedFields) : void
-    {
-        if( $packedFields & 0x80 ) {
-            fseek($handle, 3 * (2 << ($packedFields & 0x07)), SEEK_CUR);
-        }
-    }
-
-
-    /** @param resource $handle */
-    protected function skipGifSubBlocks($handle) : void
-    {
-        while( ($size = fread($handle, 1)) !== false && $size !== '' && $size !== "\x00" ) {
-            fseek($handle, ord($size), SEEK_CUR);
-        }
-    }
-
-
-    /**
-     * The VP8X chunk, when present, is always the first one: its "animation" flag is authoritative
-     * 📚 https://developers.google.com/speed/webp/docs/riff_container#extended_file_format
-     *
-     * @param resource $handle
-     */
-    protected function isAnimatedWebp($handle) : bool
-    {
-        $header = fread($handle, 21);
-        return
-            strlen($header) == 21 && str_starts_with($header, 'RIFF') &&
-            substr($header, 8, 8) == 'WEBPVP8X' && (ord($header[20]) & 0x02);
-    }
-
-
-    /**
-     * APNG: an acTL chunk before the first IDAT, declaring more than one frame
-     * 📚 https://www.w3.org/TR/png-3/#apng-frame-based-animation
-     *
-     * @param resource $handle
-     */
-    protected function isAnimatedPng($handle) : bool
-    {
-        if( fread($handle, 8) !== "\x89PNG\r\n\x1A\n" ) {
-            return false;
+        if( $frames->frames > static::ANIMATED_FRAMES_MAX ) {
+            throw new UnprocessableEntityHttpException(
+                "L'immagine animata ha troppi fotogrammi: più di " . static::ANIMATED_FRAMES_MAX . ", che è il massimo"
+            );
         }
 
-        while( strlen($chunkHeader = (string)fread($handle, 8)) == 8 ) {
+        if( $frames->getPixels() > static::ANIMATED_PIXEL_BUDGET ) {
 
-            ['length' => $length] = unpack('Nlength', $chunkHeader);
-            $type = substr($chunkHeader, 4, 4);
-
-            if( $type == 'acTL' ) {
-                $numFrames = fread($handle, 4);
-                return strlen($numFrames) == 4 && unpack('N', $numFrames)[1] > 1;
-            }
-
-            if( $type == 'IDAT' || $type == 'IEND' ) {
-                return false;
-            }
-
-            // chunk data + CRC
-            fseek($handle, $length + 4, SEEK_CUR);
+            $megapixels     = (int)ceil($frames->getPixels() / 1_000_000);
+            $maxMegapixels  = static::ANIMATED_PIXEL_BUDGET / 1_000_000;
+            throw new UnprocessableEntityHttpException(
+                "L'immagine animata è troppo pesante da elaborare: {$width}x{$height}px per {$frames->frames} fotogrammi " .
+                "fanno $megapixels megapixel, il massimo è $maxMegapixels. Riduci la risoluzione o il numero di fotogrammi"
+            );
         }
 
-        return false;
-    }
-
-
-    /**
-     * AVIF image sequence: "avis" among the brands of the leading ftyp box
-     * 📚 https://aomediacodec.github.io/av1-avif/#image-sequence-brand
-     *
-     * @param resource $handle
-     */
-    protected function isAnimatedAvif($handle) : bool
-    {
-        $header = fread($handle, 8);
-        if( strlen($header) < 8 || substr($header, 4, 4) != 'ftyp' ) {
-            return false;
-        }
-
-        $boxSize = unpack('N', $header)[1];
-        if( $boxSize < 16 || $boxSize > 1024 ) {
-            return false;
-        }
-
-        // major brand, minor version, compatible brands: 4 bytes each
-        $brands = str_split( (string)fread($handle, $boxSize - 8), 4 );
-        unset($brands[1]);
-        return in_array('avis', $brands);
+        return $this;
     }
 
 

@@ -2,19 +2,19 @@
 namespace App\Tests\Editor;
 
 use App\Entity\Cms\Image as ImageEntity;
-use App\Service\Cms\ImageEditor;
-use App\Service\Factory;
+use App\Service\Cms\ImageFrames;
 use App\Tests\BaseT;
+use App\Tests\ImageFixtures;
 use PHPUnit\Framework\Attributes\DataProvider;
-use ReflectionMethod;
 
 
 /**
- * On upload, ImageEditor flags the images holding more than one frame (Image.animated). Detection reads
- * the container structure only, never the pixels: these fixtures are mostly hand-made headers, enough
- * for the parser but not necessarily decodable.
+ * On upload, ImageFrames reads how many frames an image has, the canvas they are drawn on and whether one
+ * overflows it: ImageEditor flags the animated ones (Image.animated) and enforces the animation limits.
+ * Only the container structure is read, never the pixels: the fixtures are hand-made, structurally valid
+ * files, not necessarily decodable.
  *
- * @see \App\Service\Cms\ImageEditor::isAnimatedFile()
+ * @see \App\Service\Cms\ImageFrames
  */
 class ImageAnimatedDetectionTest extends BaseT
 {
@@ -34,53 +34,62 @@ class ImageAnimatedDetectionTest extends BaseT
 
     public static function craftedFileProvider() : array
     {
-        $gifScreen  = 'GIF89a' . pack('vvCCC', 2, 2, 0x80, 0, 0) . "\x00\x00\x00\xFF\xFF\xFF";
-        $gifFrame   = "\x2C" . pack('vvvvC', 0, 0, 2, 2, 0) . "\x02\x02\x44\x01\x00";
-        $gifGce     = "\x21\xF9\x04\x00\x0A\x00\x00\x00";
-        $gifLoop    = "\x21\xFF\x0BNETSCAPE2.0\x03\x01\x00\x00\x00";
         $gifComment = "\x21\xFE\x05\x2C\x2C\x2C\x2C\x2C\x00";   // a comment full of image-descriptor bytes
+        $gifOneFrameWithComments =
+            'GIF89a' . pack('vvCCC', 2, 2, 0x80, 0, 0) . "\x00\x00\x00\xFF\xFF\xFF" .
+            $gifComment . "\x2C" . pack('vvvvC', 0, 0, 2, 2, 0) . "\x02\x02\x44\x01\x00" . $gifComment . "\x3B";
 
-        $webp       = fn(int $flags) => 'RIFF' . pack('V', 22) . 'WEBPVP8X' . pack('V', 10) . chr($flags) . str_repeat("\x00", 9);
+        $png = "\x89PNG\r\n\x1A\n" . ImageFixtures::pngChunk('IHDR', pack('NNCCCCC', 2, 2, 8, 6, 0, 0, 0));
 
-        $pngChunk   = fn(string $type, string $data) => pack('N', strlen($data)) . $type . $data . pack('N', crc32($type . $data));
-        $pngIhdr    = "\x89PNG\r\n\x1A\n" . $pngChunk('IHDR', pack('NNCCCCC', 2, 2, 8, 6, 0, 0, 0));
-        $acTL       = fn(int $frames) => $pngChunk('acTL', pack('NN', $frames, 0));
-
-        $ftyp       = fn(string ...$brands) =>
-            pack('N', 12 + 4 * count($brands)) . 'ftyp' . $brands[0] . "\x00\x00\x00\x00" . implode('', array_slice($brands, 1));
-
+        // format, file, expected: [frames, canvas width, canvas height, a frame outside the canvas]
         return [
-            'GIF, two frames'                   => ['gif',  $gifScreen . $gifLoop . $gifGce . $gifFrame . $gifGce . $gifFrame . "\x3B", true],
-            'GIF, one frame'                    => ['gif',  $gifScreen . $gifGce . $gifFrame . "\x3B", false],
-            'GIF, one frame + 0x2C in comment'  => ['gif',  $gifScreen . $gifComment . $gifFrame . $gifComment . "\x3B", false],
-            'GIF, truncated after two frames'   => ['gif',  $gifScreen . $gifFrame . $gifFrame, true],
-            'GIF, garbage'                      => ['gif',  'GIF89a', false],
+            'GIF, 3 frames'                     => ['gif',  ImageFixtures::gif(40, 30, [[0, 0, 40, 30], [5, 5, 10, 10], [0, 0, 40, 30]]), [3, 40, 30, false]],
+            'GIF, 1 frame'                      => ['gif',  ImageFixtures::gif(40, 30, [[0, 0, 40, 30]]), [1, 40, 30, false]],
+            'GIF, 0x2C in comments'             => ['gif',  $gifOneFrameWithComments, [1, 2, 2, false]],
+            'GIF, truncated after two frames'   => ['gif',  substr(ImageFixtures::gif(4, 4, [[0, 0, 4, 4], [0, 0, 4, 4]]), 0, -1), [2, 4, 4, false]],
+            'GIF, frame larger than canvas'     => ['gif',  ImageFixtures::gif(10, 10, [[0, 0, 20000, 20000]]), [1, 10, 10, true]],
+            'GIF, frame moved outside canvas'   => ['gif',  ImageFixtures::gif(10, 10, [[0, 0, 10, 10], [5, 0, 10, 10]]), [2, 10, 10, true]],
+            'GIF, garbage'                      => ['gif',  'GIF89a', [0, 0, 0, false]],
 
-            'WebP, animation flag'              => ['webp', $webp(0x02), true],
-            'WebP, animation + alpha flags'     => ['webp', $webp(0x12), true],
-            'WebP, alpha flag only'             => ['webp', $webp(0x10), false],
-            'WebP, truncated'                   => ['webp', 'RIFF', false],
+            'WebP, 2 frames'                    => ['webp', ImageFixtures::webp(64, 32, [[0, 0, 64, 32], [10, 10, 20, 20]]), [2, 64, 32, false]],
+            'WebP, frame outside canvas'        => ['webp', ImageFixtures::webp(64, 32, [[0, 0, 64, 32], [50, 0, 20, 20]]), [2, 64, 32, true]],
+            'WebP, VP8X without animation flag' => ['webp', ImageFixtures::webp(64, 32, [], false), [1, 0, 0, false]],
+            'WebP, truncated'                   => ['webp', 'RIFF', [0, 0, 0, false]],
 
-            'APNG, 3 frames'                    => ['png',  $pngIhdr . $acTL(3) . $pngChunk('IDAT', 'x') . $pngChunk('IEND', ''), true],
-            'APNG, 1 frame'                     => ['png',  $pngIhdr . $acTL(1) . $pngChunk('IDAT', 'x') . $pngChunk('IEND', ''), false],
-            'PNG, acTL after IDAT (not APNG)'   => ['png',  $pngIhdr . $pngChunk('IDAT', 'x') . $acTL(3) . $pngChunk('IEND', ''), false],
-            'PNG, truncated'                    => ['png',  "\x89PNG", false],
+            'APNG, 3 frames'                    => ['png',  ImageFixtures::apng(30, 20, 3, [[0, 0, 30, 20], [0, 0, 30, 20], [5, 5, 5, 5]]), [3, 30, 20, false]],
+            'APNG, declaring more than it has'  => ['png',  ImageFixtures::apng(30, 20, 5000, [[0, 0, 30, 20], [0, 0, 30, 20]]), [5000, 30, 20, false]],
+            'APNG, frame outside canvas'        => ['png',  ImageFixtures::apng(30, 20, 2, [[0, 0, 30, 20], [20, 0, 30, 20]]), [2, 30, 20, true]],
+            'APNG, 1 frame'                     => ['png',  ImageFixtures::apng(30, 20, 1, [[0, 0, 30, 20]]), [1, 30, 20, false]],
+            'PNG, acTL after IDAT (not APNG)'   => ['png',  $png . ImageFixtures::pngChunk('IDAT', 'x') . ImageFixtures::pngChunk('acTL', pack('NN', 3, 0)), [1, 2, 2, false]],
+            'PNG, chunk shorter than its fields'=> ['png',  "\x89PNG\r\n\x1A\n" . pack('N', 0) . 'IHDR' . str_repeat("\x00", 12), [0, 0, 0, false]],
+            'PNG, truncated'                    => ['png',  "\x89PNG", [0, 0, 0, false]],
 
-            'AVIF sequence, major brand'        => ['avif', $ftyp('avis', 'avif', 'msf1', 'miaf'), true],
-            'AVIF sequence, compatible brand'   => ['avif', $ftyp('avif', 'mif1', 'avis'), true],
-            'AVIF still'                        => ['avif', $ftyp('avif', 'mif1', 'miaf'), false],
-            'AVIF, avis as minor version only'  => ['avif', pack('N', 16) . 'ftypavifavis', false],
-            'AVIF, truncated'                   => ['avif', "\x00\x00", false],
+            'AVIF sequence'                     => ['avif', ImageFixtures::avifSequence(128, 72, 24), [24, 128, 72, false]],
+            'AVIF sequence, compatible brand'   => ['avif', ImageFixtures::avifSequence(128, 72, 24, ['avif', 'mif1', 'avis']), [24, 128, 72, false]],
+            'AVIF still'                        => ['avif', ImageFixtures::ftyp('avif', 'mif1', 'miaf'), [1, 0, 0, false]],
+            'AVIF, avis as minor version only'  => ['avif', pack('N', 16) . 'ftypavifavis', [1, 0, 0, false]],
+            'AVIF sequence without moov'        => ['avif', ImageFixtures::ftyp('avis', 'avif'), [1, 0, 0, false]],
+            'AVIF, truncated'                   => ['avif', "\x00\x00", [0, 0, 0, false]],
 
-            'JPEG is never animated'            => ['jpg',  $gifScreen . $gifFrame . $gifFrame, false],
+            'JPEG is never animated'            => ['jpg',  ImageFixtures::gif(4, 4, [[0, 0, 4, 4], [0, 0, 4, 4]]), [1, 0, 0, false]],
         ];
     }
 
 
     #[DataProvider('craftedFileProvider')]
-    public function testCraftedFile(string $format, string $bytes, bool $expected) : void
+    public function testCraftedFile(string $format, string $bytes, array $expected) : void
     {
-        $this->assertSame($expected, $this->isAnimatedFile($this->writeTmp($bytes), $format));
+        $frames = ImageFrames::read($this->writeTmp($bytes), $format);
+        $this->assertSame($expected, [$frames->frames, $frames->canvasWidth, $frames->canvasHeight, $frames->frameOutsideCanvas]);
+        $this->assertSame($expected[0] > 1, $frames->isAnimated());
+    }
+
+
+    public function testCountingStopsAfterTheGivenFrame() : void
+    {
+        $path = $this->writeTmp( ImageFixtures::gif(2, 2, array_fill(0, 50, [0, 0, 2, 2])) );
+        $this->assertSame(11, ImageFrames::read($path, 'gif', 11)->frames);
+        $this->assertSame(50, ImageFrames::read($path, 'gif')->frames);
     }
 
 
@@ -98,17 +107,11 @@ class ImageAnimatedDetectionTest extends BaseT
 
             ob_start();
             $fxWrite($gd);
-            $path = $this->writeTmp( ob_get_clean() );
+            $frames = ImageFrames::read( $this->writeTmp(ob_get_clean()), $format );
 
-            $this->assertFalse($this->isAnimatedFile($path, $format), "A still $format image was flagged as animated");
+            $this->assertSame(1, $frames->frames, "A still $format image must have 1 frame");
+            $this->assertFalse($frames->frameOutsideCanvas);
         }
-    }
-
-
-    private function isAnimatedFile(string $path, string $format) : bool
-    {
-        $editor = static::getService(Factory::class)->createImageEditor();
-        return (new ReflectionMethod(ImageEditor::class, 'isAnimatedFile'))->invoke($editor, $path, $format);
     }
 
 
