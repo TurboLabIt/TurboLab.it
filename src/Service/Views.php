@@ -1,7 +1,6 @@
 <?php
 namespace App\Service;
 
-use App\ServiceCollection\Cms\ArticleCollection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -18,9 +17,8 @@ class Views
             "fx"    => 'loadLatestReadyForReview'
         ],
         "tendenza"      => [
-            "title"     => "Gli articoli di tendenza (ultimi " . ArticleCollection::TRENDING_DAYS . " giorni)",
-            "linkText"  => "Gli articoli di tendenza",
-            "fx"        => 'loadTrending'
+            "title" => "Gli articoli di tendenza",
+            "fx"    => 'loadTrending'
         ],
         "visitati"      => [
             "title" => "Gli articoli più visitati",
