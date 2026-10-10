@@ -4,6 +4,7 @@ namespace App\Repository\Cms;
 use App\Command\ChristmasArticleGeneratorCommand;
 use App\Entity\Cms\Article;
 use App\Entity\Cms\Tag;
+use App\Entity\Cms\Visit;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
@@ -566,6 +567,31 @@ class ArticleRepository extends BaseRepository
             ->setFirstResult($startAt)
             ->setMaxResults($this->itemsPerPage)
             ->getQuery();
+
+        return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+    }
+
+
+    public function findTrending(int $maxDaysAgo, ?int $page = 1) : ?\Doctrine\ORM\Tools\Pagination\Paginator
+    {
+        $page    = $page ?: 1;
+        $startAt = $this->itemsPerPage * ($page - 1);
+
+        // ranked by the visits received since publication, not by t.views:
+        // a re-published old article keeps its lifetime views, and would top the list for the whole window
+        $query =
+            $this->getQueryBuilderCompleteWherePublishingStatus()
+                ->andWhere('t.publishedAt >= :daysAgo')
+                    ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"))
+                ->addSelect('(
+                    SELECT COUNT(visit.id) FROM ' . Visit::class . ' visit
+                    WHERE visit.article = t AND visit.updatedAt >= t.publishedAt
+                ) AS HIDDEN viewsSincePublished')
+                ->orderBy('viewsSincePublished', 'DESC')
+                ->addOrderBy('t.publishedAt', 'DESC')
+                ->addOrderBy('t.id', 'DESC')
+                ->setFirstResult($startAt)
+                ->setMaxResults($this->itemsPerPage);
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
     }

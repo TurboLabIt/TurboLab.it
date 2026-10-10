@@ -271,7 +271,7 @@
                                             <ul>
                                                 {% for View in FrontendHelper.Views.All %}
                                                     <li>
-                                                        <a href="{{ View.url }}">{{ View.title }}</a>
+                                                        <a href="{{ View.url }}">{{ View.linkText ?? View.title }}</a>
                                                     </li>
                                                 {% endfor %}
                                             </ul>

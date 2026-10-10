@@ -14,6 +14,9 @@ use Meilisearch\Bundle\SearchManagerInterface;
 
 class ArticleCollection extends BaseArticleCollection
 {
+    const int TRENDING_DAYS = 10;
+
+
     public function __construct(Factory $factory, protected SearchManagerInterface $searchService)
     {
         parent::__construct($factory);
@@ -128,6 +131,13 @@ class ArticleCollection extends BaseArticleCollection
     public function loadTopTopComments(?int $page = 1, ?int $maxDaysAgo = null) : static
     {
         $arrArticles = $this->getRepository()->findTopComments($page, $maxDaysAgo);
+        return $this->setEntities($arrArticles);
+    }
+
+
+    public function loadTrending(?int $page = 1, int $maxDaysAgo = self::TRENDING_DAYS) : static
+    {
+        $arrArticles = $this->getRepository()->findTrending($maxDaysAgo, $page);
         return $this->setEntities($arrArticles);
     }
 
