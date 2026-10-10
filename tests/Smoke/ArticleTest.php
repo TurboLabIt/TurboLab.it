@@ -1,7 +1,9 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Entity\Cms\Image as ImageEntity;
 use App\Service\Cms\Article;
+use App\Service\Cms\ImageFrames;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -74,7 +76,7 @@ class ArticleTest extends BaseT
         // H2
         $H2s = $crawler->filter('h2');
         $countH2 = $H2s->count();
-        $this->assertEquals(8, $countH2);
+        $this->assertEquals(9, $countH2);
 
         // intro paragraph
         $firstPContent = $crawler->filter('p')->first()->html();
@@ -148,6 +150,21 @@ class ArticleTest extends BaseT
 
         //
         $this->internalImagesChecker($crawler);
+
+        // animated GIF: served as an animated WebP
+        $gifImg = $crawler->filterXPath('//h2[normalize-space(.)="GIF animata"]/following-sibling::p[1]/img');
+        $this->assertCount(1, $gifImg);
+        $gifSrc = $gifImg->attr('src');
+        $this->assertStringEndsWith('.webp', (string)parse_url($gifSrc, PHP_URL_PATH));
+
+        $gifTempFile = tempnam(sys_get_temp_dir(), 'tli_quality_gif_');
+        try {
+            file_put_contents($gifTempFile, $this->fetchImage($gifSrc, 'image/webp'));
+            $this->assertGreaterThan(1, ImageFrames::read($gifTempFile, ImageEntity::FORMAT_WEBP)->frames);
+
+        } finally {
+            unlink($gifTempFile);
+        }
     }
 
 
@@ -227,7 +244,8 @@ class ArticleTest extends BaseT
                 ],
                 [
                     'Article'   => $arrKoArticles->get(1779),
-                    'keyword'   => 'crypto'
+                    // not just "crypto": any other article on the page (sidebar, slugs, image names) may contain it
+                    'keyword'   => 'cryptorevolution'
                 ],
                 [
                     // this one carries two badges (criptovalute + sponsor) via its tags

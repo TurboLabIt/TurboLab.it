@@ -364,17 +364,18 @@ abstract class BaseT extends WebTestCase
             $siteUrl = trim('https://' . $_ENV["APP_SITE_DOMAIN"], '/');
             if( !str_starts_with($src, '/') && !str_starts_with($src, $siteUrl) ) {
                 // testing external images, such as YouTube thumbnails, is not supported
-                return $this;
+                continue;
             }
 
             if( str_starts_with($src, '/forum/') || str_starts_with($src, "{$siteUrl}forum/") ) {
                 // testing forum images is not supported
-                return $this;
+                continue;
             }
 
             if( str_ends_with($src, '/immagini/reg/6/image-26662.avif') ) {
                 // deleted image in quality test article
-                return $this->expect404($src);
+                $this->expect404($src);
+                continue;
             }
 
             // the served format follows the URL extension (eg: newsletter spotlights use PNG via getMetaUrl())
