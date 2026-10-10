@@ -19,6 +19,8 @@ final class ImageFrames
     public int $canvasWidth     = 0;
     public int $canvasHeight    = 0;
     public bool $frameOutsideCanvas = false;
+    // stored in an animation format (animated WebP, APNG, AVIF sequence), even with a single frame
+    public bool $animationContainer = false;
 
     // the moov box of an AVIF sequence is read in memory: no legit one comes close (4 bytes per frame)
     const int AVIF_MOOV_MAX_BYTES = 16 * 1024 * 1024;
@@ -154,6 +156,8 @@ final class ImageFrames
             return;
         }
 
+        $this->animationContainer = true;
+
         // VP8X payload: flags (1 byte) + reserved (3) + canvas width - 1 (3) + canvas height - 1 (3)
         $this->canvasWidth  = static::uint24($header, 24) + 1;
         $this->canvasHeight = static::uint24($header, 27) + 1;
@@ -226,7 +230,7 @@ final class ImageFrames
                 // only reached before the first IDAT: an acTL after it is not APNG
                 $data = (string)fread($handle, 4);
                 $read = strlen($data);
-                $isApng = $read == 4;
+                $isApng = $this->animationContainer = $read == 4;
                 $declaredFrames = $isApng ? unpack('N', $data)[1] : 0;
 
             } elseif( $type == 'fcTL' && $isApng ) {
@@ -292,6 +296,8 @@ final class ImageFrames
         if( !in_array('avis', $brands) ) {
             return;
         }
+
+        $this->animationContainer = true;
 
         // top-level boxes, up to moov
         $offset = $ftypSize;

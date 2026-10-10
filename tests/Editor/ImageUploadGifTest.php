@@ -6,6 +6,7 @@ use App\Exception\InvalidEnumException;
 use App\Service\Cms\Image;
 use App\Service\Factory;
 use App\Tests\BaseT;
+use App\Tests\ImageFixtures;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -19,8 +20,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class ImageUploadGifTest extends BaseT
 {
-    const int RED   = 0;
-    const int BLUE  = 1;
+    const int RED   = ImageFixtures::RED;
+    const int BLUE  = ImageFixtures::BLUE;
 
     /** @var string[] */
     private array $tmpFiles = [];
@@ -78,15 +79,17 @@ class ImageUploadGifTest extends BaseT
 
     public function testFirstFrameSmallerThanTheCanvasIsNotStretched() : void
     {
-        // a legal GIF: frame #1 is a 100x100 square inside a 400x200 canvas. getimagesize() reports the
-        // canvas, GD decodes just the frame: sizing the build on the canvas would stretch the square 2:1
+        // a legal GIF: frame #1 is a 100x100 square inside a 400x200 canvas. GD would decode just the square;
+        // the still of an animated GIF is its first frame merged onto the whole canvas, like the animation:
+        // red square in the middle, transparent around it, never stretched
         $path = $this->makeAnimatedGif(400, 200, [[100, 100, 150, 50, self::RED], [400, 200, 0, 0, self::BLUE]]);
-        $this->uploadBuildAndCheck($path, 'riquadro.gif', 'riquadro', true, [100, 100], [255, 0, 0]);
+        $this->uploadBuildAndCheck($path, 'riquadro.gif', 'riquadro', true, [400, 200], [255, 0, 0], true);
     }
 
 
     private function uploadBuildAndCheck(
-        string $path, string $fileName, string $expectedTitle, bool $expectedAnimated, array $expectedSize, array $expectedRgb
+        string $path, string $fileName, string $expectedTitle, bool $expectedAnimated, array $expectedSize, array $expectedRgb,
+        bool $expectedTransparentCorner = false
     ) : void
     {
         // lossless, so the pixel check can be exact
@@ -114,50 +117,19 @@ class ImageUploadGifTest extends BaseT
             $centerColor = imagecolorsforindex($built, imagecolorat($built, intdiv($expectedSize[0], 2), intdiv($expectedSize[1], 2)));
             $this->assertSame($expectedRgb, [$centerColor['red'], $centerColor['green'], $centerColor['blue']]);
 
+            $cornerAlpha = imagecolorsforindex($built, imagecolorat($built, 0, 0))['alpha'];
+            $this->assertSame($expectedTransparentCorner, $cornerAlpha == 127);
+
         } finally {
             $image->delete();
         }
     }
 
 
-    /**
-     * GD writes single-frame GIFs only: each frame is written by GD, then they are spliced into one GIF.
-     * All the frames share the same 2-color palette, so they can share the global color table.
-     *
-     * @param array<array{0: int, 1: int, 2: int, 3: int, 4: int}> $frames [width, height, left, top, palette index]
-     */
     private function makeAnimatedGif(int $canvasWidth, int $canvasHeight, array $frames) : string
     {
-        $gif = null;
-        foreach($frames as [$width, $height, $left, $top, $colorIndex]) {
-
-            $gd = imagecreate($width, $height);
-            $palette = [imagecolorallocate($gd, 255, 0, 0), imagecolorallocate($gd, 0, 0, 255)];
-            imagefill($gd, 0, 0, $palette[$colorIndex]);
-
-            ob_start();
-            imagegif($gd);
-            $bytes = ob_get_clean();
-
-            // header (6 bytes) + logical screen descriptor (7) + global color table, then the image descriptor
-            $packed         = ord($bytes[10]);
-            $gctLength      = $packed & 0x80 ? 3 * (2 << ($packed & 0x07)) : 0;
-            $descriptorAt   = 13 + $gctLength;
-            $this->assertSame("\x2C", $bytes[$descriptorAt], 'Unexpected block in the GIF written by GD');
-
-            $gif ??=
-                'GIF89a' . pack('vv', $canvasWidth, $canvasHeight) . substr($bytes, 10, 3) .
-                substr($bytes, 13, $gctLength) .
-                "\x21\xFF\x0BNETSCAPE2.0\x03\x01\x00\x00\x00";  // loop forever
-
-            $gif .=
-                "\x21\xF9\x04\x00\x0A\x00\x00\x00" .            // graphic control extension: 100 ms
-                "\x2C" . pack('vv', $left, $top) .              // image descriptor, moved to left/top...
-                substr($bytes, $descriptorAt + 5, -1);          // ...+ size, LZW data (no trailer)
-        }
-
         $path = $this->tmpPath();
-        file_put_contents($path, $gif . "\x3B");
+        file_put_contents($path, ImageFixtures::decodableGif($canvasWidth, $canvasHeight, $frames));
         return $path;
     }
 

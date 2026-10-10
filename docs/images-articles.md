@@ -18,11 +18,11 @@ Questo è il tipo di immagine che richiede il maggior numero di elaborazioni. I 
 
 Il flusso è il seguente:
 
-1. l'autore sceglie il file-immagine dal proprio PC e lo carica all'interno dell'articolo. L'autore deve caricare il file alla massima risoluzione di cui dispone, senza applicare watermark, in uno dei formati supportati (elencati in [Entity/Image::getUploadFormats()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Image.php)). La GIF è accettata solo in ingresso: il server ne usa **il primo fotogramma**, quindi una GIF animata viene mostrata come immagine statica. All'upload, le immagini con più di un fotogramma (GIF, WebP animate, APNG, sequenze AVIF) sono marcate con `image.animated = 1`, leggendo solo la struttura del file e mai i pixel ([Service/ImageFrames](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/ImageFrames.php)). Il flag non cambia ancora nulla nella visualizzazione; le immagini caricate prima del suo arrivo restano a `0`.
+1. l'autore sceglie il file-immagine dal proprio PC e lo carica all'interno dell'articolo. L'autore deve caricare il file alla massima risoluzione di cui dispone, senza applicare watermark, in uno dei formati supportati (elencati in [Entity/Image::getUploadFormats()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Cms/Image.php)). La GIF è accettata solo in ingresso: il server ne usa **il primo fotogramma**, quindi una GIF animata viene mostrata come immagine statica. All'upload, le immagini con più di un fotogramma (GIF, WebP animate, APNG, sequenze AVIF) sono marcate con `image.animated = 1`, leggendo solo la struttura del file e mai i pixel ([Service/ImageFrames](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/ImageFrames.php)). Per GIF e WebP il flag decide l'URL dell'immagine (vedi [Immagini animate](#immagini-animate)); le immagini caricate prima del suo arrivo restano a `0`.
    Limiti (errore `422` all'upload, sempre senza decodificare i pixel, in [ImageEditor](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/ImageEditor.php)):
    - qualsiasi immagine: ogni fotogramma deve stare dentro i bordi dell'immagine
    - immagini statiche: massimo `Image::RESOLUTION_MAX` (12000px) per lato
-   - immagini animate: massimo `Image::RESOLUTION_MAX_ANIMATED` (4096px) per lato, `Image::ANIMATED_FRAMES_MAX` (1860) fotogrammi e `Image::ANIMATED_PIXEL_BUDGET` (500 megapixel, cioè larghezza × altezza × fotogrammi). Per elaborarle si decodificano tutti i fotogrammi insieme, fuori dal `memory_limit` di PHP: circa 13 MB di RAM per megapixel, quindi il budget vale circa 7 GB
+   - immagini animate: massimo `Image::RESOLUTION_MAX_ANIMATED` (4096px) per lato, `Image::ANIMATED_FRAMES_MAX` (1860) fotogrammi e `Image::ANIMATED_PIXEL_BUDGET` (200 megapixel, cioè larghezza × altezza × fotogrammi). Per elaborarle si decodificano tutti i fotogrammi insieme, fuori dal `memory_limit` di PHP: circa 13 MB di RAM per megapixel, quindi circa 2,6 GB. Di più non si può: la *policy* di sistema di ImageMagick limita la memoria utilizzabile (1 GiB di RAM + 2 GiB mappati + 2 GiB su disco), il codice non può alzarla e oltre i ~300 megapixel ImageMagick scarta fotogrammi invece di fallire
 2. il server di TurboLab.it riceve il file e lo ri-salva (per motivi di sicurezza). Questo è considerato "**l'Originale**". A questo file non devono essere apportate altre modifiche
 3. tramite PHP, il server processa il file originale e ne deriva molteplici copie, ognuna con un set di dimensioni diverse (elencate in [Service/Image::SIZE_DIMENSIONS](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php))
 4. le copie elaborate vengono ri-compresse nel miglior formato grafico disponibile | attualmente: **AVIF**, che offre una compressione superiore ed [è supportato](https://caniuse.com/avif) da tutti i browser web moderni
@@ -31,6 +31,23 @@ Il flusso è il seguente:
 7. ricevuta la richiesta di un file-immagine da parte di un client, il server web eroga direttamente il file generato ai passi precedenti, leggendolo dalla cache e senza più bisogno di attivare l'interprete PHP
 
 Il processo di elaborazione dell'immagine via PHP, ovvero il flusso che termina con il salvataggio dell'immagine modificata nella cache sul disco, avviene dunque solo la prima volta che viene richiesta una determinata immagine (dall'autore stesso, presumibilmente). Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php).
+
+
+## Immagini animate
+
+Le GIF e le WebP animate (`image.animated = 1`) sono elaborate come le altre: al momento della richiesta, nella stessa cache, con gli stessi percorsi. Cambia solo il risultato, e l'URL: `Image::getUrl()` punta sempre alla versione WebP, quindi animata, a prescindere dai formati supportati dal client.
+
+- richieste in formato **WebP**, in qualsiasi taglia, diventano una WebP animata ([Service/Image::buildAnimated()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Cms/Image.php)): Imagick ne legge tutti i fotogrammi, li ridimensiona, applica il watermark a ciascuno e li ricodifica, sia *lossless* sia *lossy*, tenendo il file più piccolo (il *lossless* vince sulle registrazioni dello schermo, il *lossy* sui filmati)
+- in qualsiasi altro formato (AVIF, PNG, JPG) diventano un'immagine statica: il primo fotogramma, ricomposto sull'intera area dell'immagine come lo mostrerebbe il browser
+- le APNG e le AVIF animate restano `animated = 1`, ma sono sempre elaborate come statiche: Imagick, su questi server, ne legge solo il primo fotogramma (le APNG richiedono ffmpeg, le sequenze AVIF una libheif più recente). Animate in AVIF non si possono produrre per lo stesso motivo
+- una WebP "animata" con un solo fotogramma è a tutti gli effetti statica (`animated = 0`); GD però non sa aprirla, quindi anche lei passa da Imagick
+
+Un'elaborazione animata può richiedere secondi e qualche GB di RAM, quindi due lock ([Symfony Lock](https://symfony.com/doc/current/components/lock.html), `LOCK_DSN`):
+
+1. uno per variante (immagine + taglia + formato): richieste simultanee della stessa variante non ancora pronta attendono un'unica elaborazione
+2. uno globale: una sola elaborazione animata alla volta, in tutto il server. Chi non ottiene il turno entro `Image::$animatedBuildWaitSeconds` (60 secondi) riceve un errore: un'eccezione generica (`RuntimeException`), senza nulla in cache; la richiesta successiva riproverà
+
+Il file viene scritto a parte e rinominato solo a lavoro finito (Nginx serve qualsiasi file trovi nella cache, mai uno parziale). Il risultato non viene verificato: l'unica protezione contro i fotogrammi scartati in silenzio da ImageMagick (oltre i ~300 megapixel) è il limite di 200 megapixel all'upload, che dipende dalla *policy* di sistema di ImageMagick. Se un aggiornamento la abbassasse, le animazioni più pesanti verrebbero servite troncate, senza errori. Il numero di fotogrammi non sarebbe comunque un buon controllo: l'encoder WebP fonde in uno i fotogrammi consecutivi identici (in *lossy* anche quasi identici), sommandone la durata.
 
 
 ## Trasferimento delle immagini via Nginx

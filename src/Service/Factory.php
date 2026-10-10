@@ -35,6 +35,7 @@ use Meilisearch\Bundle\SearchManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Lock\LockFactory;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\User as UserService;
@@ -64,6 +65,7 @@ class Factory
         protected FileUrlGenerator $fileUrlGenerator,
         protected ForumUrlGenerator $forumUrlGenerator,
         protected UserUrlGenerator $userUrlGenerator,
+        protected LockFactory $lockFactory,
     ) {}
     //</editor-fold>
 
@@ -75,6 +77,8 @@ class Factory
     public function getStopWords() : StopWords { return $this->stopWords; }
 
     public function getUrlGenerator() : UrlGeneratorInterface { return $this->urlGenerator; }
+
+    public function getLockFactory() : LockFactory { return $this->lockFactory; }
 
     public function getCurrentUser() : ?UserService
     {

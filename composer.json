@@ -33,6 +33,7 @@
         "symfony/form": "@stable",
         "symfony/framework-bundle": "@stable",
         "symfony/http-client": "@stable",
+        "symfony/lock": "@stable",
         "symfony/mailer": "@stable",
         "symfony/monolog-bundle": "@stable",
         "symfony/property-access": "@stable",

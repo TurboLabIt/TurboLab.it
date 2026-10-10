@@ -14,6 +14,9 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
+use Imagick;
+use ImagickPixel;
+use RuntimeException;
 
 
 /**
@@ -47,10 +50,22 @@ class Image extends BaseCmsService
     const int RESOLUTION_MAX = 12000;
 
     // animated images (all frames are decoded and processed at once): max width OR height, max number of frames,
-    // and max total pixels (canvas width x height x frames) = ~7 GB of RAM when building them (measured: ~13 MB/MP)
+    // and max total pixels (canvas width x height x frames): ~2.6 GB of RAM when building them (measured: ~13 MB/MP).
+    // Not more: ImageMagick's system policy caps its storage (1 GiB memory + 2 GiB map + 2 GiB disk), code can't raise
+    // it, and past ~300 MP it silently drops frames instead of failing
     const int RESOLUTION_MAX_ANIMATED   = 4096;
     const int ANIMATED_FRAMES_MAX       = 1860;
-    const int ANIMATED_PIXEL_BUDGET     = 500_000_000;
+    const int ANIMATED_PIXEL_BUDGET     = 200_000_000;
+
+    // animated GIF/WebP are built as animated WebP, in every size, when requested as WebP. Imagick can't read all
+    // the frames of an APNG (needs ffmpeg) or of an AVIF sequence (libheif): those are always built as stills
+    const array ANIMATED_BUILD_SOURCE_FORMATS   = [ImageEntity::FORMAT_GIF, ImageEntity::FORMAT_WEBP];
+    const string ANIMATED_BUILD_FORMAT          = ImageEntity::FORMAT_WEBP;
+    const int ANIMATED_WEBP_QUALITY             = 75;
+    const string LOCK_ANIMATED_BUILD            = 'image-build-animated';
+    const int ANIMATED_BUILD_TIME_LIMIT         = 300;
+    // how long a request waits for another animated build to finish, before giving up
+    protected static int $animatedBuildWaitSeconds = 60;
 
     // the titles of uploaded images start as the file name: getTitle() drops the trailing extension(s), eg: "foto.jpg.png"
     const string REGEX_TITLE_FILE_EXTENSION = '/(\.(avif|webp|png|jpe?g|gif|svg))+$/i';
@@ -241,30 +256,20 @@ class Image extends BaseCmsService
             throw new ImageNotFoundException("Original image file not found! The expected path was ##$originalFilePath##");
         }
 
-        // 📚 https://symfony.com/doc/current/the-fast-track/en/23-imagine.html#optimizing-images-with-imagine
-        // 📚 https://github.com/php-imagine/Imagine
-        $phpImagine = (new Imagine())->open($originalFilePath);
-
-        // the size GD decoded, not getimagesize(): on a GIF the latter is the logical screen, but GD
-        // decodes only the first frame, which can be smaller
-        $iwidth     = $phpImagine->getSize()->getWidth();
-        $iheight    = $phpImagine->getSize()->getHeight();
-        $ratio      = $iwidth / $iheight;
-
-        $width  = static::SIZE_DIMENSIONS[$size][static::WIDTH];
-        $height = static::SIZE_DIMENSIONS[$size][static::HEIGHT];
-
-        if ($width / $height > $ratio) {
-            $width = $height * $ratio;
-        } else {
-            $height = $width / $ratio;
+        if( $this->isBuiltAnimated() ) {
+            return $this->buildAnimated($size, $originalFilePath);
         }
 
-        $width  = (int)round($width);
-        $height = (int)round($height);
+        $phpImagine = $this->openStill($originalFilePath);
 
-        // resize (down only, no upscaling)
-        if($iwidth > $width || $iheight > $height ) {
+        // the size of the decoded image, not getimagesize(): on a GIF the latter is the logical screen, while
+        // GD decodes only the first frame, which can be smaller
+        $iwidth     = $phpImagine->getSize()->getWidth();
+        $iheight    = $phpImagine->getSize()->getHeight();
+
+        [$width, $height, $downscale] = $this->getBuildSize($iwidth, $iheight, $size);
+
+        if($downscale) {
 
             $phpImagine->resize(new Box($width, $height), ImageInterface::FILTER_MITCHELL);
 
@@ -293,14 +298,209 @@ class Image extends BaseCmsService
     }
 
 
-    public function applyWatermark(ImageInterface $phpImagine, string $size) : static
+    /**
+     * The size to build: the image fitted into the box of $size if it's bigger, else its own size (never upscaled)
+     *
+     * @return array{0: int, 1: int, 2: bool} width, height, whether it's a downscale
+     */
+    protected function getBuildSize(int $iwidth, int $iheight, string $size) : array
+    {
+        $ratio  = $iwidth / $iheight;
+        $width  = static::SIZE_DIMENSIONS[$size][static::WIDTH];
+        $height = static::SIZE_DIMENSIONS[$size][static::HEIGHT];
+
+        if ($width / $height > $ratio) {
+            $width = $height * $ratio;
+        } else {
+            $height = $width / $ratio;
+        }
+
+        $width  = (int)round($width);
+        $height = (int)round($height);
+
+        $downscale = $iwidth > $width || $iheight > $height;
+        return $downscale ? [$width, $height, true] : [$iwidth, $iheight, false];
+    }
+
+
+    /**
+     * 📚 https://symfony.com/doc/current/the-fast-track/en/23-imagine.html#optimizing-images-with-imagine
+     * 📚 https://github.com/php-imagine/Imagine
+     */
+    protected function openStill(string $originalFilePath) : ImageInterface
+    {
+        // GD reads only the first frame of a GIF, which can be smaller than the canvas, and can't read an animated
+        // WebP at all, not even a single-frame one. Imagick reads just that first frame and merges it onto the canvas
+        if( $this->needsImagickForStill($originalFilePath) ) {
+
+            $firstFrame = $this->readFramesWithImagick($originalFilePath, '[0]');
+            $firstFrame->setImageFormat(ImageEntity::FORMAT_PNG);
+            return (new Imagine())->load( $firstFrame->getImageBlob() );
+        }
+
+        return (new Imagine())->open($originalFilePath);
+    }
+
+
+    protected function needsImagickForStill(string $originalFilePath) : bool
+    {
+        return match( $this->getFormat() ) {
+            ImageEntity::FORMAT_GIF     => $this->isAnimated(),
+            ImageEntity::FORMAT_WEBP    => ImageFrames::read($originalFilePath, ImageEntity::FORMAT_WEBP, 1)->animationContainer,
+            default                     => false
+        };
+    }
+
+
+    /**
+     * The frames of the original (all of them, or those of $frameSelector, eg: "[0]"), each one merged onto the
+     * whole canvas, the way browsers show them
+     */
+    protected function readFramesWithImagick(string $originalFilePath, string $frameSelector = '') : Imagick
+    {
+        // explicit coder: ImageMagick never sniffs the format of an uploaded file
+        $source = new Imagick($this->getFormat() . ':' . $originalFilePath . $frameSelector);
+
+        // the canvas not covered by a frame is transparent, as in browsers: ImageMagick would paint it with the
+        // "background color" declared by the file
+        foreach($source as $frame) {
+            $frame->setImageAlphaChannel(Imagick::ALPHACHANNEL_SET);
+            $frame->setImageBackgroundColor(new ImagickPixel('transparent'));
+        }
+
+        $frames = $source->coalesceImages();
+        $source->clear();
+
+        return $frames;
+    }
+
+
+    protected function buildAnimated(string $size, string $originalFilePath) : static
+    {
+        $outputFilePath = $this->getBuiltFilePath($size, true);
+
+        // concurrent first requests for the same variant: one builds it, the others wait and find it built
+        $variantLock =
+            $this->factory->getLockFactory()
+                ->createLock('image-build-' . $this->getId() . "-$size-" . static::ANIMATED_BUILD_FORMAT);
+
+        $variantLock->acquire(true);
+
+        try {
+            if( !file_exists($outputFilePath) ) {
+                $this->buildAnimatedOneAtATime($size, $originalFilePath, $outputFilePath);
+            }
+
+        } finally {
+            $variantLock->release();
+        }
+
+        $this->lastBuiltImageMimeType = mime_content_type($outputFilePath);
+
+        return $this;
+    }
+
+
+    protected function buildAnimatedOneAtATime(string $size, string $originalFilePath, string $outputFilePath) : void
+    {
+        // one animated build at a time, server-wide: each one can take a few GB of RAM (see ANIMATED_PIXEL_BUDGET)
+        $globalLock = $this->factory->getLockFactory()->createLock(static::LOCK_ANIMATED_BUILD);
+        $deadline   = microtime(true) + static::$animatedBuildWaitSeconds;
+
+        while( !$globalLock->acquire(false) ) {
+
+            if( microtime(true) >= $deadline ) {
+                throw new RuntimeException("Another animated image is being built, try again later");
+            }
+
+            usleep(250_000);
+        }
+
+        try {
+            // raise a lower limit only: 0 (CLI) means none, and set_time_limit() would impose one on the whole process
+            $timeLimit = (int)ini_get('max_execution_time');
+            if( $timeLimit > 0 && $timeLimit < static::ANIMATED_BUILD_TIME_LIMIT ) {
+                set_time_limit(static::ANIMATED_BUILD_TIME_LIMIT);
+            }
+
+            $this->encodeAnimated($size, $originalFilePath, $outputFilePath);
+
+        } finally {
+            $globalLock->release();
+        }
+    }
+
+
+    protected function encodeAnimated(string $size, string $originalFilePath, string $outputFilePath) : void
+    {
+        $frames = $this->readFramesWithImagick($originalFilePath);
+
+        [$width, $height, $downscale] = $this->getBuildSize($frames->getImageWidth(), $frames->getImageHeight(), $size);
+
+        $watermark = null;
+        $watermarkPlacement = $this->getWatermarkPlacement($width, $height, $size);
+        if( $watermarkPlacement !== null ) {
+
+            [$watermarkW, $watermarkH, $watermarkPoint] = $watermarkPlacement;
+            $watermark = new Imagick(ImageEntity::FORMAT_PNG . ':' . $this->getWatermarkFilePath());
+            $watermark->resizeImage($watermarkW, $watermarkH, Imagick::FILTER_MITCHELL, 1);
+        }
+
+        foreach($frames as $frame) {
+
+            if($downscale) {
+                $frame->resizeImage($width, $height, Imagick::FILTER_MITCHELL, 1);
+            }
+
+            $frame->setImagePage($width, $height, 0, 0);
+
+            if( $watermark !== null ) {
+                $frame->compositeImage($watermark, Imagick::COMPOSITE_OVER, $watermarkPoint->getX(), $watermarkPoint->getY());
+            }
+
+            $frame->stripImage();
+            $frame->setImageFormat(static::ANIMATED_BUILD_FORMAT);
+            $frame->setImageCompressionQuality(static::ANIMATED_WEBP_QUALITY);
+        }
+
+        // lossless wins on screen recordings, lossy on video-like content: encode both, keep the smaller
+        $animatedWebp = null;
+        foreach(['true', 'false'] as $lossless) {
+
+            $frames->setOption('webp:lossless', $lossless);
+            $frames->setOption('webp:method', '4');
+            $blob = $frames->getImagesBlob();
+
+            if( $animatedWebp === null || strlen($blob) < strlen($animatedWebp) ) {
+                $animatedWebp = $blob;
+            }
+        }
+
+        $frames->clear();
+
+        // written aside, then renamed: nginx serves any file it finds, it must never find a partial one
+        $tempFilePath = $outputFilePath . '.part';
+        file_put_contents($tempFilePath, $animatedWebp);
+        rename($tempFilePath, $outputFilePath);
+    }
+
+
+    public function getWatermarkFilePath() : string
+    {
+        return $this->projectDir->getPublicDirFromFilePath(static::WATERMARK_FILEPATH);
+    }
+
+
+    /**
+     * Where and how big the watermark is, on an image of the given size; null when it gets no watermark
+     *
+     * @return ?array{0: int, 1: int, 2: Point} watermark width, height, position
+     */
+    protected function getWatermarkPlacement(int $imageW, int $imageH, string $size) : ?array
     {
         $this->checkSize($size);
 
         $watermarkPosition = $this->entity->getWatermarkPosition();
-
-        $imageW = $phpImagine->getSize()->getWidth();
-        $imageH = $phpImagine->getSize()->getHeight();
 
         if(
             in_array($size, [static::SIZE_MIN]) ||
@@ -308,14 +508,10 @@ class Image extends BaseCmsService
             $imageW < static::MIN_WATERMARKABLE_SIZES[static::WIDTH] ||
             $imageH < static::MIN_WATERMARKABLE_SIZES[static::HEIGHT]
         ) {
-            return $this;
+            return null;
         }
 
-        $watermarkFilePath = $this->projectDir->getPublicDirFromFilePath(static::WATERMARK_FILEPATH);
-
-        $watermark  = (new Imagine())->open($watermarkFilePath);
-        $watermW    = $watermark->getSize()->getWidth();
-        $watermH    = $watermark->getSize()->getHeight();
+        [$watermW, $watermH] = getimagesize( $this->getWatermarkFilePath() );
 
         $newWatermW = floor( $imageW / 100 * static::WATERMARK_WIDTH_PERCENT );
         $newWatermW = (int)round($newWatermW);
@@ -327,15 +523,30 @@ class Image extends BaseCmsService
         $newWatermH = floor( $watermH *  $newWatermW / $watermW );
         $newWatermH = (int)round($newWatermH);
 
+        return [
+            $newWatermW, $newWatermH,
+            $this->getWatermarkPointPosition($watermarkPosition, $imageW, $imageH, $newWatermW, $newWatermH)
+        ];
+    }
+
+
+    public function applyWatermark(ImageInterface $phpImagine, string $size) : static
+    {
+        $placement = $this->getWatermarkPlacement($phpImagine->getSize()->getWidth(), $phpImagine->getSize()->getHeight(), $size);
+        if( $placement === null ) {
+            return $this;
+        }
+
+        [$watermarkW, $watermarkH, $watermarkPoint] = $placement;
+
         /**
          * Mitchell is often the most accurate.
          * @link https://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-B3BF7F3A-CD5B-46D6-AC89-0BF9AEF27C47
          */
-        $watermark->resize(new Box($newWatermW, $newWatermH), ImageInterface::FILTER_MITCHELL);
+        $watermark = (new Imagine())->open( $this->getWatermarkFilePath() );
+        $watermark->resize(new Box($watermarkW, $watermarkH), ImageInterface::FILTER_MITCHELL);
 
-        $pointPosition = $this->getWatermarkPointPosition($watermarkPosition, $imageW, $imageH, $newWatermW, $newWatermH);
-
-        $phpImagine->paste($watermark, $pointPosition, static::WATERMARK_OPACITY);
+        $phpImagine->paste($watermark, $watermarkPoint, static::WATERMARK_OPACITY);
         return $this;
     }
 
@@ -432,9 +643,11 @@ class Image extends BaseCmsService
     }
 
 
+    // an animated GIF/WebP: the animated WebP; any other image: the still, in the best format the client supports
     public function getUrl(string $size) : string
     {
-        return $this->factory->getImageUrlGenerator()->generateUrl($this, $size);
+        $format = $this->canBeBuiltAnimated() ? static::ANIMATED_BUILD_FORMAT : null;
+        return $this->factory->getImageUrlGenerator()->generateUrl($this, $size, format: $format);
     }
 
 
@@ -477,6 +690,16 @@ class Image extends BaseCmsService
     public function getFormat() : ?string { return $this->entity->getFormat(); }
 
     public function isAnimated() : bool { return $this->entity->isAnimated(); }
+
+    public function canBeBuiltAnimated() : bool
+    {
+        return $this->isAnimated() && in_array($this->getFormat(), static::ANIMATED_BUILD_SOURCE_FORMATS);
+    }
+
+    public function isBuiltAnimated() : bool
+    {
+        return $this->canBeBuiltAnimated() && static::$buildFileExtension == static::ANIMATED_BUILD_FORMAT;
+    }
 
     public function getTempOrder() : int { return $this->tempOrder; }
 
