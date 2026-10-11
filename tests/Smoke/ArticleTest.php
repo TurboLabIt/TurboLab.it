@@ -132,6 +132,17 @@ class ArticleTest extends BaseT
             $this->assertEquals($expectedTagName, $nodeTagName);
         }
 
+        // code block: newlines and indentation are byte-significant, no language = no highlighting class
+        $codeBlock = $crawler->filter('pre > code');
+        $this->assertCount(1, $codeBlock);
+        $this->assertEquals("codeblock:\n  multiriga:\n    - indentato\n    - bene", $codeBlock->text(null, false));
+        $this->assertNull($codeBlock->attr('class'));
+
+        // article link: the text the author wrote, pointing to the current canonical URL
+        $articleLink = $crawler->filterXPath('//a[normalize-space(.)="Scaricare Windows 10 DVD/ISO in italiano: download diretto ufficiale"]');
+        $this->assertCount(1, $articleLink);
+        $this->assertEquals(static::getArticle(680)->getUrl(), $articleLink->attr('href'));
+
         //
         $this->internalLinksChecker($crawler);
 
@@ -245,7 +256,7 @@ class ArticleTest extends BaseT
                 [
                     'Article'   => $arrKoArticles->get(1779),
                     // not just "crypto": any other article on the page (sidebar, slugs, image names) may contain it
-                    'keyword'   => 'cryptorevolution'
+                    'keyword'   => 'cryptore'
                 ],
                 [
                     // this one carries two badges (criptovalute + sponsor) via its tags
