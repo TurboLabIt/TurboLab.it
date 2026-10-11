@@ -15,6 +15,9 @@ doctrine:
         validate_xml_mapping: true
         #naming_strategy: doctrine.orm.naming_strategy.underscore
         naming_strategy: App\Doctrine\TLINamingStrategy
+        dql:
+            numeric_functions:
+                TIMESTAMPDIFF: App\Doctrine\TimestampDiffFunction
         schema_ignore_classes:
             - App\Entity\PhpBB\User
             - App\Entity\PhpBB\Topic

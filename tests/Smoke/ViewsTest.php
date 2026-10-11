@@ -21,13 +21,14 @@ class ViewsTest extends BaseT
 
     public static function trendingWindowProvider() : Generator
     {
-        // the wide window surely holds re-published old articles: they must not top the list with their lifetime views
+        // the wide window surely holds re-published old articles: they must not top the list with their lifetime views,
+        // and spans articles of very different ages: the ranking is per day visible
         yield from [[ArticleCollection::TRENDING_DAYS], [365]];
     }
 
 
     #[DataProvider('trendingWindowProvider')]
-    public function testTrendingRanksByViewsSincePublished(int $maxDaysAgo)
+    public function testTrendingRanksByViewsPerDay(int $maxDaysAgo)
     {
         $arrExpectedIds =
             static::getEntityManager()->getConnection()->fetchFirstColumn("
@@ -35,7 +36,7 @@ class ViewsTest extends BaseT
                 WHERE publishing_status = :published AND published_at <= NOW() AND published_at >= :daysAgo
                 ORDER BY (
                     SELECT COUNT(*) FROM visit WHERE visit.article_id = article.id AND visit.updated_at >= article.published_at
-                ) DESC, published_at DESC, id DESC
+                ) * 1440 / GREATEST(TIMESTAMPDIFF(MINUTE, published_at, NOW()), 1440) DESC, published_at DESC, id DESC
             ", [
                 'published' => Article::PUBLISHING_STATUS_PUBLISHED,
                 'daysAgo'   => (new DateTime("-$maxDaysAgo days"))->format('Y-m-d H:i:s')

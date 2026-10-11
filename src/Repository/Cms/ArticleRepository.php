@@ -577,17 +577,21 @@ class ArticleRepository extends BaseRepository
         $page    = $page ?: 1;
         $startAt = $this->itemsPerPage * ($page - 1);
 
-        // ranked by the visits received since publication, not by t.views:
-        // a re-published old article keeps its lifetime views, and would top the list for the whole window
+        // ranked by visits per day since publication ("velocity"): a fresh article doing well beats an older one with more visits.
+        // Visits are counted from the visit table, not t.views: a re-published old article keeps its lifetime views.
+        // Every article counts as visible for at least 1 day, or a just-published one would spike to the top
+        $minutesVisible = 'TIMESTAMPDIFF(MINUTE, t.publishedAt, CURRENT_TIMESTAMP())';
+
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus()
                 ->andWhere('t.publishedAt >= :daysAgo')
                     ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"))
                 ->addSelect('(
-                    SELECT COUNT(visit.id) FROM ' . Visit::class . ' visit
+                    SELECT COUNT(visit.id) * 1440 / (CASE WHEN ' . $minutesVisible . ' < 1440 THEN 1440 ELSE ' . $minutesVisible . ' END)
+                    FROM ' . Visit::class . ' visit
                     WHERE visit.article = t AND visit.updatedAt >= t.publishedAt
-                ) AS HIDDEN viewsSincePublished')
-                ->orderBy('viewsSincePublished', 'DESC')
+                ) AS HIDDEN viewsPerDay')
+                ->orderBy('viewsPerDay', 'DESC')
                 ->addOrderBy('t.publishedAt', 'DESC')
                 ->addOrderBy('t.id', 'DESC')
                 ->setFirstResult($startAt)
