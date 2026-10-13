@@ -188,6 +188,8 @@ abstract class BaseT extends WebTestCase
         // prevent "Kernel has already been booted"
         if( empty(static::$client) ) {
 
+            // a data provider (or a test that reset static::$client) may have left a booted kernel behind
+            static::ensureKernelShutdown();
             static::$client = static::createClient();
             static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
             static::$client->setServerParameter('HTTPS', 'https');

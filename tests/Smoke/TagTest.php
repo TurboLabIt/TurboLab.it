@@ -4,13 +4,13 @@ namespace App\Tests\Smoke;
 use App\Service\Cms\Tag;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\DomCrawler\Crawler;
 
 
 class TagTest extends BaseT
 {
+    use TagTitleCheckerTrait;
+
     protected static array $arrTestTags;
-    protected static array $arrCategories;
 
 
     public function testingPlayground()
@@ -164,60 +164,5 @@ class TagTest extends BaseT
         $crawler = $this->fetchDomNode($url);
 
         $this->tagTitleAsH1Checker($tag, $crawler);
-    }
-
-
-    public static function categoryProvider() : array
-    {
-        if( empty(static::$arrCategories) ) {
-
-            $arrData = static::getTagCollection()->loadCategories()->getAll();
-            static::$arrCategories = self::repackDataProviderArray($arrData);
-        }
-
-        return static::$arrCategories;
-    }
-
-
-    #[DataProvider('categoryProvider')]
-    public function testOpenAllCategories(Tag $category)
-    {
-        static::$client = null;
-
-        $url = $category->getUrl();
-        $this->assertStringEndsWith("-" . $category->getId(), $url, "Failing URL: $url");
-
-        $crawler = $this->fetchDomNode($url);
-        $this->assertResponseIsSuccessful();
-        $this->tagTitleAsH1Checker($category, $crawler);
-
-        // H2
-        $H2s = $crawler->filter('h2');
-        $countH2 = $H2s->count();
-        $this->assertGreaterThan(10, $countH2);
-
-        $this
-            ->internalLinksChecker($crawler)
-            ->internalImagesChecker($crawler);
-    }
-
-
-    protected function tagTitleAsH1Checker(Tag $tag, Crawler $crawler, ?string $expectedH1 = null) : void
-    {
-        $assertFailureMessage = "Failing URL: " . $tag->getUrl();
-
-        $tagTitle = $tag->getNavTitle();
-        $this->assertNotEmpty($tagTitle, $assertFailureMessage);
-        $this->assertNoLegacyEntities($tagTitle);
-
-        // getNavTitle() now returns the RAW tag title; the <h1> is auto-escaped on render. The DomCrawler
-        // serializes & < > as entities (quotes stay raw), matching htmlspecialchars(ENT_NOQUOTES).
-        $tagTitleAsRendered = htmlspecialchars($tagTitle, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
-        $H1FromCrawler = $crawler->filter('body h1')->html();
-        $this->assertEquals("$tagTitleAsRendered: articoli, guide e news", $H1FromCrawler, $assertFailureMessage);
-
-        if( $expectedH1 !== null ) {
-            $this->assertEquals($expectedH1, $H1FromCrawler, "Explict H1 check failure! " . $assertFailureMessage);
-        }
     }
 }
