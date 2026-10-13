@@ -277,12 +277,20 @@ abstract class BaseT extends WebTestCase
     protected function internalLinksChecker(Crawler $crawler) : static
     {
         $aNodes = $crawler->filter('a');
+        $arrCheckedHrefs = [];
         foreach($aNodes as $a) {
 
             $href = $a->getAttribute("href");
             if( empty($href) || empty(trim($href)) ) {
                 continue;
             }
+
+            // listing pages link the same URL many times (title, image, "read more"...): check each one once
+            if( array_key_exists($href, $arrCheckedHrefs) ) {
+                continue;
+            }
+
+            $arrCheckedHrefs[$href] = true;
 
             // local file: Windows Bootable DVD Generator
             if(
