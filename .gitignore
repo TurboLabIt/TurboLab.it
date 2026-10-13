@@ -134,3 +134,4 @@ phpstan.neon
 /public/images/logo/turbolab.it.png
 /public/immagini
 /assets/images/social-icons
+/docs/security-audit.md
