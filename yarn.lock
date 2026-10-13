@@ -4742,13 +4742,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-check-updates@npm:^23.1.0":
-  version: 23.1.0
-  resolution: "npm-check-updates@npm:23.1.0"
+"npm-check-updates@npm:^23.1.1":
+  version: 23.1.1
+  resolution: "npm-check-updates@npm:23.1.1"
   bin:
     ncu: build/cli.js
     npm-check-updates: build/cli.js
-  checksum: 10c0/154233b979ad6d570c6dff3af86e3cb4e7b71aff763c4d50be1c1d5aaa08c87a45e10b84ec637c756b0937d08ff2a713f961979c90ae0263c2e3e449945f23cb
+  checksum: 10c0/1abc9eedf13c9ffe60c3fe92965534f8a56b320086776e6c4f84b96e5daf4061bb193fad108ecf440a3ba8eb505eb7ae68cb2e3b91238d85f01155cfd24dbc3e
   languageName: node
   linkType: hard
 
@@ -5244,7 +5244,7 @@ __metadata:
     highlight.js: "npm:11.12.0"
     jquery-is-in-viewport: "npm:>=1.0.5"
     js-cookie: "npm:>=3.0.8"
-    npm-check-updates: "npm:^23.1.0"
+    npm-check-updates: "npm:^23.1.1"
     odometer: "npm:>=0.4.8"
     raw-loader: "npm:>=4.0.2"
     sass: "npm:>=1.105.1"
