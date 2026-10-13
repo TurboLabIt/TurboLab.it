@@ -114,6 +114,8 @@ TLITester&lt;img src=x onerror=alert(document.domain)&gt;
 
 L'esempio sopra è, rispettivamente, il titolo di un *topic* (i commenti a un articolo) e uno username. I relativi metodi PHP ([Topic->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Topic.php) e [Post->getTitle()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/PhpBB/Post.php), [User->getUsername()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/User.php)) devono quindi decodificarli esplicitamente prima di ritornare.
 
+Lo stesso vale per i titoli dei video YouTube: l'API `search` li restituisce già encodati (`NON SI CHIAMA &quot;CHIAVETTA USB&quot;!`, mentre la descrizione arriva grezza), quindi [YouTubeChannelApi](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/YouTubeChannelApi.php) li decodifica prima di ritornarli. Altrimenti ogni consumatore li encoda una seconda volta: Twig nella homepage e nella newsletter, `htmlspecialchars` nel post Telegram. Anti-regressione: [YouTubeTitleEncodingTest](https://github.com/TurboLabIt/TurboLab.it/blob/main/tests/Editor/YouTubeTitleEncodingTest.php).
+
 
 ## Articolo e test
 

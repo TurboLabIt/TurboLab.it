@@ -125,7 +125,8 @@ class YouTubeChannelApi
                 "url"           => "https://www.youtube.com/watch?v=" . $oneVideoItem->id->videoId,
                 // no autoplay=1 here: the URL ends up in browser session history and would restart the video on back/restore
                 "embedUrl"      => "https://www.youtube-nocookie.com/embed/" . $oneVideoItem->id->videoId . "?rel=0&enablejsapi=1",
-                "title"         => trim($oneVideoItem->snippet->title),
+                // the search API returns the title HTML-escaped (&quot; &#39; &amp;), the description raw
+                "title"         => HtmlProcessorBase::decode($oneVideoItem->snippet->title),
                 "abstract"      => trim($oneVideoItem->snippet->description),
                 "thumbnails"    => $oneVideoItem->snippet->thumbnails,
                 "publishedAt"   =>
