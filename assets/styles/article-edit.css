@@ -155,11 +155,15 @@
     font-weight: 400;
 }
 
-.tli-file-delete-confirm p {
+.tli-file-delete-confirm p, .tli-file-delete-confirm .tli-file-other-articles {
     margin-bottom: 8px;
     color: #212529;
     font-size: 15px;
     line-height: 1.5;
+}
+
+.tli-file-delete-confirm .tli-file-other-articles {
+    padding-left: 20px;
 }
 
 .tli-file-delete-confirm .tli-file-delete-confirm-links {

@@ -4,7 +4,8 @@
 
         {% if Article.isEditable %}
             {# the server deletes a file used only by this article, otherwise it just detaches it #}
-            {% set OtherArticlesNum = File.Articles|length - 1 %}
+            {% set OtherArticles    = File.Articles|filter((OtherArticle, articleId) => articleId != Article.id) %}
+            {% set OtherArticlesNum = OtherArticles|length %}
         {% endif %}
 
         <div class="mb-20 tli-file-download"
@@ -96,18 +97,33 @@
                     <p>
                         {% if OtherArticlesNum > 0 %}
                             <strong>«{{ File.title }}»</strong> verrà scollegato da questo articolo, ma resterà disponibile
-                            {% if OtherArticlesNum == 1 %}nell'altro articolo che lo usa{% else %}negli altri {{ OtherArticlesNum }} articoli che lo usano{% endif %}.
+                            {% if OtherArticlesNum == 1 %}nell'altro articolo che lo usa:{% else %}negli altri {{ OtherArticlesNum }} articoli che lo usano:{% endif %}
                         {% else %}
                             <strong>«{{ File.title }}»</strong> verrà eliminato definitivamente da TurboLab.it.
                         {% endif %}
                     </p>
+
+                    {% if OtherArticlesNum > 0 %}
+                        <ul class="tli-file-other-articles">
+                            {% for OtherArticle in OtherArticles %}
+                                {# the title is masked where the viewer can't list the article: link only what they can open #}
+                                <li>
+                                    {% if OtherArticle.isReadable %}
+                                        <a href="{{ OtherArticle.url }}" target="_blank">{{ OtherArticle.title }}</a>
+                                    {% else %}
+                                        {{ OtherArticle.title }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
 
                     {# the frontend fills in how many links the body still has to this file #}
                     <p class="tli-file-delete-confirm-links d-none">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <span class="tli-file-links-num-text"></span>
                         {% if OtherArticlesNum > 0 %}
-                            altrimenti il file tornerà collegato a questo articolo al prossimo salvataggio.
+                            altrimenti il file tornerà collegato a questo articolo al prossimo salvataggio, o comunque entro qualche ora.
                         {% else %}
                             altrimenti chi legge troverà un download che non funziona.
                         {% endif %}
