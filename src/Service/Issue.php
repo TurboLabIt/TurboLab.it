@@ -102,10 +102,20 @@ class Issue
         // remove "Re: " (reply) from the beginning of the title
         $issueTitle = trim(preg_replace('/^re:\s*/i', '', $issueTitle));
 
+        $postUrl    = $this->post->getUrl();
+        $guideUrl   = $this->article->load(Article::ID_ISSUE_REPORT)->getUrl();
+
         $issueBody  = trim('
-            🗨️ [Post originale](' . $this->post->getUrl() . ')' . PHP_EOL . PHP_EOL .
+            🗨️ [Post originale](' . $postUrl . ')' . PHP_EOL . PHP_EOL .
             'Autore del post: ' . $this->post->getUser()?->getUsername() . " || " .
-            'Issue creata da: ' . $author->getUsername()
+            'Issue creata da: ' . $author->getUsername() . PHP_EOL . PHP_EOL .
+            // the issue is just an index: the discussion stays on the forum. GitHub renders this as an "alert" box
+            '> [!NOTE]' . PHP_EOL .
+            '> Usiamo le issue di GitHub solo come "indice": per favore, **non lasciare messaggi qui**, ' .
+                'ma [rispondi nella discussione sul forum](' . $postUrl . '), così tutta la community potrà leggerti. Grazie!' . PHP_EOL .
+            '>' . PHP_EOL .
+            '> Per favore leggi [la guida completa](' . $guideUrl . '): ' .
+                'spiega come proporre idee e segnalare problemi nel modo più efficace. Grazie!'
         );
 
         $arrGitHubResponse = $this->github->createIssue($issueTitle, $issueBody);

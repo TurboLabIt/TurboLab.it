@@ -74,7 +74,7 @@ Prima di creare la issue su GitHub, ci sono due check:
 1. carica l'Entity del post dal forum; `404` se non esiste
 2. **ri-verifica** che il forum sia tra quelli ammessi (`ID_TLI`, `ID_COMMENTS`): è la stessa condizione del template, ma qui applicata lato server, perché il `postId` arriva dal client
 3. costruisce il **titolo** della issue dal *subject* del post (decodificato da HTML, con l'eventuale "Re: " iniziale rimosso)
-4. costruisce il **corpo** con un link markdown al post originale e i nomi dell'autore del post e dell'autore della segnalazione
+4. costruisce il **corpo** con un link markdown al post originale, i nomi dell'autore del post e dell'autore della segnalazione e un promemoria (un [*alert* `[!NOTE]` di GitHub](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)) che chiede, con gentilezza, di non lasciare messaggi su GitHub ma di rispondere nella discussione sul forum, e di leggere la guida. Le issue sono solo un indice: un commento lasciato su GitHub sfugge alla community, che segue il forum
 5. invoca [GitHub::createIssue](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/GitHub.php)
 
 [src/Service/GitHub.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/GitHub.php) esegue `POST https://api.github.com/repos/{path}/issues` con header `Authorization: Bearer {token}`. Il repository (`path`) e il token sono configurati in [config/services.yaml](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/services.yaml) a partire dalle variabili d'ambiente `GITHUB_PATH` e `GITHUB_ACCESS_TOKEN_ISSUES`.
