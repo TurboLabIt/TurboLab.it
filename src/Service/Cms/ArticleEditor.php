@@ -245,7 +245,9 @@ class ArticleEditor extends Article
 
         foreach($newTags as $tag) {
 
-            $tagId = $tag->getId();
+            // a replaced tag is never assigned: its replacement takes its place, as in autotag()
+            $tag    = $tag->getReplacement() ?? $tag;
+            $tagId  = $tag->getId();
             $existingTagJunction = $oldTagJunctionByTagId[$tagId] ?? null;
 
             if( empty($existingTagJunction) ) {

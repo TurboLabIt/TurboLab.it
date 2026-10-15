@@ -134,24 +134,21 @@ class TagCollection extends BaseServiceEntityCollection
             }
         }
 
-        foreach($this->arrData as $id => $tag) {
+        // a replaced tag is never offered: its replacement takes its place, once
+        $arrContains = [];
+        foreach($this->arrData as $tag) {
+
+            $tag    = $tag->getReplacement() ?? $tag;
+            $id     = $tag->getId();
 
             if( $id == $perfectMatchId || array_key_exists($id, $arrStartWithSelected) ) {
-                unset($this->arrData[$id]);
-            }
-
-            $replacementId = $tag->getReplacement()?->getId();
-
-            if( empty($replacementId) ) {
                 continue;
             }
 
-            if( $replacementId == $perfectMatchId || array_key_exists($replacementId, $arrStartWithSelected) ) {
-                unset($this->arrData[$id]);
-            }
+            $arrContains[$id] = $tag;
         }
 
-        $this->arrData = $arrPerfectMatch + $arrStartWithSelected + $this->arrData + $arrNew;
+        $this->arrData = $arrPerfectMatch + $arrStartWithSelected + $arrContains + $arrNew;
 
         return $this;
     }
