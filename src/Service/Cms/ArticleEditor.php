@@ -8,6 +8,8 @@ use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\ArticleTag;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Entity\Cms\Image as ImageEntity;
+use App\Entity\Cms\File as FileEntity;
+use App\Entity\Cms\Badge as BadgeEntity;
 use App\Entity\PhpBB\Forum;
 use App\Exception\TopicHasRepliesException;
 use App\Service\Factory;

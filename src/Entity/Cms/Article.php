@@ -380,20 +380,28 @@ class Article extends BaseCmsEntity
 
     public function addBadge(ArticleBadge $badge) : static
     {
-        if (!$this->badges->contains($badge)) {
-            $this->badges->add($badge);
-            $badge->setArticle($this);
+        foreach($this->badges as $item) {
+
+            if( $item->getBadge()->getId() == $badge->getBadge()->getId() ) {
+                return $this;
+            }
         }
+
+        $this->badges->add($badge);
+        $badge->setArticle($this);
 
         return $this;
     }
 
     public function removeBadge(ArticleBadge $badge) : static
     {
-        if ($this->badges->removeElement($badge)) {
-            // set the owning side to null (unless already changed)
-            if ($badge->getArticle() === $this) {
-                $badge->setArticle(null);
+        $currentItems = $this->badges->toArray();
+        foreach($currentItems as $item) {
+
+            if( $item->getBadge()->getId() == $badge->getBadge()->getId() ) {
+
+                $this->badges->removeElement($item);
+                $item->setArticle(null);
             }
         }
 

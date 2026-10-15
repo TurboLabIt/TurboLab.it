@@ -1,7 +1,10 @@
 <?php
 namespace App\Tests\Editor;
 
+use App\Entity\Cms\ArticleBadge;
+use App\Entity\Cms\ArticleFile;
 use App\Service\Cms\ArticleEditor;
+use App\Service\Cms\Badge;
 use App\Service\Factory;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -245,5 +248,40 @@ class ArticleEditorTest extends BaseT
         );
 
         $this->assertEquals(22106, $editor->getEntity()->getSpotlight()?->getId());
+    }
+
+
+    public function testArticleEditorFilesAndBadgesAcceptEntities()
+    {
+        // addFile()/removeFile()/addBadge()/removeBadge() take the service or its entity, but the File/Badge entity
+        // aliases weren't imported: an entity threw a TypeError. Badge junctions also matched by identity, so the
+        // fresh junction removeBadge() builds never matched and nothing was removed. Nothing is saved here
+        $editor = static::getArticleEditor();
+        $author = static::getUser();
+        $file   = static::getFile()->getEntity();
+        $badge  = static::getService(Factory::class)->createBadge()->load(Badge::ID_AI)->getEntity();
+
+        $fileIds = fn() =>
+            array_map(fn(ArticleFile $junction) => $junction->getFile()->getId(), $editor->getEntity()->getFiles()->toArray());
+
+        $badgeIds = fn() =>
+            array_map(fn(ArticleBadge $junction) => $junction->getBadge()->getId(), $editor->getEntity()->getBadges()->toArray());
+
+        $editor
+            ->addFile($file, $author)
+            ->addBadge($badge, $author)
+            ->addBadge($badge, $author);
+
+        $this->assertContains($file->getId(), $fileIds());
+
+        // added twice, stored once
+        $this->assertCount(1, array_keys($badgeIds(), $badge->getId()));
+
+        $editor
+            ->removeFile($file)
+            ->removeBadge($badge);
+
+        $this->assertNotContains($file->getId(), $fileIds());
+        $this->assertNotContains($badge->getId(), $badgeIds());
     }
 }
