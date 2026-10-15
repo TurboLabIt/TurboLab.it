@@ -11,6 +11,9 @@ if [ "$APP_ENV" == "dev" ]; then
   fxLink ${PROJECT_DIR}config/custom/zzmysqldump.conf /etc/turbolab.it/zzmysqldump.profile.turbolab.it.conf
   sudo cp ${PROJECT_DIR}config/custom/dev/mysql-custom.conf /etc/mysql/mysql.conf.d/96-turbolab.it-dev.cnf
 
+  sudo rm -f /etc/ImageMagick-7/policy.xml && sudo cp ${PROJECT_DIR}config/custom/imagemagick-policy.xml /etc/ImageMagick-7/policy.xml && \
+    sudo chown root:root "/etc/ImageMagick-7/policy.xml" && sudo chmod u=rw,go=r "/etc/ImageMagick-7/policy.xml"
+
   sudo rm -rf /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
   sudo cp ${PROJECT_DIR}config/custom/php-custom.ini /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
   sudo sed -i 's/display_errors = off/display_errors = on/; s/display_startup_errors = off/display_startup_errors = on/' /etc/php/${PHP_VER}/fpm/conf.d/90-turbolab.it.ini
