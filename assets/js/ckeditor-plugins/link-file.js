@@ -132,7 +132,7 @@ jQuery(function() {
 
                 const formData = new FormData();
                 formData.append('files[]', file);
-                formData.append('title', file.name.replace(/\.[^.]+$/, '') || file.name);
+                formData.append('title', titleFromFileName(file.name));
 
                 let json;
                 try {
@@ -246,6 +246,11 @@ jQuery(function() {
         } catch(e) {
             return null;
         }
+    }
+
+    // the title of an uploaded file is also the name it's downloaded with (the server appends the extension)
+    function titleFromFileName(fileName) {
+        return fileName.replace(/\.[^.]+$/, '') || fileName;
     }
 
     function attachCreatedFile(json) {
@@ -443,6 +448,20 @@ jQuery(function() {
         const formatSelect = jQuery(this).closest('.tli-link-file-create-url-form').find('.tli-link-file-url-format');
         if( formatSelect.find('option[value="' + ext + '"]').length ) {
             formatSelect.val(ext);
+        }
+    });
+
+
+    // Pre-fill the title from the chosen file, so that the downloaded file keeps its name.
+    // A title typed by the author is never overwritten
+    jQuery(document).on('change', '.tli-link-file-upload-input', function() {
+        const file = this.files && this.files[0];
+        if( !file ) return;
+        const titleInput = jQuery(this).closest('.tli-link-file-create-upload-form').find('.tli-link-file-upload-title');
+        const currentTitle = titleInput.val();
+        if( currentTitle.trim() === '' || currentTitle === titleInput.data('prefilled-title') ) {
+            const title = titleFromFileName(file.name);
+            titleInput.val(title).data('prefilled-title', title);
         }
     });
 

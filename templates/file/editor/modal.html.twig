@@ -2,7 +2,9 @@
 
     <form id="tli-edit-file" action="{{ path('app_editor_file_update', {'fileId': File.id, 'articleId': Article.id}) }}" method="POST">
         <div class="mb-3">
-            <label for="tli-file-title" class="form-label">Nome del file</label>
+            <label for="tli-file-title" class="form-label">
+                {% if File.isLocal %}Titolo (sarà anche il nome del file scaricato){% else %}Titolo (nome leggibile){% endif %}
+            </label>
             <input type="text" name="title" id="tli-file-title" class="form-control" value="{{ File.title }}" required
                    maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}">
         </div>
