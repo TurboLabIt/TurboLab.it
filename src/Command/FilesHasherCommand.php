@@ -13,9 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 
 
-/**
- * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/files-articles.md
- */
 #[AsCommand(name: 'FilesHasher')]
 class FilesHasherCommand extends AbstractBaseCommand
 {

@@ -24,9 +24,6 @@ use TurboLabIt\BaseCommand\Command\AbstractBaseCommand;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 
 
-/**
- * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/files-articles.md
- */
 #[AsCommand(
     name: 'FilesToArticles',
     description: 'Attach (via ArticleFile junction) each file to the article(s) using it, remove unused junctions'
