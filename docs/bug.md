@@ -91,7 +91,7 @@ Ogni issue aperta da `TLI-Bug` viene bloccata (*lock*) pochi secondi dopo la cre
 
 Non se ne occupa il backend, ma il workflow GitHub Actions [.github/workflows/lock-forum-issues.yml](https://github.com/TurboLabIt/TurboLab.it/blob/main/.github/workflows/lock-forum-issues.yml): scatta sull'evento `issues: opened` e blocca la issue con il `GITHUB_TOKEN` del repository, limitato a `issues: write`. `TLI-Bug` ha il ruolo *Triage*, che GitHub non autorizza a bloccare le conversazioni (serve almeno *Write*, che comprende il push sul repository): così il token salvato sul server non ha bisogno di permessi in più.
 
-Il workflow funziona solo se GitHub Actions è abilitato sul repository (*Settings* ➡ *Actions* ➡ *General*): se viene disattivato, le nuove issue restano aperte ai commenti, senza alcun errore lato sito.
+Il workflow funziona solo se GitHub Actions è abilitato per il repository a livello di organizzazione (*Organization settings* ➡ *Actions* ➡ *General*, sezione *Policies*: non la voce *Actions* ➡ *Policies* della barra laterale, che riguarda altro) e sul repository stesso (*Settings* ➡ *Actions* ➡ *General*). Se l'organizzazione lo esclude, l'abilitazione sul repository fallisce (`409 Conflict`); se viene disattivato, le nuove issue restano aperte ai commenti, senza alcun errore lato sito.
 
 
 ## Registrazione locale: l'Entity Bug
