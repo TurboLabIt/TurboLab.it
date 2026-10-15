@@ -85,6 +85,15 @@ Due dettagli importanti:
 - in ambienti diversi da `prod` il titolo viene prefissato con un *tag* d'ambiente (es. `[DEV] `) da `getEnvTag()`
 
 
+## Blocco della conversazione su GitHub
+
+Ogni issue aperta da `TLI-Bug` viene bloccata (*lock*) pochi secondi dopo la creazione: su GitHub possono commentarla solo i collaboratori del repository, perché la discussione resta sul forum (lo ricorda anche il promemoria nel corpo della issue).
+
+Non se ne occupa il backend, ma il workflow GitHub Actions [.github/workflows/lock-forum-issues.yml](https://github.com/TurboLabIt/TurboLab.it/blob/main/.github/workflows/lock-forum-issues.yml): scatta sull'evento `issues: opened` e blocca la issue con il `GITHUB_TOKEN` del repository, limitato a `issues: write`. `TLI-Bug` ha il ruolo *Triage*, che GitHub non autorizza a bloccare le conversazioni (serve almeno *Write*, che comprende il push sul repository): così il token salvato sul server non ha bisogno di permessi in più.
+
+Il workflow funziona solo se GitHub Actions è abilitato sul repository (*Settings* ➡ *Actions* ➡ *General*): se viene disattivato, le nuove issue restano aperte ai commenti, senza alcun errore lato sito.
+
+
 ## Registrazione locale: l'Entity Bug
 
 Ogni issue creata viene salvata come [Entity/Bug](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Bug.php) nel database del CMS. La riga conserva: l'utente, l'indirizzo IP, l'ID remoto (`remoteId`, il *number* della issue su GitHub), l'URL remoto (`remoteUrl`, l'`html_url`), il post di origine e i timestamp (`TimestampableEntity`).
