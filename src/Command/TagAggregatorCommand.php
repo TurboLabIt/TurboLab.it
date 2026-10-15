@@ -21,6 +21,8 @@ class TagAggregatorCommand extends AbstractBaseCommand
         //
         'blockchain' => Tag::ID_CRYPTOCURRENCIES, 'masternode' => Tag::ID_CRYPTOCURRENCIES,
         //
+        'tablet' => Tag::ID_SMARTPHONE,
+        //
         'virus' => Tag::ID_ANTIVIRUS_MALWARE, 'malware' => Tag::ID_ANTIVIRUS_MALWARE, 'antivirusantimalware' => Tag::ID_ANTIVIRUS_MALWARE,
         'ransomware' => Tag::ID_ANTIVIRUS_MALWARE, 'adware' => Tag::ID_ANTIVIRUS_MALWARE,
         'rootkit' => Tag::ID_ANTIVIRUS_MALWARE, 'browserhijacking' => Tag::ID_ANTIVIRUS_MALWARE,
