@@ -7,6 +7,7 @@ use App\Service\Cms\ImageFrames;
 use App\Service\Factory;
 use App\Tests\BaseT;
 use App\Tests\ImageFixtures;
+use DOMDocument;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,8 +23,8 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  *    small declared size: getimagesize() only sees the canvas);
  *  - animated images wider or taller than Image::RESOLUTION_MAX_ANIMATED;
  *  - animated images with more than Image::ANIMATED_FRAMES_MAX frames;
- *  - animated images over Image::ANIMATED_PIXEL_BUDGET (width x height x frames: ~2.6 GB of RAM; more doesn't
- *    fit ImageMagick's system resource policy).
+ *  - animated images over Image::ANIMATED_PIXEL_BUDGET (width x height x frames: ~5.2 GB of RAM; more doesn't
+ *    fit ImageMagick's resource policy, config/custom/imagemagick-policy.xml).
  *
  * The limits are read from the file structure, never by decoding it (see ImageFrames).
  */
@@ -47,7 +48,29 @@ class ImageUploadAnimationLimitsTest extends BaseT
     {
         $this->assertSame(4096, Image::RESOLUTION_MAX_ANIMATED);
         $this->assertSame(1860, Image::ANIMATED_FRAMES_MAX);
-        $this->assertSame(200_000_000, Image::ANIMATED_PIXEL_BUDGET);
+        $this->assertSame(400_000_000, Image::ANIMATED_PIXEL_BUDGET);
+    }
+
+
+    // the budget only holds if the ImageMagick policy deployed to the servers lets a build that big fit in RAM
+    public function testShippedImageMagickPolicyFitsTheBudget() : void
+    {
+        $domDoc = new DOMDocument();
+        $this->assertTrue( $domDoc->load(dirname(__DIR__, 2) . '/config/custom/imagemagick-policy.xml'), 'Malformed ImageMagick policy' );
+
+        $arrLimits = [];
+        foreach( $domDoc->getElementsByTagName('policy') as $policy ) {
+            if( $policy->getAttribute('domain') == 'resource' ) {
+                $arrLimits[ $policy->getAttribute('name') ] = $policy->getAttribute('value');
+            }
+        }
+
+        $gibs = fn(string $name) : int => (int)preg_replace('/GiB$/', '', $arrLimits[$name] ?? '0') * 1024 ** 3;
+
+        // ~13 MB of RAM per megapixel (measured) = ~13 bytes per pixel
+        $budgetBytes = Image::ANIMATED_PIXEL_BUDGET * 13;
+        $this->assertGreaterThanOrEqual($budgetBytes, $gibs('memory'), 'RAM limit below the animated pixel budget');
+        $this->assertGreaterThanOrEqual($budgetBytes, $gibs('map'));
     }
 
 
@@ -59,8 +82,8 @@ class ImageUploadAnimationLimitsTest extends BaseT
             'animated, too wide'                    => [Image::RESOLUTION_MAX_ANIMATED + 1, 4, array_fill(0, 2, [0, 0, 1, 1]), 'troppo grande'],
             'animated, too tall'                    => [4, Image::RESOLUTION_MAX_ANIMATED + 1, array_fill(0, 2, [0, 0, 1, 1]), 'troppo grande'],
             'too many frames'                       => [1, 1, array_fill(0, Image::ANIMATED_FRAMES_MAX + 1, [0, 0, 1, 1]), 'troppi fotogrammi'],
-            // 4096 x 4096 x 12 = 201 MP
-            'over the pixel budget'                 => [4096, 4096, array_fill(0, 12, [0, 0, 1, 1]), 'troppo pesante'],
+            // 4096 x 4096 x 24 = 403 MP
+            'over the pixel budget'                 => [4096, 4096, array_fill(0, 24, [0, 0, 1, 1]), 'troppo pesante'],
         ];
     }
 
@@ -86,7 +109,7 @@ class ImageUploadAnimationLimitsTest extends BaseT
             'APNG frame outside the canvas'         => ['png',  ImageFixtures::apng(30, 20, 2, [[0, 0, 30, 20], [20, 0, 30, 20]])],
             'animated WebP, too wide'               => ['webp', ImageFixtures::webp(Image::RESOLUTION_MAX_ANIMATED + 2, 10, array_fill(0, 2, [0, 0, 10, 10]))],
             'AVIF sequence, too many frames'        => ['avif', ImageFixtures::avifSequence(16, 16, Image::ANIMATED_FRAMES_MAX + 1)],
-            'AVIF sequence, over the pixel budget'  => ['avif', ImageFixtures::avifSequence(4096, 4096, 12)],
+            'AVIF sequence, over the pixel budget'  => ['avif', ImageFixtures::avifSequence(4096, 4096, 24)],
         ];
     }
 
@@ -102,8 +125,8 @@ class ImageUploadAnimationLimitsTest extends BaseT
     public static function acceptedProvider() : array
     {
         return [
-            // 4096 x 4096 x 11 = 185 MP
-            'animated, at the resolution limit, within budget'  => ['gif',  ImageFixtures::gif(4096, 4096, array_fill(0, 11, [0, 0, 1, 1]))],
+            // 4096 x 4096 x 23 = 386 MP
+            'animated, at the resolution limit, within budget'  => ['gif',  ImageFixtures::gif(4096, 4096, array_fill(0, 23, [0, 0, 1, 1]))],
             'animated, exactly at the frame limit'              => ['gif',  ImageFixtures::gif(1, 1, array_fill(0, Image::ANIMATED_FRAMES_MAX, [0, 0, 1, 1]))],
             'still, over the animated resolution limit'         => ['gif',  ImageFixtures::gif(Image::RESOLUTION_MAX, 1, [[0, 0, Image::RESOLUTION_MAX, 1]])],
             'AVIF sequence at the frame limit'                  => ['avif', ImageFixtures::avifSequence(16, 16, Image::ANIMATED_FRAMES_MAX)],

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TurboLab.it: replaces /etc/ImageMagick-7/policy.xml (Ubuntu's default, from imagemagick-7-common).
+  Same rules as the default, with higher storage limits (memory, map, disk) for the animated WebP builds:
+  their frames are all decoded at once, ~13 MB per megapixel, up to Image::ANIMATED_PIXEL_BUDGET (400 MP),
+  one build at a time server-wide. With the default limits (1 GiB + 2 GiB + 2 GiB) ImageMagick silently
+  dropped frames past ~300 MP instead of failing. These are caps, not reservations: memory is used as needed.
+  See docs/images-articles.md
+-->
+<!DOCTYPE policymap [
+<!ELEMENT policymap (policy)*>
+<!ATTLIST policymap xmlns CDATA #FIXED "">
+<!ELEMENT policy EMPTY>
+<!ATTLIST policy xmlns CDATA #FIXED "">
+<!ATTLIST policy domain NMTOKEN #REQUIRED>
+<!ATTLIST policy name NMTOKEN #IMPLIED>
+<!ATTLIST policy pattern CDATA #IMPLIED>
+<!ATTLIST policy rights NMTOKEN #IMPLIED>
+<!ATTLIST policy stealth NMTOKEN #IMPLIED>
+<!ATTLIST policy value CDATA #IMPLIED>
+]>
+<policymap>
+  <policy domain="Undefined" rights="none"/>
+  <policy domain="resource" name="memory" value="8GiB"/>
+  <policy domain="resource" name="map" value="8GiB"/>
+  <policy domain="resource" name="area" value="256MP"/>
+  <policy domain="resource" name="disk" value="8GiB"/>
+  <policy domain="resource" name="width" value="32KP"/>
+  <policy domain="resource" name="height" value="32KP"/>
+  <policy domain="path" rights="none" pattern="@*"/>
+  <policy domain="delegate" rights="none" pattern="URL" />
+  <policy domain="delegate" rights="none" pattern="HTTPS" />
+  <policy domain="delegate" rights="none" pattern="HTTP" />
+</policymap>

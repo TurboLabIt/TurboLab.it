@@ -50,12 +50,12 @@ class Image extends BaseCmsService
     const int RESOLUTION_MAX = 12000;
 
     // animated images (all frames are decoded and processed at once): max width OR height, max number of frames,
-    // and max total pixels (canvas width x height x frames): ~2.6 GB of RAM when building them (measured: ~13 MB/MP).
-    // Not more: ImageMagick's system policy caps its storage (1 GiB memory + 2 GiB map + 2 GiB disk), code can't raise
-    // it, and past ~300 MP it silently drops frames instead of failing
+    // and max total pixels (canvas width x height x frames): ~5.2 GB of RAM when building them (measured: ~13 MB/MP).
+    // It relies on config/custom/imagemagick-policy.xml (8 GiB memory + 8 GiB map + 8 GiB disk): code can't raise
+    // ImageMagick's system policy, and with Ubuntu's default one it silently drops frames past ~300 MP instead of failing
     const int RESOLUTION_MAX_ANIMATED   = 4096;
     const int ANIMATED_FRAMES_MAX       = 1860;
-    const int ANIMATED_PIXEL_BUDGET     = 200_000_000;
+    const int ANIMATED_PIXEL_BUDGET     = 400_000_000;
 
     // animated GIF/WebP are built as animated WebP, in every size, when requested as WebP. Imagick can't read all
     // the frames of an APNG (needs ffmpeg) or of an AVIF sequence (libheif): those are always built as stills
