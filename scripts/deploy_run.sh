@@ -3,6 +3,8 @@
 #
 # 🪄 Based on https://github.com/TurboLabIt/webstackup/blob/master/my-app-template/scripts/deploy_run.sh
 
+zzupdate server
+
 SCRIPT_NAME=deploy
 source $(dirname $(readlink -f $0))/script_begin.sh
 ## https://github.com/TurboLabIt/webstackup/blob/master/script/filesystem/deploy_run.sh
