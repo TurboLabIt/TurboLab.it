@@ -42,6 +42,7 @@ class FileEditController extends ArticleEditBaseController
 
             $this->articleEditor->addFiles($files, $currentUserAsAuthor);
             $this->factory->getEntityManager()->flush();
+            $this->clearCachedArticlePages([$this->articleEditor]);
 
             $fileEditor = null;
             foreach($files as $f) { $fileEditor = $f; break; }
@@ -88,6 +89,7 @@ class FileEditController extends ArticleEditBaseController
 
             $this->articleEditor->addFiles([$fileEditor], $currentUserAsAuthor);
             $this->factory->getEntityManager()->flush();
+            $this->clearCachedArticlePages([$this->articleEditor]);
 
             return $this->buildCreatedFileJsonResponse($fileEditor);
 
@@ -129,6 +131,8 @@ class FileEditController extends ArticleEditBaseController
                 ->setExternalDownloadUrl( $this->fileEditor->isExternal() ? $this->request->request->get('remote-url') : null )
                 ->setAutoHash()
                 ->save();
+
+            $this->clearCachedArticlePages( $this->fileEditor->getArticles() );
 
             return $this->render('article/files.html.twig', [
                 'Article'           => $this->factory->createArticle()->load($articleId),
@@ -186,6 +190,7 @@ class FileEditController extends ArticleEditBaseController
 
             // there is no need to save() the article here
             $this->factory->getEntityManager()->flush();
+            $this->clearCachedArticlePages([$this->articleEditor]);
 
             return new Response('OK');
 
@@ -203,6 +208,22 @@ class FileEditController extends ArticleEditBaseController
             $this->fileEditor =
                 $this->factory->createFileEditor()->load($fileId)
                     ->enforceCanEdit();
+    }
+
+
+    /**
+     * Article pages are cached for anonymous visitors and show their files (downloads box, body links): a file
+     * change must clear every page showing it. Listing pages don't show files: no need for clearCachedArticle()
+     */
+    protected function clearCachedArticlePages(iterable $articles) : static
+    {
+        $arrCacheTags = [];
+        foreach($articles as $article) {
+            $arrCacheTags[] = $article->getCacheKey();
+        }
+
+        $this->cache->invalidateTags($arrCacheTags);
+        return $this;
     }
 
 
