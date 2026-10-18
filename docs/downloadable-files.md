@@ -7,8 +7,8 @@ Nel codice e nel database un Download si chiama `File` (tabella `file`), anche q
 
 ## Obiettivi
 
-1. **Un Download è permanente.** Il suo indirizzo, `/scarica/{id}`, non cambia mai. Quando l'elemento cambia (l'URL esterno si sposta, l'autore carica una versione nuova o migliore del file, ...) e la versione precedente non serve più, l'autore modifica il Download: ogni link del sito (testo degli articoli, elenco dei Download dell'articolo, altri articoli che lo usano, forum, ...) eroga subito il nuovo elemento. La versione precedente non viene conservata.
-2. **Un elemento, un Download.** Non devono esistere due Download per lo stesso elemento: prima o poi uno dei due resterebbe indietro, e da qualche articolo i lettori scaricherebbero la versione vecchia.
+1. **Un Download è permanente.** Il suo indirizzo, `/scarica/{id}`, non cambia mai. Quando l'elemento cambia (l'URL esterno si sposta, l'autore carica una versione nuova o migliore del file, ...) e la versione precedente non serve più, l'autore modifica il Download: ogni link del sito (testo degli articoli, elenco dei Download dell'articolo, altri articoli che lo usano, forum, ...) eroga subito il nuovo elemento. La versione precedente non viene conservata
+2. **Un elemento ⬌ un Download.** Non devono esistere due Download per lo stesso elemento: prima o poi uno dei due resterebbe indietro, e da qualche articolo i lettori scaricherebbero la versione vecchia
 
 
 ## Cos'è un Download
@@ -18,13 +18,14 @@ Ogni Download è composto da:
 - **sorgente**, una delle due:
   - **file locale**, caricato su TurboLab.it: materiale originale prodotto dall'autore, o file rari/difficili da trovare altrove
   - **URL esterno**: file aggiornati spesso o facilmente reperibili in rete (sito del produttore, GitHub, app store, magnet BitTorrent, ...)
-- **titolo**: univoco in tutto il sito (non possono esserci due Download con lo stesso nome). Per un file locale è anche il nome del file scaricato (titolo + `.formato`)
+- **titolo**: univoco in tutto il sito (non possono esserci due Download con lo stesso nome). Per un file locale è anche il nome del file scaricato (titolo + `.formato`). Meglio senza numero di versione: il testo dei link nel corpo degli articoli è scritto all'inserimento e non segue il titolo (è dinamico solo l'URL), quindi dopo una sostituzione "Programma 1.2" resterebbe scritto ovunque. È un suggerimento dell'interfaccia, non un vincolo del backend
 - **formato**: per un file locale è l'estensione; per un URL esterno descrive (orientativamente) cosa si scarica (`zip`, `iso`, `google play (app store)`, ...)
 - autori, articoli che lo usano, numero di download
+- **data dell'ultimo aggiornamento**, mostrata ai lettori nell'elenco dei Download dell'articolo per indicare se stanno scaricando una versione recente
 
 L'identità del Download è il suo ID, quindi il suo URL: la sorgente si può sostituire, l'ID resta.
 
-**Versione o variante?** Una versione nuova dello stesso elemento *sostituisce* il Download (obiettivo 1). Una variante (ad esempio: 32/64 bit, ISO diretta/BitTorrent, variante per Windows o Linux, ...) è un elemento diverso, quindi un altro Download, e il titolo lo dice: "Windows 11 Live CD/USB 64 bit (x64)" e "... via BitTorrent" sono due Download legittimi.
+**Versione o variante?** Una versione nuova dello stesso elemento *sostituisce* il Download (obiettivo 1). Una variante (ad esempio: 32/64 bit, ISO diretta/BitTorrent, versione di un programma "per Windows" o "per Linux", ...) è un elemento diverso, quindi un altro Download, e il titolo lo dice: "Windows 11 Live CD/USB 64 bit (x64)" e "... via BitTorrent" sono due Download legittimi.
 
 
 ## Comportamento atteso
@@ -44,7 +45,7 @@ Un solo flusso, sia dal pulsante nella toolbar dell'editor sia dal riquadro sott
 
 1. il sistema cerca i Download che corrispondono:
    - file ➡ stesso contenuto (hash), poi nome del file e titolo simili
-   - URL ➡ stesso URL, normalizzato (`http`/`https`, `www.`, `/` finale, ...)
+   - URL ➡ stesso URL, con una normalizzazione leggera (`http`/`https`, `www.`, `/` finale, ...). I parametri di tracciamento (`utm_*` e simili) restano nell'URL salvato, ma non contano nel confronto: un URL che differisce da uno esistente solo per questi parametri è lo stesso elemento, e si riusa il Download esistente, con i suoi parametri
    - testo ➡ titolo, nome del file, URL
 2. **stesso elemento** ➡ lo dice ("Questo file è già su TurboLab.it come «...»") e propone **Usa questo**
 3. **elemento simile** ➡ chiede se è una **nuova versione** di «...» (➡ **Sostituisci**) o una variante (➡ nuovo Download, con un titolo che lo distingua)
@@ -58,9 +59,9 @@ Ogni strada termina con il Download collegato all'articolo e il suo link inserit
 **Modifica**, nell'elenco dei Download dell'articolo, permette di:
 
 - cambiare titolo e formato
-- **sostituire la sorgente**: caricare la nuova versione del file, o indicare il nuovo URL, anche passando da file locale a URL esterno e viceversa
+- sostituire la sorgente: caricare la nuova versione del file, o indicare il nuovo URL, anche passando da file locale a URL esterno e viceversa
 
-ID e URL `/scarica/{id}` non cambiano, quindi ogni link segue; il vecchio file locale viene eliminato. Prima di confermare, l'autore vede gli altri articoli che usano il Download. Se la nuova sorgente è già un altro Download (stesso contenuto o stesso URL), il sistema lo segnala: due Download con la stessa sorgente sarebbero un doppione.
+ID e URL `/scarica/{id}` non cambiano, quindi ogni link segue; il vecchio file locale viene eliminato, e la data dell'ultimo aggiornamento mostrata ai lettori si aggiorna. Prima di confermare, l'autore vede gli altri articoli che usano il Download. Se la nuova sorgente è già un altro Download (stesso contenuto o stesso URL), il sistema lo segnala: due Download con la stessa sorgente sarebbero un doppione.
 
 
 ### Rimuovere un Download da un articolo
@@ -71,9 +72,26 @@ L'interfaccia mostra due possibilità alternative, a seconda della situazione:
 - **Elimina** se l'articolo è l'ultimo a usarlo. La conferma avvisa se il testo contiene ancora link al Download
 
 
-### Unire due Download doppi (da valutare)
+### Download collegati, linkati e orfani
+
+Un Download è *collegato* a un articolo quando compare nel suo elenco dei Download, *linkato* quando il testo dell'articolo contiene un link a esso:
+
+- **linkato ma non collegato** ➡ viene collegato automaticamente
+- **collegato ma non linkato** ➡ accettabile: è solo segnalato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), perché l'autore lo citi nel testo
+- **non collegato a nessun articolo** ➡ candidato all'eliminazione: per ora è solo elencato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), in seguito sarà eliminato automaticamente, come già avviene per le immagini orfane
+
+
+### Unire due Download doppi
 
 Per i doppioni già esistenti e per quelli che le verifiche non intercettano: "unisci B in A" sposta su A i link e i collegamenti di B in tutti gli articoli, elimina B e fa rispondere `/scarica/B` con un redirect 301 a `/scarica/A`, così funzionano anche i link a B da fuori (come per i tag sostituiti).
+
+
+## Permessi
+
+- gli autori possono caricare nuovi Download nei **propri** articoli, collegare Download pre-esistenti ai **propri** articoli oppure aggiungere ai **propri** articoli link a qualsiasi Download. In questo scenario, guida solamente il permesso di modifica *dell'articolo*, non quello ~~del Download~~
+- tutti gli autori possono modificare, sostituire e cancellare i **propri** Download
+
+Gli editor possono modificare gli articoli di tutti e gestire i Download di tutti.
 
 
 ## Implementazione (descrizione breve)
@@ -92,6 +110,29 @@ Backend:
 - salvare un articolo collega ogni Download linkato nel testo (solo aggiunte); [uploaded-assets-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/uploaded-assets-maintenance.sh) fa lo stesso ogni 3 ore con `FilesToArticles` (la rimozione dei collegamenti inutilizzati è disattivata: [#101](https://github.com/TurboLabIt/TurboLab.it/issues/101)), più `FilesHasher` (ricalcola gli hash) e `FilesNotFound` (file mancanti su disco o nel database). I risultati sono in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare)
 
 Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/ckeditor-plugins/link-file.js) gestisce la finestra "Cerca e inserisci link a file", con "Crea via URL" e "Crea via Upload", e il riquadro "Carica file scaricabile o URL", che carica direttamente i file trascinati; [files-edit.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/files-edit.js) la modifica e Scollega/Elimina.
+
+
+## Cosa manca rispetto agli obiettivi
+
+Permanenza:
+
+- un Download esterno si aggiorna cambiandone l'URL, uno locale no: non si può caricarne una versione nuova ([#121](https://github.com/TurboLabIt/TurboLab.it/issues/121)) né trasformarlo in esterno o viceversa ([#110](https://github.com/TurboLabIt/TurboLab.it/issues/110), [#111](https://github.com/TurboLabIt/TurboLab.it/issues/111)). Resta solo un nuovo Download, cioè il doppione che l'obiettivo 2 vieta; intanto il messaggio sul titolo duplicato chiede di "aggiornare il vecchio file", cosa che l'interfaccia non permette
+
+Unicità:
+
+- **stesso contenuto**: il Download esistente viene riusato senza dirlo all'autore, e il titolo digitato è ignorato
+- **stesso URL**: il salvataggio fallisce sull'`hash`, ma il messaggio parla di titolo duplicato; un URL che differisce anche solo per un `/` finale o un parametro di tracciamento diventa invece un nuovo Download
+- **ricerca**: solo sul titolo, e solo lettere e cifre: un URL o un nome di file incollato non trova nulla; i 20 Download senza formato non compaiono mai
+- **"cerca prima di creare"** si soddisfa da solo: l'elenco degli ultimi Download, caricato all'apertura della pagina, sblocca "Crea via URL/Upload" prima che l'autore abbia cercato qualcosa; il riquadro di trascinamento salta la ricerca del tutto
+- **versione o variante**: nessun aiuto, il sistema riconosce solo il contenuto identico byte per byte
+
+Interfaccia:
+
+- la finestra mette la creazione sopra la ricerca, e chiede di scegliere subito tra URL e upload
+- la modifica sta altrove (nell'elenco dei Download dell'articolo); un co-autore dell'articolo che non ha creato il Download può eliminarlo (se l'articolo è l'ultimo a usarlo), contro la regola dei [Permessi](#permessi)
+- il formato di un Download esterno si sceglie solo tra quelli già usati
+- i lettori non vedono quando un Download è stato aggiornato
+- non si possono unire due Download doppi
 
 
 ## 🔗 Vedi anche
