@@ -23,8 +23,9 @@ export default class TliLinkFile extends Plugin {
 }
 
 
-// also opened from outside the editor, by the "Carica file scaricabile o URL" box below the downloadable files
-function openLinkFileModal(editor) {
+// also opened from outside the editor, by the "Carica file scaricabile o URL" box below the downloadable files.
+// A file dropped on that box comes along: the modal opens with it already chosen in "Crea via Upload"
+function openLinkFileModal(editor, droppedFile = null) {
 
     // Capture the selected text BEFORE opening the modal (focus will shift)
     let selectedText = '';
@@ -44,9 +45,29 @@ function openLinkFileModal(editor) {
 
     bootstrap.Modal.getOrCreateInstance(modalFrame[0]).show();
 
+    if( droppedFile ) {
+
+        modalFrame.find('.tli-link-file-create-url-form').addClass('d-none');
+        const uploadForm = modalFrame.find('.tli-link-file-create-upload-form').removeClass('d-none');
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(droppedFile);
+
+        // "change" pre-fills the title from the file name
+        const fileInput = uploadForm.find('.tli-link-file-upload-input');
+        fileInput[0].files = dataTransfer.files;
+        fileInput.trigger('change');
+    }
+
     setTimeout(() => {
-        modalFrame.find('.tli-link-file-search-input').trigger('focus');
+        modalFrame.find(droppedFile ? '.tli-link-file-upload-title' : '.tli-link-file-search-input').trigger('focus');
     }, 500);
+}
+
+
+function currentEditor() {
+    const editable = document.querySelector('.ck-editor__editable');
+    return editable ? editable.ckeditorInstance : null;
 }
 
 
@@ -54,20 +75,11 @@ jQuery(function() {
 
     // "Carica file scaricabile o URL" box: a click opens the modal...
     jQuery(document).on('click', '.tli-file-add', function() {
-
-        const box = jQuery(this);
-        if( box.hasClass('tli-file-add-uploading') ) {
-            return;
-        }
-
-        box.siblings('.tli-file-add-error').addClass('d-none').empty();
-
-        const editable = document.querySelector('.ck-editor__editable');
-        openLinkFileModal(editable ? editable.ckeditorInstance : null);
+        openLinkFileModal( currentEditor() );
     });
 
 
-    // ...dropped files are uploaded straight away, as "Crea via Upload" would, titled after their file name
+    // ...and so does a file dropped on it
     function isFileDrag(event) {
         const dataTransfer = (event.originalEvent || event).dataTransfer;
         return !!dataTransfer && Array.from(dataTransfer.types || []).includes('Files');
@@ -75,14 +87,13 @@ jQuery(function() {
 
     jQuery(document).on('dragenter dragover', '.tli-file-add', function(event) {
 
-        const box = jQuery(this);
-        if( !isFileDrag(event) || box.hasClass('tli-file-add-uploading') ) {
+        if( !isFileDrag(event) ) {
             return;
         }
 
         event.preventDefault();
         event.originalEvent.dataTransfer.dropEffect = 'copy';
-        box.addClass('tli-file-add-dragover');
+        jQuery(this).addClass('tli-file-add-dragover');
     });
 
     jQuery(document).on('dragleave', '.tli-file-add', function() {
@@ -91,13 +102,18 @@ jQuery(function() {
 
     jQuery(document).on('drop', '.tli-file-add', function(event) {
 
-        const box = jQuery(this).removeClass('tli-file-add-dragover');
-        if( !isFileDrag(event) || box.hasClass('tli-file-add-uploading') ) {
+        jQuery(this).removeClass('tli-file-add-dragover');
+        if( !isFileDrag(event) ) {
             return;
         }
 
         event.preventDefault();
-        uploadDroppedFiles(box, Array.from(event.originalEvent.dataTransfer.files));
+
+        // the upload form takes one file at a time: any other dropped file is ignored
+        const file = event.originalEvent.dataTransfer.files[0];
+        if( file ) {
+            openLinkFileModal(currentEditor(), file);
+        }
     });
 
     // a file dropped anywhere else must not make the browser open it, leaving the unsaved article behind
@@ -108,72 +124,6 @@ jQuery(function() {
             event.dataTransfer.dropEffect = 'none';
         }
     });
-
-    async function uploadDroppedFiles(box, files) {
-
-        const errorBox      = box.siblings('.tli-file-add-error').addClass('d-none').empty();
-        const statusText    = box.find('.tli-file-add-uploading-text');
-        const errors        = [];
-
-        box.addClass('tli-file-add-uploading').attr('aria-disabled', 'true');
-
-        try {
-            // one at a time: each response re-renders the whole list, and the "» Download:" lines keep the drop order
-            for( const [i, file] of files.entries() ) {
-
-                statusText.text(
-                    'Caricamento di «' + file.name + '»' + (files.length > 1 ? ' (' + (i + 1) + ' di ' + files.length + ')' : '') + '...'
-                );
-
-                if( file.size === 0 ) {
-                    errors.push('«' + file.name + '»: file vuoto o cartella, non caricato.');
-                    continue;
-                }
-
-                const formData = new FormData();
-                formData.append('files[]', file);
-                formData.append('title', titleFromFileName(file.name));
-
-                let json;
-                try {
-                    json = await jQuery.ajax({
-                        url: jQuery('#tli-link-file-modal').data('createFromUploadUrl'),
-                        method: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        dataType: 'json'
-                    });
-
-                } catch(jqXHR) {
-
-                    errors.push('«' + file.name + '»: ' + uploadErrorMessage(jqXHR));
-                    continue;
-                }
-
-                attachCreatedFile(json);
-            }
-
-        } finally {
-
-            box.removeClass('tli-file-add-uploading').removeAttr('aria-disabled');
-        }
-
-        if( errors.length > 0 ) {
-            errorBox.text( errors.join('\n\n') ).removeClass('d-none');
-        }
-    }
-
-    // the controller answers in plain text; anything else (nginx 413, a gateway error...) is not for the author's eyes
-    function uploadErrorMessage(jqXHR) {
-
-        if( jqXHR.status == 413 ) {
-            return 'il file è troppo grande.';
-        }
-
-        const isPlainText = ( jqXHR.getResponseHeader('Content-Type') || '' ).startsWith('text/plain');
-        return isPlainText && jqXHR.responseText ? jqXHR.responseText : 'errore durante il caricamento.';
-    }
 
     function setModalControlsDisabled(modalFrame, disabled) {
         modalFrame.find('.tli-link-file-search-input, .tli-link-file-search-btn, #tli-link-file-mine-only, input[name="file-sort"]')
@@ -253,17 +203,13 @@ jQuery(function() {
         return fileName.replace(/\.[^.]+$/, '') || fileName;
     }
 
-    function attachCreatedFile(json) {
+    function applyCreatedFile(modalFrame, json) {
         insertDownloadLink(json.downloadUrl, json.title);
 
         const filesSection = jQuery('#tli-downloadable-files');
         if( filesSection.length && json.attachedFilesHtml ) {
             filesSection.html(json.attachedFilesHtml);
         }
-    }
-
-    function applyCreatedFile(modalFrame, json) {
-        attachCreatedFile(json);
 
         modalFrame.find('.tli-link-file-create-url-form, .tli-link-file-create-upload-form')
             .addClass('d-none')
