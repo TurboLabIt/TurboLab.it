@@ -27,6 +27,15 @@ Struttura di assets/:
 - `themes/2024 newspark/` — archivio originale del tema acquistato, conservato come riferimento
 
 
+### Cooldown delle dipendenze: niente versioni con meno di 5 giorni
+
+Per lasciare il tempo di scoprire una release compromessa, Yarn scarta le versioni pubblicate da meno di 5 giorni ([.yarnrc.yml](https://github.com/TurboLabIt/TurboLab.it/blob/main/.yarnrc.yml)). Il limite vale solo quando Yarn deve risolvere una versione: quanto è già in `yarn.lock` si installa senza controlli, quindi il deploy non ne risente.
+
+Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Il build prosegue comunque, svuota `public/build/` e il sito risponde 500: è successo il 2026-07-15, quando il limite era di 24 ore.
+
+Su dev, `npm-check-updates` ha un proprio cooldown di 7 giorni (`NPM_CHECK_UPDATES_COOLDOWN` di webstackup): vale per le dipendenze dirette e resta il più restrittivo dei due.
+
+
 ### article.css: agganciare al corpo dell'articolo, non al wrapper
 
 `build/article.css` è caricato anche da pagine che **non** mostrano un articolo: `/scrivi` (`templates/article/editor/new.html.twig`) e `/info`. Entrambe usano il wrapper `.tli-article-main-content` della pagina articolo e ci mettono dentro tabelle Bootstrap (`.table`, `.table-sm`, `thead.table-primary`).
