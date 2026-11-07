@@ -31,9 +31,9 @@ Struttura di assets/:
 
 Per lasciare il tempo di scoprire una release compromessa, Yarn scarta le versioni pubblicate da meno di 5 giorni ([.yarnrc.yml](https://github.com/TurboLabIt/TurboLab.it/blob/main/.yarnrc.yml)). Il limite vale solo quando Yarn deve risolvere una versione: quanto è già in `yarn.lock` si installa senza controlli, quindi il deploy non ne risente.
 
-Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Il build prosegue comunque, svuota `public/build/` e il sito risponde 500: è successo il 2026-07-15, quando il limite era di 24 ore.
+Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Webstackup a quel punto ferma il build e `public/build/` resta intatta, ma il deploy prosegue e riavvia i servizi: il sito resta online con gli asset precedenti, il deploy termina senza errori e l'unico segnale è il messaggio rosso a metà del log. Prima di questo controllo il build andava avanti, svuotava `public/build/` e il sito rispondeva 500 (2026-07-15).
 
-Su dev, `npm-check-updates` ha un proprio cooldown di 7 giorni (`NPM_CHECK_UPDATES_COOLDOWN` di webstackup): vale per le dipendenze dirette e resta il più restrittivo dei due.
+Su dev, `npm-check-updates` aggiorna le dipendenze dirette con lo stesso cooldown di 5 giorni (`NPM_CHECK_UPDATES_COOLDOWN`, default di webstackup).
 
 
 ### article.css: agganciare al corpo dell'articolo, non al wrapper
