@@ -5,13 +5,14 @@ use App\Entity\Cms\Tag;
 use App\Repository\BaseRepository;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
+use SortDirection;
 
 
 class TagRepository extends BaseRepository
 {
-    const string ENTITY_CLASS               = Tag::class;
-    const string DEFAULT_ORDER_BY           = 't.title';
-    const string DEFAULT_ORDER_DIRECTION    = 'ASC';
+    const string ENTITY_CLASS                   = Tag::class;
+    const string DEFAULT_ORDER_BY               = 't.title';
+    const SortDirection DEFAULT_ORDER_DIRECTION = SortDirection::Ascending;
 
 
     protected function getQueryBuilderComplete() : QueryBuilder
@@ -38,7 +39,7 @@ class TagRepository extends BaseRepository
 
     public function findLatest(?int $num = null) : array
     {
-        $qb = $this->getQueryBuilder()->orderBy('t.updatedAt', 'DESC');
+        $qb = $this->getQueryBuilder()->orderBy('t.updatedAt', SortDirection::Descending);
 
         if( !empty($num) ) {
             $qb->setMaxResults($num);
@@ -101,7 +102,7 @@ class TagRepository extends BaseRepository
         $arrTags =
             $queryBuilder
                 ->andWhere($whereCondition)
-                ->orderBy('t.ranking', 'DESC')
+                ->orderBy('t.ranking', SortDirection::Descending)
                 ->getQuery()->getResult();
 
         return $replaceReplacedWithReplacement ? $this->replaceReplacedWithReplacement($arrTags) : $arrTags;

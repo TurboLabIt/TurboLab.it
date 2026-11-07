@@ -12,6 +12,7 @@ use App\Service\Newsletter;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 
 class ArticleRepository extends BaseRepository
@@ -120,7 +121,7 @@ class ArticleRepository extends BaseRepository
                     ->setParameter('articleIdBySystem', $arrArticleIdBySystem)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
-                ->orderBy('t.updatedAt', 'DESC')
+                ->orderBy('t.updatedAt', SortDirection::Descending)
                 ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -157,7 +158,7 @@ class ArticleRepository extends BaseRepository
         }
 
         $query =
-            $qb->orderBy('t.updatedAt', 'DESC')
+            $qb->orderBy('t.updatedAt', SortDirection::Descending)
                 ->setMaxResults($limit)
                 ->getQuery();
 
@@ -261,7 +262,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_DRAFT, false)
-                ->orderBy('t.updatedAt', 'DESC')
+                ->orderBy('t.updatedAt', SortDirection::Descending)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -287,7 +288,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_DRAFT, false)
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', SortDirection::Descending)
                 ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -311,7 +312,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', SortDirection::Descending)
                 ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -339,7 +340,7 @@ class ArticleRepository extends BaseRepository
         $upcomingArticles =
             $this->addWherePublishingStatus(clone $qb, Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('t.publishedAt IS NOT NULL AND t.publishedAt > CURRENT_TIMESTAMP()')
-                ->orderBy('t.publishedAt', 'DESC')
+                ->orderBy('t.publishedAt', SortDirection::Descending)
                 ->getQuery()->getResult();
 
         foreach($upcomingArticles as $article) {
@@ -352,7 +353,7 @@ class ArticleRepository extends BaseRepository
         // published in the past (latest)
         $pastPublishedArticles =
             $this->addWherePublishingStatus($qb)
-                ->orderBy('t.publishedAt', 'DESC')
+                ->orderBy('t.publishedAt', SortDirection::Descending)
                 ->getQuery()->getResult();
 
         $maxPublishedToAdd = 10;
@@ -394,7 +395,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->addWherePublishingStatus($qb, Article::PUBLISHING_STATUS_KO, false)
-                ->orderBy('t.updatedAt', 'DESC')
+                ->orderBy('t.updatedAt', SortDirection::Descending)
                 ->getQuery();
 
         return new \Doctrine\ORM\Tools\Pagination\Paginator($query);
@@ -410,7 +411,7 @@ class ArticleRepository extends BaseRepository
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
                 //->andWhere('t.updatedAt >= :dateLimit')
                     //->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
-                ->orderBy('t.updatedAt', 'ASC')
+                ->orderBy('t.updatedAt', SortDirection::Ascending)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
                 ->getQuery();
@@ -440,7 +441,7 @@ class ArticleRepository extends BaseRepository
 
         return
             $this->addWherePublishingStatus($qb)
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', SortDirection::Descending)
                 ->getQuery()
                 ->getResult();
     }
@@ -467,7 +468,7 @@ class ArticleRepository extends BaseRepository
                     ->setParameter('lowLimit', $lowLimit)
                 ->andWhere('t.publishedAt < :highLimit')
                     ->setParameter('highLimit', $highLimit)
-                ->orderBy('t.publishedAt', 'ASC')
+                ->orderBy('t.publishedAt', SortDirection::Ascending)
                 ->getQuery()
                 ->getResult();
     }
@@ -527,7 +528,7 @@ class ArticleRepository extends BaseRepository
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
-                ->orderBy('t.views', 'DESC');
+                ->orderBy('t.views', SortDirection::Descending);
 
         if( !empty($maxDaysAgo) ) {
 
@@ -554,7 +555,7 @@ class ArticleRepository extends BaseRepository
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere("t.title NOT LIKE '" . Newsletter::TITLE . "%'")
                 ->andWhere('commentsTopic.postNum > 1')
-                ->orderBy('commentsTopic.postNum', 'DESC');
+                ->orderBy('commentsTopic.postNum', SortDirection::Descending);
 
         if( !empty($maxDaysAgo) ) {
 
@@ -591,9 +592,9 @@ class ArticleRepository extends BaseRepository
                     FROM ' . Visit::class . ' visit
                     WHERE visit.article = t AND visit.updatedAt >= t.publishedAt
                 ) AS HIDDEN viewsPerDay')
-                ->orderBy('viewsPerDay', 'DESC')
-                ->addOrderBy('t.publishedAt', 'DESC')
-                ->addOrderBy('t.id', 'DESC')
+                ->orderBy('viewsPerDay', SortDirection::Descending)
+                ->addOrderBy('t.publishedAt', SortDirection::Descending)
+                ->addOrderBy('t.id', SortDirection::Descending)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage);
 
@@ -777,7 +778,7 @@ class ArticleRepository extends BaseRepository
                     ->setParameter('lowLimit', $startDate)
                 ->andWhere('t.publishedAt < :highLimit')
                     ->setParameter('highLimit', $endDate)
-                ->orderBy('t.publishedAt', 'ASC')
+                ->orderBy('t.publishedAt', SortDirection::Ascending)
                 ->getQuery()
                 ->getResult();
     }
@@ -864,7 +865,7 @@ class ArticleRepository extends BaseRepository
             ->andWhere($query->expr()->notLike('t.title', $query->expr()->literal("%$currentYear%")))
             ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
             ->andWhere('t.excludedFromPeriodicUpdateList = false')
-            ->orderBy('t.views', 'DESC');
+            ->orderBy('t.views', SortDirection::Descending);
 
         $query
             ->setFirstResult($startAt)
@@ -904,7 +905,7 @@ class ArticleRepository extends BaseRepository
             ->andWhere($orX)
             ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
             ->andWhere('t.excludedFromPeriodicUpdateList = false')
-            ->orderBy('t.views', 'DESC');
+            ->orderBy('t.views', SortDirection::Descending);
 
         $query
             ->setFirstResult($startAt)
@@ -922,7 +923,7 @@ class ArticleRepository extends BaseRepository
                 ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
                 ->andWhere('t.publishedAt >= :lowLimit')
                     ->setParameter('lowLimit', (new DateTime())->modify('today midnight') )
-                ->orderBy('t.publishedAt', 'ASC')
+                ->orderBy('t.publishedAt', SortDirection::Ascending)
                 ->getQuery()
                 ->getResult();
     }
@@ -936,7 +937,7 @@ class ArticleRepository extends BaseRepository
                 ->andWhere('t.format = ' . Article::FORMAT_NEWS)
                 ->andWhere('t.publishedAt >= :from')
                     ->setParameter('from', $from)
-                ->orderBy('t.publishedAt', 'DESC');
+                ->orderBy('t.publishedAt', SortDirection::Descending);
 
         if( $excludeArticleId !== null ) {
             $qb->andWhere('t.id != :excludeId')
@@ -968,7 +969,7 @@ class ArticleRepository extends BaseRepository
                 ->andWhere("t.title LIKE '" . Newsletter::TITLE . "%'")
                 ->andWhere('t.publishedAt >= :dateLimit')
                     ->setParameter('dateLimit', $dateLimit)
-                ->orderBy('t.publishedAt', 'DESC')
+                ->orderBy('t.publishedAt', SortDirection::Descending)
                 ->setMaxResults(1)
                 ->getQuery()->getOneOrNullResult();
     }
@@ -1012,7 +1013,7 @@ class ArticleRepository extends BaseRepository
 
         return
             $query
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', SortDirection::Descending)
                 ->getQuery()->getResult();
     }
 }

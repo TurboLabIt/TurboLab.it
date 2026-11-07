@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -49,11 +50,11 @@ class Article extends BaseCmsEntity
     protected bool $allowExtendedHtml = false;
 
     #[ORM\OneToMany(targetEntity: ArticleAuthor::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $authors;
 
     #[ORM\OneToMany(targetEntity: ArticleImage::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $images;
 
     #[ORM\OneToMany(targetEntity: ArticleTag::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]

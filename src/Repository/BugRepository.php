@@ -4,6 +4,7 @@ namespace App\Repository;
 use App\Entity\Bug;
 use App\Service\User;
 use DateTime;
+use SortDirection;
 
 
 class BugRepository extends BaseRepository
@@ -25,7 +26,7 @@ class BugRepository extends BaseRepository
                     ->setParameter('author', $author->getEntity())
                     ->setParameter('authorIpAddress', $authorIpAddress)
                     ->setParameter('dateLimit', $timeLimit)
-                ->orderBy('t.createdAt', 'ASC')
+                ->orderBy('t.createdAt', SortDirection::Ascending)
                 ->getQuery()->getResult();
     }
 }

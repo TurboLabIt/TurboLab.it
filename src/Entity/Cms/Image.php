@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 
@@ -46,15 +47,15 @@ class Image extends BaseCmsEntity
     protected bool $reusable = false;
 
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $authors;
 
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ArticleImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'spotlight', targetEntity: Article::class)]
-    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[ORM\OrderBy(['createdAt' => SortDirection::Ascending])]
     protected Collection $spotlightForArticles;
 
 

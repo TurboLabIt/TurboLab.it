@@ -8,6 +8,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 
 class UserRepository extends BasePhpBBRepository
@@ -277,7 +278,7 @@ class UserRepository extends BasePhpBBRepository
             $this->getQueryBuilderComplete()
                 ->andWhere('t.username_clean LIKE :termToSearch')
                     ->setParameter('termToSearch', '%' . mb_strtolower($this->prepareParamForLikeCondition($termToSearch)) . '%')
-                ->orderBy('t.user_posts', 'DESC')
+                ->orderBy('t.user_posts', SortDirection::Descending)
                 ->getQuery()
                 ->getResult();
     }

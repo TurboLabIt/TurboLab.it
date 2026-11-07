@@ -8,6 +8,7 @@ use App\Service\Cms\Article;
 use App\Service\Factory;
 use App\Service\User;
 use App\Tests\BaseT;
+use SortDirection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -158,7 +159,7 @@ class FileEditCacheInvalidationTest extends BaseT
                 ->join('aa.article', 'a')
                 ->where('aa.user = :userId')->setParameter('userId', User::ID_SYSTEM)
                 ->andWhere('a.id != :qualityTestId')->setParameter('qualityTestId', Article::ID_QUALITY_TEST)
-                ->orderBy('a.publishingStatus', 'ASC')->addOrderBy('a.id', 'ASC')
+                ->orderBy('a.publishingStatus', SortDirection::Ascending)->addOrderBy('a.id', SortDirection::Ascending)
                 ->setMaxResults($num)
                 ->getQuery()->getSingleColumnResult();
 

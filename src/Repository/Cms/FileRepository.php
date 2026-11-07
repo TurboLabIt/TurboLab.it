@@ -3,6 +3,7 @@ namespace App\Repository\Cms;
 
 use App\Entity\Cms\File;
 use App\Repository\BaseRepository;
+use SortDirection;
 
 
 class FileRepository extends BaseRepository
@@ -42,7 +43,7 @@ class FileRepository extends BaseRepository
             $this->createQueryBuilder('f')
                 ->select('f.format, COUNT(f.id) AS num')
                 ->groupBy('f.format')
-                ->orderBy('f.format', 'ASC')
+                ->orderBy('f.format', SortDirection::Ascending)
             ->getQuery()->getResult();
     }
 
@@ -52,7 +53,7 @@ class FileRepository extends BaseRepository
         $qb =
             $this->getQueryBuilder()
                 ->andWhere("t.format IS NOT NULL AND t.format != ''")
-                ->orderBy('t.updatedAt', 'DESC')
+                ->orderBy('t.updatedAt', SortDirection::Descending)
                 ->setMaxResults($limit);
 
         if( !empty($authorId) ) {

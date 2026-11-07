@@ -13,6 +13,7 @@ use App\Service\Factory;
 use App\Service\User;
 use App\Tests\BaseT;
 use PHPUnit\Framework\Attributes\DataProvider;
+use SortDirection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -317,7 +318,7 @@ class FileDownloadPublicationGateTest extends BaseT
             static::getEntityManager()->createQueryBuilder()
                 ->select('IDENTITY(aa.article)')->from(ArticleAuthor::class, 'aa')
                 ->where('aa.user = :userId')->setParameter('userId', $userId)
-                ->orderBy('aa.article', 'ASC')->setMaxResults(1)
+                ->orderBy('aa.article', SortDirection::Ascending)->setMaxResults(1)
                 ->getQuery()->getOneOrNullResult();
 
         if( empty($articleId) ) {

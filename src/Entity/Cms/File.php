@@ -8,6 +8,7 @@ use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
@@ -25,11 +26,11 @@ class File extends BaseCmsEntity
     protected ?string $url = null;
 
     #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $authors;
 
     #[ORM\OneToMany(mappedBy: 'file', targetEntity: ArticleFile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[ORM\OrderBy(['createdAt' => SortDirection::Ascending])]
     protected Collection $articles;
 
 

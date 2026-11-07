@@ -10,6 +10,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use http\Exception\InvalidArgumentException;
+use SortDirection;
 
 
 class TopicRepository extends BasePhpBBRepository
@@ -25,7 +26,7 @@ class TopicRepository extends BasePhpBBRepository
                 ->andWhere('t.forumId NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
-                ->orderBy('t.lastPostTime', 'DESC');
+                ->orderBy('t.lastPostTime', SortDirection::Descending);
     }
 
 
@@ -62,7 +63,7 @@ class TopicRepository extends BasePhpBBRepository
 
         return
             $qb
-                ->orderBy('t.lastPostTime', 'DESC')
+                ->orderBy('t.lastPostTime', SortDirection::Descending)
                 ->getQuery()->getResult();
     }
 
@@ -90,7 +91,7 @@ class TopicRepository extends BasePhpBBRepository
 
         return
             $qb
-                ->orderBy('t.views', 'DESC')
+                ->orderBy('t.views', SortDirection::Descending)
                 ->getQuery()->getResult();
     }
 

@@ -6,6 +6,7 @@ use App\Entity\PhpBB\Post;
 use DateTime;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
+use SortDirection;
 
 
 class PostRepository extends BasePhpBBRepository
@@ -21,7 +22,7 @@ class PostRepository extends BasePhpBBRepository
                 ->andWhere('t.forumId NOT IN (' . implode(',', Forum::ID_OFFLIMIT) . ')')
                 ->andWhere('t.visibility = 1')
                 ->andWhere('t.deleteTime = 0')
-                ->orderBy('t.postTime', 'DESC');
+                ->orderBy('t.postTime', SortDirection::Descending);
     }
 
 

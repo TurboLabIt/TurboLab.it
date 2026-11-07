@@ -9,6 +9,7 @@ use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -23,11 +24,11 @@ class Tag extends BaseCmsEntity
     protected ?self $replacement = null;
 
     #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['ranking' => 'ASC'])]
+    #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
     protected Collection $authors;
 
     #[ORM\OneToMany(mappedBy: 'tag', targetEntity: ArticleTag::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[ORM\OrderBy(['createdAt' => SortDirection::Ascending])]
     protected Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'tag', targetEntity: TagBadge::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

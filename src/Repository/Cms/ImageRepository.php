@@ -5,6 +5,7 @@ use App\Entity\Cms\Image;
 use App\Repository\BaseRepository;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use SortDirection;
 
 
 class ImageRepository extends BaseRepository
@@ -46,6 +47,6 @@ class ImageRepository extends BaseRepository
             $this->getQueryBuilder()
                 ->leftJoin('t.articles', 'junction')
                 ->where('junction.id IS NULL')
-                ->orderBy('t.updatedAt', 'ASC');
+                ->orderBy('t.updatedAt', SortDirection::Ascending);
     }
 }

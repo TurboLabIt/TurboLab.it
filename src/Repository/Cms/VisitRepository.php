@@ -8,6 +8,7 @@ use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use DateTime;
+use SortDirection;
 
 
 class VisitRepository extends BaseRepository
@@ -20,7 +21,7 @@ class VisitRepository extends BaseRepository
             $this->createQueryBuilder('t', 't.id')
                 ->andWhere('t.' . $entity->getClass() . '= :entity')
                     ->setParameter('entity', $entity)
-                ->orderBy('t.updatedAt', 'DESC');
+                ->orderBy('t.updatedAt', SortDirection::Descending);
 
         if( !empty($userEntity) ) {
 

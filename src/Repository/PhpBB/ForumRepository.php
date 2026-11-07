@@ -3,6 +3,7 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\Forum;
 use Doctrine\ORM\QueryBuilder;
+use SortDirection;
 
 
 class ForumRepository extends BasePhpBBRepository
@@ -22,7 +23,7 @@ class ForumRepository extends BasePhpBBRepository
                 ->andWhere('t.status = 0')
                 ->andWhere('t.type = 1')
                 ->andWhere('t.last_post_time > 0')
-                ->orderBy('t.last_post_time', 'DESC');
+                ->orderBy('t.last_post_time', SortDirection::Descending);
     }
 
 
