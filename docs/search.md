@@ -15,6 +15,15 @@ L'indicizzazione si avvia con [reindex.sh](https://github.com/TurboLabIt/TurboLa
 [Serializer/ArticleSearchNormalizer.php](https://github.com/TurboLabIt/TurboLab.it/tree/main/src/Serializer/ArticleSearchNormalizer.php).
 
 
+## Il termine viaggia nel path
+
+Il termine cercato sta nel path della URL (`/cerca/Windowsupdate.log`, `/cerca/ajax/serp/.NET`), quindi può sembrare un file. Le `location` regex di webstackup ([70_security.conf](https://github.com/TurboLabIt/webstackup/blob/master/config/nginx/70_security.conf) e [07_symfony_location.conf](https://github.com/TurboLabIt/webstackup/blob/master/config/nginx/07_symfony_location.conf)) negano `.log`, `.mmdb`, `.php` e i dotfile, e vincono su `location /`: Symfony non vedeva nemmeno la richiesta e l'utente riceveva il 404 di nginx ([🪲 #140](https://github.com/TurboLabIt/TurboLab.it/issues/140)).
+
+Per questo [nginx.conf](https://github.com/TurboLabIt/TurboLab.it/blob/main/config/custom/nginx.conf) dichiara `location ^~ /cerca/`: il `^~` salta le regex per la SERP e per tutti gli endpoint `/cerca/ajax/*`. Un'eventuale nuova route con testo libero nel path deve stare sotto `/cerca/` o avere la sua `location ^~`.
+
+Il kernel di test non passa da nginx: `SearchTest::testFileLookingTermReachesSymfony` verifica questi termini via HTTP reale.
+
+
 ## Aggiornamento
 
 L'aggiornamento di Meilisearch avviene tramite apt, insieme al resto.

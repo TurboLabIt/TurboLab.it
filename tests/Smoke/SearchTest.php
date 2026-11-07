@@ -72,6 +72,39 @@ class SearchTest extends BaseT
     }
 
 
+    /**
+     * The term travels in the path, so it can look like one of the files nginx denies by regex location (#140).
+     * Real HTTP: the test kernel never sees `location ^~ /cerca/` in config/custom/nginx.conf
+     */
+    public static function fileLookingTermProvider() : Generator
+    {
+        $arrEndpoints   = ['/cerca/', '/cerca/ajax/serp/', '/cerca/ajax/forum/', '/cerca/ajax/link-article/', '/cerca/ajax/link-file/'];
+        $arrTerms       = ['Windowsupdate.log', 'setup.php', 'GeoLite2-City.mmdb', '.NET Framework', 'cartella/.nascosta'];
+
+        foreach($arrEndpoints as $endpoint) {
+            foreach($arrTerms as $term) {
+                yield [$endpoint . rawurlencode($term)];
+            }
+        }
+    }
+
+
+    #[DataProvider('fileLookingTermProvider')]
+    public function testFileLookingTermReachesSymfony(string $urlToFetch)
+    {
+        $url = $this->generateUrl() . ltrim($urlToFetch, '/');
+
+        $httpClient =
+            HttpClient::create([
+                'max_redirects' => 0,
+                'verify_peer'   => false,
+                'verify_host'   => false
+            ]);
+
+        $this->assertSame(Response::HTTP_OK, $httpClient->request('GET', $url)->getStatusCode(), "Failing URL: $url");
+    }
+
+
     public static function mainPagesProvider() : Generator
     {
         $articleUrl = static::getArticle()->getUrl();
