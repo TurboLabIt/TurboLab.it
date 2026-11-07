@@ -118,7 +118,7 @@ class HomeController extends BaseController
                 'Videos'                    => $arrVideos,
                 'ArticlesLatestMosaic3'     => $mainArticleCollection->getItems($numLatestSlider),
                 'SplitArticlesMostViews'    => [
-                    $articlesMostViews->getItems( $articlesMostViews->count() / 2),
+                    $articlesMostViews->getItems( intdiv($articlesMostViews->count(), 2) ),
                     $articlesMostViews->getItems( $articlesMostViews->count() - 1)
                 ],
                 'Articles'                  => $mainArticleCollection
