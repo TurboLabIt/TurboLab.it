@@ -102,6 +102,7 @@
     },
     "require-dev": {
         "brianium/paratest": "@stable",
+        "nikic/php-parser": "@stable",
         "phpstan/phpstan": "@stable",
         "phpunit/phpunit": "@stable",
         "rector/rector": "@stable",
