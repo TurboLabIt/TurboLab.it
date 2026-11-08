@@ -31,7 +31,9 @@ Struttura di assets/:
 
 Per lasciare il tempo di scoprire una release compromessa, Yarn scarta le versioni pubblicate da meno di 5 giorni ([.yarnrc.yml](https://github.com/TurboLabIt/TurboLab.it/blob/main/.yarnrc.yml)). Il limite vale solo quando Yarn deve risolvere una versione: quanto è già in `yarn.lock` si installa senza controlli, quindi il deploy non ne risente.
 
-Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Webstackup a quel punto ferma il build e `public/build/` resta intatta, ma il deploy prosegue e riavvia i servizi: il sito resta online con gli asset precedenti, il deploy termina senza errori e l'unico segnale è il messaggio rosso a metà del log. Prima di questo controllo il build andava avanti, svuotava `public/build/` e il sito rispondeva 500 (2026-07-15).
+Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Webstackup a quel punto ferma il build e `public/build/` resta intatta, ma il deploy prosegue e riavvia i servizi, perché il build gira con nginx fermo e interrompere tutto lascerebbe il sito offline. Il sito resta online con gli asset precedenti e il deploy termina in rosso, con exit code 1.
+
+Anche un `yarn build` fallito fa terminare il deploy in rosso, ma è il caso peggiore: webpack non scrive gli asset, però riscrive comunque `manifest.json`, che può puntare a file mai generati o perdere `build/app.css`. `inline_css('build/app.css')` in `base.html.twig` lancia allora un'eccezione e tutte le pagine rispondono 500, come il 2026-07-15 (`File not found: public//build/app.a7906321.css`). Per rimettere a posto il manifest serve un build riuscito.
 
 Su dev, `npm-check-updates` aggiorna le dipendenze dirette con lo stesso cooldown di 5 giorni (`NPM_CHECK_UPDATES_COOLDOWN`, default di webstackup).
 
