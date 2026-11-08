@@ -34,6 +34,13 @@ Encore
     // hashed filenames in production only (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
+    // A failed build must leave manifest.json alone: Encore writes it straight to disk even when webpack emits nothing,
+    // pointing it at files that don't exist, and inline_css() then 500s every page. In production, webpack writes it
+    // with the other files, only if the build succeeds; dev keeps the default, which dev-server needs. See docs/assets-frontend.md
+    .configureManifestPlugin((options) => {
+        options.writeToFileEmit = !Encore.isProduction();
+    })
+
     // minimal @babel/preset-env: no polyfills, target ES-module-capable browsers
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = false;

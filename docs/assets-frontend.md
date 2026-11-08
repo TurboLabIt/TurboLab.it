@@ -33,9 +33,16 @@ Per lasciare il tempo di scoprire una release compromessa, Yarn scarta le versio
 
 Una modifica a `package.json` va sempre committata insieme a `yarn.lock`. Senza, il deploy deve risolvere la dipendenza e, se tutte le versioni compatibili hanno meno di 5 giorni, `yarn install` fallisce con `All versions satisfying ">=..." are quarantined`. Webstackup a quel punto ferma il build e `public/build/` resta intatta, ma il deploy prosegue e riavvia i servizi, perché il build gira con nginx fermo e interrompere tutto lascerebbe il sito offline. Il sito resta online con gli asset precedenti e il deploy termina in rosso, con exit code 1.
 
-Anche un `yarn build` fallito fa terminare il deploy in rosso, ma è il caso peggiore: webpack non scrive gli asset, però riscrive comunque `manifest.json`, che può puntare a file mai generati o perdere `build/app.css`. `inline_css('build/app.css')` in `base.html.twig` lancia allora un'eccezione e tutte le pagine rispondono 500, come il 2026-07-15 (`File not found: public//build/app.a7906321.css`). Per rimettere a posto il manifest serve un build riuscito.
-
 Su dev, `npm-check-updates` aggiorna le dipendenze dirette con lo stesso cooldown di 5 giorni (`NPM_CHECK_UPDATES_COOLDOWN`, default di webstackup).
+
+
+### Build fallito: il sito resta sugli asset precedenti
+
+Un `yarn build` di produzione fallito lascia `public/build/` com'era, `manifest.json` compreso: il sito continua a servire gli asset del build precedente. Durante il deploy, come per un `yarn install` fallito, il deploy arriva comunque in fondo, riavvia i servizi e termina in rosso, con exit code 1.
+
+In produzione webpack non scrive nulla se il build ha errori, ma Encore di default scrive `manifest.json` direttamente su disco anche in quel caso. Il manifest finiva così per puntare a file mai generati, o perdeva `build/app.css`: `inline_css('build/app.css')` in `base.html.twig` lanciava un'eccezione e tutte le pagine rispondevano 500, come il 2026-07-15 (`File not found: public//build/app.a7906321.css`). Per questo [webpack.config.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/webpack.config.js) disattiva quella scrittura in produzione (`writeToFileEmit`): il manifest lo scrive webpack insieme agli altri file, quindi solo se il build riesce. Su dev resta il default di Encore, che serve a `dev-server`.
+
+Dopo un aggiornamento di Encore conviene ricontrollarlo: con un errore di sintassi in `assets/app.js`, `yarn build` deve uscire con 1 e lasciare `manifest.json` identico.
 
 
 ### article.css: agganciare al corpo dell'articolo, non al wrapper
