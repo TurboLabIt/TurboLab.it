@@ -46,7 +46,22 @@ class FeedController extends BaseController
     }
 
 
-    protected function sendRssResponse(string $routeName, array $arrData, callable|string $fxLoadArticle) : Response
+    /**
+     * The Google News sitemap: the articles of the last two days, rebuilt as soon as one is published
+     * (same cache tag as the feeds), while the full sitemap is only regenerated at night.
+     *
+     * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md
+     */
+    #[Route('/sitemap-news.xml', name: 'app_sitemap_news')]
+    public function newsSitemap() : Response
+    {
+        return $this->sendRssResponse("app_sitemap_news", [], 'loadForNewsSitemap', 'sitemap/news.xml.twig');
+    }
+
+
+    protected function sendRssResponse(
+        string $routeName, array $arrData, callable|string $fxLoadArticle, string $template = 'feed/rss.xml.twig'
+    ) : Response
     {
         if( !array_key_exists('selfUrl', $arrData) ) {
             $arrData["selfUrl"] = strtok($this->request->getUri(), '?');
@@ -59,7 +74,7 @@ class FeedController extends BaseController
         if( !$this->isCachable() ) {
 
             $txtResponseBody =
-                $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
+                $this->twig->render($template, array_merge($arrData, [
                     "activeMenu"    => "feed",
                     "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
                 ]));
@@ -69,10 +84,10 @@ class FeedController extends BaseController
             $cacheKey = "feed_{$routeName}_" . md5(serialize($arrData));
 
             $txtResponseBody =
-                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($routeName, $arrData, $fxLoadArticle) {
+                $this->cache->get($cacheKey, function(ItemInterface $cacheItem) use($routeName, $arrData, $fxLoadArticle, $template) {
 
                     $txtResponseBody =
-                        $this->twig->render('feed/rss.xml.twig', array_merge($arrData, [
+                        $this->twig->render($template, array_merge($arrData, [
                             "activeMenu"    => "feed",
                             "Articles"      => $this->factory->createArticleCollection()->$fxLoadArticle()
                         ]));

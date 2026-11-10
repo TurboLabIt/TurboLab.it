@@ -22,6 +22,7 @@ use TurboLabIt\Encryptor\Encryptor;
 class NewsletterController extends BaseController
 {
     const string SECTION_SLUG           = "newsletter";
+    const string CAMPAIGN_NAME          = "questa-settimana-su-tli";
 
     const int ERROR_BAD_ACCESS_KEY      = 1;
     const int ERROR_USER_NOT_FOUND      = 3;
@@ -108,6 +109,10 @@ class NewsletterController extends BaseController
             }
 
         } catch(Exception) {}
+
+        // every internal link of the newsletter passes through here: tagging the destination makes these
+        // visits show up in Analytics as "newsletter / email" instead of "direct"
+        $goToUrl = UrlGenerator::addCampaignParams($goToUrl, 'newsletter', 'email', static::CAMPAIGN_NAME);
 
         return $this->redirect($goToUrl);
     }

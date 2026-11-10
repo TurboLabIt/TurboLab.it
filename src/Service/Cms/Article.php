@@ -604,5 +604,90 @@ class Article extends BaseCmsService
     }
 
 
-    public function getMetaRobots() : string { return $this->isPublished() ? 'index,follow' : 'noindex,nofollow'; }
+    public function getMetaRobots() : string
+    {
+        return $this->isPublished() ? 'index,follow,max-image-preview:large' : 'noindex,nofollow';
+    }
+
+
+    /**
+     * The most recent between "published" and "updated": an article scheduled days ahead was last
+     * edited before it went out, and a dateModified older than datePublished makes no sense.
+     */
+    public function getModifiedAt() : ?DateTimeInterface
+    {
+        $publishedAt    = $this->getPublishedAt();
+        $updatedAt      = $this->getUpdatedAt();
+
+        return empty($publishedAt) || $updatedAt > $publishedAt ? $updatedAt : $publishedAt;
+    }
+
+
+    /**
+     * schema.org data for search engines: what Google reads to show an article in Top Stories,
+     * Google News and Discover.
+     *
+     * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md
+     */
+    public function getStructuredData() : ?array
+    {
+        $publishedAt = $this->getPublishedAt();
+        if( !$this->isPublished() || !$this->isListable() || $publishedAt > new DateTime() ) {
+            return null;
+        }
+
+        $urlGenerator   = $this->factory->getUrlGenerator();
+        $siteUrl        = $urlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $arrPublisher   = [
+            "@type" => "Organization",
+            "name"  => "TurboLab.it",
+            "url"   => $siteUrl,
+            "logo"  => [
+                "@type" => "ImageObject",
+                "url"   => $siteUrl . "images/logo/turbolab.it.png"
+            ]
+        ];
+
+        $arrAuthors = [];
+        foreach($this->getAuthorsNotSystem() as $author) {
+            $arrAuthors[] = [
+                "@type" => "Person",
+                "name"  => $author->getUsername(),
+                "url"   => $author->getUrl()
+            ];
+        }
+
+        return [
+            "@context"          => "https://schema.org",
+            "@type"             => $this->isNews() ? "NewsArticle" : "Article",
+            "mainEntityOfPage"  => ["@type" => "WebPage", "@id" => $this->getUrl()],
+            "headline"          => (string)$this->getTitle(),
+            "description"       => (string)$this->getAbstract(),
+            "image"             => [ $this->getSpotlightOrDefaultMetaUrl(ImageService::SIZE_MAX) ],
+            "datePublished"     => $publishedAt->format(DATE_ATOM),
+            "dateModified"      => $this->getModifiedAt()->format(DATE_ATOM),
+            "inLanguage"        => "it-IT",
+            "articleSection"    => (string)$this->getTopTagOrDefault()->getNavTitle(),
+            // an article signed by the System user alone is a staff piece: the site is its author
+            "author"            => $arrAuthors ?: [$arrPublisher],
+            "publisher"         => $arrPublisher
+        ];
+    }
+
+
+    /** Safe to print inside a <script> element as it is: <, >, &, ' and " are emitted as \uXXXX */
+    public function getStructuredDataJson() : ?string
+    {
+        $arrData = $this->getStructuredData();
+        if( empty($arrData) ) {
+            return null;
+        }
+
+        return json_encode(
+            $arrData,
+            JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT |
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+    }
 }

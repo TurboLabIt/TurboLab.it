@@ -196,6 +196,13 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
+    // Google News ignores anything older than two days
+    public function loadForNewsSitemap() : static
+    {
+        return $this->loadByPublishedDateInterval(new DateTime('-2 days'), new DateTime());
+    }
+
+
     public function loadLatestForLinkPicker(?int $format = null, ?int $authorId = null) : static
     {
         $arrArticles = $this->getRepository()->getLatestForLinkPicker($format, $authorId);

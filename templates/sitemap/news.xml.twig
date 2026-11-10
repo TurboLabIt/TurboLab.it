@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{# 📚 https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap #}
+{# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md #}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    {% for Article in Articles %}
+        {% if not Article.isNewsletter and not Article.isSponsored %}
+            <url>
+                <loc>{{ Article.url }}</loc>
+                <lastmod>{{ Article.modifiedAt|date('c') }}</lastmod>
+                <news:news>
+                    <news:publication>
+                        <news:name>TurboLab.it</news:name>
+                        <news:language>it</news:language>
+                    </news:publication>
+                    <news:publication_date>{{ Article.publishedAt|date('c') }}</news:publication_date>
+                    <news:title>{{ Article.title }}</news:title>
+                </news:news>
+            </url>
+        {% endif %}
+    {% endfor %}
+</urlset>

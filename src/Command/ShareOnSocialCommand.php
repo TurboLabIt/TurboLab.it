@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Service\Cms\Image;
 use App\Service\Cms\Article;
+use App\Service\Cms\UrlGenerator;
 use App\Service\HtmlProcessorBase;
 use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
@@ -39,6 +40,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     const int EXEC_INTERVAL         = 15;
     const string CLI_OPT_CRON       = 'cron';
     const string CLI_OPT_SERVICES   = 'service';
+    const string CAMPAIGN_NAME      = 'auto-share';
 
     protected bool $allowDryRunOpt  = true;
     protected bool $allowIdOpt      = true;
@@ -309,12 +311,27 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     }
 
 
+    /**
+     * Tags a link to the site with the network it is posted on, so its clicks show up in Analytics
+     * under that network instead of "direct" (in-app browsers send no referrer). External URLs,
+     * such as YouTube videos, are returned as they are.
+     */
+    protected function buildCampaignUrl(string $url, string $serviceName) : string
+    {
+        if( !in_array(parse_url($url, PHP_URL_HOST), UrlGenerator::INTERNAL_DOMAINS) ) {
+            return $url;
+        }
+
+        return UrlGenerator::addCampaignParams($url, $serviceName, 'social', static::CAMPAIGN_NAME);
+    }
+
+
     protected function shareOnTelegram(array $arrParams) : static
     {
         $this->io->write("✴ Telegram: ");
 
         $title          = $arrParams["title"];
-        $url            = $arrParams["prodUrl"];
+        $url            = $this->buildCampaignUrl($arrParams["prodUrl"], TelegramMessenger::SERVICE_NAME);
         $emoji          = $arrParams["emoji"];
         $buttonLabel    = $arrParams["cta"];
 
@@ -367,7 +384,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         $title  = $arrParams["title"];
         // Facebook could ban the app (???) for posting unreachable URLs => forcing production URLs, even on dev/staging
-        $url    = $arrParams["prodUrl"];
+        $url    = $this->buildCampaignUrl($arrParams["prodUrl"], FacebookPageMessenger::SERVICE_NAME);
 
         try {
             if( $this->isNotDryRun() ) {
@@ -393,7 +410,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
 
         $emoji  = $arrParams["emoji"];
         $title  = $arrParams["title"];
-        $url    = $arrParams["prodUrl"];
+        $url    = $this->buildCampaignUrl($arrParams["prodUrl"], TwitterMessenger::SERVICE_NAME);
 
         try {
             $message = "$emoji $title $url";
@@ -420,7 +437,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
         $this->io->write("✴ LinkedIn: ");
 
         $title          = $arrParams["title"];
-        $url            = $arrParams["prodUrl"];
+        $url            = $this->buildCampaignUrl($arrParams["prodUrl"], LinkedInPageMessenger::SERVICE_NAME);
         $spotlight      = $arrParams["spotlight"];
 
         try {

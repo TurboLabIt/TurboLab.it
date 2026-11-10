@@ -16,7 +16,7 @@ trait phpBBCookiesAuthenticatorTrait
         // binary image serving (nginx serves cache hits; PHP only builds misses)
         'app_image', 'app_image_shorturl', 'app_image_legacy_no-folder-mod',
         // RSS feeds (XML, no user)
-        'app_feed', 'app_feed_fullfeed', 'app_feed_new_unpublished',
+        'app_feed', 'app_feed_fullfeed', 'app_feed_new_unpublished', 'app_sitemap_news',
         // canonical/legacy redirects (301/302, no rendering)
         'app_home_page_0-1', 'app_news_page_0-1', 'app_author_page_0-1', 'app_tag_page_0-1',
         'app_views_multi_page_0-1', 'app_article_shorturl', 'app_article_comments_legacy',

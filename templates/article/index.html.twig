@@ -12,6 +12,18 @@
 {% endblock %}
 
 
+{# 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md #}
+{% block metaStructuredData %}
+    {% if Article.structuredDataJson is not empty %}
+        <meta property="article:published_time" content="{{ Article.publishedAt|date('c') }}">
+        <meta property="article:modified_time" content="{{ Article.modifiedAt|date('c') }}">
+        <meta property="article:section" content="{{ Article.topTagOrDefault.navTitle }}">
+        {# the JSON is built and made script-safe by Article::getStructuredDataJson(): escaping it again would break it #}
+        <script type="application/ld+json">{{ Article.structuredDataJson|raw }}</script>
+    {% endif %}
+{% endblock %}
+
+
 {% block bodyMainContent %}
     <!-- ARTICLE bodyMainContent START -->
     <section class="post-layout-1-area">
