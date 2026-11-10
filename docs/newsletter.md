@@ -131,8 +131,6 @@ La pagina `/newsletter/open` si occupa di:
 3. eliminare l'eventuale record presente nella tabella `newsletter_expiring_warn` che indica la data nella quale l'utente è stato avvisato che la sua iscrizione sarebbe stata disattivata a breve per inattività
 4. effettuare un redirect verso l'URL "reale", presente nel parametro `url=`
 
-Prima del redirect, all'URL vengono aggiunti i parametri `utm_source=newsletter&utm_medium=email&utm_campaign=questa-settimana-su-tli`, così che Analytics attribuisca la visita alla newsletter: vedi [SEO per le notizie e tracciamento delle campagne](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md).
-
 
 ## Avviso di imminente dis-iscrizione automatica 🔧 *(pianificato, non ancora attivo)*
 

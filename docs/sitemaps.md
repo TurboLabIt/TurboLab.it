@@ -7,9 +7,6 @@ Il protocollo Sitemap impone un limite massimo al numero di URL indicizzabili da
 **Quando si parla della "Sitemap di TLI" si fa riferimento a questo "Sitemap index file"**, non ai singoli file parziali.
 
 
-La Sitemap per Google News è separata e dinamica: vedi [SEO per le notizie](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md).
-
-
 ## URL
 
 La Sitemap di TLI è raggiungibile all'URL [https://turbolab.it/sitemap/sitemap.xml.gz](https://turbolab.it/sitemap/sitemap.xml.gz)

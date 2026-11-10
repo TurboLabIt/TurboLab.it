@@ -626,8 +626,6 @@ class Article extends BaseCmsService
     /**
      * schema.org data for search engines: what Google reads to show an article in Top Stories,
      * Google News and Discover.
-     *
-     * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md
      */
     public function getStructuredData() : ?array
     {

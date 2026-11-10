@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Security;
 
-use App\Controller\NewsletterController;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -100,9 +99,6 @@ class NewsletterOpenRedirectTest extends TestCase
             302, $status,
             "A clean internal `url` must still redirect (302), got HTTP $status. The guard is too aggressive."
         );
-        // the opener tags the destination for Analytics: see tests/Smoke/SeoNewsTest.php
-        $internalUrl .= '?utm_source=newsletter&utm_medium=email&utm_campaign=' . NewsletterController::CAMPAIGN_NAME;
-
         $this->assertSame(
             $internalUrl, $location,
             "Expected a 302 to the internal URL $internalUrl, got Location: " . var_export($location, true) . "."

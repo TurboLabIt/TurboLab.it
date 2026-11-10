@@ -1,25 +1,16 @@
 <?php
 namespace App\Tests\Smoke;
 
-use App\Command\ShareOnSocialCommand;
-use App\Controller\NewsletterController;
-use App\Service\Cms\UrlGenerator;
 use App\Tests\BaseT;
 use DateTime;
 use DOMDocument;
 use DOMXPath;
-use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use TurboLabIt\MessengersBundle\TelegramMessenger;
 
 
 /**
- * What search engines need to treat an article as news (structured data, large image previews,
- * a Google News sitemap) and what Analytics needs to tell newsletter and social clicks from
- * "direct" visits (utm_* on the links).
- *
- * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md
+ * What search engines need to treat an article as news: structured data, large image previews
+ * and a Google News sitemap.
  */
 class SeoNewsTest extends BaseT
 {
@@ -115,52 +106,5 @@ class SeoNewsTest extends BaseT
     {
         $robotsTxt = file_get_contents( static::getProjectFilePath('public/misc/robots.txt') );
         $this->assertStringContainsString('Sitemap: https://turbolab.it/sitemap-news.xml', $robotsTxt);
-    }
-
-
-    public function testAddCampaignParams()
-    {
-        $this->assertSame(
-            'https://turbolab.it/1939?utm_source=newsletter&utm_medium=email&utm_campaign=c',
-            UrlGenerator::addCampaignParams('https://turbolab.it/1939', 'newsletter', 'email', 'c')
-        );
-
-        // an existing query string is kept, and the fragment stays last
-        $this->assertSame(
-            'https://turbolab.it/forum/posting.php?mode=reply&t=1&utm_source=newsletter&utm_medium=email&utm_campaign=c#top',
-            UrlGenerator::addCampaignParams('https://turbolab.it/forum/posting.php?mode=reply&t=1#top', 'newsletter', 'email', 'c')
-        );
-
-        // a link tagged on purpose is not tagged again
-        $tagged = 'https://turbolab.it/1939?utm_source=partner&utm_medium=referral';
-        $this->assertSame($tagged, UrlGenerator::addCampaignParams($tagged, 'newsletter', 'email', 'c'));
-    }
-
-
-    public function testNewsletterLinksAreTagged()
-    {
-        $target = $this->generateUrl('app_home');
-
-        $this->expectRedirect(
-            '/newsletter/open?url=' . urlencode($target),
-            $target . '?utm_source=newsletter&utm_medium=email&utm_campaign=' . NewsletterController::CAMPAIGN_NAME,
-            Response::HTTP_FOUND
-        );
-    }
-
-
-    public function testSocialSharesAreTaggedPerNetwork()
-    {
-        $command = static::getService(ShareOnSocialCommand::class);
-        $method  = new ReflectionMethod(ShareOnSocialCommand::class, 'buildCampaignUrl');
-
-        $this->assertSame(
-            'https://turbolab.it/1939?utm_source=telegram&utm_medium=social&utm_campaign=' . ShareOnSocialCommand::CAMPAIGN_NAME,
-            $method->invoke($command, 'https://turbolab.it/1939', TelegramMessenger::SERVICE_NAME)
-        );
-
-        // a YouTube video is shared as it is: the parameters would be noise on someone else's site
-        $videoUrl = 'https://www.youtube.com/watch?v=abc';
-        $this->assertSame($videoUrl, $method->invoke($command, $videoUrl, TelegramMessenger::SERVICE_NAME));
     }
 }

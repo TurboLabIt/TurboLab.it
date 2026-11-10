@@ -58,11 +58,6 @@ ShareOnSocialCommand ha una logica interna per rispettare un "orario del silenzi
 - se si tratta di una regolare esecuzione periodica ➡ invia gli articoli pubblicati su TLI negli ultimi [ShareOnSocialCommand::EXEC_INTERVAL](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ShareOnSocialCommand.php) minuti.
 
 
-## Tracciamento dei click
-
-Ogni link al sito condiviso dal comando porta i parametri `utm_source=<piattaforma>&utm_medium=social&utm_campaign=auto-share`, così che Analytics attribuisca la visita alla piattaforma giusta invece che al traffico "diretto". I link ai video di YouTube restano invariati. Vedi [SEO per le notizie e tracciamento delle campagne](https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md).
-
-
 ## Valutazione casi-limite
 
 L'idoneità di un articolo è valutata su un intervallo **semi-aperto**, con i secondi azzerati: `publishedAt >= lowLimit AND publishedAt < highLimit` (vedi [`ArticleRepository::findLatestForSocialSharing`](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/Cms/ArticleRepository.php)), dove:

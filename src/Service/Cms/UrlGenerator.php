@@ -71,33 +71,6 @@ class UrlGenerator
     }
 
 
-    /**
-     * Adds the utm_* parameters Google Analytics reads to tell where a visit comes from. Without
-     * them, a click from an email client or a messaging app reaches the site with no referrer and
-     * is counted as "direct". A URL already tagged is returned as it is.
-     *
-     * 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/seo-news.md
-     */
-    public static function addCampaignParams(string $url, string $source, string $medium, string $campaign) : string
-    {
-        $fragment = '';
-        $fragmentPos = strpos($url, '#');
-        if( $fragmentPos !== false ) {
-
-            $fragment   = substr($url, $fragmentPos);
-            $url        = substr($url, 0, $fragmentPos);
-        }
-
-        if( preg_match('/[?&]utm_source=/', $url) ) {
-            return $url . $fragment;
-        }
-
-        $query = http_build_query(['utm_source' => $source, 'utm_medium' => $medium, 'utm_campaign' => $campaign]);
-
-        return $url . ( str_contains($url, '?') ? '&' : '?' ) . $query . $fragment;
-    }
-
-
     protected function removeDomainFromUrl(string $url) : ?string
     {
         $arrUrlComponents = parse_url($url);
