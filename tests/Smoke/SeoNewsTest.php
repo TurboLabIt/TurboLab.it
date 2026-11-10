@@ -74,7 +74,7 @@ class SeoNewsTest extends BaseT
 
     public function testNewsSitemap()
     {
-        $xml = $this->fetchHtml('/sitemap-news.xml', Request::METHOD_GET, false);
+        $xml = $this->fetchHtml('/sitemap/news.xml', Request::METHOD_GET, false);
         $this->assertResponseHeaderSame('content-type', 'application/xml');
 
         $doc = new DOMDocument();
@@ -105,6 +105,6 @@ class SeoNewsTest extends BaseT
     public function testNewsSitemapIsDeclaredInRobotsTxt()
     {
         $robotsTxt = file_get_contents( static::getProjectFilePath('public/misc/robots.txt') );
-        $this->assertStringContainsString('Sitemap: https://turbolab.it/sitemap-news.xml', $robotsTxt);
+        $this->assertStringContainsString('Sitemap: https://turbolab.it/sitemap/news.xml', $robotsTxt);
     }
 }

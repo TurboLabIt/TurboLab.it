@@ -50,7 +50,7 @@ class FeedController extends BaseController
      * The Google News sitemap: the articles of the last two days, rebuilt as soon as one is published
      * (same cache tag as the feeds), while the full sitemap is only regenerated at night.
      */
-    #[Route('/sitemap-news.xml', name: 'app_sitemap_news')]
+    #[Route('/sitemap/news.xml', name: 'app_sitemap_news')]
     public function newsSitemap() : Response
     {
         return $this->sendRssResponse("app_sitemap_news", [], 'loadForNewsSitemap', 'sitemap/news.xml.twig');
