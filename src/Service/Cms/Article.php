@@ -406,6 +406,38 @@ class Article extends BaseCmsService
 
         return $this->getCommentsTopic()?->getCommentsAjaxLoadingUrl();
     }
+
+
+    /**
+     * The comments topic is approved when it's created, and its first post shows the article under the name of
+     * its author. Before publication, it would let a new user skip the approval phpBB requires for their first
+     * posts (https://github.com/TurboLabIt/TurboLab.it/issues/126): an article in review gets it only if
+     * every author is trusted (User::isTrustedAuthor()), all the others when an editor publishes them
+     */
+    public function isCommentsTopicAllowed() : bool
+    {
+        if( $this->isPublished() ) {
+            return true;
+        }
+
+        if( !$this->isVisitable() ) {
+            return false;
+        }
+
+        $authors = $this->getAuthors();
+        if( empty($authors) ) {
+            return false;
+        }
+
+        foreach($authors as $author) {
+
+            if( !$author->isTrustedAuthor() ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔄 Prev/Next articles ***">

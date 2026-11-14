@@ -10,6 +10,7 @@ use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
 use App\Service\Newsletter;
 use DateTime;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use SortDirection;
@@ -221,6 +222,28 @@ class ArticleRepository extends BaseRepository
                     "authorId"          => $author->getId(),
                     "publishingStatus"  => $publishingStatus
                 ]
+            );
+    }
+
+
+    // already published (a scheduled article doesn't count yet) in the last $months months
+    public function countRecentlyPublishedByAuthor(User $author, int $months) : int
+    {
+        return
+            $this->countFromSqlQuery("
+                SELECT COUNT(DISTINCT article_author.article_id) FROM article_author
+                INNER JOIN article ON article_author.article_id = article.id
+                WHERE
+                    user_id = :authorId AND
+                    publishing_status = :publishingStatus AND
+                    published_at BETWEEN NOW() - INTERVAL :months MONTH AND NOW()
+                ",
+                [
+                    "authorId"          => $author->getId(),
+                    "publishingStatus"  => Article::PUBLISHING_STATUS_PUBLISHED,
+                    "months"            => $months
+                ],
+                [ "months" => ParameterType::INTEGER ]
             );
     }
 

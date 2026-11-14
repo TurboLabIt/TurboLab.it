@@ -141,6 +141,28 @@ class UserRepository extends BasePhpBBRepository
             return null;
         }
 
+        return
+            (new User())
+                ->setId( $arrUser["user_id"] )
+                ->setUsername( $arrUser["username"] )
+                ->setUsernameClean( $arrUser["username_clean"] )
+                ->setUserType( $arrUser["user_type"] )
+                ->setEmail( $arrUser["user_email"] )
+                ->setAvatarType( $arrUser["user_avatar_type"] )
+                ->setAvatarFile( $arrUser["user_avatar"] )
+                ->setPostNum( $arrUser["user_posts"] )
+                ->setColor( $arrUser["user_colour"] )
+                ->setAllowMassEmail( $arrUser["user_allow_massemail"] )
+                ->setGroups( $this->getGroupNames($arrUser["user_id"]) );
+    }
+
+
+    /**
+     * [group_id => group_name] of the groups the user is a full member of: a pending request doesn't count.
+     * User::getRoles() reads the names
+     */
+    public function getGroupNames(int $userId) : array
+    {
         $sqlGroups = "
             SELECT
                 `groups`.group_id AS id, `groups`.group_name AS name
@@ -156,24 +178,9 @@ class UserRepository extends BasePhpBBRepository
         ";
 
         $stmtGroups = $this->getEntityManager()->getConnection()->prepare($sqlGroups);
-        $stmtGroups->bindValue('userId', $arrUser["user_id"], ParameterType::INTEGER);
+        $stmtGroups->bindValue('userId', $userId, ParameterType::INTEGER);
 
-        $ormGroupsResult    = $stmtGroups->executeQuery();
-        $arrUserGroups      = $ormGroupsResult->fetchAllKeyValue();
-
-        return
-            (new User())
-                ->setId( $arrUser["user_id"] )
-                ->setUsername( $arrUser["username"] )
-                ->setUsernameClean( $arrUser["username_clean"] )
-                ->setUserType( $arrUser["user_type"] )
-                ->setEmail( $arrUser["user_email"] )
-                ->setAvatarType( $arrUser["user_avatar_type"] )
-                ->setAvatarFile( $arrUser["user_avatar"] )
-                ->setPostNum( $arrUser["user_posts"] )
-                ->setColor( $arrUser["user_colour"] )
-                ->setAllowMassEmail( $arrUser["user_allow_massemail"] )
-                ->setGroups($arrUserGroups);
+        return $stmtGroups->executeQuery()->fetchAllKeyValue();
     }
 
 

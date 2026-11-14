@@ -428,7 +428,7 @@ class ArticleEditor extends Article
     //<editor-fold defaultstate="collapsed" desc="*** 💬 Comments topic ***">
     public function createCommentsTopicPlaceholder() : static
     {
-        if( !$this->isVisitable() || !empty( $this->getCommentsTopic() ) ) {
+        if( !empty( $this->getCommentsTopic() ) || !$this->isCommentsTopicAllowed() ) {
             return $this;
         }
 

@@ -24,6 +24,10 @@ class User extends BaseServiceEntity
     // 👀 https://turbolab.it/forum/memberlist.php?mode=viewprofile&u=4015
     const int ID_TESTER = 4015;
 
+    // see isTrustedAuthor()
+    const int TRUSTED_AUTHOR_MIN_ARTICLES   = 2;
+    const int TRUSTED_AUTHOR_MONTHS         = 6;
+
     protected ?UserEntity $entity           = null;
     protected ?array $arrAdditionalFields   = null;
     protected ?int $articlesNum             = null;
@@ -150,6 +154,28 @@ class User extends BaseServiceEntity
     public function isEditor() : bool { return $this->entity->isEditor(); }
 
     public function isAdmin() : bool { return $this->entity->isAdmin(); }
+
+
+    /**
+     * Staff, or TRUSTED_AUTHOR_MIN_ARTICLES articles already published in the last TRUSTED_AUTHOR_MONTHS months.
+     * Their articles get the comments topic on the forum before an editor publishes them:
+     * see Article::isCommentsTopicAllowed()
+     */
+    public function isTrustedAuthor() : bool
+    {
+        // the groups come with the login: an author loaded from an article has none, so isEditor() would say no
+        $this->entity->setGroups( $this->getRepository()->getGroupNames( $this->getId() ) );
+
+        if( $this->isEditor() ) {
+            return true;
+        }
+
+        $recentlyPublishedNum =
+            $this->factory->createArticleAuthorCollection($this)
+                ->countRecentlyPublished(static::TRUSTED_AUTHOR_MONTHS);
+
+        return $recentlyPublishedNum >= static::TRUSTED_AUTHOR_MIN_ARTICLES;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ✏ Articles ***">

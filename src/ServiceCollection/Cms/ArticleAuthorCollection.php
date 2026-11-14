@@ -25,6 +25,13 @@ class ArticleAuthorCollection extends BaseArticleCollection
     }
 
 
+    public function countRecentlyPublished(int $months) : int
+    {
+        $userEntity = $this->author->getEntity();
+        return $this->getRepository()->countRecentlyPublishedByAuthor($userEntity, $months);
+    }
+
+
     public function loadDrafts() : static
     {
         $userEntity = $this->author->getEntity();
