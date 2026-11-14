@@ -8,9 +8,14 @@ use App\Service\User;
 
 class FileEditorCollection extends FileCollection
 {
+    // the uploads that were already on TurboLab.it (same content): the existing Download is used instead
+    protected array $arrReusedIds = [];
+
+
     public function setFromUpload(?array $arrUpload, User $author, ?string $title = null) : static
     {
         $this->clear();
+        $this->arrReusedIds = [];
 
         if( empty($arrUpload) ) {
             return $this;
@@ -46,6 +51,7 @@ class FileEditorCollection extends FileCollection
             } else {
 
                 $arrData[$hash]["FileService"] = $this->createService($existingFileEntity);
+                $this->arrReusedIds[] = $existingFileEntity->getId();
             }
         }
 
@@ -57,6 +63,9 @@ class FileEditorCollection extends FileCollection
 
         return $this;
     }
+
+
+    public function isReused(int $fileId) : bool { return in_array($fileId, $this->arrReusedIds); }
 
 
     public function loadToDelete() : static

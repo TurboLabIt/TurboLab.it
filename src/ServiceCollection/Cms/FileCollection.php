@@ -27,6 +27,35 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
+    public function loadByHash(string $hash) : static
+    {
+        return $this->setEntities( $this->getRepository()->getByHash([$hash]) );
+    }
+
+
+    // the external Downloads pointing to the same item as $url (see File::normalizeUrlForMatching())
+    public function loadByEquivalentUrl(string $url) : static
+    {
+        $normalizedUrl  = FileService::normalizeUrlForMatching($url);
+        $arrMatches     = [];
+
+        foreach( $this->getRepository()->getExternal() as $entity ) {
+
+            if( FileService::normalizeUrlForMatching( $entity->getUrl() ) === $normalizedUrl ) {
+                $arrMatches[$entity->getId()] = $entity;
+            }
+        }
+
+        return $this->setEntities($arrMatches);
+    }
+
+
+    public function loadSimilarByTitle(string $text, int $limit = 5) : static
+    {
+        return $this->setEntities( $this->getRepository()->getSimilarByTitle($text, $limit) );
+    }
+
+
     public function loadLatest(?int $authorId = null) : static
     {
         $arrFiles = $this->getRepository()->getLatest($authorId);

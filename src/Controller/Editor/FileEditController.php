@@ -2,8 +2,8 @@
 namespace App\Controller\Editor;
 
 use App\Service\Cms\Article;
+use App\Service\Cms\File;
 use App\Service\Cms\FileEditor;
-use App\ServiceCollection\Cms\FileEditorCollection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Error;
 use Exception;
@@ -37,7 +37,7 @@ class FileEditController extends ArticleEditBaseController
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
             $files =
-                (new FileEditorCollection($this->factory))
+                $this->factory->createFileEditorCollection()
                     ->setFromUpload($uploadedFiles, $currentUserAsAuthor, $title);
 
             $this->articleEditor->addFiles($files, $currentUserAsAuthor);
@@ -51,7 +51,7 @@ class FileEditController extends ArticleEditBaseController
                 throw new BadRequestHttpException("Nessun file ricevuto.");
             }
 
-            return $this->buildCreatedFileJsonResponse($fileEditor);
+            return $this->buildCreatedFileJsonResponse( $fileEditor, $files->isReused( $fileEditor->getId() ) );
 
         } catch(UniqueConstraintViolationException $ex) {
 
@@ -75,27 +75,127 @@ class FileEditController extends ArticleEditBaseController
                 throw new BadRequestHttpException("URL, titolo e formato sono obbligatori.");
             }
 
-            if( filter_var($url, FILTER_VALIDATE_URL) === false ) {
+            if( !File::isValidExternalUrl($url) ) {
                 throw new BadRequestHttpException("L'URL inserito non è valido.");
             }
 
             $currentUserAsAuthor = $this->sentinel->getCurrentUserAsAuthor();
 
-            $fileEditor =
-                $this->factory->createFileEditor()
-                    ->createFromUrl($url, $title, $format);
+            // one item, one Download: the same URL (tracking parameters aside) reuses the existing one
+            $fileEditor = null;
+            foreach( $this->factory->createFileEditorCollection()->loadByEquivalentUrl($url) as $existing ) {
+                $fileEditor = $existing;
+                break;
+            }
 
-            $fileEditor->addAuthor($currentUserAsAuthor);
+            $isReused = !empty($fileEditor);
+
+            if( !$isReused ) {
+
+                $fileEditor =
+                    $this->factory->createFileEditor()
+                        ->createFromUrl($url, $title, $format);
+
+                $fileEditor->addAuthor($currentUserAsAuthor);
+            }
 
             $this->articleEditor->addFiles([$fileEditor], $currentUserAsAuthor);
             $this->factory->getEntityManager()->flush();
             $this->clearCachedArticlePages([$this->articleEditor]);
 
-            return $this->buildCreatedFileJsonResponse($fileEditor);
+            return $this->buildCreatedFileJsonResponse($fileEditor, $isReused);
 
         } catch(UniqueConstraintViolationException $ex) {
 
             return $this->buildDuplicateTitleResponse($ex);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    /**
+     * "Prima si cerca, poi si crea": the Downloads matching what the author is about to add, by content hash
+     * (computed in the browser) or by URL, plus the similar ones that could be an older version of it
+     */
+    #[Route('/ajax/editor/files/lookup', name: 'app_file_edit-lookup', methods: ['GET'])]
+    public function lookup(#[MapQueryParameter] int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+
+            $hash   = (string)$this->request->query->get('hash', '');
+            $url    = trim( (string)$this->request->query->get('url', '') );
+            $name   = trim( (string)$this->request->query->get('name', '') );
+
+            if( preg_match('/^[a-f0-9]{32}$/', $hash) === 1 ) {
+
+                $matches = $this->factory->createFileCollection()->loadByHash($hash);
+
+            } elseif( $url !== '' ) {
+
+                $matches = $this->factory->createFileCollection()->loadByEquivalentUrl($url);
+
+            } else {
+
+                throw new BadRequestHttpException("Indica il contenuto (hash) o l'URL da cercare.");
+            }
+
+            $similar = $this->factory->createFileCollection();
+            if( $matches->count() == 0 && $name !== '' ) {
+                $similar->loadSimilarByTitle($name);
+            }
+
+            return $this->json([
+                'matchesNum'    => $matches->count(),
+                'matchesHtml'   => $matches->count() == 0 ? null :
+                    $this->twig->render('search/results-link-file.html.twig', ['LocalResults' => $matches]),
+                'similarNum'    => $similar->count(),
+                'similarHtml'   => $similar->count() == 0 ? null :
+                    $this->twig->render('search/results-link-file.html.twig', [
+                        'LocalResults'  => $similar,
+                        'Replaceable'   => true,
+                        'ArticleId'     => $articleId
+                    ])
+            ]);
+
+        } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
+    }
+
+
+    // "Sostituisci": a new version of an existing Download (uploaded file or URL), then linked from this article
+    #[Route('/ajax/editor/files/replace/{fileId<[1-9]+[0-9]*>}', name: 'app_file_edit-replace', methods: ['POST'])]
+    public function replace(int $fileId, #[MapQueryParameter] int $articleId) : JsonResponse|Response
+    {
+        try {
+            $this->loadArticleEditor($articleId);
+            $this->loadFileEditor($fileId);
+
+            $uploadedFiles  = $this->request->files->get('files', []);
+            $url            = trim( (string)$this->request->request->get('url', '') );
+
+            if( !empty($uploadedFiles) ) {
+
+                $this->fileEditor->replaceWithUploadedFile( reset($uploadedFiles) );
+
+            } elseif( $url !== '' ) {
+
+                if( !File::isValidExternalUrl($url) ) {
+                    throw new BadRequestHttpException("L'URL inserito non è valido.");
+                }
+
+                $this->fileEditor->replaceWithUrl($url);
+
+            } else {
+
+                throw new BadRequestHttpException("Indica il nuovo file o il nuovo URL.");
+            }
+
+            $this->articleEditor->addFiles([$this->fileEditor], $this->sentinel->getCurrentUserAsAuthor());
+            $this->factory->getEntityManager()->flush();
+
+            $this->clearCachedArticlePages( [$this->articleEditor, ...array_values( $this->fileEditor->getArticles() )] );
+
+            return $this->buildCreatedFileJsonResponse($this->fileEditor);
 
         } catch(Exception|Error $ex) { return $this->textErrorResponse($ex); }
     }
@@ -227,10 +327,11 @@ class FileEditController extends ArticleEditBaseController
     }
 
 
-    protected function buildCreatedFileJsonResponse(FileEditor $fileEditor) : JsonResponse
+    protected function buildCreatedFileJsonResponse(FileEditor $fileEditor, bool $isReused = false) : JsonResponse
     {
         return $this->json([
             'id'                    => $fileEditor->getId(),
+            'reused'                => $isReused,
             'downloadUrl'           => $fileEditor->getUrl(),
             'title'                 => $fileEditor->getTitle(),
             'userPerceivedFileName' => $fileEditor->getUserPerceivedFileName(),

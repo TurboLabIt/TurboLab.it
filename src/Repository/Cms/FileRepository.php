@@ -27,6 +27,78 @@ class FileRepository extends BaseRepository
     }
 
 
+    public function getExternal() : array
+    {
+        return
+            $this->getQueryBuilder()
+                ->andWhere("t.url IS NOT NULL AND t.url != ''")
+                ->getQuery()->getResult();
+    }
+
+
+    /**
+     * "Is this a new version of...?" candidates: the version part of the name differs by definition, so FULLTEXT runs
+     * in natural-language mode (any word counts), then a title must share more than half of the words of $text
+     * (3+ characters, the FULLTEXT minimum), or a single common word like "tool" would match half the table
+     */
+    public function getSimilarByTitle(string $text, int $limit = 5) : array
+    {
+        $text = trim( preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text) );
+
+        $arrWords = array_unique( array_filter(
+            explode(' ', mb_strtolower($text)), fn(string $word) => mb_strlen($word) >= 3
+        ));
+
+        if( empty($arrWords) ) {
+            return [];
+        }
+
+        $tableName  = $this->getTableName();
+        $arrRows    =
+            $this->sqlQueryExecute("
+                SELECT id, title FROM $tableName
+                WHERE MATCH(title) AGAINST(:text IN NATURAL LANGUAGE MODE) > 0
+                ORDER BY MATCH(title) AGAINST(:text IN NATURAL LANGUAGE MODE) DESC
+                LIMIT 50",
+                ['text' => $text]
+            )->fetchAllAssociative();
+
+        $arrIds = [];
+        foreach($arrRows as $row) {
+
+            $arrTitleWords  = explode(' ', mb_strtolower( preg_replace('/[^\p{L}\p{N}]+/u', ' ', $row['title']) ));
+            $commonNum      = count( array_intersect($arrWords, $arrTitleWords) );
+
+            if( $commonNum * 2 > count($arrWords) ) {
+                $arrIds[] = $row['id'];
+            }
+
+            if( count($arrIds) >= $limit ) {
+                break;
+            }
+        }
+
+        if( empty($arrIds) ) {
+            return [];
+        }
+
+        $arrFiles =
+            $this->getQueryBuilder()
+                ->andWhere('t.id IN (:ids)')
+                ->setParameter('ids', $arrIds)
+                ->getQuery()->getResult();
+
+        $arrSorted = [];
+        foreach($arrIds as $id) {
+            if( array_key_exists($id, $arrFiles) ) {
+                $arrSorted[$id] = $arrFiles[$id];
+            }
+        }
+
+        return $arrSorted;
+    }
+
+
     public function getOrphans() : array
     {
         return

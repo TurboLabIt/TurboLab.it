@@ -24,6 +24,9 @@ class File extends BaseCmsService
 
     const string UPLOADED_FILES_FOLDER_NAME = parent::UPLOADED_ASSET_FOLDER_NAME . "/files";
 
+    // query parameters that only track the visit: two URLs differing just by these point to the same item
+    const string URL_TRACKING_PARAMS_REGEX = '/^(utm_.+|fbclid|gclid|gclsrc|dclid|gbraid|wbraid|msclkid|mc_cid|mc_eid|igshid|yclid|_ga|_gl)$/i';
+
     const string ATTACHED_BUT_UNUSED_FILE_NAME  = 'files-orphans.json';
     const string MISSING_ON_FILESYSTEM_FILE_NAME= 'files-missing-on-filesystem.json';
     const string MISSING_ON_DATABASE_FILE_NAME  = 'files-missing-on-database.json';
@@ -87,6 +90,58 @@ class File extends BaseCmsService
     public function isLocal() : bool { return empty( $this->getExternalDownloadUrl() ); }
 
     public function isExternal() : bool { return !$this->isLocal(); }
+
+
+    /**
+     * What an external Download may point to: a web address, a magnet link (BitTorrent) or an ed2k link (eMule).
+     * filter_var() alone rejects the last two: they have no host
+     */
+    public static function isValidExternalUrl(string $url) : bool
+    {
+        $url = trim($url);
+
+        if( preg_match('/\s/', $url) === 1 ) {
+            return false;
+        }
+
+        if( preg_match('/^https?:\/\//i', $url) === 1 ) {
+            return filter_var($url, FILTER_VALIDATE_URL) !== false;
+        }
+
+        return
+            preg_match('/^magnet:\?(.+&)?xt=urn:[a-z0-9]+:[^&]+/i', $url) === 1 ||
+            preg_match('/^ed2k:\/\/\|[a-z]+\|.+\|\/?$/i', $url) === 1;
+    }
+
+
+    /**
+     * Light normalization, for matching only (the stored URL is never rewritten): http/https, "www.", a trailing "/",
+     * the #fragment and the tracking parameters make no difference. Anything that isn't http(s) is just trimmed
+     */
+    public static function normalizeUrlForMatching(string $url) : string
+    {
+        $url    = trim($url);
+        $parts  = parse_url($url);
+
+        if( empty($parts['host']) || !in_array( mb_strtolower($parts['scheme'] ?? ''), ['http', 'https']) ) {
+            return $url;
+        }
+
+        $normalized = preg_replace('/^www\./', '', mb_strtolower($parts['host']));
+        $normalized.= empty($parts['port']) ? '' : ':' . $parts['port'];
+        $normalized.= rtrim($parts['path'] ?? '', '/');
+
+        $arrQuery = [];
+        foreach( explode('&', $parts['query'] ?? '') as $pair ) {
+
+            $name = urldecode( explode('=', $pair, 2)[0] );
+            if( $pair !== '' && preg_match(static::URL_TRACKING_PARAMS_REGEX, $name) !== 1 ) {
+                $arrQuery[] = $pair;
+            }
+        }
+
+        return $normalized . ( empty($arrQuery) ? '' : '?' . implode('&', $arrQuery) );
+    }
     //</editor-fold>
 
 

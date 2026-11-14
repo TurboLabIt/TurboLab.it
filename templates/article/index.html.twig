@@ -111,7 +111,11 @@
                             {% include 'article/files.html.twig' %}
                         </div>
 
-                        {% include 'article/editor/button-add-file.html.twig' %}
+                        {% if Article.isEditable %}
+                            <div class="container mb-20">
+                                {% include 'article/editor/button-add-file.html.twig' %}
+                            </div>
+                        {% endif %}
 
 
                         {% if Article.isReadable %}

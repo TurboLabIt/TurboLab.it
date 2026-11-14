@@ -1,5 +1,12 @@
 {% if Article.isReadable and Article.Files is not empty %}
 
+    {# a long list: the box below it may be off screen #}
+    {% if Article.isEditable and Article.Files|length >= 2 %}
+        <div class="mb-20">
+            {% include 'article/editor/button-add-file.html.twig' %}
+        </div>
+    {% endif %}
+
     {% for File in Article.Files %}
 
         {% if Article.isEditable %}

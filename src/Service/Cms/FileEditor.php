@@ -11,6 +11,7 @@ use App\Trait\SaveableTrait;
 use App\Trait\UploadableFileTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 
 class FileEditor extends File
@@ -50,10 +51,106 @@ class FileEditor extends File
         // general validation (from UploadableFileTrait)
         $this->validateUploadedFile($file);
 
-        $originalFilename           = $file->getClientOriginalName();
-        $filenameWithoutExtension   = pathinfo($originalFilename, PATHINFO_FILENAME);
-        $clientExtension            = $file->getClientOriginalExtension();
-        $extension                  = $file->guessExtension();
+        $filenameWithoutExtension   = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $hash                       = hash_file('md5', $file->getPathname() );
+
+        $effectiveTitle = $title !== null && trim($title) !== '' ? $title : $filenameWithoutExtension;
+
+        $this
+            ->setTitle($effectiveTitle)
+            ->setFormat( $this->getUploadedFileExtension($file) )
+            ->setHash($hash)
+            ->save();
+
+        $destinationFullPath = $this->getOriginalFilePath();
+
+        $file->move( dirname($destinationFullPath), basename($destinationFullPath) );
+
+        return $this;
+    }
+
+
+    /**
+     * A new version of the Download, from an uploaded file: same ID, same title, so every link to it follows.
+     * The previous source (local file or external URL) is gone for good
+     */
+    public function replaceWithUploadedFile(UploadedFile $file) : static
+    {
+        $this->validateUploadedFile($file);
+
+        $hash = hash_file('md5', $file->getPathname() );
+        $this->enforceSourceNotUsedElsewhere( $this->factory->createFileCollection()->loadByHash($hash) );
+
+        $previousFilePath = $this->isLocal() ? $this->getOriginalFilePath() : null;
+
+        // the old file is deleted below, not renamed by save()
+        $this->previousFilePath = null;
+
+        $this
+            ->setExternalDownloadUrl(null)
+            ->setFormat( $this->getUploadedFileExtension($file) )
+            ->setHash($hash)
+            ->save();
+
+        $newFilePath = $this->getOriginalFilePath();
+        $this->assertFilePathIsWithinUploadsDir($newFilePath);
+
+        if( !empty($previousFilePath) && $previousFilePath != $newFilePath && file_exists($previousFilePath) ) {
+
+            $this->assertFilePathIsWithinUploadsDir($previousFilePath);
+            unlink($previousFilePath);
+        }
+
+        $file->move( dirname($newFilePath), basename($newFilePath) );
+
+        return $this;
+    }
+
+
+    // A new version of the Download, from an external URL: same ID, same title and format
+    public function replaceWithUrl(string $url) : static
+    {
+        $this->enforceSourceNotUsedElsewhere( $this->factory->createFileCollection()->loadByEquivalentUrl($url) );
+
+        $previousFilePath       = $this->isLocal() ? $this->getOriginalFilePath() : null;
+        $this->previousFilePath = null;
+
+        $this
+            ->setExternalDownloadUrl($url)
+            ->setAutoHash()
+            ->save();
+
+        if( !empty($previousFilePath) && file_exists($previousFilePath) ) {
+
+            $this->assertFilePathIsWithinUploadsDir($previousFilePath);
+            unlink($previousFilePath);
+        }
+
+        return $this;
+    }
+
+
+    // one item, one Download: the new source can't be another Download's already
+    protected function enforceSourceNotUsedElsewhere(iterable $filesWithSameSource) : static
+    {
+        foreach($filesWithSameSource as $file) {
+
+            if( $file->getId() != $this->getId() ) {
+                throw new ConflictHttpException(
+                    "Impossibile sostituire: questo elemento è già su TurboLab.it come «" . $file->getTitle() . "» ( " .
+                    $file->getUrl() . " )."
+                );
+            }
+        }
+
+        return $this;
+    }
+
+
+    protected function getUploadedFileExtension(UploadedFile $file) : string
+    {
+        $clientExtension    = $file->getClientOriginalExtension();
+        $extension          = $file->guessExtension();
 
         // some file types, such as .ps1, have no "official" mime-type, thus are recognized as "text/plain" =>
         // this would screw the extension ==> falling back to client-provided extension
@@ -64,22 +161,7 @@ class FileEditor extends File
             $extension = $clientExtension;
         }
 
-
-        $hash = hash_file('md5', $file->getPathname() );
-
-        $effectiveTitle = $title !== null && trim($title) !== '' ? $title : $filenameWithoutExtension;
-
-        $this
-            ->setTitle($effectiveTitle)
-            ->setFormat($extension)
-            ->setHash($hash)
-            ->save();
-
-        $destinationFullPath = $this->getOriginalFilePath();
-
-        $file->move( dirname($destinationFullPath), basename($destinationFullPath) );
-
-        return $this;
+        return (string)$extension;
     }
 
 

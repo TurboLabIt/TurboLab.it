@@ -1,5 +1,5 @@
 <div class="modal fade" id="tli-link-file-modal" tabindex="-1"
-     data-search-state="idle"
+     data-lookup-url="{{ path('app_file_edit-lookup') }}?articleId={{ ArticleId }}"
      data-create-from-url-url="{{ path('app_file_edit-create_from_url') }}?articleId={{ ArticleId }}"
      data-create-from-upload-url="{{ path('app_file_edit-upload_from_modal') }}?articleId={{ ArticleId }}">
 
@@ -8,100 +8,101 @@
             <div class="modal-header">
                 <h5 class="modal-title">
                     <i class="fa-solid fa-download"></i>
-                    Cerca e inserisci link a file di TurboLab.it
+                    Aggiungi un Download
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body tli-link-file-dropzone">
 
-                <div class="tli-link-file-create-banner mb-3 p-3 border rounded bg-body-tertiary">
-                    <p class="small mb-2">
-                        Hai cercato e non trovato il file di cui hai bisogno? Puoi crearlo ora.
-                        <strong>Carica</strong> il file (Upload) per materiale originale prodotto da te o per file rari/difficili da trovare altrove.
-                        <strong>Linka</strong> un URL esterno per file aggiornati frequentemente o facilmente reperibili in rete.
-                    </p>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button type="button" class="btn btn-outline-primary btn-sm tli-link-file-create-via-url" disabled>
-                            <i class="fa-solid fa-link"></i> Crea via URL
-                        </button>
-                        <button type="button" class="btn btn-outline-primary btn-sm tli-link-file-create-via-upload" disabled>
-                            <i class="fa-solid fa-upload"></i> Crea via Upload
-                        </button>
-                    </div>
-                    <p class="small text-muted mt-2 mb-0 tli-link-file-create-hint">
-                        <i class="fa-solid fa-circle-info"></i>
-                        Per evitare duplicati, esegui prima una ricerca.
-                    </p>
-
-                    <form class="tli-link-file-create-url-form mt-3 d-none">
-                        <div class="mb-2">
-                            <label class="form-label small mb-1">URL del file</label>
-                            <input type="url" class="form-control form-control-sm tli-link-file-url-input"
-                                   placeholder="https://esempio.com/file.zip" required>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label small mb-1">Titolo (nome leggibile)</label>
-                            <input type="text" class="form-control form-control-sm tli-link-file-url-title"
-                                   maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}" required>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label small mb-1">Formato</label>
-                            <select class="form-select form-select-sm tli-link-file-url-format" required>
-                                <option value="">-- scegli --</option>
-                                {% for value, Item in Formats %}
-                                    <option value="{{ value }}">{% if Item.top %}📌 {% endif %}{{ Item.label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm tli-link-file-url-submit">
-                            <i class="fa-solid fa-floppy-disk"></i> Salva e inserisci nell'articolo
-                        </button>
-                        <div class="tli-link-file-create-error mt-2"></div>
-                    </form>
-
-                    <form class="tli-link-file-create-upload-form mt-3 d-none">
-                        <div class="mb-2">
-                            <label class="form-label small mb-1">Seleziona file dal tuo computer</label>
-                            <input type="file" class="form-control form-control-sm tli-link-file-upload-input" required>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label small mb-1">Titolo (sarà anche il nome del file scaricato)</label>
-                            <input type="text" class="form-control form-control-sm tli-link-file-upload-title"
-                                   maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm tli-link-file-upload-submit">
-                            <i class="fa-solid fa-upload"></i> Carica e inserisci nell'articolo
-                        </button>
-                        <div class="tli-link-file-create-error mt-2"></div>
-                    </form>
-                </div>
-
-                <div class="input-group mb-3">
+                <div class="input-group">
                     <input type="text" class="form-control tli-link-file-search-input"
-                           placeholder="Cerca file da linkare...">
-                    <button class="btn btn-primary tli-link-file-search-btn" type="button">
-                        <i class="fa-solid fa-magnifying-glass"></i> Cerca
+                           placeholder="Cerca un Download, incolla un URL o trascina qui un file">
+                    <button class="btn btn-outline-primary tli-link-file-pick" type="button">
+                        <i class="fa-solid fa-upload"></i> Scegli file...
                     </button>
                 </div>
-
-                <div class="mb-3 small">
-                    <div class="form-check form-check-inline me-0">
-                        <input class="form-check-input" type="checkbox" id="tli-link-file-mine-only" name="only-mine" value="1">
-                        <label class="form-check-label" for="tli-link-file-mine-only">Inseriti da me</label>
-                    </div>
-                    <span class="border-start mx-2"></span>
-                    <span class="me-2">Ordina per:</span>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="file-sort" id="tli-link-file-sort-relevance" value="relevance">
-                        <label class="form-check-label" for="tli-link-file-sort-relevance">Rilevanza</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="file-sort" id="tli-link-file-sort-date" value="date" checked>
-                        <label class="form-check-label" for="tli-link-file-sort-date">Data ultimo aggiornamento</label>
-                    </div>
+                <input type="file" class="d-none tli-link-file-upload-input">
+                <div class="form-text mb-3">
+                    Prima di crearne uno nuovo, verifico se il file o l'URL è già su TurboLab.it: un elemento, un Download.
                 </div>
 
-                <div class="tli-link-file-results"></div>
+                {# what the author is adding: a file or a URL #}
+                <div class="tli-link-file-source d-none mb-3 p-2 border rounded bg-body-tertiary d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-file-arrow-up tli-link-file-source-icon"></i>
+                    <strong class="tli-link-file-source-name text-break"></strong>
+                    <span class="tli-link-file-source-status small text-muted"></span>
+                    <button type="button" class="btn-close ms-auto tli-link-file-source-clear" title="Annulla"></button>
+                </div>
+
+                <div class="tli-link-file-matches d-none mb-3">
+                    <div class="alert alert-success mb-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span class="tli-link-file-matches-text"></span> Usa quello:
+                    </div>
+                    <div class="tli-link-file-matches-list"></div>
+                </div>
+
+                <div class="tli-link-file-similar d-none mb-3 p-3 border border-2 border-danger rounded bg-danger-subtle">
+                    <p class="mb-2 text-danger-emphasis">
+                        <i class="fa-solid fa-code-compare"></i>
+                        <strong>Download simili</strong>: se il tuo è una nuova versione di uno di questi, sostituiscilo.
+                        Se invece è un elemento diverso (una variante: 32/64 bit, per un altro sistema operativo, ...), crea un nuovo Download qui sotto.
+                    </p>
+                    <div class="tli-link-file-similar-list"></div>
+                </div>
+
+                <form class="tli-link-file-create-form d-none mb-3 p-3 border rounded bg-body-tertiary">
+                    <h6><i class="fa-solid fa-plus"></i> Nuovo Download</h6>
+                    <div class="mb-2">
+                        <label class="form-label small mb-1 tli-link-file-create-title-label"></label>
+                        <input type="text" class="form-control form-control-sm tli-link-file-create-title"
+                               maxlength="{{ constant('App\\Entity\\Cms\\Article::TITLE_MAX_LENGTH') }}" required>
+                        <div class="form-text">
+                            💡 Meglio senza numero di versione: quando uscirà la prossima, sostituirai il Download
+                            e il titolo resterà valido in tutti gli articoli che lo citano.
+                        </div>
+                    </div>
+                    <div class="mb-2 tli-link-file-create-format-box">
+                        <label class="form-label small mb-1">Formato</label>
+                        <select class="form-select form-select-sm tli-link-file-create-format">
+                            <option value="">-- scegli --</option>
+                            {% for value, Item in Formats %}
+                                <option value="{{ value }}">{% if Item.top %}📌 {% endif %}{{ Item.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm tli-link-file-create-submit">
+                        <i class="fa-solid fa-floppy-disk"></i> Crea e inserisci nell'articolo
+                    </button>
+                    <div class="tli-link-file-create-error mt-2"></div>
+                </form>
+
+                {# search by text: the latest Downloads when the field is empty #}
+                <div class="tli-link-file-search-box">
+                    <div class="mb-3 small">
+                        <div class="form-check form-check-inline me-0">
+                            <input class="form-check-input" type="checkbox" id="tli-link-file-mine-only" name="only-mine" value="1">
+                            <label class="form-check-label" for="tli-link-file-mine-only">Inseriti da me</label>
+                        </div>
+                        <span class="border-start mx-2"></span>
+                        <span class="me-2">Ordina per:</span>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="file-sort" id="tli-link-file-sort-relevance" value="relevance">
+                            <label class="form-check-label" for="tli-link-file-sort-relevance">Rilevanza</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="file-sort" id="tli-link-file-sort-date" value="date" checked>
+                            <label class="form-check-label" for="tli-link-file-sort-date">Data</label>
+                        </div>
+                    </div>
+
+                    <div class="tli-link-file-results"></div>
+
+                    <p class="small text-muted mt-2 mb-0">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Non c'è? Incolla l'URL nel campo qui sopra, oppure scegli o trascina qui il file: lo creerai dopo la verifica.
+                    </p>
+                </div>
 
             </div>
         </div>

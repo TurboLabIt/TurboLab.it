@@ -29,6 +29,7 @@ use App\Service\PhpBB\Topic as TopicService;
 use App\Service\PhpBB\Post as PostService;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
+use App\ServiceCollection\Cms\FileEditorCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Meilisearch\Bundle\SearchManagerInterface;
@@ -292,6 +293,8 @@ class Factory
 
 
     public function createFileCollection() : FileCollection { return new FileCollection($this); }
+
+    public function createFileEditorCollection() : FileEditorCollection { return new FileEditorCollection($this); }
 
     public function getFileUrlGenerator() : FileUrlGenerator { return $this->fileUrlGenerator; }
 

@@ -41,7 +41,7 @@ Principi dell'interfaccia:
 
 ### Aggiungere un Download a un articolo
 
-Un solo flusso, sia dal pulsante nella toolbar dell'editor sia dal riquadro sotto l'elenco dei Download dell'articolo. Accetta un **file** (scelto o trascinato, anche più d'uno), un **URL** (incollato) o del **testo** (da cercare): l'autore non deve scegliere prima tra "file" e "URL", lo capisce il sistema da cosa riceve.
+Un solo flusso, sia dal pulsante nella toolbar dell'editor sia dal riquadro sotto l'elenco dei Download dell'articolo (anche sopra, quando i Download sono almeno due). Accetta un **file** (scelto o trascinato, anche più d'uno), un **URL** (incollato) o del **testo** (da cercare): l'autore non deve scegliere prima tra "file" e "URL", lo capisce il sistema da cosa riceve.
 
 1. il sistema cerca i Download che corrispondono:
    - file ➡ stesso contenuto (hash), poi nome del file e titolo simili
@@ -106,29 +106,28 @@ Backend:
 
 - `/scarica/{id}` ([FileController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/FileController.php)): un file locale è servito via X-Sendfile da `var/uploaded-assets/files/{id}.{formato}` e scaricato come `titolo.formato`; un URL esterno risponde con un redirect 302. Il Download eredita la visibilità dagli articoli che lo usano; lo modificano i suoi autori e gli editor ([FileSentinel](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Sentinel/FileSentinel.php))
 - nel testo degli articoli il link è salvato come segnaposto `==###file::id::{id}###==` e mostrato come `/scarica/{id}`: la permanenza dei link (obiettivo 1) c'è già
-- [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): upload, creazione da URL, modifica (titolo, formato, URL esterno), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
+- [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): verifica (`lookup`: stesso contenuto, URL equivalente, titoli simili), upload, creazione da URL, sostituzione della sorgente (`replace`), modifica (titolo, formato, URL esterno), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
+- un URL esterno può essere un indirizzo web, un magnet BitTorrent o un link ed2k (`File::isValidExternalUrl()`). La normalizzazione per il confronto è `File::normalizeUrlForMatching()`; creando da un URL equivalente a uno esistente, il server riusa il Download esistente
 - salvare un articolo collega ogni Download linkato nel testo (solo aggiunte); [uploaded-assets-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/uploaded-assets-maintenance.sh) fa lo stesso ogni 3 ore con `FilesToArticles` (la rimozione dei collegamenti inutilizzati è disattivata: [#101](https://github.com/TurboLabIt/TurboLab.it/issues/101)), più `FilesHasher` (ricalcola gli hash) e `FilesNotFound` (file mancanti su disco o nel database). I risultati sono in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare)
 
-Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/ckeditor-plugins/link-file.js) gestisce la finestra "Cerca e inserisci link a file", con "Crea via URL" e "Crea via Upload", e il riquadro "Carica file scaricabile o URL", che carica direttamente i file trascinati; [files-edit.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/files-edit.js) la modifica e Scollega/Elimina.
+Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/ckeditor-plugins/link-file.js) gestisce la finestra "Aggiungi un Download" e il riquadro omonimo (un file trascinato sul riquadro apre la finestra). L'hash di un file è calcolato nel browser, così la verifica non richiede di caricarlo; una ricerca superata da nuovi caratteri digitati viene annullata. [files-edit.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/files-edit.js) gestisce la modifica e Scollega/Elimina.
 
 
 ## Cosa manca rispetto agli obiettivi
 
 Permanenza:
 
-- un Download esterno si aggiorna cambiandone l'URL, uno locale no: non si può caricarne una versione nuova ([#121](https://github.com/TurboLabIt/TurboLab.it/issues/121)) né trasformarlo in esterno o viceversa ([#110](https://github.com/TurboLabIt/TurboLab.it/issues/110), [#111](https://github.com/TurboLabIt/TurboLab.it/issues/111)). Resta solo un nuovo Download, cioè il doppione che l'obiettivo 2 vieta; intanto il messaggio sul titolo duplicato chiede di "aggiornare il vecchio file", cosa che l'interfaccia non permette
+- la sostituzione c'è solo nel flusso di aggiunta, quando il sistema propone un Download simile: **Modifica** non la offre ancora, quindi un Download che il sistema non riconosce come simile non si può sostituire ([#121](https://github.com/TurboLabIt/TurboLab.it/issues/121), [#110](https://github.com/TurboLabIt/TurboLab.it/issues/110), [#111](https://github.com/TurboLabIt/TurboLab.it/issues/111)); il messaggio sul titolo duplicato chiede ancora di "aggiornare il vecchio file"
 
 Unicità:
 
-- **stesso contenuto**: il Download esistente viene riusato senza dirlo all'autore, e il titolo digitato è ignorato
-- **stesso URL**: il salvataggio fallisce sull'`hash`, ma il messaggio parla di titolo duplicato; un URL che differisce anche solo per un `/` finale o un parametro di tracciamento diventa invece un nuovo Download
-- **ricerca**: solo sul titolo, e solo lettere e cifre: un URL o un nome di file incollato non trova nulla; i 20 Download senza formato non compaiono mai
-- **"cerca prima di creare"** si soddisfa da solo: l'elenco degli ultimi Download, caricato all'apertura della pagina, sblocca "Crea via URL/Upload" prima che l'autore abbia cercato qualcosa; il riquadro di trascinamento salta la ricerca del tutto
-- **versione o variante**: nessun aiuto, il sistema riconosce solo il contenuto identico byte per byte
+- **ricerca per testo**: solo sul titolo, e solo lettere e cifre; i 20 Download senza formato non compaiono mai
+- **versione o variante**: i Download simili si trovano solo per titolo (più di metà delle parole in comune con il nome del file o dell'URL)
+- **doppioni già esistenti**: restano, finché non si potranno unire
 
 Interfaccia:
 
-- la finestra mette la creazione sopra la ricerca, e chiede di scegliere subito tra URL e upload
+- si aggiunge un Download per volta: di più file trascinati si usa solo il primo
 - la modifica sta altrove (nell'elenco dei Download dell'articolo); un co-autore dell'articolo che non ha creato il Download può eliminarlo (se l'articolo è l'ultimo a usarlo), contro la regola dei [Permessi](#permessi)
 - il formato di un Download esterno si sceglie solo tra quelli già usati
 - i lettori non vedono quando un Download è stato aggiornato

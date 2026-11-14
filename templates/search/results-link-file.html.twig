@@ -38,14 +38,54 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-sm border tli-link-file-insert-link">
-                <i class="fa-solid fa-link"></i> Crea collegamento
-            </button>
-            <button type="button" class="btn btn-sm border tli-link-file-insert-download">
-                <i class="fa-solid fa-arrow-right"></i> Inserisci link come: » Download: ...
-            </button>
+        <div class="d-flex gap-2 flex-wrap">
+            {% if Replaceable is defined and Replaceable %}
+                {% if File.isEditable %}
+                    <button type="button" class="btn btn-sm btn-outline-primary tli-link-file-replace">
+                        <i class="fa-solid fa-arrows-rotate"></i> È una nuova versione: sostituisci
+                    </button>
+                {% endif %}
+            {% else %}
+                <button type="button" class="btn btn-sm border tli-link-file-insert-link">
+                    <i class="fa-solid fa-link"></i> Usa come link sul testo
+                </button>
+                <button type="button" class="btn btn-sm border tli-link-file-insert-download">
+                    <i class="fa-solid fa-arrow-right"></i> Usa come riga » Download: ...
+                </button>
+            {% endif %}
         </div>
+
+        {% if Replaceable is defined and Replaceable and File.isEditable %}
+            {% set OtherArticles = File.Articles|filter((OtherArticle, articleId) => articleId != ArticleId) %}
+            <div class="tli-link-file-replace-confirm alert alert-warning small mt-2 mb-0 d-none"
+                 data-replace-url="{{ path('app_file_edit-replace', {'fileId': File.id}) }}?articleId={{ ArticleId }}">
+                <p class="mb-1">
+                    «{{ File.title }}» avrà la nuova versione al posto della vecchia, che verrà eliminata.
+                    ID e indirizzo restano gli stessi: ogni link al Download, ovunque sia, scaricherà la nuova versione.
+                </p>
+                {% if OtherArticles is not empty %}
+                    <p class="mb-1">Vale anche per:</p>
+                    <ul class="mb-2">
+                        {% for OtherArticle in OtherArticles %}
+                            <li>
+                                {% if OtherArticle.isReadable %}
+                                    <a href="{{ OtherArticle.url }}" target="_blank">{{ OtherArticle.title }}</a>
+                                {% else %}
+                                    {{ OtherArticle.title }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-sm btn-outline-secondary tli-link-file-replace-cancel">Annulla</button>
+                    <button type="button" class="btn btn-sm btn-primary tli-link-file-replace-ok">
+                        <i class="fa-solid fa-arrows-rotate"></i> Sì, sostituisci e inserisci nell'articolo
+                    </button>
+                </div>
+                <div class="tli-link-file-replace-error text-danger mt-2"></div>
+            </div>
+        {% endif %}
     </div>
 
 {% else %}
