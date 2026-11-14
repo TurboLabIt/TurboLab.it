@@ -10,7 +10,7 @@
  */
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
-$txtPleaseReport = $db = null;
+$txtPleaseReport = null;
 
 
 const THIS_SPECIAL_PAGE_PATH = '/ajax/logout/';
@@ -23,6 +23,10 @@ if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 }
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
+/**
+ * phpBB's globals, set by the require above
+ * @var \phpbb\user $user
+ */
 
 // after session_begin() (in 10_phpbb_start), $user is the session owner loaded from the forwarded
 // phpBB cookies. session_kill() removes the session row + (for remember-me) the autologin key.

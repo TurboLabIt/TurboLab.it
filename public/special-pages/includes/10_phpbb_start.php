@@ -6,13 +6,17 @@ define('IN_PHPBB', true);
 chdir(TLI_PROJECT_DIR . "public/forum/");
 $phpbb_root_path = './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
-$user = $auth = null;
 
 require($phpbb_root_path . 'common.' . $phpEx);
 require($phpbb_root_path . 'includes/functions_user.' . $phpEx);
 require($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
 require($phpbb_root_path . 'includes/message_parser.' . $phpEx);
 
+/**
+ * phpBB's globals, set by common.php
+ * @var \phpbb\user $user
+ * @var \phpbb\auth\auth $auth
+ */
 $user->session_begin();
 $auth->acl($user->data);
 $user->setup();

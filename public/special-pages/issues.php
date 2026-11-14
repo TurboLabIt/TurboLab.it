@@ -4,7 +4,6 @@ clear && curl --insecure -X POST -F "issue-url=https://github.com/TurboLabIt/Tur
  */
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
-$db = null;
 
 
 const THIS_SPECIAL_PAGE_PATH = "/issue-add-to-post/";

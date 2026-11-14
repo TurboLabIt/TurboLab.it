@@ -2,7 +2,6 @@
 // clear && curl --insecure -X POST -F "article-id=1939" https://dev0.turbolab.it/comments-topic-update/
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
-$db = $user = $auth = null;
 
 const THIS_SPECIAL_PAGE_PATH = "/comments-topic-update/";
 require TLI_PROJECT_DIR . 'public/special-pages/includes/00_begin.php';
@@ -35,6 +34,12 @@ foreach([$authorId, $topicId] as $idInput) {
 }
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
+/**
+ * phpBB's globals, set by the require above
+ * @var \phpbb\db\driver\driver_interface $db
+ * @var \phpbb\user $user
+ * @var \phpbb\auth\auth $auth
+ */
 
 // prepare for storage
 $message_parser = new parse_message($postBody);

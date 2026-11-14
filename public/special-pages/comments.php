@@ -10,7 +10,7 @@
  */
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
-$txtPleaseReport = $db = null;
+$txtPleaseReport = null;
 
 
 require TLI_PROJECT_DIR . 'src/Service/PhpBB/ForumUrlGenerator.php';
@@ -25,12 +25,14 @@ if( preg_match('/^[1-9]+[0-9]*$/', $topicId) !== 1 ) {
 
 
 $commentsForumId = App\Entity\PhpBB\Forum::ID_COMMENTS;
-if( preg_match('/^[1-9]+[0-9]*$/', $commentsForumId) !== 1 ) {
-    tliHtmlResponse("Errore accesso forum commenti. $txtPleaseReport", 500);
-}
 
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
+/**
+ * phpBB's globals, set by the require above
+ * @var \phpbb\db\driver\driver_interface $db
+ * @var \Symfony\Component\DependencyInjection\ContainerInterface $phpbb_container
+ */
 
 $sqlSelectTopic = '
     SELECT * FROM ' . TOPICS_TABLE . ' AS topics

@@ -13,7 +13,7 @@
  */
 
 const TLI_PROJECT_DIR = '/var/www/turbolab.it/';
-$txtPleaseReport = $db = null;
+$txtPleaseReport = null;
 
 
 const THIS_SPECIAL_PAGE_PATH = '/ajax/login/';
@@ -44,6 +44,11 @@ $rememberMe = !empty($_POST['remember-me']);
 unset($_POST['remember-me']);
 
 require TLI_PROJECT_DIR . 'public/special-pages/includes/10_phpbb_start.php';
+/**
+ * phpBB's globals, set by the require above
+ * @var \phpbb\user $user
+ * @var \phpbb\auth\auth $auth
+ */
 
 // from: public/forum/phpbb/auth/auth.php
 // sign: function login($username, $password, $autologin = false, $viewonline = 1, $admin = 0)
