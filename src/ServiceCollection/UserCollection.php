@@ -13,7 +13,7 @@ class UserCollection extends BaseServiceEntityCollection
     protected array $arrTopEmailProviders = [];
 
 
-    public function getRepository() : UserRepository { return parent::getRepository(); }
+    public function getRepository() : UserRepository { return $this->em->getRepository(UserEntity::class); }
 
 
     public function loadNewsletterTestRecipients() : static

@@ -11,7 +11,7 @@ abstract class BaseArticleCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = Article::ENTITY_CLASS;
 
-    public function getRepository() : ArticleRepository { return parent::getRepository(); }
+    public function getRepository() : ArticleRepository { return $this->em->getRepository(ArticleEntity::class); }
 
     public function createService(?ArticleEntity $entity = null) : Article { return $this->factory->createArticle($entity); }
 }

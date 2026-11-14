@@ -109,6 +109,7 @@
         "brianium/paratest": "@stable",
         "nikic/php-parser": "@stable",
         "phpstan/phpstan": "@stable",
+        "phpstan/phpstan-doctrine": "@stable",
         "phpunit/phpunit": "@stable",
         "rector/rector": "@stable",
         "symfony/browser-kit": "@stable",

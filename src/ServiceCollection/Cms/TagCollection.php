@@ -154,7 +154,7 @@ class TagCollection extends BaseServiceEntityCollection
     }
 
 
-    public function getRepository() : TagRepository { return parent::getRepository(); }
+    public function getRepository() : TagRepository { return $this->em->getRepository(TagEntity::class); }
 
     public function createService(?TagEntity $entity = null) : TagService { return $this->factory->createTag($entity); }
 }

@@ -1,3 +1,7 @@
+includes:
+    ## maps getRepository(Entity::class) to the entity's own repository class (rules.neon left out)
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+
 parameters:
     level: 5
     paths:
@@ -22,5 +26,13 @@ parameters:
         - message: '#Access to an undefined property App\\Service\\Cms\\BaseCmsService::\$entity#'
           path: src/Service/Cms/BaseCmsService.php
     excludePaths:
-        - public/forum
-        - src/Forum/ext-turbolabit/
+        ## phpBB is never analysed, but it is scanned, so the special pages see its constants, functions and classes
+        analyse:
+            - public/forum
+        ## not even scanned: phpBB's own vendor/ ships an old Symfony, which must never shadow ours
+        analyseAndScan:
+            - public/forum/vendor
+            - public/forum/ext
+            - public/forum/cache
+            - public/forum/store
+            - src/Forum/ext-turbolabit/

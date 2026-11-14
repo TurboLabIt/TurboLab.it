@@ -11,7 +11,7 @@ abstract class BaseImageCollection extends BaseServiceEntityCollection
 {
     const string ENTITY_CLASS = Image::ENTITY_CLASS;
 
-    public function getRepository() : ImageRepository { return parent::getRepository(); }
+    public function getRepository() : ImageRepository { return $this->em->getRepository(ImageEntity::class); }
 
     public function createService(?ImageEntity $entity = null) : Image { return $this->factory->createImage($entity); }
 }

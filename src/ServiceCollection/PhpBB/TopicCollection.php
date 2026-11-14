@@ -12,7 +12,7 @@ class TopicCollection extends BaseServiceEntityCollection
     const string ENTITY_CLASS = TopicService::ENTITY_CLASS;
 
 
-    public function getRepository() : TopicRepository { return parent::getRepository(); }
+    public function getRepository() : TopicRepository { return $this->em->getRepository(TopicEntity::class); }
 
 
     public function loadLatest(?int $num = null) : static

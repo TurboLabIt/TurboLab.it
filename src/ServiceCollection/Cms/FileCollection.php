@@ -103,7 +103,7 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
-    public function getRepository() : FileRepository { return $this->em->getRepository(static::ENTITY_CLASS); }
+    public function getRepository() : FileRepository { return $this->em->getRepository(FileEntity::class); }
 
     public function createService(?FileEntity $entity = null) : FileService
     {

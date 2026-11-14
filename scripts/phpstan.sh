@@ -2,5 +2,5 @@
 clear
 
 source $(dirname $(readlink -f $0))/script_begin.sh
-XDEBUG_MODE=off ${PHP_CLI} vendor/phpstan/phpstan/phpstan analyse src
+XDEBUG_MODE=off ${PHP_CLI} vendor/phpstan/phpstan/phpstan analyse
 source "${SCRIPT_DIR}/script_end.sh"
