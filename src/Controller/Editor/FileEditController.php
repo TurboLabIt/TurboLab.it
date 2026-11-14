@@ -277,12 +277,13 @@ class FileEditController extends ArticleEditBaseController
                 throw new AccessDeniedException("Questo file non è collegato all'articolo indicato");
             }
 
-            // this file is linked by 0 or 1 article ➡ delete the file directly
-            if( count($arrUsedBy) < 2 ) {
+            // the last article using it ➡ delete the file directly, if allowed: its authors and the editors.
+            // A co-author of the article who didn't create it only detaches it: the Download stays, orphaned
+            if( count($arrUsedBy) < 2 && $fileEditor->isEditable() ) {
 
                 $fileEditor->delete();
 
-            // this file is linked by 2 or more articles ➡ just detach from the current article
+            // used by other articles too, or not deletable by this user ➡ just detach from the current article
             } else {
 
                 $this->articleEditor->removeFile($fileEditor);

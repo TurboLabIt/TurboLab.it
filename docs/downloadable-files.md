@@ -71,6 +71,8 @@ L'interfaccia mostra due possibilità alternative, a seconda della situazione:
 - **Scollega** se altri articoli lo usano (un Download in uso altrove non si elimina: lascerebbe link morti nel loro testo)
 - **Elimina** se l'articolo è l'ultimo a usarlo. La conferma avvisa se il testo contiene ancora link al Download
 
+Eliminare un Download spetta ai suoi autori e agli editor (vedi [Permessi](#permessi)): un co-autore dell'articolo che non l'ha caricato vede **Scollega** anche sull'ultimo articolo, e il Download resta su TurboLab.it, non collegato a nessun articolo.
+
 
 ### Download collegati, linkati e orfani
 
@@ -84,6 +86,8 @@ Un Download è *collegato* a un articolo quando compare nel suo elenco dei Downl
 ### Unire due Download doppi
 
 Per i doppioni già esistenti e per quelli che le verifiche non intercettano: "unisci B in A" sposta su A i link e i collegamenti di B in tutti gli articoli, elimina B e fa rispondere `/scarica/B` con un redirect 301 a `/scarica/A`, così funzionano anche i link a B da fuori (come per i tag sostituiti).
+
+**Rimandato.** Una verifica sul database di produzione (novembre 2026, 488 Download) non ha trovato doppioni: nessun contenuto o URL equivalente, e i titoli simili sono varianti legittime (32/64 bit, ISO/BitTorrent, portable, edizioni diverse). Le verifiche all'inserimento impediscono quelli nuovi: si implementa se ricompaiono.
 
 
 ## Permessi
@@ -119,14 +123,12 @@ Unicità:
 
 - **ricerca per testo**: solo sul titolo, e solo lettere e cifre; i 20 Download senza formato non compaiono mai
 - **versione o variante**: i Download simili si trovano solo per titolo (più di metà delle parole in comune con il nome del file o dell'URL)
-- **doppioni già esistenti**: restano, finché non si potranno unire
+- **unire due Download**: non c'è (vedi [Unire due Download doppi](#unire-due-download-doppi)); oggi non ci sono doppioni da unire
 
 Interfaccia:
 
 - si aggiunge un Download per volta: di più file trascinati si usa solo il primo
-- un co-autore dell'articolo che non ha creato il Download può eliminarlo (se l'articolo è l'ultimo a usarlo), contro la regola dei [Permessi](#permessi)
 - il formato di un Download esterno si sceglie solo tra quelli già usati
-- non si possono unire due Download doppi
 
 
 ## 🔗 Vedi anche

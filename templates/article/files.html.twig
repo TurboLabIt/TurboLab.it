@@ -10,9 +10,11 @@
     {% for File in Article.Files %}
 
         {% if Article.isEditable %}
-            {# the server deletes a file used only by this article, otherwise it just detaches it #}
+            {# the server deletes a file used only by this article (if FileDeletable), otherwise it just detaches it #}
             {% set OtherArticles    = File.Articles|filter((OtherArticle, articleId) => articleId != Article.id) %}
             {% set OtherArticlesNum = OtherArticles|length %}
+            {# deleting is for its authors and the editors: anyone else, on the last article, only detaches it #}
+            {% set FileDeletable    = OtherArticlesNum == 0 and File.isEditable %}
         {% endif %}
 
         <div class="mb-20 tli-file-download"
@@ -81,9 +83,9 @@
                             </button>
                         {% endif %}
 
-                        {% if OtherArticlesNum > 0 %}
+                        {% if not FileDeletable %}
                             <button type="button" class="tli-file-action tli-delete-file"
-                                    title="Scollega il file da questo articolo: resta disponibile negli altri articoli che lo usano">
+                                    title="{% if OtherArticlesNum > 0 %}Scollega il file da questo articolo: resta disponibile negli altri articoli che lo usano{% else %}Scollega il file da questo articolo: resta su TurboLab.it{% endif %}">
                                 <i class="fa-solid fa-link-slash"></i><span>Scollega</span>
                             </button>
                         {% else %}
@@ -105,6 +107,9 @@
                         {% if OtherArticlesNum > 0 %}
                             <strong>«{{ File.title }}»</strong> verrà scollegato da questo articolo, ma resterà disponibile
                             {% if OtherArticlesNum == 1 %}nell'altro articolo che lo usa:{% else %}negli altri {{ OtherArticlesNum }} articoli che lo usano:{% endif %}
+                        {% elseif not FileDeletable %}
+                            <strong>«{{ File.title }}»</strong> verrà scollegato da questo articolo.
+                            Non l'hai caricato tu, quindi resterà su TurboLab.it: potranno eliminarlo chi l'ha caricato o lo staff.
                         {% else %}
                             <strong>«{{ File.title }}»</strong> verrà eliminato definitivamente da TurboLab.it.
                         {% endif %}
@@ -129,7 +134,7 @@
                     <p class="tli-file-delete-confirm-links d-none">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <span class="tli-file-links-num-text"></span>
-                        {% if OtherArticlesNum > 0 %}
+                        {% if not FileDeletable %}
                             altrimenti il file tornerà collegato a questo articolo al prossimo salvataggio, o comunque entro qualche ora.
                         {% else %}
                             altrimenti chi legge troverà un download che non funziona.
@@ -141,7 +146,7 @@
                     <div class="d-flex justify-content-end gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary tli-file-delete-cancel">Annulla</button>
                         <button type="button" class="btn btn-sm btn-danger tli-file-delete-ok">
-                            {% if OtherArticlesNum > 0 %}
+                            {% if not FileDeletable %}
                                 <i class="fa-solid fa-link-slash"></i> Sì, scollega
                             {% else %}
                                 <i class="fa-solid fa-trash-can"></i> Sì, elimina

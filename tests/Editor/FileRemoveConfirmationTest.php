@@ -4,6 +4,7 @@ namespace App\Tests\Editor;
 use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\ArticleAuthor;
 use App\Entity\Cms\ArticleFile;
+use App\Entity\Cms\FileAuthor;
 use App\Entity\Cms\File as FileEntity;
 use App\Entity\PhpBB\User as UserEntity;
 use App\Service\Cms\Article;
@@ -67,10 +68,27 @@ class FileRemoveConfirmationTest extends BaseT
     }
 
 
+    /** On the last article too, deleting is for the Download's authors and the editors: anyone else detaches it */
+    public function testOnlyDetachForACoAuthorWhoDidNotCreateTheFile() : void
+    {
+        static::loginAsSystem();
+
+        $html = $this->renderDownloadableFiles([], false);
+
+        $this->assertStringContainsString("Non l'hai caricato tu, quindi resterà su TurboLab.it", $html);
+        $this->assertStringContainsString('Sì, scollega', $html);
+        $this->assertStringNotContainsString('verrà eliminato definitivamente', $html);
+        $this->assertStringNotContainsString('Sì, elimina', $html);
+    }
+
+
     //<editor-fold defaultstate="collapsed" desc="*** 🧰 fixtures ***">
 
-    /** The downloads box of a draft System authors, with one external file also attached to $otherArticles */
-    private function renderDownloadableFiles(array $otherArticles) : string
+    /**
+     * The downloads box of a draft System authors, with one external file also attached to $otherArticles.
+     * System is not an editor: whether it may delete the file depends on $fileAuthoredBySystem
+     */
+    private function renderDownloadableFiles(array $otherArticles, bool $fileAuthoredBySystem = true) : string
     {
         $current = $this->buildArticle(PHP_INT_MAX - 1, 'Articolo corrente', Article::PUBLISHING_STATUS_DRAFT, true);
 
@@ -80,6 +98,12 @@ class FileRemoveConfirmationTest extends BaseT
                 ->setTitle('File di prova')
                 ->setFormat('zip')
                 ->setUrl('https://example.com/file-di-prova.zip');
+
+        if($fileAuthoredBySystem) {
+            $file->addAuthor(
+                (new FileAuthor())->setUser( static::getEntityManager()->find(UserEntity::class, User::ID_SYSTEM) )
+            );
+        }
 
         foreach([$current, ...$otherArticles] as $article) {
             $file->addArticle( (new ArticleFile())->setArticle($article) );
