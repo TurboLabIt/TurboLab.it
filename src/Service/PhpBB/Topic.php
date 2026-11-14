@@ -105,7 +105,7 @@ class Topic extends BaseServiceEntity
 
     public function getLastPostDateTime() : DateTime
     {
-        $oDateTime = DateTime::createFromFormat('U', $this->entity->getLastPostTime());
+        $oDateTime = DateTime::createFromTimestamp( $this->entity->getLastPostTime() );
         $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
         return $oDateTime;
     }

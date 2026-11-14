@@ -680,7 +680,7 @@ class ArticleRepository extends BaseRepository
         for($i=0; $i < 2; $i++) {
 
             $arrQueryParams = $arrParams[$i];
-            $sqlQuery .= str_replace( array_keys($arrQueryParams), $arrQueryParams, $sqlQueryTemplate);
+            $sqlQuery .= strtr($sqlQueryTemplate, $arrQueryParams);
 
             if( $i == 0 ) {
                 $sqlQuery .= 'UNION';

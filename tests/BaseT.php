@@ -278,9 +278,8 @@ abstract class BaseT extends WebTestCase
     {
         $aNodes = $crawler->filter('a');
         $arrCheckedHrefs = [];
-        foreach($aNodes as $a) {
+        foreach($aNodes->extract(['href']) as $href) {
 
-            $href = $a->getAttribute("href");
             if( empty($href) || empty(trim($href)) ) {
                 continue;
             }
@@ -366,9 +365,8 @@ abstract class BaseT extends WebTestCase
     protected function internalImagesChecker(Crawler $crawler) : static
     {
         $imgNodes = $crawler->filter('img');
-        foreach($imgNodes as $img) {
+        foreach($imgNodes->extract(['src']) as $src) {
 
-            $src = $img->getAttribute("src");
             $this->assertNotEmpty($src);
 
             $siteUrl = trim('https://' . $_ENV["APP_SITE_DOMAIN"], '/');
@@ -423,7 +421,7 @@ abstract class BaseT extends WebTestCase
 
             $li = $paginator->filter('.' . $class);
             $this->assertTrue(
-                $li->getNode(0)->hasAttribute('class') &&
+                $li->attr('class') !== null &&
                 in_array('disabled', explode(' ', $li->attr('class')))
             );
 
@@ -437,7 +435,7 @@ abstract class BaseT extends WebTestCase
 
             $li = $paginator->filter('.' . $class);
             $this->assertTrue(
-                $li->getNode(0)->hasAttribute('class') &&
+                $li->attr('class') !== null &&
                 !in_array('disabled', explode(' ', $li->attr('class')))
             );
 
@@ -470,7 +468,7 @@ abstract class BaseT extends WebTestCase
 
                 $li = $paginator->filter('.' . $class);
                 $this->assertTrue(
-                    $li->getNode(0)->hasAttribute('class') &&
+                    $li->attr('class') !== null &&
                     !in_array('disabled', explode(' ', $li->attr('class')))
                 );
 
@@ -491,7 +489,7 @@ abstract class BaseT extends WebTestCase
 
                 $li = $paginator->filter('.' . $class);
                 $this->assertTrue(
-                    $li->getNode(0)->hasAttribute('class') &&
+                    $li->attr('class') !== null &&
                     !in_array('disabled', explode(' ', $li->attr('class')))
                 );
 
@@ -522,7 +520,7 @@ abstract class BaseT extends WebTestCase
 
             $li = $paginator->filter('.' . $class);
             $this->assertTrue(
-                $li->getNode(0)->hasAttribute('class') &&
+                $li->attr('class') !== null &&
                 !in_array('disabled', explode(' ', $li->attr('class')))
             );
 
@@ -542,7 +540,7 @@ abstract class BaseT extends WebTestCase
 
             $li = $paginator->filter('.' . $class);
             $this->assertTrue(
-                $li->getNode(0)->hasAttribute('class') &&
+                $li->attr('class') !== null &&
                 in_array('disabled', explode(' ', $li->attr('class')))
             );
 

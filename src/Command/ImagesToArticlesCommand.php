@@ -52,7 +52,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->loadAllArticles();
+        $this->loadAllArticles($this->articles);
 
         $this->fxTitle("🔬 Scanning each article text to determine which images it actually uses....");
         $this->processItems($this->articles, [$this, 'scanOneArticle']);

@@ -23,7 +23,7 @@ class GitHub
 
     public function createIssue(string $issueTitle, string $issueBody) : array
     {
-        $endpointUrl = static::API_BASE_URL . 'repos/' . $this->arrConfig["github"]["path"] . '/issues';
+        $endpointUrl = self::API_BASE_URL . 'repos/' . $this->arrConfig["github"]["path"] . '/issues';
 
         $arrPayload = [
             'title' => $this->getEnvTag() . $issueTitle,

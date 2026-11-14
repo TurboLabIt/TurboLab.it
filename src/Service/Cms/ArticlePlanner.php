@@ -5,6 +5,7 @@ use App\Service\Factory;
 use App\Service\Mailer;
 use App\ServiceCollection\Cms\ArticleCollection;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 
 
@@ -75,7 +76,7 @@ class ArticlePlanner
     }
 
 
-    protected function publishOnDate(ArticleEditor $article, DateTime $publishingDate) : static
+    protected function publishOnDate(ArticleEditor $article, DateTimeInterface $publishingDate) : static
     {
         $article
             ->setPublishingStatus(ArticleEditor::PUBLISHING_STATUS_PUBLISHED)
@@ -212,7 +213,7 @@ class ArticlePlanner
             return false;
         }
 
-        $easter = DateTime::createFromFormat('U', easter_date($date->format('Y')));
+        $easter = DateTime::createFromTimestamp( easter_date( (int)$date->format('Y') ) );
         $easter->setTimezone(new DateTimeZone('Europe/Rome'));
         $easterMonday = (clone $easter)->modify('next monday');
 

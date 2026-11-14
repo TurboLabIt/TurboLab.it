@@ -110,15 +110,13 @@ class ArticleTest extends BaseT
         // YouTube
         $iframes = $crawler->filter('iframe');
         $countYouTubeIframe = 0;
-        foreach($iframes as $iframe) {
+        foreach($iframes->extract(['src', 'allowfullscreen']) as [$src, $allowFullScreen]) {
 
-            $src = $iframe->getAttribute("src");
             if( stripos($src, 'youtube-nocookie.com/embed') !== false ) {
                 $countYouTubeIframe++;
             }
 
-            $width = $iframe->getAttribute("allowfullscreen");
-            $this->assertEquals('allowfullscreen', $width, "YouTube embed: missing attrib \"allowfullscreen\"");
+            $this->assertEquals('allowfullscreen', $allowFullScreen, "YouTube embed: missing attrib \"allowfullscreen\"");
         }
 
         $this->assertGreaterThanOrEqual(2, $countYouTubeIframe);
@@ -128,7 +126,7 @@ class ArticleTest extends BaseT
         $arrExpectedNodes = [1 => 'strong', 2 => 'em', 3 => 's', 4 => 'code',  5 => 'ins'];
         foreach($arrExpectedNodes as $index => $expectedTagName) {
 
-            $nodeTagName = $formattingStylesOl->getNode($index - 1)->firstChild->tagName;
+            $nodeTagName = $formattingStylesOl->getNode($index - 1)->firstChild->nodeName;
             $this->assertEquals($expectedTagName, $nodeTagName);
         }
 

@@ -40,7 +40,7 @@ trait phpBBCookiesAuthenticatorTrait
             static::COOKIE_NO_REMEMBER_ME_WORKAROUND, $cookieSecret, [
                 'expires'   => 0,       // expires at the end of the session
                 'path'      => '/',
-                'domain'    => null,    // "this domain only, no subdomains"
+                'domain'    => '',      // "this domain only, no subdomains"
                 'secure'    => true,
                 'httponly'  => true,
                 'samesite'  => 'Strict'

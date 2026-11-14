@@ -355,7 +355,7 @@ class ArticleEditor extends Article
     public function addFile(File|FileEntity $file, User $author) : static
     {
         $fileEntity     = $file instanceof File ? $file->getEntity() : $file;
-        $authorEntity   = $author instanceof User ? $author->getEntity() : $author;
+        $authorEntity   = $author->getEntity();
 
         $this->entity->addFile(
             (new ArticleFile())
@@ -393,7 +393,7 @@ class ArticleEditor extends Article
     public function addBadge(Badge|BadgeEntity $badge, User $author) : static
     {
         $badgeEntity    = $badge instanceof Badge ? $badge->getEntity() : $badge;
-        $authorEntity   = $author instanceof User ? $author->getEntity() : $author;
+        $authorEntity   = $author->getEntity();
 
         $this->entity->addBadge(
             (new ArticleBadge())

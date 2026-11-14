@@ -31,7 +31,7 @@ class FilesHasherCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->loadAllFiles();
+        $this->loadAllFiles($this->files);
 
         $this->fxTitle("#️⃣ Hashing...");
         $this->processItems($this->files, [$this, 'hashOneFile'], null, [$this, 'buildItemTitle']);

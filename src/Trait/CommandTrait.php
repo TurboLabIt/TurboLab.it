@@ -1,6 +1,8 @@
 <?php
 namespace App\Trait;
 
+use App\ServiceCollection\Cms\ArticleCollection;
+use App\ServiceCollection\Cms\FileCollection;
 use InvalidArgumentException;
 
 trait CommandTrait
@@ -25,26 +27,24 @@ trait CommandTrait
     }
 
 
-    protected function loadAllArticles() : int
+    protected function loadAllArticles(ArticleCollection $articles) : int
     {
-        $this
-            ->fxTitle("🚚 Loading all articles from the database...")
-            ->articles->loadAll();
+        $this->fxTitle("🚚 Loading all articles from the database...");
+        $articles->loadAll();
 
-        $articlesNum = $this->articles->count();
+        $articlesNum = $articles->count();
         $this->fxOK("##$articlesNum## article(s) loaded");
 
         return $articlesNum;
     }
 
 
-    protected function loadAllFiles() : int
+    protected function loadAllFiles(FileCollection $files) : int
     {
-        $this
-            ->fxTitle("🚚 Loading all files from the database...")
-            ->files->loadAll();
+        $this->fxTitle("🚚 Loading all files from the database...");
+        $files->loadAll();
 
-        $filesNum = $this->files->count();
+        $filesNum = $files->count();
         $this->fxOK("##$filesNum## file(s) loaded");
 
         return $filesNum;

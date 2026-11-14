@@ -9,6 +9,7 @@ use App\Service\FrontendHelper;
 use App\Service\Mailer;
 use App\Service\Sentinel\ArticleSentinel;
 use DateTime;
+use DateTimeInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -110,7 +111,7 @@ abstract class ArticleEditBaseController extends BaseController
     }
 
 
-    protected function clearCachedArticle(?DateTime $previousPublishedAt = null, ?array $arrPreviousTags = null, ?array $arrPreviousAuthors = null) : static
+    protected function clearCachedArticle(?DateTimeInterface $previousPublishedAt = null, ?array $arrPreviousTags = null, ?array $arrPreviousAuthors = null) : static
     {
         $publishedAt        = $this->articleEditor->getPublishedAt();
         $arrTagsToDelete    = [];
@@ -135,7 +136,7 @@ abstract class ArticleEditBaseController extends BaseController
             }
 
             $arrArticleAuthors = array_merge($arrPreviousAuthors ?? [], $this->articleEditor->getAuthors());
-            foreach($arrArticleAuthors ?? [] as $author) {
+            foreach($arrArticleAuthors as $author) {
                 $arrTagsToDelete[] = $author->getCacheKey() . '_page_1';
             }
         }

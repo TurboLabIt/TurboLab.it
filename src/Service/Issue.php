@@ -84,7 +84,7 @@ class Issue
             throw new BadRequestHttpException("Bad post ID");
         }
 
-        /** @var PostEntity $postEntity */
+        /** @var PostEntity|false $postEntity */
         $postEntity = $this->entityManager->getRepository(PostEntity::class)->getOneById($postId);
 
         if( empty($postEntity) ) {

@@ -24,17 +24,12 @@ $arrEnvFiles =
         ".env.$realEnv.local"
     ]);
 
-if( method_exists(Dotenv::class, 'bootEnv') ) {
+foreach($arrEnvFiles as $envFile) {
 
-    foreach($arrEnvFiles as $envFile) {
-
-        if( file_exists($envFile) ) {
-            (new Dotenv())->bootEnv($envFile);
-        }
+    if( file_exists($envFile) ) {
+        (new Dotenv())->bootEnv($envFile);
     }
 }
 
 // https://github.com/symfony/symfony/issues/53812#issuecomment-1962311843
-if( method_exists(ErrorHandler::class, 'register') ) {
-    ErrorHandler::register(null, false);
-}
+ErrorHandler::register(null, false);

@@ -128,9 +128,9 @@ class ArticleNewCsrfTest extends BaseT
         $conn = $this->getConnection();
 
         $groupId = $conn->fetchOne(
-            "SELECT group_id FROM " . $this->forumTable('groups') . " WHERE group_name = ?", [static::STAFF_GROUP_NAME]
+            "SELECT group_id FROM " . $this->forumTable('groups') . " WHERE group_name = ?", [self::STAFF_GROUP_NAME]
         );
-        $this->assertNotFalse($groupId, static::STAFF_GROUP_NAME . " group not found in the forum DB");
+        $this->assertNotFalse($groupId, self::STAFF_GROUP_NAME . " group not found in the forum DB");
 
         $alreadyMember = $conn->fetchOne(
             "SELECT 1 FROM " . $this->forumTable('user_group') . " WHERE group_id = ? AND user_id = ?",
@@ -152,20 +152,20 @@ class ArticleNewCsrfTest extends BaseT
                 (session_id, session_user_id, session_last_visit, session_start, session_time,
                  session_ip, session_browser, session_forwarded_for, session_page, session_autologin)
             VALUES (?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), '127.0.0.1', 'phpunit', '', 'index.php', 1)",
-            [static::FAKE_PHPBB_SID, User::ID_SYSTEM]
+            [self::FAKE_PHPBB_SID, User::ID_SYSTEM]
         );
 
         $conn->executeStatement(
             "REPLACE INTO " . $this->forumTable('sessions_keys') . " (key_id, user_id, last_ip, last_login)
             VALUES (MD5(?), ?, '127.0.0.1', UNIX_TIMESTAMP())",
-            [static::FAKE_PHPBB_RAW_KEY, User::ID_SYSTEM]
+            [self::FAKE_PHPBB_RAW_KEY, User::ID_SYSTEM]
         );
 
         $cookieBasename = phpBBCookiesAuthenticator::COOKIE_BASENAME_PHPBB;
         $cookieJar      = static::$client->getCookieJar();
         $cookieJar->set( new Cookie($cookieBasename . 'u',   (string)User::ID_SYSTEM) );
-        $cookieJar->set( new Cookie($cookieBasename . 'sid', static::FAKE_PHPBB_SID) );
-        $cookieJar->set( new Cookie($cookieBasename . 'k',   static::FAKE_PHPBB_RAW_KEY) );
+        $cookieJar->set( new Cookie($cookieBasename . 'sid', self::FAKE_PHPBB_SID) );
+        $cookieJar->set( new Cookie($cookieBasename . 'k',   self::FAKE_PHPBB_RAW_KEY) );
     }
 
 
@@ -196,11 +196,11 @@ class ArticleNewCsrfTest extends BaseT
         );
 
         $conn->executeStatement(
-            "DELETE FROM " . $this->forumTable('sessions') . " WHERE session_id = ?", [static::FAKE_PHPBB_SID]
+            "DELETE FROM " . $this->forumTable('sessions') . " WHERE session_id = ?", [self::FAKE_PHPBB_SID]
         );
 
         $conn->executeStatement(
-            "DELETE FROM " . $this->forumTable('sessions_keys') . " WHERE key_id = MD5(?)", [static::FAKE_PHPBB_RAW_KEY]
+            "DELETE FROM " . $this->forumTable('sessions_keys') . " WHERE key_id = MD5(?)", [self::FAKE_PHPBB_RAW_KEY]
         );
 
         if( $this->groupMembershipAdded ) {
@@ -208,7 +208,7 @@ class ArticleNewCsrfTest extends BaseT
             $conn->executeStatement(
                 "DELETE ug FROM " . $this->forumTable('user_group') . " ug
                 INNER JOIN " . $this->forumTable('groups') . " g ON g.group_id = ug.group_id
-                WHERE g.group_name = ? AND ug.user_id = ?", [static::STAFF_GROUP_NAME, User::ID_SYSTEM]
+                WHERE g.group_name = ? AND ug.user_id = ?", [self::STAFF_GROUP_NAME, User::ID_SYSTEM]
             );
         }
 

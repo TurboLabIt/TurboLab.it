@@ -245,18 +245,6 @@ class User extends BaseServiceEntity
     }
 
 
-    public function getArticlesUpcoming() : BaseArticleCollection
-    {
-        if( array_key_exists('upcoming', $this->arrArticlesCollections) ) {
-            return $this->arrArticlesCollections['upcoming'];
-        }
-
-        return
-            $this->arrArticlesCollections['upcoming'] =
-                $this->factory->createArticleAuthorCollection($this)->loadUpcoming();
-    }
-
-
     public function getArticlesKo() : BaseArticleCollection
     {
         if( array_key_exists('ko', $this->arrArticlesCollections) ) {

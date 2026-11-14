@@ -61,9 +61,8 @@ class NewsletterTest extends BaseT
 
         $url = $this->getPreviewUrl();
         $links = $this->fetchDomNode($url, 'body')->filter('a');
-        foreach($links as $link) {
+        foreach($links->extract(['href']) as $href) {
 
-            $href = $link->getAttribute('href');
             if( stripos($href, 'newsletter/disiscrizione') === false ) {
                 continue;
             }
@@ -92,9 +91,8 @@ class NewsletterTest extends BaseT
         $firstSubscribeUrl = null;
 
         $links = $this->fetchDomNode($unsubscribeUrl, 'body')->filter('a');
-        foreach($links as $link) {
+        foreach($links->extract(['href']) as $href) {
 
-            $href = $link->getAttribute('href');
             if( stripos($href, 'newsletter/iscrizione') !== false ) {
 
                 if( empty($firstSubscribeUrl) ) {

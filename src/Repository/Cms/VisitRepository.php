@@ -74,10 +74,10 @@ class VisitRepository extends BaseRepository
                 ->setIpAddress($ipAddress)
                 ->setUser($userEntity);
 
-        match( $entity->getClass() ) {
-            Article::TLI_CLASS  => $visitEntity->setArticle($entity),
-            Tag::TLI_CLASS      => $visitEntity->setTag($entity),
-            File::TLI_CLASS     => $visitEntity->setFile($entity),
+        match(true) {
+            $entity instanceof Article  => $visitEntity->setArticle($entity),
+            $entity instanceof Tag      => $visitEntity->setTag($entity),
+            $entity instanceof File     => $visitEntity->setFile($entity),
         };
 
         return $visitEntity;

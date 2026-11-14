@@ -55,7 +55,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->loadAllArticles();
+        $this->loadAllArticles($this->articles);
 
         $this->fxTitle("🔬 Scanning each article text to determine which files it actually uses....");
         $this->processItems($this->articles, [$this, 'scanOneArticle']);
@@ -69,7 +69,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $junctionsNum = count($junctions);
         $this->fxOK("##$junctionsNum## junctions(s) loaded");
 
-        $this->loadAllFiles();
+        $this->loadAllFiles($this->files);
 
         $this->fxTitle("🚮 Deleting unused junctions....");
         $this->processItems($junctions, [$this, 'deleteOneJunctionIfUnused']);

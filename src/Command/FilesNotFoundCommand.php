@@ -48,7 +48,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     {
         parent::execute($input, $output);
 
-        $this->loadAllFiles();
+        $this->loadAllFiles($this->files);
 
         $this->fxTitle('🔍 Scanning the file system...');
         $this->filesUploadDir = $this->projectDir->getVarDir(File::UPLOADED_FILES_FOLDER_NAME);
