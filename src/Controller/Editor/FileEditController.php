@@ -185,11 +185,7 @@ class FileEditController extends ArticleEditBaseController
 
                 // a local file's format was its extension: the author picks (or confirms) the one of the URL
                 $format = trim( (string)$this->request->request->get('format', '') );
-                if( $format !== '' ) {
-                    $this->fileEditor->setFormat($format);
-                }
-
-                $this->fileEditor->replaceWithUrl($url);
+                $this->fileEditor->replaceWithUrl($url, $format === '' ? null : $format);
 
             } else {
 

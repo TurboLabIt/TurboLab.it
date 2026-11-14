@@ -107,13 +107,18 @@ class FileEditor extends File
     }
 
 
-    // A new version of the Download, from an external URL: same ID, same title and format
-    public function replaceWithUrl(string $url) : static
+    // A new version of the Download, from an external URL: same ID and title; the format only if given
+    public function replaceWithUrl(string $url, ?string $format = null) : static
     {
         $this->enforceSourceNotUsedElsewhere( $this->factory->createFileCollection()->loadByEquivalentUrl($url) );
 
+        // before the format changes: a local file's path is "{id}.{format}"
         $previousFilePath       = $this->isLocal() ? $this->getOriginalFilePath() : null;
         $this->previousFilePath = null;
+
+        if( !empty($format) ) {
+            $this->setFormat($format);
+        }
 
         $this
             ->setExternalDownloadUrl($url)

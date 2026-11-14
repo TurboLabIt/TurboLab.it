@@ -60,11 +60,13 @@ class FileReplaceTest extends BaseT
         $oldPath    = $file->getOriginalFilePath();
         $url        = 'https://example.com/' . uniqid(self::FIXTURE_TITLE_PREFIX) . '.zip';
 
-        $this->reload($fileId)->replaceWithUrl($url);
+        // a new format too: the old file's path ("{id}.zip") must be worked out before it changes
+        $this->reload($fileId)->replaceWithUrl($url, 'google play (app store)');
 
         $replaced = $this->reload($fileId);
 
         $this->assertTrue( $replaced->isExternal() );
+        $this->assertSame( 'google play (app store)', $replaced->getFormat() );
         $this->assertSame( $url, $replaced->getExternalDownloadUrl() );
         $this->assertSame( md5($url), $replaced->getHash() );
         $this->assertFileDoesNotExist($oldPath, "Becoming external, the local file must be deleted");
