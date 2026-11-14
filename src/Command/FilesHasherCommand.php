@@ -1,7 +1,6 @@
 <?php
 namespace App\Command;
 
-use App\Service\Entity\File as FileEntity;
 use App\Service\Cms\FileEditor;
 use App\ServiceCollection\Cms\FileEditorCollection;
 use App\Trait\CommandTrait;
