@@ -43,7 +43,7 @@
 
                         {% if File.format is not empty %}Formato: <code>{{ File.format }}</code> | {% endif %}
                         {% if File.sizeLabel is not empty %}{{ File.sizeLabel }} | {% endif %}
-                        <i class="fa-regular fa-calendar"></i> Aggiornato il {{ File.sourceUpdatedAt|date('d/m/Y') }}
+                        <i class="fa-regular fa-calendar"></i> Aggiornato il {{ File.updatedAt|date('d/m/Y') }}
                         <br>
 
                         <i class="fa-solid fa-flask-vial"></i>

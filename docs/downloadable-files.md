@@ -98,7 +98,7 @@ Gli editor possono modificare gli articoli di tutti e gestire i Download di tutt
 
 Database:
 
-- `file`: `title` (UNIQUE), `format`, `url` (vuoto = file locale), `hash` (UNIQUE: md5 del contenuto per i file locali, dell'URL per quelli esterni), `source_updated_at` (la data dell'ultimo aggiornamento mostrata ai lettori), `views`
+- `file`: `title` (UNIQUE), `format`, `url` (vuoto = file locale), `hash` (UNIQUE: md5 del contenuto per i file locali, dell'URL per quelli esterni), `views`, `updated_at` (la data dell'ultimo aggiornamento mostrata ai lettori)
 - `file_author`: chi ha creato il Download
 - `article_file`: gli articoli che usano il Download (+ `user_id`: chi l'ha collegato)
 
@@ -107,7 +107,6 @@ Backend:
 - `/scarica/{id}` ([FileController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/FileController.php)): un file locale è servito via X-Sendfile da `var/uploaded-assets/files/{id}.{formato}` e scaricato come `titolo.formato`; un URL esterno risponde con un redirect 302. Il Download eredita la visibilità dagli articoli che lo usano; lo modificano i suoi autori e gli editor ([FileSentinel](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Sentinel/FileSentinel.php))
 - nel testo degli articoli il link è salvato come segnaposto `==###file::id::{id}###==` e mostrato come `/scarica/{id}`: la permanenza dei link (obiettivo 1) c'è già
 - [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): verifica (`lookup`: stesso contenuto, URL equivalente, titoli simili), upload, creazione da URL, sostituzione della sorgente (`replace`, sia dalla finestra "Aggiungi un Download" sia da **Modifica**), modifica (solo titolo e formato: un nuovo file o URL passa sempre da `replace`, con le sue verifiche), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
-- `source_updated_at` si aggiorna quando cambia l'`hash`, cioè esattamente quando cambia la sorgente (`Entity\Cms\File::setHash()`): un cambio di titolo o di formato non lo sposta, a differenza di `updated_at`. Per i Download creati prima della colonna vale `created_at` se locali (non si potevano sostituire), `updated_at` se esterni (l'URL si poteva modificare)
 - un URL esterno può essere un indirizzo web, un magnet BitTorrent o un link ed2k (`File::isValidExternalUrl()`). La normalizzazione per il confronto è `File::normalizeUrlForMatching()`; creando da un URL equivalente a uno esistente, il server riusa il Download esistente
 - salvare un articolo collega ogni Download linkato nel testo (solo aggiunte); [uploaded-assets-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/uploaded-assets-maintenance.sh) fa lo stesso ogni 3 ore con `FilesToArticles` (la rimozione dei collegamenti inutilizzati è disattivata: [#101](https://github.com/TurboLabIt/TurboLab.it/issues/101)), più `FilesHasher` (ricalcola gli hash) e `FilesNotFound` (file mancanti su disco o nel database). I risultati sono in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare)
 

@@ -1,7 +1,6 @@
 <?php
 namespace App\Service\Cms;
 
-use DateTime;
 use App\Entity\Cms\File as FileEntity;
 use App\Exception\FileLogicException;
 use App\Exception\FileNotFoundException;
@@ -89,9 +88,6 @@ class File extends BaseCmsService
     public function getExternalDownloadUrl() : ?string { return $this->entity->getUrl(); }
 
     public function isLocal() : bool { return empty( $this->getExternalDownloadUrl() ); }
-
-    // when the file or the URL last changed (a rename doesn't count): shown to readers
-    public function getSourceUpdatedAt() : ?DateTime { return $this->entity->getSourceUpdatedAt(); }
 
     public function isExternal() : bool { return !$this->isLocal(); }
 

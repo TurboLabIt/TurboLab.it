@@ -14,11 +14,10 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 /**
  * A Download is permanent (docs/downloadable-files.md): "Sostituisci" swaps its file or URL and keeps its ID, so
  * every link follows. The old local file goes away, the date shown to readers moves, and a source that is already
- * another Download is refused (one item, one Download). A rename is not a new version: the date stays.
+ * another Download is refused (one item, one Download).
  *
  * @see \App\Service\Cms\FileEditor::replaceWithUploadedFile()
  * @see \App\Service\Cms\FileEditor::replaceWithUrl()
- * @see \App\Entity\Cms\File::setHash()
  */
 class FileReplaceTest extends BaseT
 {
@@ -117,22 +116,6 @@ class FileReplaceTest extends BaseT
     }
 
 
-    public function testRenameKeepsTheSourceDate() : void
-    {
-        static::loginAsSystem();
-
-        $fileId = $this->createExternalFile()->getId();
-
-        $this->reload($fileId)
-            ->setTitle( uniqid(self::FIXTURE_TITLE_PREFIX . 'renamed-') )
-            ->setFormat('iso')
-            ->save();
-
-        $this->assertSame( self::OLD_DATE, $this->reload($fileId)->getSourceUpdatedAt()->format('Y-m-d H:i:s'),
-            "A rename is not a new version: the date shown to readers must not move" );
-    }
-
-
     public function testModificaNoLongerChangesTheUrl() : void
     {
         static::loginAsSystem();
@@ -215,7 +198,7 @@ class FileReplaceTest extends BaseT
         $this->arrFileIds[] = $fileId = $file->getId();
 
         static::getEntityManager()->getConnection()->executeStatement(
-            'UPDATE file SET source_updated_at = :date WHERE id = :id', ['date' => self::OLD_DATE, 'id' => $fileId]
+            'UPDATE file SET updated_at = :date WHERE id = :id', ['date' => self::OLD_DATE, 'id' => $fileId]
         );
 
         static::ensureKernelShutdown();
@@ -242,7 +225,7 @@ class FileReplaceTest extends BaseT
 
     private function assertSourceDateMoved(FileEditor $file) : void
     {
-        $this->assertGreaterThan( self::OLD_DATE, $file->getSourceUpdatedAt()->format('Y-m-d H:i:s'),
+        $this->assertGreaterThan( self::OLD_DATE, $file->getUpdatedAt()->format('Y-m-d H:i:s'),
             "A new version must move the date shown to readers" );
     }
     //</editor-fold>
