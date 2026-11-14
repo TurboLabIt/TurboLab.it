@@ -7,6 +7,7 @@ use App\Trait\TitleableEntityTrait;
 use App\Trait\ViewableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use SortDirection;
 
@@ -17,13 +18,18 @@ class File extends BaseCmsEntity
     const string TLI_CLASS = 'file';
     const int FORMAT_MAX_LENGTH = 50;
 
-    use TitleableEntityTrait, ViewableEntityTrait, HashableEntityTrait;
+    use TitleableEntityTrait, ViewableEntityTrait;
+    use HashableEntityTrait { setHash as protected setHashValue; }
 
     #[ORM\Column(length: self::FORMAT_MAX_LENGTH, nullable: true)]
     protected ?string $format = null;
 
     #[ORM\Column(length: 2500, nullable: true)]
     protected ?string $url = null;
+
+    // when the file or the URL last changed, shown to readers: updatedAt moves on a rename too
+    #[ORM\Column]
+    protected ?DateTime $sourceUpdatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'file', targetEntity: FileAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
@@ -39,6 +45,20 @@ class File extends BaseCmsEntity
         $this->authors  = new ArrayCollection();
         $this->articles = new ArrayCollection();
     }
+
+
+    // the hash is the md5 of the content (local) or of the URL (external): it changes exactly when the source does
+    public function setHash(string $hash) : static
+    {
+        if( $hash !== $this->hash ) {
+            $this->sourceUpdatedAt = new DateTime();
+        }
+
+        return $this->setHashValue($hash);
+    }
+
+
+    public function getSourceUpdatedAt() : ?DateTime { return $this->sourceUpdatedAt; }
 
 
     public function getFormat() : ?string { return $this->format; }

@@ -29,48 +29,69 @@
                 <div class="form-text">🛍️ Se il file è ospitato da un "app store", selezionalo dalla lista.</div>
             {% endif %}
         </div>
-        {#
-        <div class="mb-3">
-
-            <label class="form-label">Modalità di erogazione</label>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="file-hosting-mode" id="tli-file-hosting-mode-local"
-                       {% if File.isLocal %}checked{% endif %} required>
-                <label class="form-check-label" for="file-hosting-mode-local">Locale (file caricato direttamente su TurboLab.it)</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="file-hosting-mode" id="tli-file-hosting-mode-remote"
-                       {% if not File.isLocal %}checked{% endif %} required>
-                <label class="form-check-label" for="file-hosting-mode-remote">Esterno (file ospitato altrove)</label>
-            </div>
-
-            <div class="form-text">
-                Modalità attuale:
-                <strong>
-                    {% if File.isLocal %}
-                        locale (<code>{{ File.url }}</code>)
-                    {% else %}
-                        remoto (<code>{{ File.externalDownloadUrl }}</code>)
-                    {% endif %}
-                </strong>
-            </div>
-
-        </div>
-        #}
-
-        {% if File.isExternal %}
-        <div class="mb-3 {% if File.isLocal %}d-none{% endif %}">
-            <label for="tli-file-remote-url" class="form-label">URL remoto</label>
-            <input type="text" name="remote-url" id="tli-file-remote-url" class="form-control"
-                   {% if not File.isLocal %}required{% endif %} value="{{ File.externalDownloadUrl }}">
-        </div>
-        {% endif %}
-
         <div class="alert alert-danger tli-file-error tli-edit-file-error d-none"></div>
 
     </form>
+
+    {% set OtherArticles = File.Articles|filter((OtherArticle, articleId) => articleId != Article.id) %}
+
+    {# a new version: same ID, same address, every link follows. The frontend handles the source and the request #}
+    <div class="tli-file-replace border-top pt-3"
+         data-replace-url="{{ path('app_file_edit-replace', {'fileId': File.id}) }}?articleId={{ Article.id }}">
+
+        <h6><i class="fa-solid fa-arrows-rotate"></i> Sostituisci con una nuova versione</h6>
+
+        <div class="input-group">
+            <input type="text" class="form-control tli-file-replace-url"
+                   placeholder="Incolla il nuovo URL, oppure scegli o trascina qui il nuovo file">
+            <button class="btn btn-outline-primary tli-file-replace-pick" type="button">
+                <i class="fa-solid fa-upload"></i> Scegli file...
+            </button>
+        </div>
+        <input type="file" class="d-none tli-file-replace-input">
+        <div class="form-text">
+            Il Download resta lo stesso, con lo stesso indirizzo: ogni link, in tutti gli articoli, scaricherà la nuova versione.
+            {% if File.isLocal %}Il file attuale verrà eliminato.{% endif %}
+        </div>
+
+        <div class="tli-file-replace-confirm d-none mt-2 p-3 border border-2 border-danger rounded bg-danger-subtle">
+
+            <p class="mb-2 text-danger-emphasis">
+                <strong>«{{ File.title }}»</strong> sarà sostituito da <strong class="tli-file-replace-source-name text-break"></strong>
+                {% if OtherArticles is empty %}
+                    in questo articolo.
+                {% else %}
+                    in questo articolo e
+                    {% if OtherArticles|length == 1 %}nell'altro articolo che lo usa:{% else %}negli altri {{ OtherArticles|length }} articoli che lo usano:{% endif %}
+                {% endif %}
+            </p>
+
+            {% if OtherArticles is not empty %}
+                <ul class="mb-2">
+                    {% for OtherArticle in OtherArticles %}
+                        {# the title is masked where the viewer can't list the article: link only what they can open #}
+                        <li>
+                            {% if OtherArticle.isReadable %}
+                                <a href="{{ OtherArticle.url }}" target="_blank">{{ OtherArticle.title }}</a>
+                            {% else %}
+                                {{ OtherArticle.title }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <p class="tli-file-error tli-file-replace-error alert alert-danger d-none"></p>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary tli-file-replace-cancel">Annulla</button>
+                <button type="button" class="btn btn-sm btn-danger tli-file-replace-ok">
+                    <i class="fa-solid fa-arrows-rotate"></i> Sì, sostituisci
+                </button>
+            </div>
+        </div>
+
+    </div>
 
 </div>
 

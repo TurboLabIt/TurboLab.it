@@ -41,10 +41,10 @@
 
                     <span class="tli-author-articles-counter">
 
-                        {% if File.format is not empty %}Formato: <code>{{ File.format }}</code>{% endif %}
-                        {% if File.format is not empty and File.sizeLabel is not empty %} | {% endif %}
-                        {% if File.sizeLabel is not empty %}{{ File.sizeLabel }}{% endif %}
-                        {% if File.format is not empty or File.sizeLabel is not empty %}<br>{% endif %}
+                        {% if File.format is not empty %}Formato: <code>{{ File.format }}</code> | {% endif %}
+                        {% if File.sizeLabel is not empty %}{{ File.sizeLabel }} | {% endif %}
+                        <i class="fa-regular fa-calendar"></i> Aggiornato il {{ File.sourceUpdatedAt|date('d/m/Y') }}
+                        <br>
 
                         <i class="fa-solid fa-flask-vial"></i>
                         Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
@@ -75,7 +75,7 @@
 
                         {% if File.isEditable %}
                             <button type="button" class="tli-file-action tli-open-edit-file"
-                                    title="Modifica titolo e dettagli del file"
+                                    title="Modifica il Download o sostituiscilo con una nuova versione"
                                     data-tli-modal-url="{{ path('app_file_edit-get_modal', {'fileId': File.id, 'articleId': Article.id}) }}">
                                 <i class="fa-solid fa-pen"></i><span>Modifica</span>
                             </button>

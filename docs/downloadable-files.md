@@ -98,7 +98,7 @@ Gli editor possono modificare gli articoli di tutti e gestire i Download di tutt
 
 Database:
 
-- `file`: `title` (UNIQUE), `format`, `url` (vuoto = file locale), `hash` (UNIQUE: md5 del contenuto per i file locali, dell'URL per quelli esterni), `views`
+- `file`: `title` (UNIQUE), `format`, `url` (vuoto = file locale), `hash` (UNIQUE: md5 del contenuto per i file locali, dell'URL per quelli esterni), `source_updated_at` (la data dell'ultimo aggiornamento mostrata ai lettori), `views`
 - `file_author`: chi ha creato il Download
 - `article_file`: gli articoli che usano il Download (+ `user_id`: chi l'ha collegato)
 
@@ -106,18 +106,15 @@ Backend:
 
 - `/scarica/{id}` ([FileController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/FileController.php)): un file locale è servito via X-Sendfile da `var/uploaded-assets/files/{id}.{formato}` e scaricato come `titolo.formato`; un URL esterno risponde con un redirect 302. Il Download eredita la visibilità dagli articoli che lo usano; lo modificano i suoi autori e gli editor ([FileSentinel](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Sentinel/FileSentinel.php))
 - nel testo degli articoli il link è salvato come segnaposto `==###file::id::{id}###==` e mostrato come `/scarica/{id}`: la permanenza dei link (obiettivo 1) c'è già
-- [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): verifica (`lookup`: stesso contenuto, URL equivalente, titoli simili), upload, creazione da URL, sostituzione della sorgente (`replace`), modifica (titolo, formato, URL esterno), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
+- [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): verifica (`lookup`: stesso contenuto, URL equivalente, titoli simili), upload, creazione da URL, sostituzione della sorgente (`replace`, sia dalla finestra "Aggiungi un Download" sia da **Modifica**), modifica (solo titolo e formato: un nuovo file o URL passa sempre da `replace`, con le sue verifiche), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
+- `source_updated_at` si aggiorna quando cambia l'`hash`, cioè esattamente quando cambia la sorgente (`Entity\Cms\File::setHash()`): un cambio di titolo o di formato non lo sposta, a differenza di `updated_at`. Per i Download creati prima della colonna vale `created_at` se locali (non si potevano sostituire), `updated_at` se esterni (l'URL si poteva modificare)
 - un URL esterno può essere un indirizzo web, un magnet BitTorrent o un link ed2k (`File::isValidExternalUrl()`). La normalizzazione per il confronto è `File::normalizeUrlForMatching()`; creando da un URL equivalente a uno esistente, il server riusa il Download esistente
 - salvare un articolo collega ogni Download linkato nel testo (solo aggiunte); [uploaded-assets-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/uploaded-assets-maintenance.sh) fa lo stesso ogni 3 ore con `FilesToArticles` (la rimozione dei collegamenti inutilizzati è disattivata: [#101](https://github.com/TurboLabIt/TurboLab.it/issues/101)), più `FilesHasher` (ricalcola gli hash) e `FilesNotFound` (file mancanti su disco o nel database). I risultati sono in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare)
 
-Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/ckeditor-plugins/link-file.js) gestisce la finestra "Aggiungi un Download" e il riquadro omonimo (un file trascinato sul riquadro apre la finestra). L'hash di un file è calcolato nel browser, così la verifica non richiede di caricarlo; una ricerca superata da nuovi caratteri digitati viene annullata. [files-edit.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/files-edit.js) gestisce la modifica e Scollega/Elimina.
+Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/ckeditor-plugins/link-file.js) gestisce la finestra "Aggiungi un Download" e il riquadro omonimo (un file trascinato sul riquadro apre la finestra). L'hash di un file è calcolato nel browser, così la verifica non richiede di caricarlo; una ricerca superata da nuovi caratteri digitati viene annullata. [files-edit.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/files-edit.js) gestisce la modifica (con "Sostituisci con una nuova versione") e Scollega/Elimina. Le funzioni comuni (riconoscere un URL, dedurre titolo e formato, hash) sono in [download-source.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/download-source.js).
 
 
 ## Cosa manca rispetto agli obiettivi
-
-Permanenza:
-
-- la sostituzione c'è solo nel flusso di aggiunta, quando il sistema propone un Download simile: **Modifica** non la offre ancora, quindi un Download che il sistema non riconosce come simile non si può sostituire ([#121](https://github.com/TurboLabIt/TurboLab.it/issues/121), [#110](https://github.com/TurboLabIt/TurboLab.it/issues/110), [#111](https://github.com/TurboLabIt/TurboLab.it/issues/111)); il messaggio sul titolo duplicato chiede ancora di "aggiornare il vecchio file"
 
 Unicità:
 
@@ -128,9 +125,8 @@ Unicità:
 Interfaccia:
 
 - si aggiunge un Download per volta: di più file trascinati si usa solo il primo
-- la modifica sta altrove (nell'elenco dei Download dell'articolo); un co-autore dell'articolo che non ha creato il Download può eliminarlo (se l'articolo è l'ultimo a usarlo), contro la regola dei [Permessi](#permessi)
+- un co-autore dell'articolo che non ha creato il Download può eliminarlo (se l'articolo è l'ultimo a usarlo), contro la regola dei [Permessi](#permessi)
 - il formato di un Download esterno si sceglie solo tra quelli già usati
-- i lettori non vedono quando un Download è stato aggiornato
 - non si possono unire due Download doppi
 
 

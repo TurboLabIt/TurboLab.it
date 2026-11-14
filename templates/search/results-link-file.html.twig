@@ -31,9 +31,9 @@
                         <i class="fa-solid fa-flask-vial"></i>
                         Scaricato {{ File.views }} {% if File.views == 1 %}volta{% else %}volte{% endif %}
                     {% endif %}
-                    {% if File.updatedAt %}
+                    {% if File.sourceUpdatedAt %}
                         <span class="mx-1"></span>
-                        <i class="fa-regular fa-clock"></i> Ultimo aggiornamento: {{ File.updatedAt|friendlyDate }}
+                        <i class="fa-regular fa-clock"></i> Aggiornato il {{ File.sourceUpdatedAt|date('d/m/Y') }}
                     {% endif %}
                 </div>
             </div>

@@ -183,6 +183,12 @@ class FileEditController extends ArticleEditBaseController
                     throw new BadRequestHttpException("L'URL inserito non è valido.");
                 }
 
+                // a local file's format was its extension: the author picks (or confirms) the one of the URL
+                $format = trim( (string)$this->request->request->get('format', '') );
+                if( $format !== '' ) {
+                    $this->fileEditor->setFormat($format);
+                }
+
                 $this->fileEditor->replaceWithUrl($url);
 
             } else {
@@ -208,7 +214,7 @@ class FileEditController extends ArticleEditBaseController
             $this->loadFileEditor($fileId);
 
             return $this->json([
-                "title" => "📝 Modifica file: " . $this->fileEditor->getTitle() . " | #" . $this->fileEditor->getId(),
+                "title" => "📝 Modifica Download: " . $this->fileEditor->getTitle() . " | #" . $this->fileEditor->getId(),
                 "body"  => $this->twig->render('file/editor/modal.html.twig', [
                     'File'      => $this->fileEditor,
                     'Article'   => $this->factory->createArticle()->load($articleId),
@@ -225,11 +231,10 @@ class FileEditController extends ArticleEditBaseController
     {
         try {
 
+            // title and format only: a new file or URL goes through replace(), with its checks
             $this->loadFileEditor($fileId)
                 ->setTitle( $this->request->request->get('title') )
                 ->setFormat( $this->request->request->get('format') )
-                ->setExternalDownloadUrl( $this->fileEditor->isExternal() ? $this->request->request->get('remote-url') : null )
-                ->setAutoHash()
                 ->save();
 
             $this->clearCachedArticlePages( $this->fileEditor->getArticles() );
@@ -254,7 +259,7 @@ class FileEditController extends ArticleEditBaseController
                     new ConflictHttpException(
                         "Impossibile salvare: esiste già un file dal titolo: $title ( $originalFileUrl ). " . PHP_EOL . PHP_EOL .
                         "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
-                        "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
+                        "🆕 Se è una nuova versione di quel Download, usa «Sostituisci» su quello, invece di crearne un altro. " . PHP_EOL . PHP_EOL .
                         "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
                     )
                 );
@@ -355,7 +360,7 @@ class FileEditController extends ArticleEditBaseController
                 new ConflictHttpException(
                     "Impossibile salvare: esiste già un file con questo titolo. " . PHP_EOL . PHP_EOL .
                     "Per favore, presta la massima attenzione a non creare file duplicati. " . PHP_EOL . PHP_EOL .
-                    "🆕 Se stai cercando di creare la nuova versione di un file pre-esistente, devi aggiornare il vecchio file. " . PHP_EOL . PHP_EOL .
+                    "🆕 Se è una nuova versione di quel Download, usa «Sostituisci» su quello, invece di crearne un altro. " . PHP_EOL . PHP_EOL .
                     "🎏 Se invece si tratta dello stesso file in formato diverso, esplicitalo nel titolo. Ad es.: per Linux, (portable), ..."
                 )
             );

@@ -1,5 +1,6 @@
 //import $ from 'jquery';
 import Validator from './validator';
+import { URL_REGEX, isFileDrag, guessFormatFromUrl, sizeLabel } from './download-source';
 
 
 // a submit (not a click on the button) also catches Enter in a field, which would otherwise post the form natively
@@ -147,3 +148,155 @@ function countFileLinksInArticleBody(fileUrl)
 
     }).length;
 }
+
+
+//<editor-fold defaultstate="collapsed" desc="*** Sostituisci: a new version of the Download, same ID ***">
+// the new source, file or URL, of the modal currently open
+let replaceSource = null;
+
+
+function replaceBox() {
+    return $('#tli-ajax-modal .tli-file-replace');
+}
+
+
+function setReplaceSource(source) {
+
+    replaceSource = source;
+
+    const box = replaceBox();
+    box.find('.tli-file-replace-error').addClass('d-none').empty();
+
+    if( !source ) {
+        box.find('.tli-file-replace-confirm').addClass('d-none');
+        return;
+    }
+
+    box.find('.tli-file-replace-source-name').text(
+        source.type == 'file' ? source.file.name + ' (' + sizeLabel(source.file.size) + ')' : source.url
+    );
+
+    box.find('.tli-file-replace-confirm').removeClass('d-none')
+        .find('.tli-file-replace-cancel').trigger('focus');
+
+    // from a URL the format can't be its extension: the system guesses, the author corrects (in the form above)
+    if( source.type == 'url' ) {
+
+        const select = $('#tli-file-format');
+        select.find('option.external-only').removeClass('d-none');
+
+        const format = guessFormatFromUrl(source.url);
+        if( format && select.find('option[value="' + format + '"]').length ) {
+            select.val(format);
+        }
+    }
+}
+
+
+$(document).on('click', '#tli-ajax-modal .tli-file-replace-pick', function() {
+    replaceBox().find('.tli-file-replace-input').val('').trigger('click');
+});
+
+$(document).on('change', '#tli-ajax-modal .tli-file-replace-input', function() {
+
+    if( this.files && this.files[0] ) {
+        replaceBox().find('.tli-file-replace-url').val('');
+        setReplaceSource({ type: 'file', file: this.files[0] });
+    }
+});
+
+$(document).on('input', '#tli-ajax-modal .tli-file-replace-url', function() {
+
+    const url = this.value.trim();
+    setReplaceSource( URL_REGEX.test(url) ? { type: 'url', url: url } : null );
+});
+
+$(document).on('dragenter dragover', '#tli-ajax-modal .tli-file-replace', function(event) {
+
+    if( isFileDrag(event) ) {
+        event.preventDefault();
+        event.originalEvent.dataTransfer.dropEffect = 'copy';
+        $(this).addClass('tli-file-add-dragover');
+    }
+});
+
+$(document).on('dragleave', '#tli-ajax-modal .tli-file-replace', function(event) {
+    if( !this.contains(event.relatedTarget) ) {
+        $(this).removeClass('tli-file-add-dragover');
+    }
+});
+
+$(document).on('drop', '#tli-ajax-modal .tli-file-replace', function(event) {
+
+    $(this).removeClass('tli-file-add-dragover');
+    if( !isFileDrag(event) ) {
+        return;
+    }
+
+    event.preventDefault();
+
+    // one new version: any other dropped file is ignored
+    const file = event.originalEvent.dataTransfer.files[0];
+    if( file ) {
+        $(this).find('.tli-file-replace-url').val('');
+        setReplaceSource({ type: 'file', file: file });
+    }
+});
+
+$(document).on('click', '#tli-ajax-modal .tli-file-replace-cancel', function() {
+
+    const box = replaceBox();
+    box.find('.tli-file-replace-url, .tli-file-replace-input').val('');
+    setReplaceSource(null);
+    box.find('.tli-file-replace-url').trigger('focus');
+});
+
+
+$(document).on('click', '#tli-ajax-modal .tli-file-replace-ok', function() {
+
+    const box       = replaceBox();
+    const replaceUrl= box.data('replace-url');
+    if( !replaceSource || !Validator.isSameOriginHttpsUrl(replaceUrl) ) {
+        return;
+    }
+
+    const buttons   = box.find('.tli-file-replace-confirm button').prop('disabled', true);
+    const errorBox  = box.find('.tli-file-replace-error').addClass('d-none').empty();
+
+    const data = new FormData();
+    if( replaceSource.type == 'file' ) {
+        data.append('files[]', replaceSource.file);
+    } else {
+        data.append('url', replaceSource.url);
+        data.append('format', $('#tli-file-format').val() || '');
+    }
+
+    $.ajax({
+        url: replaceUrl, method: 'POST', data: data,
+        contentType: false, processData: false, dataType: 'json'
+    })
+        .done(function(json) {
+
+            $('#tli-ajax-modal').find('.btn-close').trigger('click');
+
+            if( json.attachedFilesHtml ) {
+                $('#tli-downloadable-files').html(json.attachedFilesHtml);
+            }
+        })
+        .fail(function(jqXHR) {
+
+            let message = 'Errore durante la sostituzione.';
+            if( jqXHR.status == 413 ) {
+                message = 'Il file è troppo grande.';
+            } else if( ( jqXHR.getResponseHeader('Content-Type') || '' ).startsWith('text/plain') && jqXHR.responseText ) {
+                message = jqXHR.responseText;
+            }
+
+            errorBox.text(message).removeClass('d-none');
+        })
+        .always(() => buttons.prop('disabled', false));
+});
+
+
+$(document).on('hidden.bs.modal', '#tli-ajax-modal', () => replaceSource = null);
+//</editor-fold>
