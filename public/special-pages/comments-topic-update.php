@@ -93,8 +93,11 @@ $data = [
     'notify_set'    => false,
 ];
 
-$userBackup = $user;
-$authBackup = $auth;
+// submit_post() runs as the author: save the session user's state, then restore it.
+// Copying $user or $auth would only copy a reference to the same object, and restore nothing
+$sessionUserData    = $user->data;
+$sessionUserIp      = $user->ip;
+
 $user->data = array_merge($user->data, $postAuthor);
 $auth->acl($user->data);
 $user->ip = '0.0.0.0';
@@ -102,8 +105,9 @@ $user->ip = '0.0.0.0';
 $arrPoll = [];
 $result = submit_post('edit', $postTitle,  $postAuthor['username'] ?? '', POST_NORMAL, $arrPoll, $data);
 
-$user = $userBackup;
-$auth = $authBackup;
+$user->data = $sessionUserData;
+$user->ip   = $sessionUserIp;
+$auth->acl($user->data);
 
 
 // submit_post can't update all the fields => manual fixup via SQL is required
