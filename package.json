@@ -16,17 +16,14 @@
     "devDependencies": {
         "@babel/core": ">=8.1.0",
         "@babel/preset-env": ">=8.0.7",
-        "@symfony/webpack-encore": ">=7.2.0",
+        "@symfony/webpack-encore": ">=7.2.1",
         "bootstrap-icons": "1.13.2",
         "file-loader": ">=6.2.0",
         "npm-check-updates": "^23.1.1",
         "raw-loader": ">=4.0.2",
-        "sass": ">=1.107.1",
-        "sass-loader": ">=17.1",
-        "simple-icons": "16.36.0",
+        "simple-icons": "16.37.0",
         "webpack": ">=5.112.2",
-        "webpack-cli": "7.3.1",
-        "webpack-notifier": ">=1.17.0"
+        "webpack-cli": "7.3.1"
     },
     "license": "UNLICENSED",
     "private": true,
