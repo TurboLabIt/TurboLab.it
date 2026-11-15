@@ -111,11 +111,10 @@ class Issue
             'Issue creata da: ' . $author->getUsername() . PHP_EOL . PHP_EOL .
             // the issue is just an index: the discussion stays on the forum. GitHub renders this as an "alert" box
             '> [!NOTE]' . PHP_EOL .
-            '> Usiamo le issue di GitHub solo come "indice": per favore, **non lasciare messaggi qui**, ' .
-                'ma [rispondi nella discussione sul forum](' . $postUrl . '), così tutta la community potrà leggerti. Grazie!' . PHP_EOL .
+            '> Per favore, **non lasciare messaggi qui**, ' .
+                'ma [rispondi nella discussione sul forum](' . $postUrl . ').' . PHP_EOL .
             '>' . PHP_EOL .
-            '> Per favore leggi [la guida completa](' . $guideUrl . '): ' .
-                'spiega come proporre idee e segnalare problemi nel modo più efficace. Grazie!'
+            '> Leggi [la guida completa](' . $guideUrl . '): spiega come proporre idee e segnalare problemi nel modo più efficace. Grazie!'
         );
 
         $arrGitHubResponse = $this->github->createIssue($issueTitle, $issueBody);
