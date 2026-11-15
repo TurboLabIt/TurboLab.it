@@ -40,3 +40,8 @@ img.tli-post-formatting-button-icon {
     font-size: 14px;
     font-weight: bolder;
 }
+
+
+#quick-links .dropdown-contents > li.tli-own-topics + li.separator {
+    display: none;
+}

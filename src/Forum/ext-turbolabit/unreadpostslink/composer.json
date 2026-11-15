@@ -1,7 +1,7 @@
 {
 	"name": "turbolabit/unreadpostslink",
 	"type": "phpbb-extension",
-	"description": "Always-visible link to Unread posts and Mark forums read",
+	"description": "Always-visible link to Unread posts and Mark forums read, plus Your topics in the quick links",
 	"homepage": "http://turbolab.it",
 	"version": "1.0.0",
 	"license": "GPL-2.0",

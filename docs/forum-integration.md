@@ -9,7 +9,7 @@ Le estensioni phpBB sviluppate per TurboLab.it vivono in [src/Forum/ext-turbolab
 
 - **forumintegration** — inietta nel forum le personalizzazioni del sito: per esempio l'header/menu e il footer del sito attorno alle pagine del forum, pulsanti extra sui post, pulsante per inserire il link a un articolo, ...
 - **httpsonimg** — forza l'HTTPS sulle immagini ospitate su una whitelist di domini
-- **unreadpostslink** — link sempre visibile a *Messaggi non letti* e *Segna tutti come letti*
+- **unreadpostslink** — link sempre visibile a *Messaggi non letti* e *Segna tutti come letti*; la voce *I tuoi argomenti* fra i *Collegamenti rapidi* (la ricerca di *I tuoi messaggi* limitata al primo post: `sf=firstpost`), con titolo e breadcrumb propri nella pagina dei risultati ([issue #105](https://github.com/TurboLabIt/TurboLab.it/issues/105)). phpBB non ha un evento subito sotto *I tuoi messaggi*: la voce entra con `navbar_header_quick_links_before`, quindi sopra, e una regola in [assets/styles/forum/app.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/forum/app.css) nasconde il separatore che phpBB stampa fra le due. Il sito ha la stessa voce nel menu *Forum*
 - [(rimossa) tapatalkstripsign](https://github.com/TurboLabIt/TurboLab.it/commit/469c918c498d6c33e10aa4d99be4b2aa4f747db0) — rimuove la firma automatica *"Sent ... via Tapatalk"*
 
 Il core di phpBB non va mai modificato: ogni personalizzazione passa da queste estensioni.
