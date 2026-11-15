@@ -123,7 +123,7 @@ Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/ass
 
 Unicità:
 
-- **ricerca per testo**: su titolo e URL, non sul formato né sugli articoli che usano il Download; i 20 Download senza formato compaiono solo cercandoli per ID o indirizzo
+- **ricerca per testo**: su titolo e URL, non sul formato né sugli articoli che usano il Download
 - **versione o variante**: i Download simili si trovano solo per titolo (più di metà delle parole in comune con il nome del file o dell'URL)
 - **unire due Download**: non c'è (vedi [Unire due Download doppi](#unire-due-download-doppi)); oggi non ci sono doppioni da unire
 

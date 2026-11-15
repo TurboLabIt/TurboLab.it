@@ -54,6 +54,19 @@ class FileSearchTest extends BaseT
     }
 
 
+    // a link to a project's download page has no format, and it's still a Download to find and reuse
+    public function testFoundWithoutAFormat() : void
+    {
+        $file = $this->createExternalFile( uniqid(self::FIXTURE_TITLE_PREFIX), 'https://example.com/' . uniqid() . '/' );
+
+        static::getEntityManager()->getConnection()->executeStatement(
+            "UPDATE file SET format = '' WHERE id = :id", ['id' => $file->getId()]
+        );
+
+        $this->assertArrayHasKey( $file->getId(), $this->search( $file->getTitle() ) );
+    }
+
+
     public function testFoundByItsIdOrItsAddress() : void
     {
         $file   = $this->createExternalFile( uniqid(self::FIXTURE_TITLE_PREFIX), 'https://example.com/' . uniqid() . '.zip' );

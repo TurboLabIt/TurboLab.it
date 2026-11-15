@@ -124,7 +124,6 @@ class FileRepository extends BaseRepository
     {
         $qb =
             $this->getQueryBuilder()
-                ->andWhere("t.format IS NOT NULL AND t.format != ''")
                 ->orderBy('t.updatedAt', SortDirection::Descending)
                 ->setMaxResults($limit);
 
@@ -197,8 +196,6 @@ class FileRepository extends BaseRepository
             $whereClauses[]         = "(f.title LIKE :$paramName OR f.url LIKE :$paramName)";
             $sqlParams[$paramName]  = '%' . $term . '%';
         }
-
-        $whereClauses[] = "f.format IS NOT NULL AND f.format != ''";
 
         $authorFilter = '';
         if( !empty($authorId) ) {
