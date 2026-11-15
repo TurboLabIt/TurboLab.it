@@ -149,7 +149,9 @@ class FileRepository extends BaseRepository
 
     public function getSerpByFulltext(string $termToSearch, ?int $authorId = null, ?string $sort = null) : array
     {
-        $termToSearch       = preg_replace('/[^a-z0-9_ ]/i', '', $termToSearch);
+        // letters (accented too) and digits only: punctuation splits words ("youtube-dl", "github.com/ventoy"), as
+        // in the index, and the boolean-mode operators (+ - * " ...) can't reach MATCH()
+        $termToSearch       = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $termToSearch);
         $arrFulltextTerms   = [];
         $arrLikeTerms       = [];
 
@@ -184,14 +186,15 @@ class FileRepository extends BaseRepository
         if( !empty($arrFulltextTerms) ) {
 
             $sqlParams['termToSearch']  = implode(' ', $arrFulltextTerms);
-            $whereClauses[]             = "MATCH(f.title) AGAINST(:termToSearch IN BOOLEAN MODE)";
-            $rankingExpr                = "MATCH(f.title) AGAINST(:termToSearch IN BOOLEAN MODE)";
+            // the URL too (title_url_fulltext_idx): "github", "resilio" find a Download not named after them
+            $whereClauses[]             = "MATCH(f.title, f.url) AGAINST(:termToSearch IN BOOLEAN MODE)";
+            $rankingExpr                = "MATCH(f.title, f.url) AGAINST(:termToSearch IN BOOLEAN MODE)";
         }
 
         foreach($arrLikeTerms as $i => $term) {
 
             $paramName              = "likeTerm$i";
-            $whereClauses[]         = "f.title LIKE :$paramName";
+            $whereClauses[]         = "(f.title LIKE :$paramName OR f.url LIKE :$paramName)";
             $sqlParams[$paramName]  = '%' . $term . '%';
         }
 

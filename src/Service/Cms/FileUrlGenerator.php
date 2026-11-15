@@ -33,7 +33,8 @@ class FileUrlGenerator extends UrlGenerator
 
     public function extractIdFromUrl(string $url) : ?int
     {
-        if( !$this->isInternalUrl($url) ) {
+        // only a web address, absolute or relative, can be one: a magnet or ed2k link has no path to read
+        if( preg_match('#^(https?://|/)#i', $url) !== 1 || !$this->isInternalUrl($url) ) {
             return null;
         }
 

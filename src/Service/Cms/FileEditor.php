@@ -35,6 +35,8 @@ class FileEditor extends File
 
     public function createFromUrl(string $url, string $title, string $format) : FileEditor
     {
+        $this->enforceNotADownloadAddress($url);
+
         $this
             ->setExternalDownloadUrl($url)
             ->setTitle($title)
@@ -111,6 +113,8 @@ class FileEditor extends File
     public function replaceWithUrl(string $url, ?string $format = null) : static
     {
         $this->enforceSourceNotUsedElsewhere( $this->factory->createFileCollection()->loadByEquivalentUrl($url) );
+        // another Download's address is refused just above, as a duplicate: this is its own (a redirect loop)
+        $this->enforceNotADownloadAddress($url);
 
         // before the format changes: a local file's path is "{id}.{format}"
         $previousFilePath       = $this->isLocal() ? $this->getOriginalFilePath() : null;
@@ -136,6 +140,19 @@ class FileEditor extends File
 
 
     // one item, one Download: the new source can't be another Download's already
+    // "/scarica/123" is a Download of TurboLab.it, never the external source of one: it would redirect to itself
+    protected function enforceNotADownloadAddress(string $url) : static
+    {
+        if( $this->factory->getFileUrlGenerator()->extractIdFromUrl( trim($url) ) !== null ) {
+            throw new BadRequestHttpException(
+                "Questo è l'indirizzo di un Download di TurboLab.it, non di un file esterno."
+            );
+        }
+
+        return $this;
+    }
+
+
     protected function enforceSourceNotUsedElsewhere(iterable $filesWithSameSource) : static
     {
         foreach($filesWithSameSource as $file) {

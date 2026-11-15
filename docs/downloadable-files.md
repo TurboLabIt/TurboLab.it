@@ -47,6 +47,7 @@ Un solo flusso, sia dal pulsante nella toolbar dell'editor sia dal riquadro sott
    - file ➡ stesso contenuto (hash), poi nome del file e titolo simili
    - URL ➡ stesso URL, con una normalizzazione leggera (`http`/`https`, `www.`, `/` finale, ...). I parametri di tracciamento (`utm_*` e simili) restano nell'URL salvato, ma non contano nel confronto: un URL che differisce da uno esistente solo per questi parametri è lo stesso elemento, e si riusa il Download esistente, con i suoi parametri
    - testo ➡ titolo, nome del file, URL
+   - l'indirizzo di un Download di TurboLab.it (`https://turbolab.it/scarica/123`, `/scarica/123` o l'ID), copiato ad esempio da un altro articolo ➡ è quel Download: non diventa mai la sorgente esterna di un Download nuovo, che rimanderebbe a un altro
 2. **stesso elemento** ➡ lo dice ("Questo file è già su TurboLab.it come «...»") e propone **Usa questo**
 3. **elemento simile** ➡ chiede se è una **nuova versione** di «...» (➡ **Sostituisci**) o una variante (➡ nuovo Download, con un titolo che lo distingua)
 4. **nessuna corrispondenza** ➡ nuovo Download, con titolo e formato già compilati: dal nome del file o dall'URL, il formato anche dal sito (Google Play ➡ `google play (app store)`)
@@ -111,6 +112,7 @@ Backend:
 - `/scarica/{id}` ([FileController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/FileController.php)): un file locale è servito via X-Sendfile da `var/uploaded-assets/files/{id}.{formato}` e scaricato come `titolo.formato`; un URL esterno risponde con un redirect 302. Il Download eredita la visibilità dagli articoli che lo usano; lo modificano i suoi autori e gli editor ([FileSentinel](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Service/Sentinel/FileSentinel.php))
 - nel testo degli articoli il link è salvato come segnaposto `==###file::id::{id}###==` e mostrato come `/scarica/{id}`: la permanenza dei link (obiettivo 1) c'è già
 - [FileEditController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/Editor/FileEditController.php): verifica (`lookup`: stesso contenuto, URL equivalente, titoli simili), upload, creazione da URL, sostituzione della sorgente (`replace`, sia dalla finestra "Aggiungi un Download" sia da **Modifica**), modifica (solo titolo e formato: un nuovo file o URL passa sempre da `replace`, con le sue verifiche), scollega/elimina. Ogni modifica svuota la cache delle pagine degli articoli interessati
+- la ricerca per testo usa l'indice FULLTEXT su `title` e `url` (le parole dell'URL contano: "github", "dotnet", ...); punteggiatura e trattini separano le parole, le lettere accentate restano. Il controllo dei Download simili usa l'indice sul solo titolo
 - un URL esterno può essere un indirizzo web, un magnet BitTorrent o un link ed2k (`File::isValidExternalUrl()`). La normalizzazione per il confronto è `File::normalizeUrlForMatching()`; creando da un URL equivalente a uno esistente, il server riusa il Download esistente
 - salvare un articolo collega ogni Download linkato nel testo (solo aggiunte); [uploaded-assets-maintenance.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/uploaded-assets-maintenance.sh) fa lo stesso ogni 3 ore con `FilesToArticles` (la rimozione dei collegamenti inutilizzati è disattivata: [#101](https://github.com/TurboLabIt/TurboLab.it/issues/101)), più `FilesHasher` (ricalcola gli hash) e `FilesNotFound` (file mancanti su disco o nel database). I risultati sono in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare)
 
@@ -121,7 +123,7 @@ Frontend: [link-file.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/ass
 
 Unicità:
 
-- **ricerca per testo**: solo sul titolo, e solo lettere e cifre; i 20 Download senza formato non compaiono mai
+- **ricerca per testo**: su titolo e URL, non sul formato né sugli articoli che usano il Download; i 20 Download senza formato compaiono solo cercandoli per ID o indirizzo
 - **versione o variante**: i Download simili si trovano solo per titolo (più di metà delle parole in comune con il nome del file o dell'URL)
 - **unire due Download**: non c'è (vedi [Unire due Download doppi](#unire-due-download-doppi)); oggi non ci sono doppioni da unire
 

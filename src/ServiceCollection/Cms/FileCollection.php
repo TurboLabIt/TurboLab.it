@@ -20,9 +20,21 @@ class FileCollection extends BaseServiceEntityCollection
     }
 
 
+    // a Download's ID or its "/scarica/123" address finds that Download, ahead of the text matches
     public function loadSerp(string $termToSearch, ?int $authorId = null, ?string $sort = null) : static
     {
-        $arrFiles = $this->getRepository()->getSerpByFulltext($termToSearch, $authorId, $sort);
+        $termToSearch   = trim($termToSearch);
+        $fileId         =
+            ctype_digit($termToSearch)
+                ? (int)$termToSearch
+                : $this->factory->getFileUrlGenerator()->extractIdFromUrl($termToSearch);
+
+        $arrFiles = [];
+        if( !empty($fileId) && ( $entity = $this->getRepository()->find($fileId) ) !== null ) {
+            $arrFiles[$fileId] = $entity;
+        }
+
+        $arrFiles += $this->getRepository()->getSerpByFulltext($termToSearch, $authorId, $sort);
         return $this->setEntities($arrFiles);
     }
 
@@ -36,6 +48,14 @@ class FileCollection extends BaseServiceEntityCollection
     // the external Downloads pointing to the same item as $url (see File::normalizeUrlForMatching())
     public function loadByEquivalentUrl(string $url) : static
     {
+        // a Download's own address (copied from another article) is that Download, not a new external item
+        $fileId = $this->factory->getFileUrlGenerator()->extractIdFromUrl( trim($url) );
+        if( $fileId !== null ) {
+
+            $entity = $this->getRepository()->find($fileId);
+            return $this->setEntities( $entity === null ? [] : [$fileId => $entity] );
+        }
+
         $normalizedUrl  = FileService::normalizeUrlForMatching($url);
         $arrMatches     = [];
 
