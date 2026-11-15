@@ -1,4 +1,4 @@
-# Issues opened from the forum are just an index: the discussion stays on the forum.
+# Issues are just an index: the discussion stays on the forum.
 # Lock each one as soon as TLI-Bug opens it, so that only collaborators can comment on GitHub.
 # 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/bug.md
 name: Lock forum issues
