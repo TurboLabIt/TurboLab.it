@@ -55,6 +55,15 @@ page; a reply answers with `?p=N`. A post that needs a moderator's approval gets
 post, and `forum.py` exits with code 4. Accounts without the admin flood exemption must wait the forum's flood
 interval (15 seconds) between two posts.
 
+## Reading and quoting
+
+`read` and `reply --post-id` use phpBB's own "reply quoting this post" form (`posting.php?mode=quote&p=N`), which
+phpBB resolves to the post's topic. Its message box comes pre-filled with `[quote=author post_id=N time=… user_id=…]`
+and the post's BBCode: `reply --quote-file` keeps that header and puts in it the words asked for, after checking
+that they are in the post. Under the form, phpBB's topic review lists the topic's latest posts (`posts_per_page`,
+25) as the BBCode their authors typed. That's what `read` prints, so a quote can be copied from it unchanged. Both
+commands need an account that can reply in that topic.
+
 ## Errors
 
 | What you see | Meaning | What to do |
@@ -72,6 +81,8 @@ interval (15 seconds) between two posts.
 | "Forum not allowed" (403) | the post isn't in forum 6 or 26 | post in forum 6 |
 | `whoami`: anonymous | the session expired or was closed | `login` again |
 | `topic`/`reply`: no posting form, with phpBB's "not authorised" message | the account can't post there | the user posts it |
-| `topic`/`reply`: phpBB's flood message | two posts too close together | wait 15 seconds |
+| `topic`/`reply`: phpBB's flood message ("…dopo così poco tempo") | two posts too close together | wait 15 seconds |
+| `read`/`reply --post-id`: no posting form, "Il messaggio richiesto non esiste" | wrong post ID, or a post this account can't see | take P from the issue's "Post originale" link |
+| `reply`: "the quote isn't in post N word for word" | the words to quote differ from the post's | copy them from `read`, unchanged |
 | `topic`/`reply`: exit code 4, HELD | the post waits for a moderator | stop; `bug` only after the approval |
 | the issue isn't locked after a minute | GitHub Actions off at org or repo level | `docs/bug.md`, "Blocco della conversazione su GitHub" |

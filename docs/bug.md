@@ -10,7 +10,9 @@ La guida per utenti finali è disponibile qui: [Ho un'idea / suggerimento / prob
 
 ## Procedura per gli agenti AI
 
-Anche gli agenti AI (Claude Code) aprono le issue come chiunque altro, con l'account TurboLab.it di chi li sta usando: una discussione nel forum *TurboLab.it & dintorni*, poi il click sull'icona 🪲. La procedura è nella skill [.claude/skills/tli-issue](https://github.com/TurboLabIt/TurboLab.it/tree/main/.claude/skills/tli-issue): ricerca di discussioni e issue già esistenti, stesura, prova su una copia di sviluppo, pubblicazione in produzione (solo con l'OK esplicito di chi sta usando l'agente), verifica e, dopo la correzione, chiusura della issue e risposta nella discussione.
+Anche gli agenti AI (Claude Code) aprono le issue come chiunque altro, con l'account TurboLab.it di chi li sta usando: una discussione nel forum *TurboLab.it & dintorni*, poi il click sull'icona 🪲. La procedura è nella skill [.claude/skills/tli-issue](https://github.com/TurboLabIt/TurboLab.it/tree/main/.claude/skills/tli-issue): ricerca di discussioni e issue già esistenti, stesura, prova su una copia di sviluppo, pubblicazione in produzione (solo con l'OK esplicito di chi sta usando l'agente) e verifica.
+
+La chiusura è nella skill [.claude/skills/tli-issue-close](https://github.com/TurboLabIt/TurboLab.it/tree/main/.claude/skills/tli-issue-close): `Closes #N` nel messaggio del commit che corregge il problema (GitHub chiude la issue quando il commit arriva su `main`), poi una risposta nella discussione sul forum, pubblicata subito con lo stesso account, che dice agli utenti che cosa è cambiato. Mai un commento su GitHub: le issue sono solo un indice.
 
 Non serve alcun accesso ai server: lo script della skill esegue login via HTTPS come il browser, senza "ricordami", con username e password salvati in `/etc/turbolab.it/account-turbolab.it.conf` (fuori dal repository e da Symfony, permessi 600). La prima volta la skill li chiede e crea il file. Lo script li invia solo a `turbolab.it` e ai suoi sottodomini: qualsiasi altro host viene rifiutato.
 
