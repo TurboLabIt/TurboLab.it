@@ -27,7 +27,8 @@ facts shape everything here:
 
 Work in the working copy (`../php-packages/<folder>`, where `vendor/turbolabit/<name>` points). It is a repository
 of its own, with its own history, public on GitHub: commit and push it there, on `main`. The `tli-commit` helper
-works from inside it too. Keep a package general: what only this site needs belongs in the project.
+works from inside it too, also where the working copies sit on a shared folder that shows every file as
+executable: it records a file's mode the way git is configured to there. Keep a package general: what only this site needs belongs in the project.
 
 ## 2. Wait for Packagist
 

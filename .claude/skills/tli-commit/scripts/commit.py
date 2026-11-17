@@ -126,7 +126,11 @@ def build_tree(files: list, index: str) -> str:
             git('update-index', '--force-remove', '--', path, env=env)
             continue
         tracked = git('ls-tree', 'HEAD', '--', path).split()
-        mode = tracked[0] if tracked else ('100755' if os.stat(path).st_mode & 0o100 else '100644')
+        # a file keeps the mode it has in the last commit. A new one is executable when the disk says so, as git
+        # does: unless core.fileMode is off (a shared folder where every file looks executable), where git trusts
+        # no mode and neither does this
+        trust_modes = git('config', '--get', 'core.fileMode', check=False)[1] != 'false'
+        mode = tracked[0] if tracked else ('100755' if trust_modes and os.stat(path).st_mode & 0o100 else '100644')
         blob = git('hash-object', '-w', f'--path={path}', '--', path)
         git('update-index', '--add', '--cacheinfo', f'{mode},{blob},{path}', env=env)
     return git('write-tree', env=env)
