@@ -141,6 +141,15 @@
                                         </div>
                                     </div>
 
+                                    {# between the two rows of three cards in each of the first two cycles of ten: two pairs per
+                                       page at most. After the first row of two, they would reach the first screen at 1920x1080
+                                       and on a portrait tablet #}
+                                    {% if loop.index in [5, 15] %}
+                                        <div class="col-12">
+                                            {% include 'ads/clickio/square-pair.html.twig' %}
+                                        </div>
+                                    {% endif %}
+
                                 {% else %}
 
                                     <div class="tli-fullpage-message mb-35" style="font-size: 22px">Nessun articolo trovato.</div>
