@@ -124,7 +124,13 @@ phpstan.neon
 
 ## AI
 /CLAUDE.md
-/.claude/
+/.claude/*
+!/.claude/skills/
+!/.claude/settings.json
+
+
+## Python
+__pycache__/
 
 
 ## TurboLab.it
