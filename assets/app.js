@@ -14,6 +14,7 @@ import './styles/userbar.css';
 import './styles/glow.css';
 import './styles/footer.css';
 import './styles/handstop.css';
+import './styles/ads.css';
 
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;

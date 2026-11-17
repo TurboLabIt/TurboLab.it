@@ -2,9 +2,10 @@
 
     {% include 'ads/handstop.html.twig' %}
 
-    {# 336x280 "articoli" (Clickio ad unit 604594), twice: side by side where they fit, stacked elsewhere. In an article
-       the pair spreads over the box's padding to fit (.tli-ad-pair in article.css); the homepage's main column is wide
-       enough as it is. A unit can repeat: Clickio's loader gives an ad to every <script> carrying its code #}
+    {# 336x280 "articoli" (Clickio ad unit 604594), twice: side by side where they fit, stacked elsewhere, each one at
+       the center of its half (.tli-ad-pair > div in ads.css). In an article the pair spreads over the box's padding to
+       fit (.tli-ad-pair in article.css); the homepage's main column is wide enough as it is. A unit can repeat:
+       Clickio's loader gives an ad to every <script> carrying its code #}
     <div class="tli-ad-pair d-flex flex-wrap justify-content-center gap-3 mb-4">
         {% for slot in 1..2 %}
             <div>

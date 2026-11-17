@@ -1,0 +1,5 @@
+.tli-ad-pair > div {
+    flex: 1 1 336px;
+    display: flex;
+    justify-content: center;
+}

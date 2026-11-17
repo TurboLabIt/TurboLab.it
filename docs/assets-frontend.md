@@ -66,6 +66,8 @@ I due annunci prima dei tag ([templates/ads/clickio/square-pair.html.twig](https
 
 Risultato: affiancati da 1200 px in su e tra 768 e 991 px (articolo a tutta larghezza), impilati tra 992 e 1199 px e sui telefoni.
 
+Ognuno sta al centro della sua metà della riga: ogni posto (`.tli-ad-pair > div` in [assets/styles/ads.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/ads.css), globale perché la coppia è sia negli articoli sia in homepage) parte da 336 px e cresce quanto l'altro, e centra il contenitore che Clickio ci inserisce. Base di 336 px, non 0: con 0 i due posti starebbero sempre sulla stessa riga e non si impilerebbero mai; e nemmeno `auto`, che con un solo annuncio arrivato darebbe due metà diverse. In homepage le metà cadono così sotto le due colonne di card.
+
 In homepage la stessa coppia segue tutte e quattro le card dello slider in alto, prima del mosaico ([templates/home/index.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/home/index.html.twig)). Lì sta sotto la prima schermata a tutte le risoluzioni comuni (comincia a 1229 px dall'alto a 1366, a 1157 px da 1536 in su): non spinge giù le notizie, e il suo arrivo in ritardo non sposta nulla di visibile al caricamento. Tra le due righe di card sarebbe entrata nella prima schermata di un monitor 1920x1080. La colonna principale è abbastanza larga senza allargarsi sul padding (736 px tra 1200 e 1399, 856 da 1400, 696 tra 768 e 991; `article.css` in homepage non c'è), quindi affiancati e impilati nelle stesse fasce dell'articolo. La colonna di destra finisce prima di quella principale: a 1366 lo spazio vuoto sotto di lei passa da circa 690 a circa 990 px.
 
 
