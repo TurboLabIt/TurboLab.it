@@ -62,6 +62,9 @@
                             </div>
                         {% endfor %}
                     </div>
+                    {# after all four cards and not between their two rows, which on a large display would bring the ads
+                       onto the first screen and push two cards below it #}
+                    {% include 'ads/clickio/square-pair.html.twig' %}
                     <div class="row">
                         <!-- HOME PAGE top mosaic 1st half START -->
                         <div class="col-lg-6 col-md-6">
