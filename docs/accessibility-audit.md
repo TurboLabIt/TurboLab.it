@@ -137,7 +137,7 @@ I finding 1–4 nascevano dallo stesso audit Lighthouse `color-contrast`/`link-i
 
 **Fix.** Meta ridotto a `width=device-width, initial-scale=1` (rimosso anche `shrink-to-fit=no`, workaround per Safari 9 morto da anni). Lo zoom **accidentale** — il vero fastidio, cioè il doppio-tap — è neutralizzato da `body { touch-action: manipulation }` in [app.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/app.css): niente *double-tap-to-zoom*, *pinch* deliberato preservato, nessun audit fallito su alcuna versione di Lighthouse. Il rischio di auto-zoom iOS sui campi *form* (l'unico uso legittimo di `maximum-scale=1`) non ci riguarda: gli input sono Bootstrap a 16px. Verificato dal vivo su dev0 (meta + CSS inline nella pagina servita).
 
-**Residuo (non pubblico).** ✅ Chiuso il 2026-07-15: i due template di test ([test/index.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/test/index.html.twig), [test/new-home.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/test/new-home.html.twig)) sono stati allineati al meta di `base.html.twig` (`width=device-width, initial-scale=1`).
+**Residuo (non pubblico).** ✅ Chiuso il 2026-07-15: i due template di test ([test/index.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/test/index.html.twig), `test/new-home.html.twig`, in seguito rimosso) sono stati allineati al meta di `base.html.twig` (`width=device-width, initial-scale=1`).
 
 
 ### 9. 🟠 Alto — Contrasto: rosa Bootstrap dei `<code>` ✅ risolto (2026-07-15)
