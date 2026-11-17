@@ -15,6 +15,8 @@ use Meilisearch\Bundle\SearchManagerInterface;
 class ArticleCollection extends BaseArticleCollection
 {
     const int TRENDING_DAYS = 10;
+    // few enough that the sidebar sticky ad, which comes after them, is reached early
+    const int SIDEBAR_MAX_ARTICLES = 3;
 
 
     public function __construct(Factory $factory, protected SearchManagerInterface $searchService)
@@ -42,7 +44,7 @@ class ArticleCollection extends BaseArticleCollection
         $this->loadLatestPublished();
 
         $sideArticlesNum    = $article->textLengthIndex() / 10;
-        $sideArticlesNum    = min($sideArticlesNum, 5);
+        $sideArticlesNum    = min($sideArticlesNum, static::SIDEBAR_MAX_ARTICLES);
 
         $arrFilteredArticles = [];
         foreach($this->arrData as $articleInSetId => $articleInSet) {

@@ -91,7 +91,8 @@
                 </article>
                 <!-- INFO main END -->
 
-                {% include 'parts/column-articles.html.twig' %}
+                {# no sidebar sticky ad here: the page is too short for it to pin, it would only make the page longer #}
+                {% include 'parts/column-articles.html.twig' with {hasAds: false} %}
 
             </div>
         </div>

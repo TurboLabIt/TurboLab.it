@@ -158,30 +158,34 @@
 
                     </div>
 
-                    {% if Article.isReadable %}
-                        <div id="tli-article-authors-bio" class="tli-article-box mt-30 container">
-                            {% include 'article/authors-bio.html.twig' %}
+                    {# the article's own footer, the first one on the page: Clickio's sidebar sticky stops above it (its unit
+                       config, s_s_bot: footer) instead of riding over the full-width comments down to the site's footer #}
+                    <footer>
+                        {% if Article.isReadable %}
+                            <div id="tli-article-authors-bio" class="tli-article-box mt-30 container">
+                                {% include 'article/authors-bio.html.twig' %}
+                            </div>
+                        {% endif %}
+
+                        <div class="post-reader-text post-reader-text-2 post-reader-text-3 pt-50">
+                            <div class="row">
+
+                                {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.previousArticle ?? null } %}
+                                    {% block prevNextArticleNavText %}
+                                        <i class="fa fa-angle-left"></i> PRECEDENTE
+                                    {% endblock %}
+                                {% endembed %}
+
+                                {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.nextArticle ?? null } %}
+                                    {% block prevNextArticleNavClass %}text-end{% endblock %}
+                                    {% block prevNextArticleNavText %}
+                                        SUCCESSIVO <i class="fa fa-angle-right"></i>
+                                    {% endblock %}
+                                {% endembed %}
+
+                            </div>
                         </div>
-                    {% endif %}
-
-                    <div class="post-reader-text post-reader-text-2 post-reader-text-3 pt-50">
-                        <div class="row">
-
-                            {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.previousArticle ?? null } %}
-                                {% block prevNextArticleNavText %}
-                                    <i class="fa fa-angle-left"></i> PRECEDENTE
-                                {% endblock %}
-                            {% endembed %}
-
-                            {% embed 'article/prev-next-article.html.twig' with { 'Article': Article.nextArticle ?? null } %}
-                                {% block prevNextArticleNavClass %}text-end{% endblock %}
-                                {% block prevNextArticleNavText %}
-                                    SUCCESSIVO <i class="fa fa-angle-right"></i>
-                                {% endblock %}
-                            {% endembed %}
-
-                        </div>
-                    </div>
+                    </footer>
                 </article>
                 <!-- ARTICLE main END -->
 
@@ -201,7 +205,6 @@
             {% if Article.commentsTopic is not empty and Article.isListable %}
                 <div class="row mb-30">
                     <div class="col-lg-12">
-                        {# keep the id: Clickio's sidebar sticky (its unit config, s_s_bot) stops above it #}
                         <div id="tli-comments-box">
 
                             <h3 class="title">

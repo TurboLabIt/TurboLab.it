@@ -1,57 +1,62 @@
 <!-- ARTICLE side column START -->
 <div class="col-lg-4 mt-20">
-    {# keep the id: Clickio's sidebar sticky (its unit config, s_s_top) pins below it, and doesn't render without it #}
-    <div class="about-tab-btn" id="tli-side-articles">
-        <div class="about-post-items">
-            <div class="row">
-                {% for Article in SideArticles %}
+    {# a list of sidebar widgets, as on TLI1: Clickio's config for the sidebar sticky still pins it below the last one
+       (s_s_top: ul.sidebar_list>li.widget.widget-sidebar:nth-last-of-type(1)), and renders nothing without it #}
+    <ul class="sidebar_list list-unstyled mb-0">
+        <li class="widget widget-sidebar">
+            <div class="about-tab-btn">
+                <div class="about-post-items">
+                    <div class="row">
+                        {% for Article in SideArticles %}
 
-                    <div class="trending-news-item mb-30">
+                            <div class="trending-news-item mb-30">
 
-                        <div class="trending-news-content">
-                            <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
-                        </div>
+                                <div class="trending-news-content">
+                                    <h3 class="title"><a href="{{ Article.url }}">{{ Article.title }}</a></h3>
+                                </div>
 
-                        <div class="trending-news-thumb">
-                            <a href="{{ Article.url }}">
-                                <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.reg) }}"
-                                     class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}"
-                                     {% if loop.index > 2 %}loading="lazy"{% endif %}>
-                            </a>
-                        </div>
+                                <div class="trending-news-thumb">
+                                    <a href="{{ Article.url }}">
+                                        <img src="{{ Article.spotlightOrDefaultUrl(ImageSizes.reg) }}"
+                                             class="tli-uniform-slider-image" alt="{{ Article.titleWithFreshUpdatedAt }}"
+                                             {% if loop.index > 2 %}loading="lazy"{% endif %}>
+                                    </a>
+                                </div>
 
-                        <div class="tli-mosaic-post-meta">
-                            <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
-                                {{ Article.TopTagOrDefault.title|upper }}
-                            </a>
-                            <span class="tli-meta-slash"> · </span>
-                            <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
-                        </div>
+                                <div class="tli-mosaic-post-meta">
+                                    <a class="tli-meta-category" href="{{ Article.TopTagOrDefault.url }}">
+                                        {{ Article.TopTagOrDefault.title|upper }}
+                                    </a>
+                                    <span class="tli-meta-slash"> · </span>
+                                    <span class="tli-meta-date">{{ Article.publishedAt|friendlyDate }}</span>
+                                </div>
 
-                        <div class="tli-mosaic-post-meta">
-                            {% if Article.AuthorsNotSystem is not empty %}
-                                <span class="tli-meta-authors">
-                                                        a cura di
-                                                        {% for Author in Article.AuthorsNotSystem %}
-                                                            <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
-                                                        {% endfor %}
-                                                    </span>
-                            {% endif %}
-                            {% if Article.commentsUrl is not empty %}
-                                <span class="tli-meta-slash">&nbsp;</span>
-                                <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
-                                    <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
-                                    {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
-                                </a>
-                            {% endif %}
-                        </div>
+                                <div class="tli-mosaic-post-meta">
+                                    {% if Article.AuthorsNotSystem is not empty %}
+                                        <span class="tli-meta-authors">
+                                                                a cura di
+                                                                {% for Author in Article.AuthorsNotSystem %}
+                                                                    <a href="{{ Author.url }}">{{ Author.username }}</a>{% if not loop.last %}, {% endif %}
+                                                                {% endfor %}
+                                                            </span>
+                                    {% endif %}
+                                    {% if Article.commentsUrl is not empty %}
+                                        <span class="tli-meta-slash">&nbsp;</span>
+                                        <a class="tli-meta-comments-num" href="{{ Article.commentsUrl }}">
+                                            <i class="fa-solid fa-comment"></i> {{ Article.commentsNum }}
+                                            {% if Article.commentsNum == 1 %}commento{% else %}commenti{% endif %}
+                                        </a>
+                                    {% endif %}
+                                </div>
 
+                            </div>
+
+                        {% endfor %}
                     </div>
-
-                {% endfor %}
+                </div>
             </div>
-        </div>
-    </div>
+        </li>
+    </ul>
 
     {# a sticky: it stays pinned while the article scrolls by, so it must remain the column's last item #}
     {% include 'ads/clickio/sticky-sidebar.html.twig' %}
