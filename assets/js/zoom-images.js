@@ -32,21 +32,17 @@ if(lightboxEl) {
         });
     }
 
-    // Click on article body image → open lightbox at that image
+    // Click on one of the article's own images → open lightbox at that image.
+    // Any other image (an ad, an outside picture in an old body) keeps its normal click.
     $(document).on('click', '#tli-article-body img', function(e) {
 
-        e.preventDefault();
-
-        const src     = $(this).attr('src');
-        const idMatch = src.match(/-(\d+)\.[^.]+$/);
+        const idMatch = ($(this).attr('src') || '').match(/-(\d+)\.[^.]+$/);
         if(!idMatch) return;
 
-        const imageId = idMatch[1];
-        let slideIndex = 0;
+        const slideIndex = Array.from(items).findIndex(item => item.dataset.imageId === idMatch[1]);
+        if(slideIndex === -1) return;
 
-        items.forEach(function(item, i) {
-            if(item.dataset.imageId === imageId) slideIndex = i;
-        });
+        e.preventDefault();
 
         loadImage(slideIndex);
         loadImage(slideIndex - 1);

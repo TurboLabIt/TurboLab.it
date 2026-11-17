@@ -42,6 +42,9 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+#tli-article-body img[src*="/immagini/"] {
     cursor: zoom-in;
 }
 
@@ -165,7 +168,8 @@
     color: blue;
 }
 
-#tli-article-body iframe, .ck.ck-content.ck-editor__editable iframe {
+#tli-article-body iframe[src^="https://www.youtube-nocookie.com/embed/"],
+.ck.ck-content.ck-editor__editable iframe[src^="https://www.youtube-nocookie.com/embed/"] {
     width:100%;
     aspect-ratio: 16/9
 }
