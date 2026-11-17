@@ -60,6 +60,13 @@ Nel corpo dell'articolo le regole valgono solo per gli elementi che produciamo n
 - **zoom** (`js/zoom-images.js`): cursore `zoom-in` sulle immagini in `/immagini/` e lightbox solo per quelle presenti nella sua galleria. Il clic su qualunque altra immagine resta un clic normale: prima il gestore lo annullava sempre, e un'immagine fuori dalla galleria apriva la prima foto.
 
 
+### Coppia di annunci 336x280 a fine articolo
+
+I due annunci prima dei tag ([templates/ads/clickio/square-pair.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/ads/clickio/square-pair.html.twig)) stanno fianco a fianco quando c'è posto e si impilano altrimenti (flex con `flex-wrap` di Bootstrap). Affiancati servono 688 px (2 × 336 più 16 di spazio), ma tra 1200 e 1399 px la colonna del testo è larga 676 px: per questo `.tli-ad-pair` ([assets/styles/article.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/article.css)) si allarga sui 30 px di padding laterale del riquadro dell'articolo (`.post-layout-top-content-3` del tema), come fa Newspark stesso con `.post-layout-top-content-2`. Solo da 576 px in su: sotto, il tema porta il padding a 15 px, e un margine di -30 px farebbe scorrere la pagina di lato.
+
+Risultato: affiancati da 1200 px in su e tra 768 e 991 px (articolo a tutta larghezza), impilati tra 992 e 1199 px e sui telefoni.
+
+
 ### Evidenziazione del codice (highlight.js)
 
 I blocchi `<pre><code class="language-*">` degli articoli sono evidenziati client-side da highlight.js, inserito nell'entry `article`: core + sole lingue di `HtmlProcessorForStorage::ALLOWED_CODE_LANGUAGES`, mai autodetection — un blocco senza classe resta com'è. Il modulo è `js/article-code-highlight.js`; il tema (`github.css`) porta solo i colori dei token, perché sfondo e padding del blocco restano quelli di `article.css` (specificità maggiore). In editing non si evidenzia nulla: il div è di CKEditor.

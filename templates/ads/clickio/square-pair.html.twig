@@ -1,7 +1,8 @@
 {% if hasAds is not defined or hasAds %}
 
-    {# 336x280 "articoli" (Clickio ad unit 604594), twice: side by side where the text column fits both (screens 1400px
-       and up), stacked elsewhere. A unit can repeat: Clickio's loader gives an ad to every <script> carrying its code #}
+    {# 336x280 "articoli" (Clickio ad unit 604594), twice: side by side where they fit (the pair spreads over the article
+       box's padding: .tli-ad-pair in article.css), stacked elsewhere. A unit can repeat: Clickio's loader gives an ad to
+       every <script> carrying its code #}
     <div class="tli-ad-pair d-flex flex-wrap justify-content-center gap-3 mb-4">
         {% for slot in 1..2 %}
             <div>

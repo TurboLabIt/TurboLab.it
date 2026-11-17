@@ -200,6 +200,13 @@
     font-weight: 500;
 }
 
+@media (min-width: 576px) {
+    .tli-ad-pair {
+        margin-left: -30px;
+        margin-right: -30px;
+    }
+}
+
 .tli-tags-strip ul {
     list-style-type: none;
     padding: 0;
