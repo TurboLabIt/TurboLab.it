@@ -73,7 +73,8 @@ name, an internal hostname, a path that tells too much, steps to reproduce a wea
 `scripts/cache-clear.sh` and the dev build do it) is committed and pushed **at once, in a commit of its own**,
 whoever caused it, without raising it with the user. With it goes the manifest (`composer.json`, `package.json`)
 only when the same update rewrote its version ranges. Check first that the diff really is a bump: versions,
-references, hashes. A lock change that ships a `turbolabit/*` package the code now depends on goes with that code.
+references, hashes. A lock change that ships a `turbolabit/*` package the code now depends on goes with that code:
+the `tli-package-release` skill.
 
 ## 5. When it doesn't go through
 
