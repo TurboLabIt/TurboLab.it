@@ -41,6 +41,7 @@ class ArticleSidebarAdTest extends BaseT
         $column = $this->fetchDomNode($url, '.col-lg-4:has(> ul.sidebar_list)');
         $this->assertCount(1, $column, "The side column is missing on $url");
         $this->assertCount(0, $column->filter('script.__lxGc__'), "$url is too short for the sidebar sticky ad");
+        $this->assertCount(0, $column->filter('.tli-handstop'), "No sidebar ad on $url, so no ad-blocker warning in its column");
 
         $this->assertStringContainsString('clickio', $this->fetchHtml($url), "$url keeps the other Clickio ads");
     }
@@ -60,6 +61,7 @@ class ArticleSidebarAdTest extends BaseT
             "Too many side articles on $url: the sticky ad below them would show up later");
 
         $this->assertCount(1, $column->filter('script.__lxGc__'), "The side column of $url must carry exactly one Clickio ad block");
+        $this->assertCount(1, $column->filter('.tli-handstop'), "The sidebar ad on $url needs its ad-blocker warning");
 
         $lastItem = $column->children()->last();
         $this->assertSame('script', $lastItem->nodeName(), "The sticky ad must be the last item of the side column on $url");

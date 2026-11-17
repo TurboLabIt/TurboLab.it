@@ -33,6 +33,8 @@ class ArticleSquarePairAdTest extends BaseT
         }
 
         $this->assertSame('tli-article-tags', $pair->nextAll()->first()->attr('id'), "The pair must sit right before the tags on $url");
+        $this->assertStringContainsString('tli-handstop', (string)$pair->previousAll()->first()->attr('class'),
+            "The pair on $url needs its ad-blocker warning, right before it");
         $this->assertCount(1, $pair->previousAll()->filter('#tli-article-body'), "The pair must come after the text on $url, not above it");
     }
 }

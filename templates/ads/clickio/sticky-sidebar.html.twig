@@ -1,5 +1,8 @@
 {% if hasAds is not defined or hasAds %}
 
+    {# the ad-blocker warning goes before the ad: the sticky must stay the column's last item #}
+    {% include 'ads/handstop.html.twig' %}
+
     {# 300x600 sidebar sticky #}
     <script async src='//s.clickiocdn.com/t/common_258.js'></script>
     <script class='__lxGc__' type='text/javascript'>
