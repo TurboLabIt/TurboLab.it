@@ -1,6 +1,7 @@
 <!-- ARTICLE side column START -->
 <div class="col-lg-4 mt-20">
-    <div class="about-tab-btn">
+    {# keep the id: Clickio's sidebar sticky (its unit config, s_s_top) pins below it, and doesn't render without it #}
+    <div class="about-tab-btn" id="tli-side-articles">
         <div class="about-post-items">
             <div class="row">
                 {% for Article in SideArticles %}
