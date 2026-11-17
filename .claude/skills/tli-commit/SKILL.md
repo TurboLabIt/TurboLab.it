@@ -37,7 +37,8 @@ checked (`Tests: …`). Not a list of files.
 - A fix for an issue says `Closes #N`: the `tli-issue-close` skill has the rest of that procedure.
 - A lock-file bump has its own short messages: `composer update`, `yarn update`, `composer+yarn update`.
 - After a blank line, the attribution trailer of whoever wrote it.
-- Nothing that helps an attacker: what was fixed, never how it could be exploited.
+- Nothing that helps an attacker: what was fixed, never how it could be exploited (the `tli-security-finding`
+  skill).
 
 Save it as a file in your scratchpad.
 
