@@ -54,6 +54,9 @@ node $B shot https://dev0.turbolab.it/1939 --out <file>.png --state <state>
 python3 -I .claude/skills/tli-issue/scripts/forum.py logout <state>
 ```
 
+On a dev copy, the `tli-logged-in-check` skill opens such a session as any user (an editor, an author, a new
+user) without a password, and writes the same kind of file.
+
 The tab gets that session's cookies and its User-Agent, which phpBB checks on every request. The login state
 shows in the page a moment after the load, when the userbar arrives: wait for it
 (`--wait-for "/Ciao\\s+\\S+!/.test(document.body.innerText)"`) rather than looking for the username in the HTML.

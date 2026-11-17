@@ -198,8 +198,8 @@ in the topic, posted at once. Never a comment on GitHub.
 ## The script
 
 `scripts/forum.py` is a single Python 3 file using only the standard library, so there's nothing to install. It has
-`setup`, `login`, `whoami`, `search`, `read`, `visit-guide`, `topic`, `reply`, `bug` and `logout`, and
-`tli-issue-close` uses it too. It keeps the session
+`setup`, `login`, `whoami`, `search`, `read`, `get`, `visit-guide`, `topic`, `reply`, `bug` and `logout`, and
+other skills use it too (`tli-issue-close`, `tli-logged-in-check`, `tli-browser-test`). It keeps the session
 cookies in a private state file and never uses "remember me", so no long-lived key is left behind. `login` also says
 when an earlier login never logged out: close that session too, unless something is still using it. The account and
 the session only go to turbolab.it and its subdomains. TLS is always verified: for dev0 it trusts the self-signed

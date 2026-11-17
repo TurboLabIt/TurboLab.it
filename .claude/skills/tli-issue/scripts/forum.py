@@ -7,6 +7,7 @@ user's OWN TurboLab.it account. Plain HTTPS: no SSH, no database, no headless br
   forum.py whoami <state>                             who the site thinks you are (exit 1 if anonymous)
   forum.py search <state> --keywords "…" [--titles-only] [--forums 6,26]   phpBB's own search, newest first
   forum.py read <state> --post-id N | --topic T [--last 6] [--full]        a topic's latest posts, as BBCode
+  forum.py get <state> PATH [--out FILE]              a page of the site as that session gets it; --out saves it
   forum.py visit-guide <state>                        opens the guide /49, records the visit the bug icon requires
   forum.py topic <state> --forum 6 --subject-file S --message-file M          new topic: prints its post ID and URL
   forum.py reply <state> --topic T | --post-id N [--quote-file Q] --message-file M [--subject-file S]
@@ -564,6 +565,20 @@ def cmd_whoami(site: Site, args) -> None:
     print(f"OK logged in as {name} on {site.host}")
 
 
+def cmd_get(site: Site, args) -> None:
+    if not args.path.startswith('/') or args.path.startswith('//'):
+        fail("get takes a path on the site, starting with one /", 2)
+    status, headers, page, path = site.get(args.path)
+    title = re.search(r'<title[^>]*>(.*?)</title>', page, re.S | re.I)
+    print(f"HTTP {status} {site.base}{one_line(path)}")
+    print(f"{one_line(headers.get('content-type', 'no content type'))}, {len(page)} characters"
+          + (f", title {quoted(plain_text(title.group(1)))}" if title else ''))
+    if args.out:
+        with open(args.out, 'w', encoding='utf-8') as f:
+            f.write(page)
+        print(f"saved to {args.out}")
+
+
 def cmd_search(site: Site, args) -> None:
     params = [('keywords', args.keywords), ('terms', 'all'), ('author', ''), ('sc', '1'),
               ('sf', 'titleonly' if args.titles_only else 'all'), ('sr', 'topics'), ('sk', 't'), ('sd', 'd'),
@@ -700,6 +715,12 @@ def main() -> None:
         command = sub.add_parser(name)
         command.add_argument('state')
         command.set_defaults(run=run, needs_state=True)
+
+    get = sub.add_parser('get')
+    get.add_argument('state')
+    get.add_argument('path', help='a path on the site, like /1939 or /forum/ucp.php')
+    get.add_argument('--out', help='save the page there')
+    get.set_defaults(run=cmd_get, needs_state=True)
 
     search = sub.add_parser('search')
     search.add_argument('state')
