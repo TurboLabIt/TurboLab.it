@@ -56,9 +56,15 @@ def fail(message: str, code: int = 1) -> None:
     sys.exit(code)
 
 
+# control characters, the Unicode line separators and the marks that reorder text on screen. The last two kinds
+# are built from their code points: written as they are, nobody could see them in this file
+UNPRINTABLE = re.compile(r'[\x00-\x1f\x7f-\x9f' + ''.join(
+    chr(code) for code in (0x2028, 0x2029, *range(0x202a, 0x202f), *range(0x2066, 0x206a))) + ']')
+
+
 def shown(text) -> str:
     """A name or a line of a file, safe to print: nothing in it drives the terminal."""
-    return re.sub(r'[\x00-\x1f\x7f-\x9f  ‪-‮⁦-⁩]', '?', str(text))
+    return UNPRINTABLE.sub('?', str(text))
 
 
 def git(*args, env=None, check=True, binary=False, timeout=120):

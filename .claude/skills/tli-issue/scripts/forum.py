@@ -48,8 +48,10 @@ def fail(message: str, code: int = 1) -> None:
 
 
 # what text taken from a page must never carry into this script's output: control characters, the Unicode line and
-# paragraph separators, and the marks that reorder text on screen (the line feed is handled by each function)
-UNSAFE = r'\x00-\x09\x0b-\x1f\x7f-\x9f  ‪-‮⁦-⁩'
+# paragraph separators, and the marks that reorder text on screen (the line feed is handled by each function).
+# The last two kinds are built from their code points: written as they are, nobody could see them in this file
+UNSAFE = r'\x00-\x09\x0b-\x1f\x7f-\x9f' + ''.join(
+    chr(code) for code in (0x2028, 0x2029, *range(0x202a, 0x202f), *range(0x2066, 0x206a)))
 
 
 def plain_text(markup: str) -> str:
