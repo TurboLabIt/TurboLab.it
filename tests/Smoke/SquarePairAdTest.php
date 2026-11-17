@@ -17,7 +17,8 @@ use Symfony\Component\DomCrawler\Crawler;
  * carries the unit's code, so each one must keep it literally.
  *
  * In an article, readers only, like every ad: whoever can edit it gets none (hasAds); see ArticleSidebarAdTest for why
- * that branch isn't exercised here. The homepage is the same for everyone.
+ * that branch isn't exercised here. Nor does an article with its ads off (show_ads): see ArticleShowAdsTest. The
+ * homepage is the same for everyone.
  */
 class SquarePairAdTest extends BaseT
 {
@@ -27,7 +28,7 @@ class SquarePairAdTest extends BaseT
 
     public function testTheSquarePairClosesTheArticleText() : void
     {
-        $url  = static::getArticle()->getUrl();
+        $url  = static::getArticleWithAds()->getUrl();
         $pair = $this->fetchDomNode($url, '.tli-ad-pair');
         $this->assertIsTheSquarePair($pair, $url);
 

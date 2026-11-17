@@ -105,6 +105,20 @@ abstract class BaseT extends WebTestCase
     }
 
 
+    // ID_QUALITY_TEST has its ads off (show_ads = 0, kept from TLI1): the ads are checked on the newest article with ads
+    protected static function getArticleWithAds() : Article
+    {
+        foreach(static::getArticleCollection()->loadLatestPublished() as $article) {
+
+            if( $article->showAds() ) {
+                return $article;
+            }
+        }
+
+        static::fail("No published article with ads among the latest ones");
+    }
+
+
     protected static function getTag(int $tagId = Tag::ID_DEFAULT_TAG) : Tag
     {
         return static::getService(Factory::class)->createTag()->load($tagId);

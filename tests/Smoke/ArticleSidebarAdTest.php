@@ -18,7 +18,7 @@ use Symfony\Component\DomCrawler\Crawler;
  *
  * Readers only: whoever can edit the article gets the images gallery instead of this column, and no ads (hasAds).
  * That branch is the article template's, untouched by the ad, and a KernelBrowser login can't reach it (stateless
- * firewall), so it isn't exercised here.
+ * firewall), so it isn't exercised here. Nor is an article with its ads off (show_ads): see ArticleShowAdsTest.
  */
 class ArticleSidebarAdTest extends BaseT
 {
@@ -28,7 +28,7 @@ class ArticleSidebarAdTest extends BaseT
 
     public function testArticleSideColumnEndsWithTheStickyAd() : void
     {
-        $page = $this->assertSideColumnEndsWithTheStickyAd( static::getArticle()->getUrl() );
+        $page = $this->assertSideColumnEndsWithTheStickyAd( static::getArticleWithAds()->getUrl() );
 
         $this->assertNotNull($page->filter('footer')->first()->closest('article'),
             "The first footer on the article page must be the article's own: the pinned sidebar ad stops above it");

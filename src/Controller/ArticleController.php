@@ -103,7 +103,8 @@ class ArticleController extends BaseController
                 'EmuleGuide'            => $this->factory->createArticle()->load(Article::ID_EMULE_GUIDE),
                 'commentsLoadingUrl'    => $article->getCommentsAjaxLoadingUrl(),
                 'SideArticles'          => $this->factory->createArticleCollection()->loadSideBarOf($article),
-                'hasAds'                => !$sentinel->canEdit()
+                // show_ads: the article's own switch, kept from TLI1 (no UI): off where no ad may run
+                'hasAds'                => $article->showAds() && !$sentinel->canEdit()
             ]);
 
         if( $article->isDraft() ) {

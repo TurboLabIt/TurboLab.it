@@ -180,6 +180,8 @@ class Article extends BaseCmsService
 
     //<editor-fold defaultstate="collapsed" desc="*** 🐦‍🔥 Special features ***">
     public function isAllowExtendedHtml() : bool { return $this->entity->isAllowExtendedHtml(); }
+
+    public function showAds() : bool { return $this->entity->showAds(); }
     //</editor-fold>
 
 
