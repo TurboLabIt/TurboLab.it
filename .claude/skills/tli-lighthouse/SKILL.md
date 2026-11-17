@@ -51,7 +51,7 @@ that run go up by as much, and the score drops by tens of points.
 - **Know what your change can move.** A change in the browser (CSS, a script, an image) can't change `ttfb`. If
   `ttfb` moved, it's the environment. If only `ttfb`-driven figures moved (FCP, LCP, by the same amount), likewise.
 - **The script says when the box was busy**: a NOTE under the address when one run's `ttfb` is more than double
-  the median. Run it again, with more runs.
+  the median. Run it again, with more runs. The `tli-dev0-doctor` skill tells what state the box is in.
 - **Absolute figures on a dev copy are worse than production's**: the Symfony toolbar is on the page, nothing is
   cached, and the box is small. Judge a change by the difference, and take the absolute figures from production.
 
