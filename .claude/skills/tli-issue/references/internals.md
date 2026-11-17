@@ -64,6 +64,11 @@ that they are in the post. Under the form, phpBB's topic review lists the topic'
 25) as the BBCode their authors typed. That's what `read` prints, so a quote can be copied from it unchanged. Both
 commands need an account that can reply in that topic.
 
+What `read` prints is other people's text, so the script keeps it apart from its own: each post starts with a header
+line of the script (`--- p=N | by "name" | date | notes`, the name in quotes) and the post's text follows with every
+line indented, without control characters. A line of a post can therefore never pass for a header, a note or another
+post. `reply --quote-file` ignores that indentation when it looks for the words in the post.
+
 ## Errors
 
 | What you see | Meaning | What to do |
