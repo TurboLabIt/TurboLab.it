@@ -2,6 +2,7 @@
 namespace App\Tests\ZZ_Commands;
 
 use App\Command\ChristmasArticleGeneratorCommand;
+use App\Command\FilesNotFoundCommand;
 use App\Command\NewsletterSendCommand;
 use App\Command\ShareOnSocialCommand;
 use App\Command\SitemapGeneratorCommand;
@@ -41,5 +42,13 @@ class CommandsTest extends BaseT
         $command = static::getService(ChristmasArticleGeneratorCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
         $this->assertEquals($result, ChristmasArticleGeneratorCommand::SUCCESS);
+    }
+
+
+    public function testFilesNotFoundCommand()
+    {
+        $command = static::getService(FilesNotFoundCommand::class);
+        $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
+        $this->assertEquals($result, FilesNotFoundCommand::SUCCESS);
     }
 }

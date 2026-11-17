@@ -187,6 +187,11 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     {
         foreach($this->files as $file) {
 
+            // an external Download has no file on disk (its path is null)
+            if( !$file->isLocal() ) {
+                continue;
+            }
+
             $filePath = $file->getOriginalFilePath();
             $this->arrFilesByPath[$filePath] = null;
         }
