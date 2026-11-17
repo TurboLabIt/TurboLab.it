@@ -23,7 +23,7 @@ const PROJECT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..',
 // the only sites this is for: TurboLab.it and its subdomains (the dev copies)
 const SITE_HOST = /^(?:[a-z0-9-]+\.)*turbolab\.it$/;
 // the consent dialog puts itself back when removed, and its backdrop takes every pointer event: kept off the network
-const CONSENT_DIALOG = ['*clickiocmp.com*', '*clickiocdn.com*'];
+export const CONSENT_DIALOG = ['*clickiocmp.com*', '*clickiocdn.com*'];
 const sleep = ms => new Promise(done => setTimeout(done, ms));
 // a signal ends Node without its exit handlers: turned into an exit, the browser and its profile are still removed
 for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.once(signal, () => process.exit(1));
@@ -311,22 +311,30 @@ class Browser {
 }
 
 /**
+ * The flags Chrome needs on this kind of box, whoever starts it (this library, or Lighthouse): headless, the
+ * certificates to trust (dev0's by itself, plus the PEM files given), and no sandbox only where the kernel refuses
+ * unprivileged user namespaces (AppArmor, as on dev0), because there Chrome can't build one.
+ */
+export function chromeFlags({ certificates = [] } = {}) {
+  const flags = ['--headless=new', '--disable-gpu', '--mute-audio', '--no-first-run', '--no-default-browser-check'];
+  const trusted = [devCertificate(), ...certificates].filter(Boolean).map(certificateFingerprint);
+  if (trusted.length) flags.push(`--ignore-certificate-errors-spki-list=${trusted.join(',')}`);
+  const restricted = '/proc/sys/kernel/apparmor_restrict_unprivileged_userns';
+  if (existsSync(restricted) && readFileSync(restricted, 'utf8').trim() === '1') flags.push('--no-sandbox');
+  return flags;
+}
+
+/**
  * Starts a browser of its own. `touch` gives a coarse pointer without hover (a phone); otherwise a mouse that
  * hovers, which headless Chrome doesn't report by itself. `certificates` are PEM files to trust: dev0's is
  * trusted by itself, and only that one, so TLS errors elsewhere still show.
  */
 export async function launch({ touch = false, certificates = [], args = [] } = {}) {
   const profile = mkdtempSync(join(tmpdir(), 'tli-browser.'));
-  const trusted = [devCertificate(), ...certificates].filter(Boolean).map(certificateFingerprint);
   const pointer = touch ? 'primaryPointerType=2,availablePointerTypes=2,primaryHoverType=1,availableHoverTypes=1'
     : 'primaryPointerType=4,availablePointerTypes=4,primaryHoverType=2,availableHoverTypes=2';
-  const flags = ['--headless=new', '--remote-debugging-pipe', `--user-data-dir=${profile}`, '--no-first-run',
-    '--no-default-browser-check', '--disable-gpu', '--hide-scrollbars', '--mute-audio', '--window-size=1280,900',
-    `--blink-settings=${pointer}`];
-  if (trusted.length) flags.push(`--ignore-certificate-errors-spki-list=${trusted.join(',')}`);
-  // where the kernel refuses unprivileged user namespaces (AppArmor, as on dev0) Chrome can't build its sandbox
-  const restricted = '/proc/sys/kernel/apparmor_restrict_unprivileged_userns';
-  if (existsSync(restricted) && readFileSync(restricted, 'utf8').trim() === '1') flags.push('--no-sandbox');
+  const flags = [...chromeFlags({ certificates }), '--remote-debugging-pipe', `--user-data-dir=${profile}`,
+    '--hide-scrollbars', '--window-size=1280,900', `--blink-settings=${pointer}`];
 
   const binary = chromePath();
   const child = spawn(binary, [...flags, ...args], { stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe'] });
