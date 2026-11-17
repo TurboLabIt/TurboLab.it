@@ -46,6 +46,7 @@ REVIEW = [
 ]
 PLACEHOLDER = re.compile(r'(?i)^(?:x+|\*+|\.+|…+|changeme|change_me|password|secret|example|placeholder|null|none'
                          r'|true|false|your[-_].*|<.*>|\{.*\}|%.*%|\$.*)$')
+PLAIN_URL = re.compile(r'^https?://[A-Za-z0-9.-]+(?::\d+)?(?:/[A-Za-z0-9._~/-]*)?$')
 PUBLIC_IP = re.compile(r'^(?:127\.|0\.0\.0\.0$|255\.|192\.0\.2\.|198\.51\.100\.|203\.0\.113\.)')
 PUBLIC_MAIL = re.compile(r'(?i)@(?:example\.(?:com|org|net)|(?:.*\.)?invalid|anthropic\.com'
                          r'|users\.noreply\.github\.com)$')
@@ -168,7 +169,9 @@ def meant_to_be_public(kind: str, value: str) -> bool:
     if kind == 'e-mail address':
         return bool(PUBLIC_MAIL.search(value))
     if kind.startswith('value assigned'):
-        return bool(PLACEHOLDER.match(value))
+        # a placeholder, or a plain web address, as in the constant that names a token endpoint. An address that
+        # carries credentials or a query string doesn't pass here, and the other patterns look inside it
+        return bool(PLACEHOLDER.match(value) or PLAIN_URL.match(value))
     return not looks_random(value)
 
 
