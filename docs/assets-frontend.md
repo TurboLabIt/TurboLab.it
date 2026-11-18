@@ -69,6 +69,15 @@ Per questo [assets/styles/app.css](https://github.com/TurboLabIt/TurboLab.it/blo
 `break-word` non basta a un elemento flex accanto a una miniatura: la sua larghezza minima resta quella della parola più lunga, e la riga esce lo stesso. Per questo `.gallery_item_content` (liste della homepage e del footer, in `app.css`) e il titolo dei video in homepage (`.tli-video-thumb > .flex-grow-1`, in [assets/styles/youtube-integration.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/youtube-integration.css)) hanno `min-width: 0`. Un nuovo layout flex con un titolo accanto a un'immagine ha bisogno della stessa regola.
 
 
+### Logo: 360 px, sui telefoni stretti si restringe in proporzione
+
+Il logo dell'intestazione e quello del footer (`.logo img`, `.footer-logo img` in [assets/styles/app.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/app.css)) sono larghi 360 px e alti 62, con `all: revert`: toglie la regola del tema `img { max-width: 100% }`, che con l'altezza fissa schiacciava il logo quando la colonna era più stretta (con lo zoom del browser). Sotto i 576 px, però, la colonna è larga quanto lo schermo meno 24 px, e su un telefono più stretto di 384 px il logo ne usciva: a 360 px, una larghezza comune su Android, ogni pagina del sito era larga 373 px e scorreva di lato.
+
+Per questo, solo sotto i 576 px, il logo ha `max-width: 100%` con `height: auto` e `aspect-ratio: 360 / 62`, e si restringe in proporzione: 296 px a 320, 336 a 360, 351 a 375; da 390 in su resta di 360. ⚠️ `aspect-ratio` sembra superfluo, visto che l'`<img>` ha gli attributi `width` e `height`, ma `all: revert` scarta anche quelli: senza, il logo è alto 0 px finché l'immagine non arriva, e quando arriva sposta la pagina.
+
+Sopra i 576 px resta di 360 px anche dove la sua colonna è più stretta (l'intestazione tra 992 e 1199 px, larga 296; il footer tra 768 e 991, larga 276): accanto non c'è niente e il logo non esce dallo schermo, mentre restringerlo lì lo cambierebbe su schermi comuni, come i 1024 px di un tablet in orizzontale.
+
+
 ### Coppia di annunci 336x280: fine articolo, homepage ed elenchi
 
 I due annunci prima dei tag ([templates/ads/clickio/square-pair.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/ads/clickio/square-pair.html.twig)) stanno fianco a fianco quando c'è posto e si impilano altrimenti (flex con `flex-wrap` di Bootstrap). Affiancati servono 688 px (2 × 336 più 16 di spazio), ma tra 1200 e 1399 px la colonna del testo è larga 676 px: per questo `.tli-ad-pair` ([assets/styles/article.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/article.css)) si allarga sui 30 px di padding laterale del riquadro dell'articolo (`.post-layout-top-content-3` del tema), come fa Newspark stesso con `.post-layout-top-content-2`. Solo da 576 px in su: sotto, il tema porta il padding a 15 px, e un margine di -30 px farebbe scorrere la pagina di lato.

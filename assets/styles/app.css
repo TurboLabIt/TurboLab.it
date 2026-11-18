@@ -48,6 +48,16 @@ i[class*="fa-"] {
     height: 62px;
 }
 
+@media (max-width: 575.98px) {
+    .logo img, .footer-logo img {
+        max-width: 100%;
+        height: auto;
+        /* CLS guard: all: revert above also drops the img's width/height attributes,
+           so this ratio is what reserves the logo's height before the image arrives */
+        aspect-ratio: 360 / 62;
+    }
+}
+
 ::placeholder {
     opacity: 0.3 !important;
 }
