@@ -91,7 +91,7 @@ saved is in the `--dry-run` output first.
 ## The plan
 
 A JSON object: article ID, then its operations. Blocks are pointed at by quoting some of their words, as `show`
-prints them but without the link targets, and a quote must match exactly one block. Only the articles under "File da
+prints them but without the link targets, and a quote must match exactly one block, or be the whole text of one of them (a heading repeated as the link text of the "» Leggi:" line below it). Only the articles under "File da
 controllare:" and only their listed Downloads are accepted.
 
 ```json
@@ -107,7 +107,7 @@ controllare:" and only their listed Downloads are accepted.
 
 | op | what it does | fields |
 |---|---|---|
-| `line` | the `» Download:` line, as a paragraph | `file`; `after` or `before` (words of a block); `lead_in`, optional, text added at the end of the `after` paragraph, punctuation included |
+| `line` | the `» Download:` line, as a paragraph | `file`; `after` or `before` (words of a block); `lead_in`, optional: with `after`, text added at the end of that paragraph, punctuation included; with `before`, a paragraph of its own right before the line, for a place with no paragraph to end (997: the end of a section closed by a credit line) |
 | `link` | turns words of a block into the link | `file`; `in` (words of the block); `text`: the words to link, once in that block, in one run of text (no bold or italics inside), outside links |
 | `repoint` | points a link of the text at the Download | `file`; `href`: the link's target as `show` prints it, which only one link of the text may have |
 | `restore` | puts back text that the page hides (below) | `text`, as `show` prints it; `after` or `before` |

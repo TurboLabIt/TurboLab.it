@@ -254,6 +254,10 @@ def blocks_of(markup: str) -> list:
 def find_block(blocks: list, quote, what: str) -> Block:
     wanted = ' '.join(str(quote or '').split())
     hits = [block for block in blocks if wanted and wanted in block.text]
+    # a heading whose words are also a "» Leggi:" line's link text: the block that is the whole quote wins
+    exact = [block for block in hits if block.text == wanted]
+    if len(hits) > 1 and len(exact) == 1:
+        hits = exact
     if len(hits) != 1:
         fail(f"{what}: {quoted(wanted)} is in {len(hits)} blocks of the text, and it must point at exactly one: "
              "quote more of its words, as `show` prints them (not the link targets)")
@@ -382,9 +386,14 @@ def splices_of(article: Article, blocks: list, downloads: dict, ops: list, hidde
 
         if kind == 'line':
             block, position = locate(blocks, op, what)
-            if op.get('lead_in'):
-                if 'after' not in op or block.tag != 'p' or not block.html.endswith('</p>'):
-                    fail(f"{what}: a lead_in ends the paragraph the line follows: it needs after, on a paragraph")
+            if op.get('lead_in') and 'before' in op:
+                # a paragraph of its own, right before the line: for a place with no paragraph to end, such as the
+                # end of a section closed by a credit or an image (splice() keeps the order of the same operation)
+                splices.append((position, position, f"<p>{html.escape(op['lead_in'].strip(), quote=False)}</p>",
+                                number))
+            elif op.get('lead_in'):
+                if block.tag != 'p' or not block.html.endswith('</p>'):
+                    fail(f"{what}: a lead_in with after ends the paragraph the line follows: it must be a paragraph")
                 splices.append((block.end - 4, block.end - 4, html.escape(op['lead_in'], quote=False), number))
             splices.append((position, position, DOWNLOAD_LINE.format(
                 url=url, title=html.escape(download['title'], quote=False)), number))
