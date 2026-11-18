@@ -248,6 +248,21 @@ abstract class BaseT extends WebTestCase
 
         return $this;
     }
+
+
+    /**
+     * What makes the ads on a page, counted part by part for the tests on who gets them (hasAds). Elements, not
+     * strings: the stylesheet inlined in every page styles .tli-handstop
+     */
+    protected function countAdParts(Crawler $page) : array
+    {
+        return [
+            'Clickio scripts (header code, consent tool, stickies)' => $page->filter('script[src*="clickio"]')->count(),
+            'Clickio ad units'                                      => $page->filter('script.__lxGc__')->count(),
+            'ad-blocker warnings'                                   => $page->filter('.tli-handstop')->count(),
+            'the "ads expected" flag for economics.js'              => substr_count($page->html(), 'tliExpectAxx'),
+        ];
+    }
     //</editor-fold>
 
 

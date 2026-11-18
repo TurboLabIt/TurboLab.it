@@ -109,7 +109,9 @@ class AuthorContoller extends BaseController
                 'changeBioUrl'          => $changeBioUrl ?? null,
                 'Articles'              => $authorArticles,
                 'Pages'                 => $authorArticles->count() > 0 ? $oPages : null,
-                'currentPage'           => $page
+                'currentPage'           => $page,
+                // the cached copy is built only for logged-out visitors (isCachable(true)), so it always has the ads
+                'hasAds'                => $this->hasAdsForCurrentUser()
             ]);
         }
 }

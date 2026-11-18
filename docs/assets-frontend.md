@@ -95,6 +95,17 @@ Negli elenchi di articoli ([templates/archive/index.html.twig](https://github.co
 Ogni coppia compare solo se dopo di lei restano almeno due card (`loop.revindex0 >= 2`), per via di uno dei Better Ads Standards: con annunci oltre il 30% dell'altezza della pagina mobile, Chrome può bloccare gli annunci dell'intero sito. Su un telefono, contando lo sticky in basso, un elenco di due card chiuso dalla coppia è per il 37% annunci, uno di tre per il 30%, uno di quattro tra il 22 e il 26%. Per lo stesso motivo non è più fitta di così: su un telefono ogni coppia è un blocco di quasi 600 px.
 
 
+### Chi non vede gli annunci: lo staff, tranne dove la cache è di tutti
+
+I template degli annunci ([templates/ads/clickio/](https://github.com/TurboLabIt/TurboLab.it/tree/main/templates/ads/clickio)) li mostrano a meno che la pagina non passi `hasAds` falso: una pagina che non lo passa ha gli annunci. Non li ha:
+
+- lo staff (gli editor), sulle pagine costruite per chi le guarda, cioè senza cache o in cache solo per chi non ha fatto login (`isCachable(true)`): pagine autore, `/info`, `/statistiche`, ricerca, calendario, `/scrivi`, `/scarica/da-controllare` e `/immagini/orfane` passano [BaseController::hasAdsForCurrentUser()](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/BaseController.php);
+- in un articolo, chi lo può modificare (lo staff e gli autori dell'articolo), e nessuno se l'articolo ha `show_ads` a 0 ([ArticleController](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ArticleController.php));
+- nessuno, nelle pagine di iscrizione e disiscrizione della newsletter.
+
+Su homepage, `/news`, tag e viste lo staff li vede: lì la cache delle viste dà la stessa copia a tutti, anche a chi ha fatto login, quindi la scelta la farebbe chi l'ha costruita, e una visita dello staff subito dopo una pubblicazione (che svuota quelle cache) lascerebbe la pagina senza annunci per tutti. La stessa regola era stata messa in homepage a maggio 2026, e tolta due giorni dopo proprio per questo. In dev e in test la cache è spenta, quindi lì l'errore non si vedrebbe: [tests/Smoke/StaffNoAdsTest.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/tests/Smoke/StaffNoAdsTest.php) controlla anche che su queste pagine lo staff abbia ancora gli annunci.
+
+
 ### Evidenziazione del codice (highlight.js)
 
 I blocchi `<pre><code class="language-*">` degli articoli sono evidenziati client-side da highlight.js, inserito nell'entry `article`: core + sole lingue di `HtmlProcessorForStorage::ALLOWED_CODE_LANGUAGES`, mai autodetection — un blocco senza classe resta com'è. Il modulo è `js/article-code-highlight.js`; il tema (`github.css`) porta solo i colori dei token, perché sfondo e padding del blocco restano quelli di `article.css` (specificità maggiore). In editing non si evidenzia nulla: il div è di CKEditor.

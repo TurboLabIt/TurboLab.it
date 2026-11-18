@@ -47,7 +47,8 @@ class InfoController extends BaseController
                 'ServerInfo'        => $currentUser ? $serverInfo->getServerInfo() : [],
                 'IssueReportGuide'  => $this->factory->createArticle()->load(Article::ID_ISSUE_REPORT),
                 'SideArticles'      => $this->factory->createArticleCollection()->loadLatestPublished()
-                    ->getItems(3)
+                    ->getItems(3),
+                'hasAds'            => $this->hasAdsForCurrentUser()
             ]);
     }
 
@@ -65,7 +66,8 @@ class InfoController extends BaseController
                 'CurrentUser'       => $this->getCurrentUser(),
                 'StatsConfigured'   => $googleAnalytics->isConfigured(),
                 'StatsAllowedDays'  => GoogleAnalytics::ALLOWED_RANGE_DAYS,
-                'StatsDefaultDays'  => GoogleAnalytics::DEFAULT_RANGE_DAYS
+                'StatsDefaultDays'  => GoogleAnalytics::DEFAULT_RANGE_DAYS,
+                'hasAds'            => $this->hasAdsForCurrentUser()
             ]);
     }
 

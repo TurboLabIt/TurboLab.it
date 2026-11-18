@@ -78,6 +78,7 @@ class FileController extends BaseController
             'activeMenu'        => null,
             'FrontendHelper'    => $frontendHelper,
             'CurrentUser'       => $currentUser,
+            'hasAds'            => $this->hasAdsForCurrentUser()
         ];
 
         if( $currentUser ) {

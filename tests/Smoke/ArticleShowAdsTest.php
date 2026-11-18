@@ -19,26 +19,13 @@ class ArticleShowAdsTest extends BaseT
         $this->assertFalse($article->showAds(), "This test relies on the quality-test article having its ads off (show_ads = 0)");
 
         $url = $article->getUrl();
-        foreach($this->countAdParts($url) as $part => $count) {
+        foreach($this->countAdParts( $this->fetchDomNode($url) ) as $part => $count) {
             $this->assertSame(0, $count, "$url has its ads off (show_ads = 0), yet it carries $part");
         }
 
         $urlWithAds = static::getArticleWithAds()->getUrl();
-        foreach($this->countAdParts($urlWithAds) as $part => $count) {
+        foreach($this->countAdParts( $this->fetchDomNode($urlWithAds) ) as $part => $count) {
             $this->assertGreaterThan(0, $count, "Positive control: $urlWithAds has its ads on, so it must carry $part");
         }
-    }
-
-
-    private function countAdParts(string $url) : array
-    {
-        // elements, not strings: the stylesheet inlined in every page styles .tli-handstop
-        $page = $this->fetchDomNode($url);
-        return [
-            'Clickio scripts (header code, consent tool, stickies)' => $page->filter('script[src*="clickio"]')->count(),
-            'Clickio ad units'                                      => $page->filter('script.__lxGc__')->count(),
-            'ad-blocker warnings'                                   => $page->filter('.tli-handstop')->count(),
-            'the "ads expected" flag for economics.js'              => substr_count($page->html(), 'tliExpectAxx'),
-        ];
     }
 }

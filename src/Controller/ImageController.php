@@ -138,6 +138,7 @@ class ImageController extends BaseController
             'CurrentUser'       => $currentUser,
             'Images'            => $images,
             'num'               => $count,
+            'hasAds'            => $this->hasAdsForCurrentUser()
         ]);
     }
 

@@ -71,6 +71,18 @@ abstract class BaseController extends AbstractController
     }
 
 
+    /**
+     * Staff (editors) get no ads. Only for the 'hasAds' of a page built for its logged-in viewer, uncached or behind
+     * isCachable(true): a page the view cache shares among all visitors (the homepage, /news, tags, views) would keep
+     * the choice of whoever built it, and a staff visit right after a publish would leave it ad-free for everyone.
+     * That's also why a page that passes no hasAds gets the ads (templates/ads/clickio/*)
+     */
+    protected function hasAdsForCurrentUser() : bool
+    {
+        return !( $this->getCurrentUser()?->isEditor() ?? false );
+    }
+
+
     protected function tliStandardControllerResponse(array $arrCacheTags, ?int $page, ?callable $fxBuildHtml = null) : Response
     {
         $page = empty($page) ? 1 : $page;

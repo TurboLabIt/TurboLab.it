@@ -66,7 +66,8 @@ class ArticleNewController extends ArticleEditBaseController
             'formatNews'                    => Article::FORMAT_NEWS,
             'formatActionSponsor'           => Article::FORMAT_ACTION_SPONSOR,
             'csrfTokenFieldName'            => static::CSRF_TOKEN_PARAM_NAME,
-            'csrfToken'                     => $this->csrfTokenManager->getToken(static::CSRF_TOKEN_ID)->getValue()
+            'csrfToken'                     => $this->csrfTokenManager->getToken(static::CSRF_TOKEN_ID)->getValue(),
+            'hasAds'                        => $this->hasAdsForCurrentUser()
         ]);
     }
 

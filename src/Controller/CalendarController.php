@@ -34,7 +34,8 @@ class CalendarController extends BaseController
                 'FrontendHelper'            => $this->frontendHelper,
                 'minCalendarDate'           => $minCalendarDate->modify('-1 day')->format('Y-m-d'),
                 'maxCalendarDate'           => $maxCalendarDate->modify('+1 day')->format('Y-m-d'),
-                'calendarEventsLoadingUrl'  => $this->generateUrl('app_calendar_events')
+                'calendarEventsLoadingUrl'  => $this->generateUrl('app_calendar_events'),
+                'hasAds'                    => $this->hasAdsForCurrentUser()
             ]);
     }
 

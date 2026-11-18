@@ -34,6 +34,7 @@ class SearchController extends BaseController
                 'activeMenu'        => static::SECTION_SLUG,
                 'FrontendHelper'    => $this->frontendHelper,
                 'termToSearch'      => $termToSearch,
+                'hasAds'            => $this->hasAdsForCurrentUser()
             ]);
     }
 
