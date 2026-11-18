@@ -7,6 +7,7 @@ use App\Entity\Cms\File as FileEntity;
 use App\Service\Cms\Article;
 use App\Service\Cms\File;
 use App\Service\Factory;
+use App\Service\HtmlProcessorForDisplay;
 use App\Service\User;
 use App\Tests\BaseT;
 use SortDirection;
@@ -47,6 +48,35 @@ class FilesToArticlesReportTest extends BaseT
             "An article with a Download attached and not linked must be listed, even when it changed just now");
         $this->assertArrayHasKey($this->fileId, $list[$articleId]['Files'],
             "A Download attached and not linked must be listed, even when it was attached just now");
+    }
+
+
+    /**
+     * The quality-test article carries Downloads for the tests, some of them on purpose not linked in its text (the
+     * logo, a registry file): it's never in the list, like the "about us" article. Read-only: the fixture stays as it is
+     */
+    public function testTheQualityTestArticleIsNeverListed() : void
+    {
+        static::loginAsSystem();
+        $article = static::getService(Factory::class)->createArticle()->load(Article::ID_QUALITY_TEST);
+
+        $attachedIds = array_map( fn($file) => (int)$file->getId(), array_values( $article->getFiles() ) );
+        preg_match_all(HtmlProcessorForDisplay::REGEX_FILE_PLACEHOLDER, (string)$article->getEntity()->getBody(), $arrMatches);
+
+        if( empty( array_diff($attachedIds, array_map('intval', $arrMatches[0])) ) ) {
+            $this->markTestSkipped("The quality-test article links every Download it has: nothing that could be listed");
+        }
+
+        $command    = static::getService(FilesToArticlesCommand::class);
+        $result     = $command->run(new ArrayInput(['--dry-run' => true]), new BufferedOutput());
+        $this->assertSame(FilesToArticlesCommand::SUCCESS, $result);
+
+        $listPath = static::getService(ProjectDir::class)->getVarDirFromFilePath(File::ATTACHED_BUT_UNUSED_FILE_NAME);
+        $list = json_decode((string)file_get_contents($listPath), true);
+
+        $this->assertIsArray($list, "FilesToArticles must write the list as JSON");
+        $this->assertArrayNotHasKey(Article::ID_QUALITY_TEST, $list,
+            "The quality-test article's Downloads are attached on purpose: it must never be in the list");
     }
 
 

@@ -210,9 +210,10 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         $fileId     = $junction->getFile()->getId();
 
 
-        if( $articleId == Article::ID_ABOUT_US ) {
+        if( in_array($articleId, [Article::ID_ABOUT_US, Article::ID_QUALITY_TEST]) ) {
 
-            // special case! some files (logo, presentation, ...) are attached on the "about us" article, but not linked
+            // special cases! some files are attached to these articles on purpose, but not linked: the logo, the
+            // presentation, ... on the "about us" article; the test fixtures' Downloads on the quality-test article
             return $this->removeFromArticleMap($articleId, $fileId);
         }
 

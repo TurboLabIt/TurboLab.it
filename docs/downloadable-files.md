@@ -80,7 +80,7 @@ Eliminare un Download spetta ai suoi autori e agli editor (vedi [Permessi](#perm
 Un Download è *collegato* a un articolo quando compare nel suo elenco dei Download, *linkato* quando il testo dell'articolo contiene un link a esso:
 
 - **linkato ma non collegato** ➡ viene collegato automaticamente
-- **collegato ma non linkato** ➡ accettabile: è solo segnalato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), perché l'autore lo citi nel testo
+- **collegato ma non linkato** ➡ accettabile: è solo segnalato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), perché l'autore lo citi nel testo. Non vi compaiono due articoli i cui Download sono collegati di proposito senza essere linkati: "Chi siamo" (logo, presentazione, ...) e l'articolo dei test automatici (`Article::ID_QUALITY_TEST`, 1939)
 - **non collegato a nessun articolo** ➡ candidato all'eliminazione: per ora è solo elencato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), in seguito sarà eliminato automaticamente, come già avviene per le immagini orfane
 
 Gli articoli *collegati ma non linkati* li corregge anche Claude Code, con la skill [.claude/skills/tli-unlinked-downloads](https://github.com/TurboLabIt/TurboLab.it/tree/main/.claude/skills/tli-unlinked-downloads): il link va dove il testo cita il Download, come riga `» Download:` dopo il paragrafo oppure sulle parole stesse quando la citazione è un inciso, e il resto del testo non cambia. Lavora via HTTPS, salvando come l'editor, con un account amministratore salvato in `/etc/turbolab.it/account-turbolab.it-admin.conf` (fuori dal repository, permessi 600).
