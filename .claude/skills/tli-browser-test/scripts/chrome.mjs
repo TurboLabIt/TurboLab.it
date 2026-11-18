@@ -22,8 +22,9 @@ import { fileURLToPath } from 'node:url';
 const PROJECT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 // the only sites this is for: TurboLab.it and its subdomains (the dev copies)
 const SITE_HOST = /^(?:[a-z0-9-]+\.)*turbolab\.it$/;
-// the consent dialog puts itself back when removed, and its backdrop takes every pointer event: kept off the network
-export const CONSENT_DIALOG = ['*clickiocmp.com*', '*clickiocdn.com*'];
+// the consent dialogs, Clickio's on the site and Google's on the forum (its own tag, not AdSense's script), kept off
+// the network: Clickio's puts itself back when removed, and its backdrop takes every pointer event
+export const CONSENT_DIALOG = ['*clickiocmp.com*', '*clickiocdn.com*', '*fundingchoicesmessages.google.com*'];
 const sleep = ms => new Promise(done => setTimeout(done, ms));
 // a signal ends Node without its exit handlers: turned into an exit, the browser and its profile are still removed
 for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.once(signal, () => process.exit(1));

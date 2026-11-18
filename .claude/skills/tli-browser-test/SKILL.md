@@ -39,7 +39,7 @@ Options, for all three:
 | `--wait-for '<js>'`, `--wait <ms>` | wait until the expression is true, then that long |
 | `--full`, `--selector <css>` | `shot` only: the whole page, or one element |
 | `--state <file>` | a logged-in tab (below) |
-| `--keep-consent` | leave the consent dialog in (it is blocked otherwise) |
+| `--keep-consent` | leave the consent dialogs in (they are blocked otherwise) |
 
 `check` exits with code 1 on a status of 400 or more, or on any JavaScript error. Save screenshots in your
 scratchpad and look at them with the Read tool: a screenshot nobody looked at proves nothing.
@@ -95,8 +95,9 @@ Each of these broke a hand-written driver at least once. They are in the library
   same box: never `pkill` Chrome, and never reuse a profile folder.
 - **The protocol over a pipe**, not over a TCP port that any local user could attach to.
 - **dev0's self-signed certificate**: that one certificate is trusted, so a real TLS error still shows.
-- **The consent dialog**: removed from the page, it puts itself back, and its backdrop takes every click. Its
-  hosts are blocked at network level instead.
+- **The consent dialogs**: Clickio's on the site and Google's on the forum, which loads it with a tag of its own
+  (`fundingchoicesmessages.google.com`), not through AdSense's script. Removed from the page, Clickio's puts itself
+  back, and its backdrop takes every click. Their hosts are blocked at network level instead.
 - **Hover**: headless Chrome reports a pointer that can't hover, so `:hover` rules and hover media queries never
   apply. The mouse is declared at launch (and a coarse, hover-less pointer with `touch`).
 - **Smooth scrolling**: the site scrolls with an animation, so measuring and then clicking misses. `rect`,

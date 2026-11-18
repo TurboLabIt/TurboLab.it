@@ -12,7 +12,7 @@
  *   --hover CSS        move the pointer onto that element first      --click CSS    click it first
  *   --wait-for JS      wait until that expression is true             --wait MS      then wait that long
  *   --full             (shot) the whole page                          --selector CSS (shot) only that element
- *   --keep-consent     don't block the consent dialog
+ *   --keep-consent     don't block the consent dialogs (the site's and the forum's)
  *   --any-site         allow an address outside turbolab.it (the browser may run without its sandbox)
  */
 import { parseArgs } from 'node:util';
