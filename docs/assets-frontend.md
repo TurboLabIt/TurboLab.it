@@ -60,6 +60,15 @@ Nel corpo dell'articolo le regole valgono solo per gli elementi che produciamo n
 - **zoom** (`js/zoom-images.js`): cursore `zoom-in` sulle immagini in `/immagini/` e lightbox solo per quelle presenti nella sua galleria. Il clic su qualunque altra immagine resta un clic normale: prima il gestore lo annullava sempre, e un'immagine fuori dalla galleria apriva la prima foto.
 
 
+### Peso del testo: il 400 di Bootstrap, non il 300 del tema
+
+Il tema metteva `font-weight: 300` sul `body` di [assets/styles/newspark/style.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/newspark/style.css): tolto, il testo prende il 400 di Bootstrap. Con 300, tutto il testo che eredita il peso del `body` (footer, estratti degli elenchi, metadati, risultati di ricerca, testo nell'editor...) era sottile dove il font di sistema ha una variante light (Segoe UI su Windows, SF su macOS e iOS, Roboto su Android), e uno `<strong>` non era in grassetto: per Bootstrap è `bolder`, che partendo da 300 vale 400. Il testo degli articoli era già a 400 (`.post-text` del tema), quello nell'editor no: chi scriveva vedeva il testo più sottile di chi legge.
+
+⚠️ Un peso relativo (`bolder`, `lighter`) cambia con quello del `body`: la barra in alto (`#tli-userbar-load-target` in [assets/styles/userbar.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/userbar.css)) aveva `bolder`, che sul 300 dava 400; sul 400 avrebbe messo in grassetto tutta la barra, e i due inviti (Esegui login, Iscriviti ora) non si sarebbero più distinti. Tolto, la barra resta com'era.
+
+⚠️ Sui server di sviluppo il browser headless ha solo DejaVu Sans, che non ha una variante light: lì 300 e 400 sembrano uguali, e la differenza si vede solo sostituendo un font che ce l'ha (Lato, per esempio).
+
+
 ### Parole più lunghe della riga: vanno a capo, non allargano la pagina
 
 Diversi titoli contengono una parola più lunga della riga: un codice d'errore (`MOZILLA_PKIX_ERROR_OCSP_RESPONSE_FOR_CERT_MISSING`, `KMODE_EXCEPTION_NOT_HANDLED`), il nome di un file o di un componente (`Windows.SecurityCenter.SecurityAppBroker`). Il trattino basso e il punto non sono punti in cui andare a capo, quindi su un telefono il titolo di un articolo così allargava la pagina fino a 1253 px invece di 390, e su desktop usciva dalla sua colonna finendo sopra quella laterale. Lo stesso succedeva alle card degli elenchi e al testo degli articoli (un link, un `<strong>`).
@@ -76,8 +85,6 @@ Le due pagine di controllo per gli autori hanno un foglio di stile loro, l'entry
 Le tabelle restano tabelle da 992 px in su. Sotto, ogni riga diventa un blocco: l'intestazione sparisce e ogni cella mostra sopra di sé l'etichetta del suo `data-label`. Il motivo sono i nomi di file senza spazi (`Disattiva_Windows_Defender_in_Windows_10_Aprile_2018_Update`): una colonna non può essere più stretta della sua parola più lunga, quindi su un telefono la pagina era larga 657 px invece di 390, e a 768 px la colonna del titolo scendeva a una parola per riga. `overflow-wrap: anywhere` sulle celle non risolve: abbassa la larghezza minima di tutte le colonne, e il browser spezza i nomi anche su desktop, dove ci starebbero interi. Un nome più largo della tabella intera scorre dentro il suo `.table-responsive`, senza allargare la pagina.
 
 Le immagini orfane sono una griglia (`.tli-check-images`): 4 colonne da 992 px in su, 3 da 576, 2 sui telefoni, ognuna con il titolo, l'ID, chi l'ha caricata e la data di cancellazione, in rosso nell'ultimo mese. Il nome di chi l'ha caricata porta alla sua pagina autore: è nero sul grigio della riga, come i link nelle *strip* dei metadati, perché il blu del sito sul grigio non arriva al contrasto di 3:1 che un link deve avere col testo intorno. La miniatura sta intera in un riquadro 4:3 (`object-fit: contain`): ritagliata come nelle card degli articoli, una schermata di telefono o una finestra lunga non si riconoscerebbe. È la misura `reg`, non `max`: la pagina carica tutte le orfane, e a 1920 px ognuna peserebbe troppo. ⚠️ L'`aspect-ratio` non è solo estetica: riserva l'altezza del riquadro prima che l'immagine (`loading="lazy"`) arrivi, e senza la griglia si sposterebbe a ogni caricamento.
-
-⚠️ Il tema mette `font-weight: 300` sul `body`, e per Bootstrap `<strong>` è `bolder`, che partendo da 300 vale 400: dove il testo eredita il peso del tema, uno `<strong>` non è in grassetto, e dove il font di sistema ha una variante light (Windows, macOS) il testo stesso è sottile. Il testo degli articoli (`.post-text` del tema) e le card di queste due pagine hanno peso 400.
 
 
 ### Logo: 360 px, sui telefoni stretti si restringe in proporzione

@@ -4,8 +4,6 @@
 }
 
 .tli-check {
-    /* the theme's body is 300: below 400, a strong (bolder) isn't bold */
-    font-weight: 400;
     background-color: #fff;
     border: 1px solid #e1e5ea;
     border-radius: 10px;
