@@ -54,9 +54,17 @@
                         <span class="tli-check-image-meta">
                             #{{ Image.id }}
                             {%- for Author in Image.Authors %}
-                                {{- loop.first ? ' · ' : ', ' }}{{ Author.username }}
+                                {{- loop.first ? ' · ' : ', ' }}<a href="{{ path('app_author', {'usernameClean': Author.usernameClean}) }}">{{ Author.username }}</a>
                             {%- endfor %}
                         </span>
+                        {% set DeletionDate = Image.orphanDeletionDate %}
+                        {% if DeletionDate %}
+                            <span class="tli-check-image-deletion{% if DeletionDate < date('+30 days') %} tli-check-image-deletion-soon{% endif %}">
+                                <i class="fa-regular fa-trash-can"></i>
+                                Cancellazione:
+                                <span class="text-nowrap">{{ DeletionDate > date() ? DeletionDate|format_datetime(locale='it', pattern='d MMM y') : 'a breve' }}</span>
+                            </span>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

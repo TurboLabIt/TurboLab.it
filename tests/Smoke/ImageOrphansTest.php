@@ -2,12 +2,15 @@
 namespace App\Tests\Smoke;
 
 use App\Controller\ImageController;
+use App\Repository\Cms\ImageRepository;
 use App\Service\Cms\Image;
 use App\Service\Factory;
 use App\Service\FrontendHelper;
 use App\Service\User;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\Tests\BaseT;
+use DateTime;
+use IntlDateFormatter;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +19,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * "Immagini orfane" (/immagini/orfane) shows the images no article uses, which ImagesDelete removes some months later.
- * With orphans, its card has a tile for each: the image, linked to its largest size, its title, its ID and who uploaded
- * it, so that authors can tell theirs; with none, one line says so, as /scarica/da-controllare does for its checks that
- * found nothing (Zane, 2026-11-18).
+ * With orphans, its card has a tile for each: the image, linked to its largest size, its title, its ID, who uploaded it
+ * (linked to their page), so that authors can tell theirs, and when ImagesDelete will remove it; with none, one line says
+ * so, as /scarica/da-controllare does for its checks that found nothing (Zane, 2026-11-18).
  *
  * The real controller renders the real template, with orphans the test chooses: the real list changes whenever a test
  * uploads an image or deletes an article.
@@ -26,7 +29,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ImageOrphansTest extends BaseT
 {
     // images every copy of the database has
-    const array FIXTURE_IMAGE_IDS = [Image::ID_DEFAULT_SPOTLIGHT, Image::ID_404];
+    const array FIXTURE_IMAGE_IDS = [Image::ID_DEFAULT_SPOTLIGHT, Image::ID_404, Image::ID_CHRISTMAS_SPOTLIGHT];
 
 
     public function testEachOrphanGetsATile() : void
@@ -42,33 +45,77 @@ class ImageOrphansTest extends BaseT
         $arrExpectedTiles = [];
         foreach(self::FIXTURE_IMAGE_IDS as $imageId) {
 
-            $image = static::getService(Factory::class)->createImage()->load($imageId);
-            $authors = implode(', ', array_map(fn(User $author) => $author->getUsername(), $image->getAuthors()));
+            $image      = static::getService(Factory::class)->createImage()->load($imageId);
+            $arrAuthors = $image->getAuthors();
+            $authors    = implode(', ', array_map(fn(User $author) => $author->getUsername(), $arrAuthors));
 
             $arrExpectedTiles[] = [
-                'link'  => $image->getUrl(Image::SIZE_MAX),
-                'src'   => $image->getUrl(Image::SIZE_REG),
-                'alt'   => $image->getTitle(),
-                'title' => $image->getTitle(),
-                'meta'  => "#$imageId" . ( $authors === '' ? '' : " · $authors" )
+                'link'          => $image->getUrl(Image::SIZE_MAX),
+                'src'           => $image->getUrl(Image::SIZE_REG),
+                'alt'           => $image->getTitle(),
+                'title'         => $image->getTitle(),
+                'meta'          => "#$imageId" . ( $authors === '' ? '' : " · $authors" ),
+                'authorLinks'   => array_values( array_map(
+                    fn(User $author) => $this->generateUrl('app_author',
+                        ['usernameClean' => $author->getUsernameClean()], UrlGeneratorInterface::ABSOLUTE_PATH),
+                    $arrAuthors
+                ))
             ];
         }
 
         $arrTiles =
             $crawler->filter('main .tli-check-images > li')->each( fn(Crawler $tile) => [
-                'link'  => $tile->filter('a')->attr('href'),
-                'src'   => $tile->filter('img')->attr('src'),
-                'alt'   => $tile->filter('img')->attr('alt'),
-                'title' => trim( $tile->filter('.tli-check-image-title')->text() ),
-                'meta'  => trim( $tile->filter('.tli-check-image-meta')->text() )
+                'link'          => $tile->filter('a')->attr('href'),
+                'src'           => $tile->filter('img')->attr('src'),
+                'alt'           => $tile->filter('img')->attr('alt'),
+                'title'         => trim( $tile->filter('.tli-check-image-title')->text() ),
+                'meta'          => trim( $tile->filter('.tli-check-image-meta')->text() ),
+                'authorLinks'   => $tile->filter('.tli-check-image-meta a')->each( fn(Crawler $link) => $link->attr('href') )
             ]);
 
         $this->assertSame($arrExpectedTiles, $arrTiles,
             "A tile for each orphan, in the order of the list: the image (not the largest size: a page of them would " .
-            "weigh megabytes) linked to its largest size, its title, its ID and its authors");
+            "weigh megabytes) linked to its largest size, its title, its ID and its authors, each linked to their " .
+            "page by a relative address");
 
         $this->assertCount(0, $crawler->filter('main .tli-check-passed'), "With orphans, nothing may say there are none");
         $this->assertResourcesForAuthors($crawler);
+    }
+
+
+    /**
+     * ImagesDelete removes an orphan when its last change is DELETE_ORPHANS_AFTER_MONTHS old: the tile says when, in red
+     * from the last 30 days on, and "a breve" once the date has passed (the next run is at most 3 hours away)
+     */
+    public function testEachTileSaysWhenItsImageWillBeDeleted() : void
+    {
+        $months = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
+
+        $arrUpdatedAt = [
+            // goes in months
+            Image::ID_DEFAULT_SPOTLIGHT     => new DateTime('-1 month'),
+            // goes in 10 days
+            Image::ID_404                   => (new DateTime('+10 days'))->modify("-$months months"),
+            // should have gone a month ago
+            Image::ID_CHRISTMAS_SPOTLIGHT   => (new DateTime('-1 month'))->modify("-$months months"),
+        ];
+
+        $crawler = $this->renderPage( array_keys($arrUpdatedAt), $arrUpdatedAt );
+
+        $formatter = new IntlDateFormatter('it', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'd MMM y');
+        $deletionDate = fn(DateTime $updatedAt) => $formatter->format( (clone $updatedAt)->modify("+$months months") );
+
+        $this->assertSame([
+            ['text' => 'Cancellazione: ' . $deletionDate($arrUpdatedAt[Image::ID_DEFAULT_SPOTLIGHT]), 'soon' => false],
+            ['text' => 'Cancellazione: ' . $deletionDate($arrUpdatedAt[Image::ID_404]), 'soon' => true],
+            ['text' => 'Cancellazione: a breve', 'soon' => true],
+        ],
+            $crawler->filter('main .tli-check-images > li .tli-check-image-deletion')->each( fn(Crawler $line) => [
+                'text' => trim( $line->text() ),
+                'soon' => str_contains( (string)$line->attr('class'), 'tli-check-image-deletion-soon' )
+            ]),
+            "Each tile must say when its image goes, $months months after its last change, in red from the last 30 days on"
+        );
     }
 
 
@@ -91,13 +138,19 @@ class ImageOrphansTest extends BaseT
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🧰 the page, rendered with the orphans the test chooses ***">
-    private function renderPage(array $arrImageIds) : Crawler
+    /**
+     * @param int[] $arrImageIds the orphans, in this order
+     * @param array<int, DateTime> $arrUpdatedAt image ID => the last change the test gives it (default: its own)
+     */
+    private function renderPage(array $arrImageIds, array $arrUpdatedAt = []) : Crawler
     {
         static::loginAsSystem();
 
-        $orphans = new class(static::getService(Factory::class), $arrImageIds) extends ImageCollection {
+        $orphans = new class(static::getService(Factory::class), $arrImageIds, $arrUpdatedAt) extends ImageCollection {
 
-            public function __construct(Factory $factory, private readonly array $arrImageIds)
+            public function __construct(
+                Factory $factory, private readonly array $arrImageIds, private readonly array $arrUpdatedAt
+            )
             {
                 parent::__construct($factory);
             }
@@ -108,10 +161,17 @@ class ImageOrphansTest extends BaseT
                     return $this->setEntities([]);
                 }
 
-                // in the order given, as the real list keeps its own (oldest first)
+                // in the order given, as the real list keeps its own (oldest first); copies, so that a date the test
+                // changes is never written back to the database
                 $arrEntities = [];
                 foreach($this->load($this->arrImageIds) as $image) {
-                    $arrEntities[ $image->getId() ] = $image->getEntity();
+
+                    $entity = clone $image->getEntity();
+                    if( !empty($this->arrUpdatedAt[ $image->getId() ]) ) {
+                        $entity->setUpdatedAt( $this->arrUpdatedAt[ $image->getId() ] );
+                    }
+
+                    $arrEntities[ $image->getId() ] = $entity;
                 }
 
                 return $this->setEntities( array_map(fn(int $imageId) => $arrEntities[$imageId], $this->arrImageIds) );

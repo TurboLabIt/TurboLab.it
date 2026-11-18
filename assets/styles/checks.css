@@ -48,7 +48,6 @@
     line-height: 1.6;
     color: #343a40;
     margin-bottom: 12px;
-    max-width: 80ch;
 }
 
 .tli-check a {
@@ -181,11 +180,21 @@
     color: #17222B;
 }
 
-.tli-check-image-meta {
+.tli-check-image-meta,
+.tli-check-image-deletion {
     display: block;
     margin-top: 2px;
     font-size: 13px;
     color: #6c757d;
+}
+
+.tli-check-image-meta a {
+    color: #17222B;
+}
+
+.tli-check-image-deletion-soon {
+    color: #b02a37;
+    font-weight: 600;
 }
 
 @media (max-width: 767.98px) {

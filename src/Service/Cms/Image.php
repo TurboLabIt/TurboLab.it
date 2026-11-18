@@ -8,6 +8,7 @@ use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
 use App\Service\Factory;
 use App\Trait\AuthorableTrait;
+use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
@@ -727,4 +728,19 @@ class Image extends BaseCmsService
     }
 
     public function getWatermarkPosition() : int { return $this->entity->getWatermarkPosition(); }
+
+
+    /**
+     * When ImagesDelete removes this image if no article uses it by then: it takes the orphans whose last change is
+     * DELETE_ORPHANS_AFTER_MONTHS old (ImageRepository::getToDelete()), at its first run after that (every 3 hours)
+     */
+    public function getOrphanDeletionDate() : ?DateTime
+    {
+        $updatedAt = $this->entity->getUpdatedAt();
+        if( empty($updatedAt) ) {
+            return null;
+        }
+
+        return (clone $updatedAt)->modify('+' . ImageRepository::DELETE_ORPHANS_AFTER_MONTHS . ' months');
+    }
 }
