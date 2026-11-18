@@ -98,19 +98,20 @@ def fetch_list(site) -> dict:
     status, _, page, _ = site.get(LIST_PATH)
     if status != 200:
         fail(f"{LIST_PATH} answered HTTP {status}")
-    heading = re.search(r'<h2 class="title">File da controllare: ([\d.]+)</h2>', page)
-    if not heading and re.search(r'<li>\s*Zero "File da controllare"', page):
+    heading = re.search(r'<h2 class="tli-check-title">(?:(?!</h2>).)*?File da controllare\s*'
+                        r'<span class="tli-check-count">([\d.]+)</span>\s*</h2>', page, re.S)
+    if not heading and re.search(r'<li>(?:(?!</li>).)*?Zero "File da controllare"', page, re.S):
         # an empty list has no section: the page names it among the checks that found nothing, without a date
         return {'site': site.base, 'generated': None, 'articles': {}}
     if not heading:
         fail(f"no «File da controllare:» section on {LIST_PATH}: the list is for logged-in users, check `whoami`")
-    end = page.find('<h2 class="title">', heading.end())
+    end = page.find('</section>', heading.end())
     section = page[heading.end():end if end > 0 else len(page)]
     generated = re.search(r'è stata generata (.*?)\. Gli articoli', text_of(section))
 
     articles = {}
     for article_id, cells in re.findall(r'<tr>\s*<th scope="row">(\d+)</th>(.*?)</tr>', section, re.S):
-        tds = re.findall(r'<td>(.*?)</td>', cells, re.S)
+        tds = re.findall(r'<td\b[^>]*>(.*?)</td>', cells, re.S)
         link = re.search(r'<a href="([^"]+)">(.*?)</a>', tds[0], re.S) if len(tds) == 3 else None
         if not link:
             fail(f"row {article_id} of the list isn't article, Downloads, authors: has the page changed?")

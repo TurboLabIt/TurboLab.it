@@ -2,6 +2,13 @@
 
 {% block metaRobots %}noindex,nofollow{% endblock %}
 
+{% block stylesheets %}
+
+    {{ parent() }}
+    {{ inline_css('build/file-need-fixing.css') }}
+
+{% endblock %}
+
 {% block bodyMainContent %}
 
     {% block beforeArticleList %}{% endblock %}
@@ -16,7 +23,7 @@
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
                             <li class="breadcrumb-item"><i class="fa-solid fa-pen"></i> <a href="{{ path('app_article_new') }}">Nuovo articolo</a></li>
-                            <li class="breadcrumb-item"><i class="fa-solid fa-images"></i> File da controllare</li>
+                            <li class="breadcrumb-item"><i class="fa-solid fa-file-half-dashed"></i> File da controllare</li>
                         </ol>
                     </nav>
                 </div>
@@ -25,60 +32,56 @@
     </div>
 
 
+    <div class="container tli-need-fixing">
+
     {% if CurrentUser %}
 
-    {% if AttachedUnused is not empty %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">File da controllare: {{ numAttachedUnused }}</h2>
-                    <p class="tli-readable-text">
-                        I seguenti articoli hanno file associati, ma tali file non sono linkati nel corpo dell'articolo stesso.
-                        Per correggere il problema, assicurati di inserire il link a tali file nel corpo dell'articolo.
-                        In caso di dubbio, puoi usare questa formula:
-                    </p>
-                    <p class="tli-readable-text text-center">
-                        <strong>» Download</strong>: <a href="https://turbolab.it/scarica/9999">Nome del file e link</a>
-                    </p>
-                    <p class="tli-readable-text">
-                        <i class="fa-solid fa-person-chalkboard"></i> <a href="/1094" target="_blank">Esempio d'uso qui</a>
-                    </p>
-                    <p class="tli-readable-text">
-                        Nota: questa lista viene ri-generata ogni 3 ore circa.
-                        La versione che stai visualizzando è stata generata
-                        {{ dateAttachedUnusedList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
-                        Gli articoli/file che correggerai spariranno dalla lista alla prossima generazione.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-striped table-hover">
+        {% if AttachedUnused is not empty %}
+        <section class="tli-check">
+            <h2 class="tli-check-title">
+                <i class="fa-solid fa-link-slash"></i>
+                File da controllare <span class="tli-check-count">{{ numAttachedUnused }}</span>
+            </h2>
+            <p>
+                I seguenti articoli hanno file associati, ma tali file non sono linkati nel corpo dell'articolo stesso.
+                Per correggere il problema, assicurati di inserire il link a tali file nel corpo dell'articolo.
+                In caso di dubbio, puoi usare questa formula:
+            </p>
+            <p class="tli-check-sample">
+                <strong>» Download</strong>: <a href="https://turbolab.it/scarica/9999">Nome del file e link</a>
+            </p>
+            <p>
+                <i class="fa-solid fa-person-chalkboard"></i> <a href="/1094" target="_blank">Esempio d'uso qui</a>
+            </p>
+            <p class="tli-check-note">
+                <i class="fa-solid fa-clock"></i>
+                Nota: questa lista viene ri-generata ogni 3 ore circa.
+                La versione che stai visualizzando è stata generata
+                {{ dateAttachedUnusedList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
+                Gli articoli/file che correggerai spariranno dalla lista alla prossima generazione.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm tli-check-table">
                     <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Titolo art.</th>
-                        <th scope="col">File</th>
-                        <th scope="col">Autori</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Titolo art.</th>
+                            <th scope="col">File</th>
+                            <th scope="col">Autori</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for articleId,Item in AttachedUnused %}
                             <tr>
                                 <th scope="row">{{ articleId }}</th>
-                                <td><a href="{{ Item.url }}">{{ Item.title }}</a></td>
-                                <td>
+                                <td data-label="Articolo"><a href="{{ Item.url }}">{{ Item.title }}</a></td>
+                                <td data-label="File">
                                     {% for fileId,File in Item.Files %}
                                         <a href="{{ File.url }}">{{ File.title }} (#{{ fileId }})</a>
                                         {% if not loop.last %}<br>{% endif %}
                                     {% endfor %}
                                 </td>
-                                <td>
+                                <td data-label="Autori">
                                     {% for Author in Item.Authors %}
                                         {{ Author.username }}{% if not loop.last %}, {% endif %}
                                     {% endfor %}
@@ -88,218 +91,181 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    {% endif %}
+        </section>
+        {% endif %}
 
 
-    {% if Orphans is not empty %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">File orfani: {{ numOrphans }}</h2>
-                    <p class="tli-readable-text">
-                        I seguenti file non sono "allegati" ad alcun articolo, e saranno presto cancellati automaticamente.
-                        Per evitare che questo accada, allegali a un articolo, oppure salva una copia dei file che vuoi conservare sul tuo PC.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-striped table-hover">
+        {% if Orphans is not empty %}
+        <section class="tli-check">
+            <h2 class="tli-check-title">
+                <i class="fa-solid fa-file-circle-question"></i>
+                File orfani <span class="tli-check-count">{{ numOrphans }}</span>
+            </h2>
+            <p>
+                I seguenti file non sono "allegati" ad alcun articolo, e saranno presto cancellati automaticamente.
+                Per evitare che questo accada, allegali a un articolo, oppure salva una copia dei file che vuoi conservare sul tuo PC.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm tli-check-table">
                     <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">File</th>
-                        <th scope="col">Autori</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">File</th>
+                            <th scope="col">Autori</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for File in Orphans %}
-                        <tr>
-                            <th scope="row">{{ File.id }}</th>
-                            <td><a href="{{ File.url }}">{{ File.title }}</a></td>
-                            <td>
-                                {% for Author in File.Authors %}
-                                    {{ Author.username }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        {% for File in Orphans %}
+                            <tr>
+                                <th scope="row">{{ File.id }}</th>
+                                <td data-label="File"><a href="{{ File.url }}">{{ File.title }}</a></td>
+                                <td data-label="Autori">
+                                    {% for Author in File.Authors %}
+                                        {{ Author.username }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    {% endif %}
+        </section>
+        {% endif %}
 
 
-    {% if MissingOnFilesystem is not empty %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">File mancanti su filesystem: {{ numMissingOnFilesystem }}</h2>
-                    <p class="tli-readable-text">
-                        I seguenti file locali sono indicizzati dal database, ma non sono presenti sul filesystem.
-                        Al momento, non è possibile intervenire via web per ripristinarli.
-                    </p>
-                    <p class="tli-readable-text">
-                        Nota: questa lista viene ri-generata ogni 3 ore circa.
-                        La versione che stai visualizzando è stata generata
-                        {{ dateMissingOnFilesystemList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-striped table-hover">
+        {% if MissingOnFilesystem is not empty %}
+        <section class="tli-check">
+            <h2 class="tli-check-title">
+                <i class="fa-solid fa-file-circle-exclamation"></i>
+                File mancanti su filesystem <span class="tli-check-count">{{ numMissingOnFilesystem }}</span>
+            </h2>
+            <p>
+                I seguenti file locali sono indicizzati dal database, ma non sono presenti sul filesystem.
+                Al momento, non è possibile intervenire via web per ripristinarli.
+            </p>
+            <p class="tli-check-note">
+                <i class="fa-solid fa-clock"></i>
+                Nota: questa lista viene ri-generata ogni 3 ore circa.
+                La versione che stai visualizzando è stata generata
+                {{ dateMissingOnFilesystemList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm tli-check-table">
                     <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">File</th>
-                        <th scope="col">Autori</th>
-                        <th scope="col">Articoli</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">File</th>
+                            <th scope="col">Autori</th>
+                            <th scope="col">Articoli</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for fileId,Item in MissingOnFilesystem %}
-                        <tr>
-                            <th scope="row">{{ fileId }}</th>
-                            <td><a href="{{ Item.url }}">{{ Item.title }}</a></td>
-                            <td>
-                                {% for Author in Item.Authors %}
-                                    {{ Author.username }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {% for articleId,Article in Item.Articles %}
-                                    <a href="{{ Article.url }}">{{ Article.title }} (#{{ articleId }})</a>
-                                    {% if not loop.last %}<br>{% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        {% for fileId,Item in MissingOnFilesystem %}
+                            <tr>
+                                <th scope="row">{{ fileId }}</th>
+                                <td data-label="File"><a href="{{ Item.url }}">{{ Item.title }}</a></td>
+                                <td data-label="Autori">
+                                    {% for Author in Item.Authors %}
+                                        {{ Author.username }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td data-label="Articoli">
+                                    {% for articleId,Article in Item.Articles %}
+                                        <a href="{{ Article.url }}">{{ Article.title }} (#{{ articleId }})</a>
+                                        {% if not loop.last %}<br>{% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    {% endif %}
+        </section>
+        {% endif %}
 
 
-    {% if MissingOnDatabase is not empty %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">File mancanti su database: {{ numMissingOnDatabase }}</h2>
-                    <p class="tli-readable-text">
-                        I seguenti file locali sono presenti sul filesystem, ma non sono indicizzati dal database.
-                        Al momento, non è possibile intervenire via web per ripristinarli.
-                    </p>
-                    <p class="tli-readable-text">
-                        Nota: questa lista viene ri-generata ogni 3 ore circa.
-                        La versione che stai visualizzando è stata generata
-                        {{ dateMissingOnDatabaseList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-striped table-hover">
+        {% if MissingOnDatabase is not empty %}
+        <section class="tli-check">
+            <h2 class="tli-check-title">
+                <i class="fa-solid fa-database"></i>
+                File mancanti su database <span class="tli-check-count">{{ numMissingOnDatabase }}</span>
+            </h2>
+            <p>
+                I seguenti file locali sono presenti sul filesystem, ma non sono indicizzati dal database.
+                Al momento, non è possibile intervenire via web per ripristinarli.
+            </p>
+            <p class="tli-check-note">
+                <i class="fa-solid fa-clock"></i>
+                Nota: questa lista viene ri-generata ogni 3 ore circa.
+                La versione che stai visualizzando è stata generata
+                {{ dateMissingOnDatabaseList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm tli-check-table">
                     <thead>
-                    <tr>
-                        <th scope="col">Filename</th>
-                        <th scope="col">Ultima modifica</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">Filename</th>
+                            <th scope="col">Ultima modifica</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for Item in MissingOnDatabase %}
-                        <tr>
-                            <td>{{ Item.filename }}</td>
-                            <td>{{ Item.lastModified }}</td>
-                        </tr>
-                    {% endfor %}
+                        {% for Item in MissingOnDatabase %}
+                            <tr>
+                                <td data-label="Filename">{{ Item.filename }}</td>
+                                <td data-label="Ultima modifica">{{ Item.lastModified }}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    {% endif %}
+        </section>
+        {% endif %}
 
 
-    {% set CheckedLists     = [AttachedUnused, Orphans, MissingOnFilesystem, MissingOnDatabase] %}
-    {% set PassedChecksNum  = CheckedLists|filter(List => List is empty)|length %}
+        {% set CheckedLists     = [AttachedUnused, Orphans, MissingOnFilesystem, MissingOnDatabase] %}
+        {% set PassedChecksNum  = CheckedLists|filter(List => List is empty)|length %}
 
-    {% if PassedChecksNum > 0 %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">{{ PassedChecksNum < CheckedLists|length ? 'Altri controlli effettuati' : 'Controlli effettuati' }}</h2>
-                    <ul class="tli-readable-text">
-                        {% if AttachedUnused is empty %}
-                            <li>Zero "File da controllare"&nbsp;- nessun articolo ha download associati che non siano linkati nel testo</li>
-                        {% endif %}
-                        {% if Orphans is empty %}
-                            <li>Zero "File orfani"&nbsp;- ogni file è associato almeno a un articolo</li>
-                        {% endif %}
-                        {% if MissingOnFilesystem is empty %}
-                            <li>Zero "File mancanti su filesystem"&nbsp;- tutti i file ospitati da TLI sono scaricabili</li>
-                        {% endif %}
-                        {% if MissingOnDatabase is empty %}
-                            <li>Zero "File mancanti su database"&nbsp;- tutti i file ospitati da TLI sono indicizzati nel database</li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
+        {% if PassedChecksNum > 0 %}
+        <section class="tli-check tli-check-passed">
+            <h2 class="tli-check-title">
+                <i class="fa-solid fa-circle-check"></i>
+                {{ PassedChecksNum < CheckedLists|length ? 'Altri controlli effettuati' : 'Controlli effettuati' }}
+            </h2>
+            <ul>
+                {% if AttachedUnused is empty %}
+                    <li><i class="fa-solid fa-check"></i> <strong>Zero "File da controllare"</strong>&nbsp;- nessun articolo ha download associati che non siano linkati nel testo</li>
+                {% endif %}
+                {% if Orphans is empty %}
+                    <li><i class="fa-solid fa-check"></i> <strong>Zero "File orfani"</strong>&nbsp;- ogni file è associato almeno a un articolo</li>
+                {% endif %}
+                {% if MissingOnFilesystem is empty %}
+                    <li><i class="fa-solid fa-check"></i> <strong>Zero "File mancanti su filesystem"</strong>&nbsp;- tutti i file ospitati da TLI sono scaricabili</li>
+                {% endif %}
+                {% if MissingOnDatabase is empty %}
+                    <li><i class="fa-solid fa-check"></i> <strong>Zero "File mancanti su database"</strong>&nbsp;- tutti i file ospitati da TLI sono indicizzati nel database</li>
+                {% endif %}
+            </ul>
+        </section>
+        {% endif %}
 
     {% else %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">Per visualizzare i file da controllare devi eseguire login</h2>
-                    {% include 'user/login-form.html.twig' %}
-                </div>
-            </div>
-        </div>
-    </div>
+        <section class="tli-check">
+            <h2 class="tli-check-title">Per visualizzare i file da controllare devi eseguire login</h2>
+            {% include 'user/login-form.html.twig' %}
+        </section>
 
     {% endif %}
 
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">Altre risorse per gli autori</h2>
-                    <p class="tli-readable-text">
-                        <i class="fa-solid fa-images"></i>
-                        <a href="{{ path('app_image_orphans') }}">Immagini orfane</a>
-                    </p>
-                </div>
-            </div>
-        </div>
+        <section class="tli-check tli-check-resources">
+            <h2 class="tli-check-title">Altre risorse per gli autori</h2>
+            <p>
+                <i class="fa-solid fa-images"></i>
+                <a href="{{ path('app_image_orphans') }}">Immagini orfane</a>
+            </p>
+        </section>
+
     </div>
 
 

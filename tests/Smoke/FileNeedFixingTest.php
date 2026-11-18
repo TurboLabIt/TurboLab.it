@@ -107,7 +107,8 @@ class FileNeedFixingTest extends BaseT
 
             if( $arrFoundSomething[$title] ) {
 
-                $arrExpectedHeadings[] = "$title: 1";
+                // the title, then the count in its badge
+                $arrExpectedHeadings[] = "$title 1";
 
             } else {
 
@@ -125,7 +126,7 @@ class FileNeedFixingTest extends BaseT
         $this->assertSame($arrExpectedHeadings, $this->texts($crawler, 'main h2'),
             "A section for each check with results, in order, then the passed checks, then the resources for authors");
 
-        $this->assertSame($arrExpectedPassed, $this->texts($crawler, 'main .section-title li'),
+        $this->assertSame($arrExpectedPassed, $this->texts($crawler, 'main .tli-check-passed li'),
             "A line for each check that found nothing, and only for those");
     }
 
@@ -150,13 +151,32 @@ class FileNeedFixingTest extends BaseT
 
             $section =
                 $crawler
-                    ->filter('main .section-title')
-                    ->reduce( fn(Crawler $node) => str_starts_with($node->filter('h2')->text(), "$title:") );
+                    ->filter('main .tli-check')
+                    ->reduce( fn(Crawler $node) => str_starts_with($node->filter('h2')->text(), "$title ") );
 
             $this->assertCount(1, $section, "The page must have one section titled \"$title\"");
             $this->assertStringContainsString("è stata generata", $section->text(), "\"$title\" must say when it was generated");
             $this->assertStringContainsString($expectedDate, $section->text(),
                 "\"$title\" must show the date of its own report, " . self::REPORT_FILE_NAMES[$title]);
+        }
+    }
+
+
+    /** below 992 px each row is a block, and a cell is named only by its data-label (file-need-fixing.css) */
+    public function testEveryCellIsLabelledForTheStackedRows() : void
+    {
+        $crawler = $this->renderPage( array_fill_keys(array_keys(self::CHECKS), true) );
+
+        $arrCells =
+            $crawler->filter('main .tli-check-table td')->each(
+                fn(Crawler $node) => ['text' => trim($node->text()), 'label' => (string)$node->attr('data-label')]
+            );
+
+        $this->assertNotEmpty($arrCells, "The tables must have cells for this test to mean anything");
+
+        foreach($arrCells as $cell) {
+            $this->assertNotEmpty($cell['label'],
+                "Every cell needs a data-label, or on phones it shows with no name: " . $cell['text']);
         }
     }
 

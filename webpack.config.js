@@ -25,6 +25,7 @@ Encore
     .addEntry('search', './assets/search.js')
     .addEntry('stats', './assets/stats.js')
     .addEntry('forum', './assets/forum.js')
+    .addEntry('file-need-fixing', './assets/file-need-fixing.js')
 
     // single shared runtime.js chunk (recommended unless building a SPA)
     .enableSingleRuntimeChunk()

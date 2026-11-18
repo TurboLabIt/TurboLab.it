@@ -18,7 +18,7 @@ Il comando per generare i file è:
 
 Struttura di assets/:
 
-- `*.js` nella radice — i 10 entry point
+- `*.js` nella radice — gli 11 entry point
 - `js/` — moduli JS custom (jQuery + vanilla JS); include `js/ckeditor-plugins/` (i plugin CKEditor 5) e `js/forum/`
 - `styles/` — CSS semplice; include il tema `styles/newspark/`, più `styles/forum/` e `styles/email/`
 - `images/` — immagini sorgente, copiate in `public/build/images/` durante la build
@@ -67,6 +67,15 @@ Diversi titoli contengono una parola più lunga della riga: un codice d'errore (
 Per questo [assets/styles/app.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/app.css) mette `overflow-wrap: break-word` su `body`: una parola si spezza solo quando da sola non sta nella riga, quindi il resto del testo non cambia. Non `anywhere`, che cambia anche la larghezza minima del contenuto: nelle tabelle spezza parole che ci starebbero (vedi sopra, `/scrivi`).
 
 `break-word` non basta a un elemento flex accanto a una miniatura: la sua larghezza minima resta quella della parola più lunga, e la riga esce lo stesso. Per questo `.gallery_item_content` (liste della homepage e del footer, in `app.css`) e il titolo dei video in homepage (`.tli-video-thumb > .flex-grow-1`, in [assets/styles/youtube-integration.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/youtube-integration.css)) hanno `min-width: 0`. Un nuovo layout flex con un titolo accanto a un'immagine ha bisogno della stessa regola.
+
+
+### /scarica/da-controllare: tabelle da 992 px in su, righe impilate sotto
+
+La pagina ha un foglio di stile suo, l'entry `file-need-fixing` ([assets/styles/file-need-fixing.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/file-need-fixing.css)), che solo il suo template carica con `inline_css()`: ogni controllo è una card (`.tli-check`) con il numero dei risultati in un badge, e quelli senza risultati stanno in una card verde in fondo.
+
+Le tabelle restano tabelle da 992 px in su. Sotto, ogni riga diventa un blocco: l'intestazione sparisce e ogni cella mostra sopra di sé l'etichetta del suo `data-label`. Il motivo sono i nomi di file senza spazi (`Disattiva_Windows_Defender_in_Windows_10_Aprile_2018_Update`): una colonna non può essere più stretta della sua parola più lunga, quindi su un telefono la pagina era larga 657 px invece di 390, e a 768 px la colonna del titolo scendeva a una parola per riga. `overflow-wrap: anywhere` sulle celle non risolve: abbassa la larghezza minima di tutte le colonne, e il browser spezza i nomi anche su desktop, dove ci starebbero interi. Un nome più largo della tabella intera scorre dentro il suo `.table-responsive`, senza allargare la pagina.
+
+⚠️ Il tema mette `font-weight: 300` sul `body`, e per Bootstrap `<strong>` è `bolder`, che partendo da 300 vale 400: dove il testo eredita il peso del tema, uno `<strong>` non è in grassetto, e dove il font di sistema ha una variante light (Windows, macOS) il testo stesso è sottile. Il testo degli articoli (`.post-text` del tema) e le card di questa pagina hanno peso 400.
 
 
 ### Logo: 360 px, sui telefoni stretti si restringe in proporzione
