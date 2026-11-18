@@ -26,6 +26,11 @@ class FileEditor extends File
     // and compound extensions like "tar.gz". "/" and "\" are excluded by the class; ".." is rejected separately.
     const string FORMAT_ALLOWED_REGEX = '/^[a-z0-9 ().-]*$/';
 
+    // CAB archives under a name of their own: a troubleshooting pack and a Windows update package. Their mime-type
+    // says .cab, but Windows runs them (msdt.exe, wusa.exe) only with their own extension: as "title.cab" they
+    // would open as an archive. An upload of one of them keeps the extension it came with
+    const array CAB_FORMATS = ['diagcab', 'msu'];
+
 
     public function __construct(Factory $factory, protected TextProcessor $textProcessor)
     {
@@ -180,6 +185,11 @@ class FileEditor extends File
             in_array($clientExtension, ['ps1', 'service', 'bat', 'sh']) ||
             empty($extension) || in_array($extension, ['txt', 'html'])
         ) {
+            $extension = $clientExtension;
+        }
+
+        // a CAB archive with a name of its own, which Windows needs to run it
+        if( $extension == 'cab' && in_array(mb_strtolower($clientExtension), static::CAB_FORMATS) ) {
             $extension = $clientExtension;
         }
 
