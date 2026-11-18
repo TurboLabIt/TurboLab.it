@@ -3,7 +3,6 @@ namespace App\Command;
 
 use App\Entity\Cms\ArticleFile;
 use App\Repository\Cms\ArticleFileRepository;
-use App\Repository\Cms\FileRepository;
 use App\Service\Cms\Article;
 use App\Service\Cms\File;
 use App\Service\Entity\Article as ArticleEntity;
@@ -13,7 +12,6 @@ use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\FileCollection;
 use App\Trait\CommandTrait;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
@@ -219,14 +217,12 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         }
 
 
-        $dateCutoff = (new DateTime())->modify('-' . FileRepository::ORPHANS_AFTER_MONTHS . ' months');
-        if( $junction->getUpdatedAt() > $dateCutoff ||  $article->getUpdatedAt() > $dateCutoff ) {
-
-            // don't delete "too new" assoc
-            return $this->removeFromArticleMap($articleId, $fileId);
-        }
-
-
+        /**
+         * No grace period, unlike the images (ImagesToArticlesCommand): there it keeps a recent association from being
+         * deleted, here nothing is deleted (#101), and the list exists so that the authors link the file. Hiding a
+         * Download for 9 months after the article or the link last changed hid every new case, and any save of an
+         * article hid the Downloads it still didn't link (2026-11-18)
+         */
         $articleFiles = $this->arrArticleMap[$articleId]['Files'] ?? [];
         $isAlreadyAttached = in_array($fileId, $articleFiles);
 
@@ -257,6 +253,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
         }
 
         // temporary disabled https://github.com/TurboLabIt/TurboLab.it/issues/101
+        // (if it comes back: a grace period like the images' one, on the delete only, never on the list above)
         //$this->articleFileRepository->delete($junction, false);
 
         // fail-safe - this shouldn't happen (the file is not linked)
