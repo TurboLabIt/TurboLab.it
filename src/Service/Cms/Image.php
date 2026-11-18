@@ -285,12 +285,29 @@ class Image extends BaseCmsService
                 ->applyWatermark($phpImagine, $size)
                 ->getBuiltFilePath($size, true);
 
-        $phpImagine->save($outputFilePath, [
-            'flatten'               => true,
-            'jpeg_quality'          => '80',
-            'png_compression_level' => 9,
-            'avif_quality'          => 40,
-        ]);
+        // written aside, then renamed, as the animated build is: GD creates the file before encoding into it, and a
+        // concurrent request for the same image (tryPreBuilt() only checks that it exists) would get it empty. No lock
+        // here, so each build writes its own temporary file: the last rename wins, and every one is complete
+        $tempFilePath = $outputFilePath . '.' . bin2hex( random_bytes(4) ) . '.part';
+
+        try {
+            $phpImagine->save($tempFilePath, [
+                // Imagine reads the format from the extension, which the temporary file doesn't have
+                'format'                => pathinfo($outputFilePath, PATHINFO_EXTENSION),
+                'flatten'               => true,
+                'jpeg_quality'          => '80',
+                'png_compression_level' => 9,
+                'avif_quality'          => 40,
+            ]);
+
+            rename($tempFilePath, $outputFilePath);
+
+        } finally {
+            // left behind only by a save that failed
+            if( file_exists($tempFilePath) ) {
+                unlink($tempFilePath);
+            }
+        }
 
         $this->lastBuiltImageMimeType = mime_content_type($outputFilePath);
 
