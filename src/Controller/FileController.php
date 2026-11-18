@@ -95,18 +95,20 @@ class FileController extends BaseController
             $arrMissingOnDatabase       = json_decode(file_get_contents($filePathMissingOnDatabase), true);
 
             $arrData += [
-                'AttachedUnused'            => $arrAttachedUnused,
-                'numAttachedUnused'         => number_format(count($arrAttachedUnused), 0, ',', '.'),
-                'dateAttachedUnusedList'    => new DateTime('@' . filemtime($filePathUnused)),
+                'AttachedUnused'                => $arrAttachedUnused,
+                'numAttachedUnused'             => number_format(count($arrAttachedUnused), 0, ',', '.'),
+                'dateAttachedUnusedList'        => new DateTime('@' . filemtime($filePathUnused)),
                 //
-                'Orphans'                   => $files,
-                'numOrphans'                => number_format($orphans->count(), 0, ',', '.'),
+                'Orphans'                       => $files,
+                'numOrphans'                    => number_format($orphans->count(), 0, ',', '.'),
                 //
-                'MissingOnFilesystem'       => $arrMissingOnFilesystem,
-                'numMissingOnFilesystem'    => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
+                'MissingOnFilesystem'           => $arrMissingOnFilesystem,
+                'numMissingOnFilesystem'        => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
+                'dateMissingOnFilesystemList'   => new DateTime('@' . filemtime($filePathMissingOnFilesystem)),
                 //
-                'MissingOnDatabase'         => $arrMissingOnDatabase,
-                'numMissingOnDatabase'      => number_format(count($arrMissingOnDatabase), 0, ',', '.')
+                'MissingOnDatabase'             => $arrMissingOnDatabase,
+                'numMissingOnDatabase'          => number_format(count($arrMissingOnDatabase), 0, ',', '.'),
+                'dateMissingOnDatabaseList'     => new DateTime('@' . filemtime($filePathMissingOnDatabase))
             ];
         }
 

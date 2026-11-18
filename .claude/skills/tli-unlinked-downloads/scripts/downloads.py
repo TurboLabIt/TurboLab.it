@@ -99,6 +99,9 @@ def fetch_list(site) -> dict:
     if status != 200:
         fail(f"{LIST_PATH} answered HTTP {status}")
     heading = re.search(r'<h2 class="title">File da controllare: ([\d.]+)</h2>', page)
+    if not heading and re.search(r'<li>\s*Zero "File da controllare"', page):
+        # an empty list has no section: the page names it among the checks that found nothing, without a date
+        return {'site': site.base, 'generated': None, 'articles': {}}
     if not heading:
         fail(f"no «File da controllare:» section on {LIST_PATH}: the list is for logged-in users, check `whoami`")
     end = page.find('<h2 class="title">', heading.end())

@@ -72,7 +72,8 @@ saved is in the `--dry-run` output first.
 
 1. `python3 -I $S login --account admin`.
 2. `python3 -I $D list <state>`: the articles under "File da controllare:" and their Downloads, with the date the
-   list was generated.
+   list was generated. With none left the page has no such section, only the line `Zero "File da controllare"`
+   under "Altri controlli effettuati", and `list` says 0 articles.
 3. For each article, `python3 -I $D show <state> --article N`: the text as the editor gets it, block by block,
    with the blocks that may mention a Download marked and the ones around them (`--all` for every block, `--full`
    for whole blocks), and the hidden-text check. Decide by the rules above.

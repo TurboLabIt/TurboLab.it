@@ -27,6 +27,7 @@
 
     {% if CurrentUser %}
 
+    {% if AttachedUnused is not empty %}
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -89,8 +90,10 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 
+    {% if Orphans is not empty %}
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -133,8 +136,10 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 
+    {% if MissingOnFilesystem is not empty %}
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -147,7 +152,7 @@
                     <p class="tli-readable-text">
                         Nota: questa lista viene ri-generata ogni 3 ore circa.
                         La versione che stai visualizzando è stata generata
-                        {{ dateAttachedUnusedList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
+                        {{ dateMissingOnFilesystemList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
                     </p>
                 </div>
             </div>
@@ -189,8 +194,10 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 
+    {% if MissingOnDatabase is not empty %}
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -203,7 +210,7 @@
                     <p class="tli-readable-text">
                         Nota: questa lista viene ri-generata ogni 3 ore circa.
                         La versione che stai visualizzando è stata generata
-                        {{ dateAttachedUnusedList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
+                        {{ dateMissingOnDatabaseList|format_datetime(locale='it', pattern="EEEE d MMMM y, 'ore' HH:mm") }}.
                     </p>
                 </div>
             </div>
@@ -232,6 +239,37 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+
+    {% set CheckedLists     = [AttachedUnused, Orphans, MissingOnFilesystem, MissingOnDatabase] %}
+    {% set PassedChecksNum  = CheckedLists|filter(List => List is empty)|length %}
+
+    {% if PassedChecksNum > 0 %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2 class="title">{{ PassedChecksNum < CheckedLists|length ? 'Altri controlli effettuati' : 'Controlli effettuati' }}</h2>
+                    <ul class="tli-readable-text">
+                        {% if AttachedUnused is empty %}
+                            <li>Zero "File da controllare"&nbsp;- nessun articolo ha download associati che non siano linkati nel testo</li>
+                        {% endif %}
+                        {% if Orphans is empty %}
+                            <li>Zero "File orfani"&nbsp;- ogni file è associato almeno a un articolo</li>
+                        {% endif %}
+                        {% if MissingOnFilesystem is empty %}
+                            <li>Zero "File mancanti su filesystem"&nbsp;- tutti i file ospitati da TLI sono scaricabili</li>
+                        {% endif %}
+                        {% if MissingOnDatabase is empty %}
+                            <li>Zero "File mancanti su database"&nbsp;- tutti i file ospitati da TLI sono indicizzati nel database</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
 
     {% else %}
