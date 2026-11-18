@@ -16,10 +16,10 @@ use Symfony\Component\DomCrawler\Crawler;
  * - on the homepage, after all four cards of the top slider and before the mosaic: below the first screen at every
  *   common size, while between the two rows of cards they would reach it on a large display;
  * - in every listing (archive/index.html.twig: tags, news, the homepage's later pages, authors, views), twice at most:
- *   after the first row (the two big cards), by choice, even if there it reaches the first screen at 1920x1080 and on
- *   a portrait tablet; then between the two rows of three cards of the second cycle of ten. Only with two cards or more
- *   after it: on a phone, a listing of two cards closed by a pair is 37% ads with the bottom sticky, one of three 30%,
- *   at the limit of the Better Ads Standards.
+ *   after the first two rows (the two big cards, then the first row of three), by choice, even if the first one reaches
+ *   the first screen at 1920x1080 and on a portrait tablet. Only with two cards or more after it: on a phone, a listing
+ *   of two cards closed by a pair is 37% ads with the bottom sticky, one of three 30%, at the limit of the Better Ads
+ *   Standards.
  *
  * Both squares run the same unit, which works because Clickio's loader gives an ad to every <script> whose text
  * carries the unit's code, so each one must keep it literally.
@@ -34,7 +34,7 @@ class SquarePairAdTest extends BaseT
     private const string SQUARE_UNIT_CODE = "['b']['_601521']";
 
     // in a listing, each pair follows this many cards
-    private const array LISTING_PAIRS_AFTER_CARDS = [2, 15];
+    private const array LISTING_PAIRS_AFTER_CARDS = [2, 5];
 
 
     public function testTheSquarePairClosesTheArticleText() : void
@@ -94,8 +94,8 @@ class SquarePairAdTest extends BaseT
 
     public function testShortListingsGetNoSquarePair() : void
     {
-        // cards on the page => pairs: the one after the second card needs two more cards after it
-        foreach([2 => 0, 3 => 0, 4 => 1] as $cardsNum => $pairsNum) {
+        // cards on the page => pairs: each one needs two more cards after it
+        foreach([2 => 0, 3 => 0, 4 => 1, 6 => 1, 7 => 2] as $cardsNum => $pairsNum) {
 
             [$url, $grid] = $this->fetchTagGridWithCards($cardsNum);
             $this->assertCount($pairsNum, $grid->filter('.tli-ad-pair'), "Wrong number of pairs of squares on $url, $cardsNum cards");

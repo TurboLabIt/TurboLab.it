@@ -141,12 +141,12 @@
                                         </div>
                                     </div>
 
-                                    {# two pairs per page at most: after the first row (the two big cards), by choice, even if
-                                       there it reaches the first screen at 1920x1080 and on a portrait tablet; then between the
-                                       two rows of three cards of the second cycle of ten. Only with two cards or more after it:
-                                       on a phone, a listing of two cards closed by a pair is 37% ads with the bottom sticky, one
-                                       of three 30%, at the limit of the Better Ads Standards #}
-                                    {% if loop.index in [2, 15] and loop.revindex0 >= 2 %}
+                                    {# two pairs per page at most, after the first two rows (the two big cards, then the first
+                                       row of three), by choice, even if the first one reaches the first screen at 1920x1080 and
+                                       on a portrait tablet. Only with two cards or more after it: on a phone, a listing of two
+                                       cards closed by a pair is 37% ads with the bottom sticky, one of three 30%, at the limit
+                                       of the Better Ads Standards #}
+                                    {% if loop.index in [2, 5] and loop.revindex0 >= 2 %}
                                         <div class="col-12">
                                             {% include 'ads/clickio/square-pair.html.twig' %}
                                         </div>
