@@ -77,6 +77,8 @@ Per questo, solo sotto i 576 px, il logo ha `max-width: 100%` con `height: auto`
 
 Sopra i 576 px resta di 360 px anche dove la sua colonna è più stretta (l'intestazione tra 992 e 1199 px, larga 296; il footer tra 768 e 991, larga 276): accanto non c'è niente e il logo non esce dallo schermo, mentre restringerlo lì lo cambierebbe su schermi comuni, come i 1024 px di un tablet in orizzontale.
 
+Il forum ha un logo suo ([assets/styles/forum/logo.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/forum/logo.css)): un'immagine di sfondo larga 340 px (`.site_logo`) dentro il link `.logo`, che sui telefoni è un `inline-block` con 10 px di padding per lato. Il `max-width: 100%` di `.site_logo` non basta, perché il link prende la larghezza proprio dal logo: largo 360 px, allargava ogni pagina del forum (366 px a 360). Per questo anche il link ha `max-width: 100%`, con `box-sizing: border-box` (senza, il padding resterebbe fuori dal 100%), e il logo cambia solo sotto i 370 px: 290 px a 320, 330 a 360.
+
 
 ### Coppia di annunci 336x280: fine articolo, homepage ed elenchi
 

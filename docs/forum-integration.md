@@ -30,6 +30,8 @@ Il comando `ForumIntegrationBuilder` provvede dunque a:
 1. renderizzare i template Twig dedicati
 2. salvare l'output renderizzato nella cartella non-versionata del modulo
 
+⚠️ Gli indirizzi di `forum.css` e `forum.js` finiscono nei file generati come sono in quel momento in `public/build/manifest.json`: con `yarn build` hanno l'hash (`/build/forum.d9e5157a.css`), con `yarn dev` no. Ogni build svuota `public/build/` (`cleanupOutputBeforeBuild()` in [webpack.config.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/webpack.config.js)), quindi dopo un build che cambia quei nomi (`yarn dev` dopo `yarn build` o viceversa, o un `yarn build` che cambia il contenuto del forum) il forum chiede file che non ci sono più e resta senza i suoi stili e script (404), finché non si rigenerano i file e phpBB non ricompila i template: `php bin/console ForumIntegrationBuilder` e `bash scripts/phpbb-cli.sh cache:purge`, oppure tutto [scripts/cache-clear.sh](https://github.com/TurboLabIt/TurboLab.it/blob/main/scripts/cache-clear.sh). Il deploy non ne soffre: `cache-clear.sh` esegue il build prima di `ForumIntegrationBuilder`.
+
 
 ## 🔗 Vedi anche
 

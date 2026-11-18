@@ -11,5 +11,12 @@
 /* Mostro il logo anche su mobile https://turbolab.it/forum/viewtopic.php?t=3263 */
 .logo { display: inline-block !important; }
 
+/* the max-width of .site_logo can't shrink this link, which takes its width from the logo:
+   without these two, below 366 px the link (360 px with its padding) widens every forum page */
+.logo {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Nascondo il nome del sito di fianco al logo */
 #site-description > h1, #site-description > p { display: none !important; }
