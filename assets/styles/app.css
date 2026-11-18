@@ -2,6 +2,13 @@ body {
     background-color: lightgray;
     /* no double-tap-to-zoom (accidental zoom) */
     touch-action: manipulation;
+    /* a word longer than the line (an error code, a file name) wraps instead of widening the page */
+    overflow-wrap: break-word;
+}
+
+/* lets the title beside a thumbnail shrink, so its long words can wrap */
+.gallery_item_content {
+    min-width: 0;
 }
 
 .tli-readable-text {

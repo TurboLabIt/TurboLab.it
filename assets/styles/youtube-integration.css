@@ -7,6 +7,11 @@
     flex-shrink: 0;
 }
 
+/* lets the title beside the thumbnail shrink, so its long words can wrap */
+.tli-video-thumb > .flex-grow-1 {
+    min-width: 0;
+}
+
 .tli-video-thumb-title {
     overflow: hidden;
     text-overflow: ellipsis;

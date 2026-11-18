@@ -60,6 +60,15 @@ Nel corpo dell'articolo le regole valgono solo per gli elementi che produciamo n
 - **zoom** (`js/zoom-images.js`): cursore `zoom-in` sulle immagini in `/immagini/` e lightbox solo per quelle presenti nella sua galleria. Il clic su qualunque altra immagine resta un clic normale: prima il gestore lo annullava sempre, e un'immagine fuori dalla galleria apriva la prima foto.
 
 
+### Parole più lunghe della riga: vanno a capo, non allargano la pagina
+
+Diversi titoli contengono una parola più lunga della riga: un codice d'errore (`MOZILLA_PKIX_ERROR_OCSP_RESPONSE_FOR_CERT_MISSING`, `KMODE_EXCEPTION_NOT_HANDLED`), il nome di un file o di un componente (`Windows.SecurityCenter.SecurityAppBroker`). Il trattino basso e il punto non sono punti in cui andare a capo, quindi su un telefono il titolo di un articolo così allargava la pagina fino a 1253 px invece di 390, e su desktop usciva dalla sua colonna finendo sopra quella laterale. Lo stesso succedeva alle card degli elenchi e al testo degli articoli (un link, un `<strong>`).
+
+Per questo [assets/styles/app.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/app.css) mette `overflow-wrap: break-word` su `body`: una parola si spezza solo quando da sola non sta nella riga, quindi il resto del testo non cambia. Non `anywhere`, che cambia anche la larghezza minima del contenuto: nelle tabelle spezza parole che ci starebbero (vedi sopra, `/scrivi`).
+
+`break-word` non basta a un elemento flex accanto a una miniatura: la sua larghezza minima resta quella della parola più lunga, e la riga esce lo stesso. Per questo `.gallery_item_content` (liste della homepage e del footer, in `app.css`) e il titolo dei video in homepage (`.tli-video-thumb > .flex-grow-1`, in [assets/styles/youtube-integration.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/youtube-integration.css)) hanno `min-width: 0`. Un nuovo layout flex con un titolo accanto a un'immagine ha bisogno della stessa regola.
+
+
 ### Coppia di annunci 336x280: fine articolo, homepage ed elenchi
 
 I due annunci prima dei tag ([templates/ads/clickio/square-pair.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/ads/clickio/square-pair.html.twig)) stanno fianco a fianco quando c'è posto e si impilano altrimenti (flex con `flex-wrap` di Bootstrap). Affiancati servono 688 px (2 × 336 più 16 di spazio), ma tra 1200 e 1399 px la colonna del testo è larga 676 px: per questo `.tli-ad-pair` ([assets/styles/article.css](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/styles/article.css)) si allarga sui 30 px di padding laterale del riquadro dell'articolo (`.post-layout-top-content-3` del tema), come fa Newspark stesso con `.post-layout-top-content-2`. Solo da 576 px in su: sotto, il tema porta il padding a 15 px, e un margine di -30 px farebbe scorrere la pagina di lato.
