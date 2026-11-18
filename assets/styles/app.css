@@ -181,6 +181,18 @@ div.stellarnav.mobile.active ul {
 .post-load-btn a {
     background: #0a6cc9;
     border-color: #0a6cc9;
+    max-width: 100%;
+    white-space: normal;
+    text-wrap: balance;
+    line-height: 1.5;
+    padding: 18px 40px;
+}
+
+@media (max-width: 575.98px) {
+    .post-load-btn a {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }
 
 
