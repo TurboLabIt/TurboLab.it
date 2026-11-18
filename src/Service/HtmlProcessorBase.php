@@ -2,12 +2,26 @@
 namespace App\Service;
 
 use DOMDocument;
+use DOMElement;
 use DOMNode;
+use DOMText;
 
 
 // 📚 https://github.com/TurboLabIt/TurboLab.it/blob/main/docs/encoding.md
 abstract class HtmlProcessorBase
 {
+    /**
+     * The elements a <p> can't contain. At the top level of a body, what lies between two of them (text, inline
+     * elements) is a run of inline content, which parseHTML() puts in a <p> when it holds text: see implyParagraphs()
+     */
+    const array BLOCK_TAGS = [
+        'address', 'article', 'aside', 'blockquote', 'caption', 'center', 'col', 'colgroup', 'dd', 'details', 'dialog',
+        'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'header', 'hgroup', 'hr', 'li', 'listing', 'main', 'menu', 'nav', 'ol', 'p', 'pre', 'search', 'section',
+        'summary', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul', 'xmp',
+    ];
+
+
     public function __construct(protected Factory $factory) {}
 
 
@@ -140,8 +154,18 @@ abstract class HtmlProcessorBase
          * LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD:
          *     Prevent <html><body> wrapper in output
          *     https://stackoverflow.com/a/22490902/1204976
+         *
+         * <body>…</body>:
+         *     libxml 2.14+ (its rewritten HTML5 parser) drops every text node that has no parent element: with
+         *     NOIMPLIED, the text outside the top-level elements, which the bodies imported from TLI1 have plenty
+         *     of. The old HTML4 parser put that text in an implied <p>. From June to November 2026 the article
+         *     pages hid it, and so did the editor, whose save then deleted it. The explicit <body> gives it a
+         *     parent, implyParagraphs() does what the old parser did, and the body's children go back to the top
+         *     level, where every caller expects them. A </body> or </html> in the text would close it early:
+         *     neither means anything in an article body, so they go
          */
-        $result = $domDoc->loadHTML('<?xml encoding="utf-8" ?>' . $text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $text   = preg_replace('~</(?:body|html)\s*>~i', '', $text) ?? $text;
+        $result = $domDoc->loadHTML('<?xml encoding="utf-8" ?><body>' . $text . '</body>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         if( $result === false ) {
             return false;
@@ -162,8 +186,105 @@ abstract class HtmlProcessorBase
             }
         }
 
+        foreach( iterator_to_array($domDoc->childNodes) as $item ) {
+
+            if( !($item instanceof DOMElement) || $item->tagName != 'body' ) {
+                continue;
+            }
+
+            $this->implyParagraphs($domDoc, $item);
+
+            foreach( iterator_to_array($item->childNodes) as $child ) {
+                $domDoc->insertBefore($child, $item);
+            }
+
+            $domDoc->removeChild($item);
+            break;
+        }
+
         $domDoc->encoding = 'UTF-8';
         return $domDoc;
+    }
+
+
+    /**
+     * What libxml's old HTML4 parser did by itself: the text between the top-level blocks goes in a <p>, with the
+     * inline elements next to it (a run of inline content that holds text). A run with no text, such as an image
+     * between two paragraphs, stays as it is, and the whitespace around it goes, as it always did.
+     */
+    protected function implyParagraphs(DOMDocument $domDoc, DOMElement $parent) : void
+    {
+        $arrRun = [];
+        foreach( iterator_to_array($parent->childNodes) as $node ) {
+
+            if( $node instanceof DOMElement && in_array(strtolower($node->tagName), static::BLOCK_TAGS) ) {
+
+                $this->wrapRunInParagraph($domDoc, $parent, $arrRun);
+                $arrRun = [];
+                continue;
+            }
+
+            $arrRun[] = $node;
+        }
+
+        $this->wrapRunInParagraph($domDoc, $parent, $arrRun);
+    }
+
+
+    /**
+     * @param DOMNode[] $arrRun consecutive children of $parent, none of them a block
+     */
+    protected function wrapRunInParagraph(DOMDocument $domDoc, DOMElement $parent, array $arrRun) : void
+    {
+        // HTML's whitespace, without the non-breaking space: a run holding one alone is text, as it was for libxml
+        $fxIsBlank = fn(DOMNode $node) : bool => preg_match('/[^ \t\n\r\f]/', $node->textContent) !== 1;
+
+        $hasText = false;
+        foreach($arrRun as $node) {
+
+            if( ($node instanceof DOMText || $node instanceof DOMElement) && !$fxIsBlank($node) ) {
+                $hasText = true;
+                break;
+            }
+        }
+
+        if( !$hasText ) {
+
+            foreach($arrRun as $node) {
+
+                if( $node instanceof DOMText ) {
+                    $parent->removeChild($node);
+                }
+            }
+
+            return;
+        }
+
+        // the new paragraph starts and ends with its first and last word
+        while( reset($arrRun) instanceof DOMText && $fxIsBlank(reset($arrRun)) ) {
+            $parent->removeChild( array_shift($arrRun) );
+        }
+
+        while( end($arrRun) instanceof DOMText && $fxIsBlank(end($arrRun)) ) {
+            $parent->removeChild( array_pop($arrRun) );
+        }
+
+        $first = reset($arrRun);
+        if( $first instanceof DOMText ) {
+            $first->data = ltrim($first->data, " \t\n\r\f");
+        }
+
+        $last = end($arrRun);
+        if( $last instanceof DOMText ) {
+            $last->data = rtrim($last->data, " \t\n\r\f");
+        }
+
+        $paragraph = $domDoc->createElement('p');
+        $parent->insertBefore($paragraph, $first);
+
+        foreach($arrRun as $node) {
+            $paragraph->appendChild($node);
+        }
     }
 
 

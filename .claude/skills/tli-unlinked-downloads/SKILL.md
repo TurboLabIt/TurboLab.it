@@ -114,9 +114,11 @@ controllare:" and only their listed Downloads are accepted.
 
 ## Text the page hides
 
-Since PHP 8.5 (libxml's HTML5 parser, 2026-06), the page drops any text that the stored body has outside an element
-(TLI1 bodies have plenty: 555 published articles on 2026-11-18). Readers don't see it, the editor never gets it, and
-the next save, by hand or by this script, deletes it for good. So `show` and `apply` compare the editor's copy with
+From June 2026 (PHP 8.5, libxml's HTML5 parser) the page dropped any text that the stored body had outside an
+element (TLI1 bodies have plenty: 560 published articles on 2026-11-18). Readers didn't see it, the editor never got
+it, and the next save, by hand or by this script, deleted it for good. Since 2026-11-18 `parseHTML()` keeps it, in a
+`<p>` ("Testo fuori dai tag" in `docs/encoding.md`), but only on a site where that fix is deployed, and any other
+way the editor's copy could miss stored text would go the same way. So `show` and `apply` compare the editor's copy with
 the body stored in this checkout's database (`stored-body.php`, on a dev copy only). Words the page hides make
 `apply` skip the article, unless the plan puts them back with a `restore` that `show` prints ready to use, at the
 place the stored body has them: that's the author's own text, made visible again.

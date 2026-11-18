@@ -81,8 +81,9 @@ class HtmlProcessorForStorage extends HtmlProcessorBase
             $tliPurifierConfig->set('AutoFormat.RemoveEmpty', true);
 
             // Wrap loose, top-level inline text into <p>. libxml's old HTML4 parser did this implicitly;
-            // the new HTML5 parser (libxml 2.14+) leaves bare text unwrapped (and LIBXML_HTML_NOIMPLIED then
-            // drops it), which would otherwise lose the body text and the auto-extracted abstract.
+            // the new HTML5 parser (libxml 2.14+) drops bare top-level text, and parseHTML() now puts it back
+            // in a <p> itself (implyParagraphs(), which the display of the bodies imported from TLI1 needs).
+            // This runs first on what is saved, and also turns a blank line in the text into a new paragraph.
             // The extra blank line it inserts between blocks is normalized away by the later DOM round-trip.
             $tliPurifierConfig->set('AutoFormat.AutoParagraph', true);
 
