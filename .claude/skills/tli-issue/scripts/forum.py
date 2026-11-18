@@ -2,8 +2,9 @@
 Forum actions for the tli-issue and tli-issue-close skills, sent the way the browser sends them, logged in with the
 user's OWN TurboLab.it account. Plain HTTPS: no SSH, no database, no headless browser. Run with `python3 -I`:
 
-  forum.py setup [--stdin] [--force]                  stores the account in the credentials file, asking for it
-  forum.py login [--site prod|dev0|URL] [--cafile PEM]   logs in; prints the state file the commands below take
+  forum.py setup [--account admin] [--stdin] [--force]   stores the account in the credentials file, asking for it
+  forum.py login [--account admin] [--site prod|dev0|URL] [--cafile PEM]
+                                                      logs in; prints the state file the commands below take
   forum.py whoami <state>                             who the site thinks you are (exit 1 if anonymous)
   forum.py search <state> --keywords "…" [--titles-only] [--forums 6,26]   phpBB's own search, newest first
   forum.py read <state> --post-id N | --topic T [--last 6] [--full]        a topic's latest posts, as BBCode
@@ -16,7 +17,10 @@ user's OWN TurboLab.it account. Plain HTTPS: no SSH, no database, no headless br
   forum.py logout <state>                             logs out, checks it, deletes the state
 
 Credentials: DEV_TLI_USERNAME and DEV_TLI_PASSWORD in /etc/turbolab.it/account-turbolab.it.conf, shell syntax,
-mode 600 (TLI_ACCOUNT_CONF overrides the path). Only `setup` writes that file and only `login` reads it: nothing
+mode 600 (TLI_ACCOUNT_CONF overrides the path). `--account admin` uses an administrator's account instead, kept the
+same way in /etc/turbolab.it/account-turbolab.it-admin.conf (TLI_ADMIN_ACCOUNT_CONF overrides it): it's for what only
+the staff may do, like editing other people's articles (the tli-unlinked-downloads skill), and it never replaces the
+user's own account where theirs is enough. Only `setup` writes those files and only `login` reads them: nothing
 prints the password, and it never goes on a command line (`setup --stdin` takes it from a redirected file: every
 user of the PC can read a running command's text). The state file (mode 600, in a private directory) holds the
 session cookies only. Login never uses "remember me", so no long-lived key is created.
@@ -32,8 +36,12 @@ from html.parser import HTMLParser
 
 SCRIPT = os.path.realpath(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(SCRIPT), '..', '..', '..', '..'))
-CREDENTIALS_FILE = os.environ.get('TLI_ACCOUNT_CONF') or '/etc/turbolab.it/account-turbolab.it.conf'
-SITES = {'prod': 'https://turbolab.it', 'dev0': 'https://dev0.turbolab.it'}
+# each account in a file of its own, outside the repository: (variable overriding the path, the path)
+ACCOUNT_FILES = {
+    'user':  ('TLI_ACCOUNT_CONF', '/etc/turbolab.it/account-turbolab.it.conf'),
+    'admin': ('TLI_ADMIN_ACCOUNT_CONF', '/etc/turbolab.it/account-turbolab.it-admin.conf'),
+}
+SITES ={'prod': 'https://turbolab.it', 'dev0': 'https://dev0.turbolab.it'}
 # the only hosts the account's password and session cookies are ever sent to: the site and its subdomains (dev copies)
 SITE_HOST = re.compile(r'(?:[a-z0-9-]+\.)*turbolab\.it')
 GUIDE_ARTICLE_ID = 49           # Article::ID_ISSUE_REPORT
@@ -102,17 +110,29 @@ def write_private(path: str, content: str) -> None:
 
 # ---------------------------------------------------------------------------------------------------- credentials
 
-def read_credentials() -> tuple:
-    how_to_create = (f"ask the user to run, in a terminal: python3 -I {SCRIPT} setup "
-                     f"(or to give you the account, then store it with setup --stdin the way SKILL.md says, "
-                     f"never inside a command)")
+def credentials_file(account: str) -> str:
+    variable, default = ACCOUNT_FILES[account]
+    return os.environ.get(variable) or default
+
+
+def account_option(account: str) -> str:
+    """What to add to setup and login for this account: nothing for the user's own."""
+    return '' if account == 'user' else f' --account {account}'
+
+
+def read_credentials(account: str) -> tuple:
+    path = credentials_file(account)
+    whose = "the user's own account" if account == 'user' else "an administrator's account (the user decides which)"
+    how_to_create = (f"it holds {whose}: ask the user to run, in a terminal: python3 -I {SCRIPT} setup"
+                     f"{account_option(account)} (or to give you the account, then store it with setup --stdin the "
+                     f"way SKILL.md says, never inside a command)")
     try:
-        with open(CREDENTIALS_FILE, encoding='utf-8') as f:
+        with open(path, encoding='utf-8') as f:
             lines = f.read().splitlines()
     except FileNotFoundError:
-        fail(f"no credentials file {CREDENTIALS_FILE}: {how_to_create}", EXIT_NO_CREDENTIALS)
+        fail(f"no credentials file {path}: {how_to_create}", EXIT_NO_CREDENTIALS)
     except PermissionError:
-        fail(f"{CREDENTIALS_FILE} isn't readable by this user")
+        fail(f"{path} isn't readable by this user")
 
     values = {}
     for line in lines:
@@ -125,20 +145,22 @@ def read_credentials() -> tuple:
         try:
             tokens = shlex.split(raw)
         except ValueError:
-            fail(f"{key.strip()} in {CREDENTIALS_FILE} isn't valid shell syntax: fix it, or run setup --force")
+            fail(f"{key.strip()} in {path} isn't valid shell syntax: fix it, or run setup{account_option(account)} "
+                 "--force")
         values[key.strip()] = tokens[0] if len(tokens) == 1 else raw.strip()
 
     if not values.get('DEV_TLI_USERNAME') or not values.get('DEV_TLI_PASSWORD'):
-        fail(f"DEV_TLI_USERNAME and DEV_TLI_PASSWORD must both be in {CREDENTIALS_FILE}: {how_to_create} --force",
+        fail(f"DEV_TLI_USERNAME and DEV_TLI_PASSWORD must both be in {path}: {how_to_create} --force",
              EXIT_NO_CREDENTIALS)
-    if os.stat(CREDENTIALS_FILE).st_mode & 0o077:
-        print(f"WARNING: other users can read {CREDENTIALS_FILE}: chmod 600 it", file=sys.stderr)
+    if os.stat(path).st_mode & 0o077:
+        print(f"WARNING: other users can read {path}: chmod 600 it", file=sys.stderr)
     return values['DEV_TLI_USERNAME'], values['DEV_TLI_PASSWORD']
 
 
 def cmd_setup(args) -> None:
-    if os.path.exists(CREDENTIALS_FILE) and not args.force:
-        fail(f"{CREDENTIALS_FILE} already exists: setup --force replaces it")
+    path = credentials_file(args.account)
+    if os.path.exists(path) and not args.force:
+        fail(f"{path} already exists: setup{account_option(args.account)} --force replaces it")
 
     if args.stdin:
         lines = sys.stdin.read().splitlines() + ['', '']
@@ -147,9 +169,10 @@ def cmd_setup(args) -> None:
         if not sys.stdin.isatty():
             fail("setup asks for the account in a terminal: run it in one, or pass username and password as two "
                  "lines on stdin with --stdin")
+        kind = 'TurboLab.it' if args.account == 'user' else 'TurboLab.it administrator'
         try:
-            username = input('TurboLab.it username: ')
-            password = getpass.getpass('TurboLab.it password (not shown): ')
+            username = input(f'{kind} username: ')
+            password = getpass.getpass(f'{kind} password (not shown): ')
         except (EOFError, KeyboardInterrupt):
             print()
             fail("setup cancelled: nothing saved")
@@ -159,23 +182,27 @@ def cmd_setup(args) -> None:
     if not username or not password:
         fail("both username and password are needed")
 
-    directory = os.path.dirname(CREDENTIALS_FILE)
+    purpose = {
+        'user':  "account used by the tli-issue skill (.claude/skills/tli-issue)",
+        'admin': "administrator account used by the tli-unlinked-downloads skill (.claude/skills/tli-unlinked-downloads)",
+    }[args.account]
+    directory = os.path.dirname(path)
     try:
         os.makedirs(directory, exist_ok=True)
-        write_private(CREDENTIALS_FILE,
-                      "# TurboLab.it account used by the tli-issue skill (.claude/skills/tli-issue). Keep it mode 600.\n"
-                      f"DEV_TLI_USERNAME={shlex.quote(username)}\nDEV_TLI_PASSWORD={shlex.quote(password)}\n")
+        write_private(path, f"# TurboLab.it {purpose}. Keep it mode 600.\n"
+                            f"DEV_TLI_USERNAME={shlex.quote(username)}\nDEV_TLI_PASSWORD={shlex.quote(password)}\n")
     except PermissionError:
         if os.path.isdir(directory):
             # never hand an existing directory over: other configuration may live there, and whoever owns the
             # directory can replace every file in it
             fail(f"{directory} exists, but this user can't write in it. Leave its owner alone: keep the account in "
-                 "a file of your own instead, by setting TLI_ACCOUNT_CONF to its path in your shell profile, then "
-                 "setup again")
+                 f"a file of your own instead, by setting {ACCOUNT_FILES[args.account][0]} to its path in your shell "
+                 "profile, then setup again")
         fail(f"can't create {directory}: run once `sudo install -d -o \"$USER\" -m 755 {directory}`, "
              "then setup again")
-    print(f"OK account {username} saved in {CREDENTIALS_FILE} (mode 600). Try it with: python3 -I {SCRIPT} login "
-          "(on production: then run the logout it prints, so that no session stays open)")
+    print(f"OK account {username} saved in {path} (mode 600). Try it with: python3 -I {SCRIPT} login"
+          f"{account_option(args.account)} (on production: then run the logout it prints, so that no session stays "
+          "open)")
 
 
 # ---------------------------------------------------------------------------------------------------- the session
@@ -306,23 +333,24 @@ def resolve_site(site: str, cafile):
 
 def cmd_login(args) -> None:
     base, cafile = resolve_site(args.site, args.cafile)
-    username, password = read_credentials()
+    username, password = read_credentials(args.account)
+    path, again = credentials_file(args.account), f"setup{account_option(args.account)} --force"
 
     site = Site({'base_url': base, 'cafile': cafile, 'ua': UA, 'cookies': {}})
     # no "remember-me": login.php then sets the fallback cookie Symfony accepts in place of the autologin key
     status, _, body = site.request('POST', '/ajax/login/', {'username': username, 'password': password}, ajax=True)
     del password
     if status != 200:
-        wrong_password = f"The password in {CREDENTIALS_FILE} is wrong: ask the user to fix it (setup --force)."
+        wrong_password = f"The password in {path} is wrong: ask the user to fix it ({again})."
         if base != SITES['prod']:
             # a copy only knows the password the account had when its database was imported
             wrong_password = (
                 "On a dev copy that has two possible causes: ask the user which. Either the password in "
-                f"{CREDENTIALS_FILE} is wrong (setup --force replaces it), or it was changed on production after "
+                f"{path} is wrong ({again} replaces it), or it was changed on production after "
                 "this copy's database was imported: then the file is right, and the copy needs a new import.")
         advice = {
             403: wrong_password,
-            401: f"Check the username in {CREDENTIALS_FILE} with the user, and that the account is active.",
+            401: f"Check the username in {path} with the user, and that the account is active.",
             429: "The account now needs the forum's own login, with its question: only the user can do that, "
                  "in a browser.",
         }.get(status, "The site's own error: try again later, or log in from the forum in a browser.")
@@ -336,8 +364,9 @@ def cmd_login(args) -> None:
     state_dir = tempfile.mkdtemp(prefix='tli-forum-session.')
     site.state_path = os.path.join(state_dir, 'state.json')
     site.state['username'] = name
+    site.state['account'] = args.account
     site.save()
-    print(f"OK logged in as {name} on {site.host}")
+    print(f"OK logged in as {name} on {site.host}" + ('' if args.account == 'user' else f" ({args.account} account)"))
     print(f"state file: {site.state_path}")
     print(f"when done, even after a failure: python3 -I {SCRIPT} logout {site.state_path}", flush=True)
     for older, last_used in older_sessions(site.state_path):
@@ -701,12 +730,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest='command', required=True)
 
+    accounts = dict(choices=sorted(ACCOUNT_FILES), default='user',
+                    help="whose account: the user's own (the default), or admin, an administrator's")
+
     setup = sub.add_parser('setup')
+    setup.add_argument('--account', **accounts)
     setup.add_argument('--stdin', action='store_true', help='read username and password as two lines on stdin')
     setup.add_argument('--force', action='store_true', help='replace an existing credentials file')
     setup.set_defaults(run=cmd_setup, needs_state=False)
 
     login = sub.add_parser('login')
+    login.add_argument('--account', **accounts)
     login.add_argument('--site', default='prod', help='prod (the default), dev0 or https://NAME.turbolab.it')
     login.add_argument('--cafile', help="a dev copy's self-signed certificate")
     login.set_defaults(run=cmd_login, needs_state=False)

@@ -56,6 +56,11 @@ give the account:
 
 On a PC without `/etc/turbolab.it`, `setup` prints the one `sudo` command that creates it.
 
+What only the staff may do (the `tli-unlinked-downloads` skill edits other people's articles) goes out as an
+**administrator's account** instead, which the user chooses: `--account admin` on `setup` and `login`, kept in
+`/etc/turbolab.it/account-turbolab.it-admin.conf` (`TLI_ADMIN_ACCOUNT_CONF` overrides the path) with the same format
+and the same rules. Issues and replies stay on the user's own account.
+
 When a login is refused (wrong password, unknown or inactive account), stop and tell the user. Never retry in a
 loop: after 5 failures the account can only log in through the forum's own form, which asks a question that only a
 person should answer.
@@ -199,7 +204,8 @@ in the topic, posted at once. Never a comment on GitHub.
 
 `scripts/forum.py` is a single Python 3 file using only the standard library, so there's nothing to install. It has
 `setup`, `login`, `whoami`, `search`, `read`, `get`, `visit-guide`, `topic`, `reply`, `bug` and `logout`, and
-other skills use it too (`tli-issue-close`, `tli-logged-in-check`, `tli-browser-test`). It keeps the session
+other skills use it too (`tli-issue-close`, `tli-logged-in-check`, `tli-browser-test`, and `tli-unlinked-downloads`,
+which imports its `Site` class for the session). It keeps the session
 cookies in a private state file and never uses "remember me", so no long-lived key is left behind. `login` also says
 when an earlier login never logged out: close that session too, unless something is still using it. The account and
 the session only go to turbolab.it and its subdomains. TLS is always verified: for dev0 it trusts the self-signed

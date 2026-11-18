@@ -83,6 +83,8 @@ Un Download è *collegato* a un articolo quando compare nel suo elenco dei Downl
 - **collegato ma non linkato** ➡ accettabile: è solo segnalato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), perché l'autore lo citi nel testo
 - **non collegato a nessun articolo** ➡ candidato all'eliminazione: per ora è solo elencato in [/scarica/da-controllare](https://turbolab.it/scarica/da-controllare), in seguito sarà eliminato automaticamente, come già avviene per le immagini orfane
 
+Gli articoli *collegati ma non linkati* li corregge anche Claude Code, con la skill [.claude/skills/tli-unlinked-downloads](https://github.com/TurboLabIt/TurboLab.it/tree/main/.claude/skills/tli-unlinked-downloads): il link va dove il testo cita il Download, come riga `» Download:` dopo il paragrafo oppure sulle parole stesse quando la citazione è un inciso, e il resto del testo non cambia. Lavora via HTTPS, salvando come l'editor, con un account amministratore salvato in `/etc/turbolab.it/account-turbolab.it-admin.conf` (fuori dal repository, permessi 600).
+
 
 ### Unire due Download doppi
 

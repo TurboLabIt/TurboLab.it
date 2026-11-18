@@ -48,7 +48,9 @@ php $X end <state>         # always, when done: removes the session and the file
 
 `start` writes the session straight into this copy's forum database, no password involved, and a state file in
 the same format `forum.py login` writes. It refuses to run unless `APP_ENV` is `dev` and the copy's own address is
-a subdomain of turbolab.it, and it works on the database of this checkout only.
+a subdomain of turbolab.it, and it works on the database of this checkout only. That check and the kernel it boots
+are in `scripts/dev-copy.php`, which every dev-copy helper requires (`stored-body.php` of the
+`tli-unlinked-downloads` skill too): a new one starts from there, not from a copy of it.
 
 If the check is about the login itself (the form, a wrong password, the cookies), use the real thing instead:
 `forum.py login --site dev0`, in the `tli-issue` skill.

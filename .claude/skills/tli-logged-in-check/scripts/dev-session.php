@@ -13,33 +13,11 @@
  */
 declare(strict_types=1);
 
-use App\Kernel;
-use Symfony\Component\Dotenv\Dotenv;
-
-const PROJECT_DIR = __DIR__ . '/../../../../';
 const USER_AGENT  = 'Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0 tli-dev-session/1.0';
 const FORUM       = 'turbolab_it_forum.phpbb_';
 
-function fail(string $message, int $code = 1) : never
-{
-    fwrite(STDERR, "FAILED: $message\n");
-    exit($code);
-}
-
-require PROJECT_DIR . 'vendor/autoload.php';
-(new Dotenv())->bootEnv(PROJECT_DIR . '.env');
-if (($_SERVER['APP_ENV'] ?? '') !== 'dev') {
-    fail("APP_ENV is «" . ($_SERVER['APP_ENV'] ?? '') . "», not dev: this only runs on a dev copy");
-}
-$site = rtrim((string) ($_SERVER['APP_SITE_URL'] ?? ''), '/');
-$host = (string) parse_url($site, PHP_URL_HOST);
-if (parse_url($site, PHP_URL_SCHEME) !== 'https' || !preg_match('/^(?:[a-z0-9-]+\.)+turbolab\.it$/', $host) || $host === 'www.turbolab.it') {
-    fail("this copy's address (APP_SITE_URL) isn't a dev copy under turbolab.it: nothing done");
-}
-
-$kernel = new Kernel('dev', true);
-$kernel->boot();
-$db = $kernel->getContainer()->get('doctrine')->getConnection();
+// this checkout's kernel and database, once it's certain this is a dev copy: PROJECT_DIR, fail(), $db, $site, $host
+require __DIR__ . '/dev-copy.php';
 
 $command  = $argv[1] ?? '';
 $argument = $argv[2] ?? '';
