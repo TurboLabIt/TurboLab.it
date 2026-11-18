@@ -162,7 +162,7 @@ class FileNeedFixingTest extends BaseT
     }
 
 
-    /** below 992 px each row is a block, and a cell is named only by its data-label (file-need-fixing.css) */
+    /** below 992 px each row is a block, and a cell is named only by its data-label (checks.css) */
     public function testEveryCellIsLabelledForTheStackedRows() : void
     {
         $crawler = $this->renderPage( array_fill_keys(array_keys(self::CHECKS), true) );

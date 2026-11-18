@@ -5,14 +5,12 @@
 {% block stylesheets %}
 
     {{ parent() }}
-    {{ inline_css('build/archive.css') }}
+    {{ inline_css('build/checks.css') }}
 
 {% endblock %}
 
 
 {% block bodyMainContent %}
-
-    <!-- ARCHIVE bodyMainContent START -->
 
     <div class="container">
         <div class="row">
@@ -30,91 +28,70 @@
         </div>
     </div>
 
+
+    <div class="container tli-checks">
+
     {% if CurrentUser %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h1 class="title">Immagini orfane: {{ num }}</h1>
-                    <p class="tli-readable-text">
-                        Le seguenti immagini non sono utilizzate da alcun articolo, e saranno presto cancellate automaticamente.
-                        Per evitare che questo accada, inseriscile nel testo di un articolo, oppure
-                        salva una copia dell'immagine che vuoi conservare sul tuo PC.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    {% block beforeArticleList %}{% endblock %}
-
-    <section class="about-item-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="about-tab-btn mt-20">
-                        <div class="about-post-items">
-
-                            <div class="row">
-
-                                {% for Image in Images  %}
-
-                                    <div class="col-lg-4 col-md-4">
-                                        <div class="trending-news-item mb-30">
-
-                                            <div class="trending-news-thumb">
-                                                <a href="{{ Image.url(ImageSizes.max) }}" target="_blank">
-                                                    <img src="{{ Image.url(ImageSizes.max) }}"
-                                                         class="tli-uniform-slider-image" loading="lazy">
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        {% if Images is not empty %}
+        <section class="tli-check">
+            <h1 class="tli-check-title">
+                <i class="fa-solid fa-images"></i>
+                Immagini orfane <span class="tli-check-count">{{ num }}</span>
+            </h1>
+            <p>
+                Le seguenti immagini non sono utilizzate da alcun articolo, e saranno presto cancellate automaticamente.
+                Per evitare che questo accada, inseriscile nel testo di un articolo, oppure
+                salva una copia dell'immagine che vuoi conservare sul tuo PC.
+            </p>
+            <ul class="tli-check-images">
+                {% for Image in Images %}
+                    <li>
+                        <a href="{{ Image.url(ImageSizes.max) }}" target="_blank">
+                            <img src="{{ Image.url(ImageSizes.reg) }}" alt="{{ Image.title }}" loading="lazy">
+                        </a>
+                        <span class="tli-check-image-title" title="{{ Image.title }}">{{ Image.title }}</span>
+                        <span class="tli-check-image-meta">
+                            #{{ Image.id }}
+                            {%- for Author in Image.Authors %}
+                                {{- loop.first ? ' · ' : ', ' }}{{ Author.username }}
+                            {%- endfor %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% else %}
+        <section class="tli-check tli-check-passed">
+            <h1 class="tli-check-title">
+                <i class="fa-solid fa-circle-check"></i>
+                Immagini orfane
+            </h1>
+            <ul>
+                <li><i class="fa-solid fa-check"></i> <strong>Zero "Immagini orfane"</strong>&nbsp;- ogni immagine è utilizzata almeno in un articolo</li>
+            </ul>
+        </section>
+        {% endif %}
 
     {% else %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h1 class="title">Immagini orfane</h1>
-                    <p class="tli-readable-text">Per visualizzare le immagini orfane devi eseguire login.</p>
-                    {% include 'user/login-form.html.twig' %}
-                </div>
-            </div>
-        </div>
-    </div>
+        <section class="tli-check">
+            <h1 class="tli-check-title">Immagini orfane</h1>
+            <p>Per visualizzare le immagini orfane devi eseguire login.</p>
+            {% include 'user/login-form.html.twig' %}
+        </section>
 
     {% endif %}
 
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="title">Altre risorse per gli autori</h2>
-                    <p class="tli-readable-text">
-                        <i class="fa-solid fa-file-half-dashed"></i>
-                        <a href="{{ path('app_file_need-fixing') }}">File da controllare</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <section class="tli-check tli-check-resources">
+            <h2 class="tli-check-title">Altre risorse per gli autori</h2>
+            <p>
+                <i class="fa-solid fa-file-half-dashed"></i>
+                <a href="{{ path('app_file_need-fixing') }}">File da controllare</a>
+            </p>
+        </section>
 
-    <!-- ARCHIVE bodyMainContent END -->
+    </div>
 
 {% endblock %}

@@ -113,6 +113,6 @@ In alternativa, la gestione delle immagini caricate negli articoli viene svolta 
 
 [ImagesToArticlesCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ImagesToArticlesCommand.php): scansiona il testo di ogni articolo, rileva quali immagini sono mostrate nel corpo dell'articolo e crea la relazione *articolo-immagine*. Questo fa sì che l'immagine sia mostrata (anche) nella gallery di quell'articolo. Se un'immagine precedentemente mostrata nell'articolo non viene più utilizzata, la stessa procedura elimina la relazione *articolo-immagine* dopo qualche mese dall'ultima modifica.
 
-Le immagini non-relazionate ad alcun articolo sono chiamate "orfane" e mostrate in [immagini/orfane](https://turbolab.it/immagini/orfane). La pagina è linkata in [/scrivi](https://turbolab.it/scrivi).
+Le immagini non-relazionate ad alcun articolo sono chiamate "orfane" e mostrate in [immagini/orfane](https://turbolab.it/immagini/orfane). La pagina è linkata in [/scrivi](https://turbolab.it/scrivi). Per ogni immagine mostra il titolo, l'ID e chi l'ha caricata; quando non ce n'è nessuna, lo dice in una riga.
 
 [ImagesDeleteCommand](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Command/ImagesDeleteCommand.php): elimina fisicamente il file di tutte le immagini orfane dopo qualche mese che sono divenute tali.

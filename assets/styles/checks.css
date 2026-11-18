@@ -1,4 +1,4 @@
-.tli-need-fixing {
+.tli-checks {
     margin-top: 8px;
     margin-bottom: 40px;
 }
@@ -146,6 +146,48 @@
     margin-bottom: 0;
 }
 
+.tli-check-images {
+    list-style: none;
+    padding: 0;
+    margin: 22px 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px 20px;
+}
+
+.tli-check-images img {
+    display: block;
+    width: 100%;
+    /* reserves each tile's height before its image arrives: no layout shift */
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background-color: #f1f4f8;
+    border: 1px solid #e1e5ea;
+    border-radius: 6px;
+}
+
+.tli-check-images a:hover img {
+    border-color: #0a6cc9;
+}
+
+.tli-check-image-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #17222B;
+}
+
+.tli-check-image-meta {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: #6c757d;
+}
+
 @media (max-width: 767.98px) {
 
     .tli-check {
@@ -164,6 +206,11 @@
 }
 
 @media (max-width: 991.98px) {
+
+    .tli-check-images {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px 16px;
+    }
 
     .tli-check-table thead {
         display: none;
@@ -203,5 +250,13 @@
         text-transform: uppercase;
         letter-spacing: 0.03em;
         color: #6c757d;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .tli-check-images {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 12px;
     }
 }
