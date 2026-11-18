@@ -40,8 +40,16 @@ class ImageOrphansTest extends BaseT
         $this->assertSame(['Immagini orfane ' . count(self::FIXTURE_IMAGE_IDS)], $this->texts($crawler, 'main h1'),
             "The title, then how many orphans in its badge");
 
-        $this->assertStringContainsString("Le seguenti immagini non sono utilizzate da alcun articolo",
-            $crawler->filter('main')->text(), "The card must say what the images are, and what to do with them");
+        $explanation = $crawler->filter('main .tli-check > p')->first()->text();
+        $this->assertStringContainsString("Le seguenti immagini non sono utilizzate da alcun articolo", $explanation,
+            "The card must say what the images are, and what to do with them");
+
+        $this->assertSame(12, ImageRepository::DELETE_ORPHANS_AFTER_MONTHS,
+            "The card says «un anno»: change its words with the constant");
+        $this->assertStringContainsString(
+            "saranno cancellate automaticamente un anno dopo essere rimaste senza articoli, alla data indicata sotto ognuna",
+            $explanation, "The card must say when the images go"
+        );
 
         $arrExpectedTiles = [];
         foreach(self::FIXTURE_IMAGE_IDS as $imageId) {
