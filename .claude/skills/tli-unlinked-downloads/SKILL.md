@@ -80,7 +80,9 @@ saved is in the `--dry-run` output first.
 5. `python3 -I $D apply <state> --plan <plan> --dry-run`: every change, each inserted line with the paragraph it
    follows, and nothing saved. Read it all.
 6. `python3 -I $D apply <state> --plan <plan>`: it saves each article the way the editor does, reads the page
-   again and checks that every Download is linked. `--article N` applies one article of the plan.
+   again and checks that every Download is linked. `--article N` applies one article of the plan. An article whose
+   page no longer has one of the plan's Downloads attached, or already links it, is skipped: the list is up to 3
+   hours old, and someone may have been there in the meantime.
 7. `python3 -I $S logout <state>`.
 8. Tell the user, article by article: what was linked and how, what the save's text fixers changed, what was left
    and why, and whatever else turned up (a sentence cut short, a dead Download). The articles leave the list at
@@ -127,16 +129,21 @@ knowingly, since that's the case where text can go.
 ## Rehearsing on dev0
 
 dev0 has the same articles, and its list is whatever its own last `FilesToArticles` run found: rebuild it with
-`php bin/console FilesToArticles`, which on a dev copy is harmless. Log in with `forum.py login --site dev0 --account admin`, or open a session as any editor with the
-`tli-logged-in-check` skill, then `apply --dry-run`. A real `apply` there is for testing the script: it changes the
+`php bin/console FilesToArticles`, which on a dev copy is harmless. Log in with `forum.py login --site dev0
+--account admin`, or open a session as any editor with the `tli-logged-in-check` skill, then `apply --dry-run`. A real `apply` there is for testing the script: it changes the
 copy that the production check reads, and those articles then come out stale until the copy is refreshed, or the
 articles' rows are put back from a dump in `backup/db-dumps/`.
 
 ## Traps
 
 - **A draft answers HTTP 503**, and the editor still gets it: `show` says it's not published, the fix is the same.
-- **The list leaves out anything recent**: `FilesToArticles` skips a link when the article or the link changed in
-  the last 9 months (`FileRepository::ORPHANS_AFTER_MONTHS`). Articles enter the list as they age.
+- **A list that lags behind**: the site's list is only as new as its last `FilesToArticles` run, and as the code
+  that ran it. A fix of that command shows on a dev copy before production has it: on 2026-11-18 production still
+  hid everything changed in the last 9 months (a rule meant for the images), which dev0 already listed. Then take
+  the list from the dev copy and work on production with it: `show` and `apply` with `--list-from <dev0 state>`
+  (a `dev-session.php` session, or `forum.py login --site dev0 --account admin`, after
+  `php bin/console FilesToArticles` there). The Downloads keep their IDs, now at production's addresses, and each
+  must still be attached to its article on production, which `show` says and `apply` checks.
 - **An external Download can be dead** (997's pointed at a Microsoft file gone 404). Linking it sends readers to an
   error: tell the user, who can replace its source ("Sostituisci", in the editor) before it's linked.
 - **The save endpoint takes no token**: the login and the right to edit the article are what it checks, and, on

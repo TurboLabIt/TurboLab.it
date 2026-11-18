@@ -5,10 +5,10 @@ admin`, in the tli-issue skill) or, on a dev copy, with a dev-session.php sessio
 HTTPS, saving the way the editor saves. Run with `python3 -I`:
 
   downloads.py list <state> [--out FILE]          the articles under "File da controllare:" and their Downloads
-  downloads.py show <state> --article N [--all] [--full] [--skip-hidden-check]
+  downloads.py show <state> --article N [--all] [--full] [--skip-hidden-check] [--list-from STATE]
                                                   the article as the editor gets it, block by block, with the
                                                   places that mention its Downloads and the hidden-text check
-  downloads.py apply <state> --plan FILE [--article N] [--dry-run] [--skip-hidden-check]
+  downloads.py apply <state> --plan FILE [--article N] [--dry-run] [--skip-hidden-check] [--list-from STATE]
                                                   applies a plan (format in SKILL.md): checks it, saves, verifies
 
 Only the articles in that list can be in a plan, and only with their listed Downloads. The hidden-text check reads
@@ -130,11 +130,36 @@ def fetch_list(site) -> dict:
     return {'site': site.base, 'generated': generated.group(1) if generated else None, 'articles': articles}
 
 
+def listing_for(site, args) -> dict:
+    """The list the work is checked against: the site's own, or, with --list-from, the one another session gets (a dev
+    copy, when production's list lags behind: a FilesToArticles fix not deployed yet, a run not come yet). Its Downloads
+    then point at this site, where each one must still be attached to its article (checked on the article's page)."""
+    if not getattr(args, 'list_from', None):
+        return fetch_list(site)
+    other = forum.Site.load(args.list_from)
+    listing = fetch_list(other)
+    for article in listing['articles'].values():
+        article['url'] = f"{site.base}/{article['id']}"
+        for download in article['downloads']:
+            download['url'] = f"{site.base}/scarica/{download['id']}"
+    listing['from'] = other.host
+    return listing
+
+
 def listed_article(listing: dict, article_id: int, site) -> dict:
     if article_id not in listing['articles']:
-        fail(f"article {article_id} isn't under «File da controllare:» on {site.host}: this skill touches only "
-             "the articles listed there")
+        fail(f"article {article_id} isn't under «File da controllare:» on {listing.get('from') or site.host}: this "
+             "skill touches only the articles listed there")
     return listing['articles'][article_id]
+
+
+def target_downloads(article: Article, item: dict) -> dict:
+    """The article's listed Downloads, each as this site has it: its title here, attached or not, linked or not."""
+    found = {}
+    for download in item['downloads']:
+        found[download['id']] = dict(download, title=article.attached.get(download['url'], download['title']),
+                                     attached=download['url'] in article.attached, linked=article.links(download['url']))
+    return found
 
 
 # ---------------------------------------------------------------------------------------------------- the editor's copy
@@ -166,6 +191,12 @@ class Article:
         self.body = body.strip()
         modified = re.search(r'<meta property="article:modified_time" content="([^"]+)"', page)
         self.modified = modified.group(1) if modified else None
+        # the Downloads attached to it on this site, as its list under the text shows them: address → title
+        self.attached = {html.unescape(href): html.unescape(title).strip() for href, title in re.findall(
+            r'<a href="([^"]+)" target="_blank"\s+class="tli-download-text-link"><span>(.*?)</span></a>', page, re.S)}
+
+    def links(self, url: str) -> bool:
+        return f'href="{html.escape(url)}"' in self.body
 
 
 class Block:
@@ -442,14 +473,18 @@ def hidden_report(article: Article, copy, why) -> dict:
 
 
 def cmd_show(site, args) -> None:
-    item = listed_article(fetch_list(site), args.article, site)
+    listing = listing_for(site, args)
+    item = listed_article(listing, args.article, site)
     article = Article(site, args.article)
     blocks = blocks_of(article.body)
     print(f"article {article.id} {quoted(article.title)} by {one_line(item['authors'])}: "
           + ('published' if article.published else 'NOT PUBLISHED (HTTP 503: a draft, or under review)')
-          + (f", last changed {article.modified[:16]}" if article.modified else ''))
-    for download in item['downloads']:
-        print(f"  Download #{download['id']} {quoted(download['title'])} {one_line(download['url'])}")
+          + (f", last changed {article.modified[:16]}" if article.modified else '')
+          + (f" (listed on {listing['from']})" if listing.get('from') else ''))
+    for download in target_downloads(article, item).values():
+        state = ('ALREADY LINKED in the text' if download['linked'] else 'attached, not linked') \
+            if download['attached'] else f"NOT ATTACHED to it on {site.host}"
+        print(f"  Download #{download['id']} {quoted(download['title'])} {one_line(download['url'])}: {state}")
 
     if args.skip_hidden_check:
         print("hidden-text check: skipped")
@@ -503,7 +538,7 @@ def cmd_apply(site, args) -> None:
         if str(args.article) not in plan:
             fail(f"article {args.article} isn't in the plan", 2)
         plan = {str(args.article): plan[str(args.article)]}
-    listing = fetch_list(site)
+    listing = listing_for(site, args)
     ids = [int(key) for key in plan]
     for article_id in ids:
         listed_article(listing, article_id, site)
@@ -525,7 +560,20 @@ def cmd_apply(site, args) -> None:
             print(f"   SKIPPED, nothing saved: hidden-text check {hidden['state']}: {hidden['why']}")
             continue
 
-        downloads = {download['id']: download for download in item['downloads']}
+        downloads = target_downloads(article, item)
+        named = [downloads[op['file']] for op in plan[str(article_id)] if op.get('file') in downloads]
+        detached = [f"#{download['id']}" for download in named if not download['attached']]
+        if detached:
+            skipped.append((article_id, f"Download(s) {', '.join(detached)} no longer attached to it on {site.host}"))
+            print(f"   SKIPPED, nothing saved: Download(s) {', '.join(detached)} no longer attached to the article on "
+                  f"{site.host}: detached after the list was made?")
+            continue
+        already = [f"#{download['id']}" for download in named if download['linked']]
+        if already:
+            skipped.append((article_id, f"Download(s) {', '.join(already)} already linked in the text"))
+            print(f"   SKIPPED, nothing saved: the text already links Download(s) {', '.join(already)}: the list is "
+                  "older than the article, or the plan is: `show` it again")
+            continue
         splices, linked = splices_of(article, blocks, downloads, plan[str(article_id)],
                                      hidden['runs'] if hidden else [])
         body = splice(article.body, splices)
@@ -577,7 +625,7 @@ def cmd_apply(site, args) -> None:
           + (', '.join(str(i) for i in done) or 'none'))
     for article_id, reason in skipped:
         print(f"skipped {article_id}: {reason}")
-    if left and not args.article:
+    if left and not args.article and not listing.get('from'):
         print(f"not in the plan, left as they are: {', '.join(str(i) for i in left)}")
     if done and not args.dry_run:
         print("The list is rebuilt by FilesToArticles (uploaded-assets-maintenance.sh, every 3 hours): run `list` "
@@ -599,6 +647,7 @@ def main() -> None:
     show.add_argument('--all', action='store_true', help='every block, not just the ones that may mention a Download')
     show.add_argument('--full', action='store_true', help="don't cut long blocks")
     show.add_argument('--skip-hidden-check', action='store_true')
+    show.add_argument('--list-from', metavar='STATE', help="take the list from another session's site (a dev copy)")
     show.set_defaults(run=cmd_show)
 
     apply = sub.add_parser('apply')
@@ -606,6 +655,7 @@ def main() -> None:
     apply.add_argument('--plan', required=True)
     apply.add_argument('--article', type=int, help="only this article of the plan")
     apply.add_argument('--dry-run', action='store_true', help='check and print the changes, save nothing')
+    apply.add_argument('--list-from', metavar='STATE', help="take the list from another session's site (a dev copy)")
     apply.add_argument('--skip-hidden-check', action='store_true',
                        help="save even where this checkout's database can't tell whether the page hides text")
     apply.set_defaults(run=cmd_apply)
