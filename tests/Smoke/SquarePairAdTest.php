@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Smoke;
 
+use App\Service\Cms\Article;
 use App\Service\Cms\Tag;
 use App\Service\User;
 use App\Tests\BaseT;
@@ -15,8 +16,10 @@ use Symfony\Component\DomCrawler\Crawler;
  * - on the homepage, after all four cards of the top slider and before the mosaic: below the first screen at every
  *   common size, while between the two rows of cards they would reach it on a large display;
  * - in every listing (archive/index.html.twig: tags, news, the homepage's later pages, authors, views), twice at most:
- *   between the two rows of three cards of each of the first two cycles of ten. After the first row of two they would
- *   reach the first screen at 1920x1080 and on a portrait tablet.
+ *   after the first row (the two big cards), by choice, even if there it reaches the first screen at 1920x1080 and on
+ *   a portrait tablet; then between the two rows of three cards of the second cycle of ten. Only with two cards or more
+ *   after it: on a phone, a listing of two cards closed by a pair is 37% ads with the bottom sticky, one of three 30%,
+ *   at the limit of the Better Ads Standards.
  *
  * Both squares run the same unit, which works because Clickio's loader gives an ad to every <script> whose text
  * carries the unit's code, so each one must keep it literally.
@@ -31,7 +34,7 @@ class SquarePairAdTest extends BaseT
     private const string SQUARE_UNIT_CODE = "['b']['_601521']";
 
     // in a listing, each pair follows this many cards
-    private const array LISTING_PAIRS_AFTER_CARDS = [5, 15];
+    private const array LISTING_PAIRS_AFTER_CARDS = [2, 15];
 
 
     public function testTheSquarePairClosesTheArticleText() : void
@@ -83,9 +86,46 @@ class SquarePairAdTest extends BaseT
 
                 $row = $pair->closest('.col-12') ?? $this->fail("Each pair on $url must take a whole row of the grid");
                 $this->assertSame($cardsBefore, $row->previousAll()->filter('.trending-news-item')->count(),
-                    "Pair #" . ($i + 1) . " on $url must follow card $cardsBefore, between the two rows of three");
+                    "Pair #" . ($i + 1) . " on $url must follow card $cardsBefore");
             }
         }
+    }
+
+
+    public function testShortListingsGetNoSquarePair() : void
+    {
+        // cards on the page => pairs: the one after the second card needs two more cards after it
+        foreach([2 => 0, 3 => 0, 4 => 1] as $cardsNum => $pairsNum) {
+
+            [$url, $grid] = $this->fetchTagGridWithCards($cardsNum);
+            $this->assertCount($pairsNum, $grid->filter('.tli-ad-pair'), "Wrong number of pairs of squares on $url, $cardsNum cards");
+        }
+    }
+
+
+    // a tag page whose grid has exactly that many cards
+    private function fetchTagGridWithCards(int $cardsNum) : array
+    {
+        $arrTagIds =
+            static::getEntityManager()->getConnection()->fetchFirstColumn("
+                SELECT article_tag.tag_id FROM article_tag
+                INNER JOIN article ON article.id = article_tag.article_id
+                INNER JOIN tag ON tag.id = article_tag.tag_id
+                WHERE publishing_status = :published AND published_at <= NOW() AND tag.replacement_id IS NULL
+                GROUP BY article_tag.tag_id HAVING COUNT(1) = :cardsNum
+                ORDER BY article_tag.tag_id LIMIT 10
+            ", ['published' => Article::PUBLISHING_STATUS_PUBLISHED, 'cardsNum' => $cardsNum]);
+
+        foreach($arrTagIds as $tagId) {
+
+            $url  = static::getTag((int)$tagId)->getUrl();
+            $grid = $this->fetchDomNode($url, '.about-post-items');
+            if( $grid->filter('.trending-news-item')->count() == $cardsNum ) {
+                return [$url, $grid];
+            }
+        }
+
+        static::fail("No tag page with exactly $cardsNum cards");
     }
 
 
