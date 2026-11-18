@@ -18,7 +18,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 /**
- * "Immagini orfane" (/immagini/orfane) shows the images no article uses, which ImagesDelete removes some months later.
+ * "Immagini orfane" (/immagini/orfane) shows the images no article uses, which ImagesDelete removes a year after they
+ * lost their last article.
  * With orphans, its card has a tile for each: the image, linked to its largest size, its title, its ID, who uploaded it
  * (linked to their page), so that authors can tell theirs, and when ImagesDelete will remove it; with none, one line says
  * so, as /scarica/da-controllare does for its checks that found nothing (Zane, 2026-11-18).
@@ -84,38 +85,56 @@ class ImageOrphansTest extends BaseT
 
 
     /**
-     * ImagesDelete removes an orphan when its last change is DELETE_ORPHANS_AFTER_MONTHS old: the tile says when, in red
-     * from the last 30 days on, and "a breve" once the date has passed (the next run is at most 3 hours away)
+     * ImagesDelete removes an orphan DELETE_ORPHANS_AFTER_MONTHS after it lost its last article (orphanedAt): the tile
+     * says when, in red from the last 30 days on, and "a breve" once the date has passed (the next run is at most 3
+     * hours away). The dates are the test's: the images' last change, years older, must not count
      */
     public function testEachTileSaysWhenItsImageWillBeDeleted() : void
     {
         $months = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
 
-        $arrUpdatedAt = [
+        $arrOrphanedAt = [
             // goes in months
             Image::ID_DEFAULT_SPOTLIGHT     => new DateTime('-1 month'),
             // goes in 10 days
             Image::ID_404                   => (new DateTime('+10 days'))->modify("-$months months"),
-            // should have gone a month ago
-            Image::ID_CHRISTMAS_SPOTLIGHT   => (new DateTime('-1 month'))->modify("-$months months"),
+            // due: the next run deletes it
+            Image::ID_CHRISTMAS_SPOTLIGHT   => (new DateTime('-1 hour'))->modify("-$months months"),
         ];
 
-        $crawler = $this->renderPage( array_keys($arrUpdatedAt), $arrUpdatedAt );
+        $crawler = $this->renderPage( array_keys($arrOrphanedAt), $arrOrphanedAt );
 
-        $formatter = new IntlDateFormatter('it', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'd MMM y');
-        $deletionDate = fn(DateTime $updatedAt) => $formatter->format( (clone $updatedAt)->modify("+$months months") );
+        $deletionDate = fn(DateTime $orphanedAt) => $this->formatDate( (clone $orphanedAt)->modify("+$months months") );
 
         $this->assertSame([
-            ['text' => 'Cancellazione: ' . $deletionDate($arrUpdatedAt[Image::ID_DEFAULT_SPOTLIGHT]), 'soon' => false],
-            ['text' => 'Cancellazione: ' . $deletionDate($arrUpdatedAt[Image::ID_404]), 'soon' => true],
+            ['text' => 'Cancellazione: ' . $deletionDate($arrOrphanedAt[Image::ID_DEFAULT_SPOTLIGHT]), 'soon' => false],
+            ['text' => 'Cancellazione: ' . $deletionDate($arrOrphanedAt[Image::ID_404]), 'soon' => true],
             ['text' => 'Cancellazione: a breve', 'soon' => true],
         ],
-            $crawler->filter('main .tli-check-images > li .tli-check-image-deletion')->each( fn(Crawler $line) => [
-                'text' => trim( $line->text() ),
-                'soon' => str_contains( (string)$line->attr('class'), 'tli-check-image-deletion-soon' )
-            ]),
-            "Each tile must say when its image goes, $months months after its last change, in red from the last 30 days on"
+            $this->deletionLines($crawler),
+            "Each tile must say when its image goes, $months months after it lost its last article, in red from the " .
+            "last 30 days on"
         );
+    }
+
+
+    /**
+     * An image that lost its last article since the last ImagesDelete run has no orphanedAt yet: the next run dates it,
+     * so its months start now
+     */
+    public function testAnOrphanNotDatedYetGetsItsWholeYear() : void
+    {
+        $months   = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
+        $expected = fn() => ['text' => 'Cancellazione: ' . $this->formatDate( new DateTime("+$months months") ), 'soon' => false];
+
+        // the date before and after: the page may be built across midnight
+        $arrExpected    = [ $expected() ];
+        $crawler        = $this->renderPage([Image::ID_DEFAULT_SPOTLIGHT], [Image::ID_DEFAULT_SPOTLIGHT => null]);
+        $arrExpected[]  = $expected();
+
+        $arrLines = $this->deletionLines($crawler);
+        $this->assertCount(1, $arrLines);
+        $this->assertContains($arrLines[0], $arrExpected, "An orphan not dated yet must go $months months from now");
     }
 
 
@@ -140,16 +159,17 @@ class ImageOrphansTest extends BaseT
     //<editor-fold defaultstate="collapsed" desc="*** 🧰 the page, rendered with the orphans the test chooses ***">
     /**
      * @param int[] $arrImageIds the orphans, in this order
-     * @param array<int, DateTime> $arrUpdatedAt image ID => the last change the test gives it (default: its own)
+     * @param array<int, ?DateTime> $arrOrphanedAt image ID => when the test says it lost its last article (null: not
+     *                                             dated yet); default: its own
      */
-    private function renderPage(array $arrImageIds, array $arrUpdatedAt = []) : Crawler
+    private function renderPage(array $arrImageIds, array $arrOrphanedAt = []) : Crawler
     {
         static::loginAsSystem();
 
-        $orphans = new class(static::getService(Factory::class), $arrImageIds, $arrUpdatedAt) extends ImageCollection {
+        $orphans = new class(static::getService(Factory::class), $arrImageIds, $arrOrphanedAt) extends ImageCollection {
 
             public function __construct(
-                Factory $factory, private readonly array $arrImageIds, private readonly array $arrUpdatedAt
+                Factory $factory, private readonly array $arrImageIds, private readonly array $arrOrphanedAt
             )
             {
                 parent::__construct($factory);
@@ -167,8 +187,8 @@ class ImageOrphansTest extends BaseT
                 foreach($this->load($this->arrImageIds) as $image) {
 
                     $entity = clone $image->getEntity();
-                    if( !empty($this->arrUpdatedAt[ $image->getId() ]) ) {
-                        $entity->setUpdatedAt( $this->arrUpdatedAt[ $image->getId() ] );
+                    if( array_key_exists($image->getId(), $this->arrOrphanedAt) ) {
+                        $entity->setOrphanedAt( $this->arrOrphanedAt[ $image->getId() ] );
                     }
 
                     $arrEntities[ $image->getId() ] = $entity;
@@ -194,6 +214,26 @@ class ImageOrphansTest extends BaseT
         $this->assertSame(['Altre risorse per gli autori'], $this->texts($crawler, 'main h2'));
         $this->assertCount(1, $crawler->filter('main a[href="' . $this->generateUrl('app_file_need-fixing', [], UrlGeneratorInterface::ABSOLUTE_PATH) . '"]'),
             "The resources for authors must link the files to check");
+    }
+
+
+    /** each tile's deletion line, and whether it is red */
+    private function deletionLines(Crawler $crawler) : array
+    {
+        return
+            $crawler->filter('main .tli-check-images > li .tli-check-image-deletion')->each( fn(Crawler $line) => [
+                'text' => trim( $line->text() ),
+                'soon' => str_contains( (string)$line->attr('class'), 'tli-check-image-deletion-soon' )
+            ]);
+    }
+
+
+    /** as the page writes a date: 4 dic 2026 */
+    private function formatDate(DateTime $date) : string
+    {
+        return
+            (new IntlDateFormatter('it', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'd MMM y'))
+                ->format($date);
     }
 
 

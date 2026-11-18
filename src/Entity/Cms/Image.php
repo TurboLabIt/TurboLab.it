@@ -5,6 +5,7 @@ use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
 use App\Trait\HashableEntityTrait;
 use App\Trait\TitleableEntityTrait;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -45,6 +46,9 @@ class Image extends BaseCmsEntity
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     protected bool $reusable = false;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?DateTimeInterface $orphanedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: ImageAuthor::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['ranking' => SortDirection::Ascending])]
@@ -129,6 +133,19 @@ class Image extends BaseCmsEntity
     public function setReusable(bool $reusable) : static
     {
         $this->reusable = $reusable;
+        return $this;
+    }
+
+
+    /**
+     * When the image lost its last article: null while an article uses it, and until the next ImagesDelete run
+     * (ImageRepository::updateOrphanedAt())
+     */
+    public function getOrphanedAt() : ?DateTimeInterface { return $this->orphanedAt; }
+
+    public function setOrphanedAt(?DateTimeInterface $orphanedAt) : static
+    {
+        $this->orphanedAt = $orphanedAt;
         return $this;
     }
 

@@ -731,16 +731,14 @@ class Image extends BaseCmsService
 
 
     /**
-     * When ImagesDelete removes this image if no article uses it by then: it takes the orphans whose last change is
-     * DELETE_ORPHANS_AFTER_MONTHS old (ImageRepository::getToDelete()), at its first run after that (every 3 hours)
+     * When ImagesDelete removes this orphan if no article uses it by then: DELETE_ORPHANS_AFTER_MONTHS after it lost its
+     * last article (ImageRepository::getToDelete()), at its first run after that (every 3 hours). An orphan the last
+     * run hasn't dated yet lost it in the last 3 hours: its months start now
      */
-    public function getOrphanDeletionDate() : ?DateTime
+    public function getOrphanDeletionDate() : DateTime
     {
-        $updatedAt = $this->entity->getUpdatedAt();
-        if( empty($updatedAt) ) {
-            return null;
-        }
-
-        return (clone $updatedAt)->modify('+' . ImageRepository::DELETE_ORPHANS_AFTER_MONTHS . ' months');
+        return
+            DateTime::createFromInterface( $this->entity->getOrphanedAt() ?? new DateTime() )
+                ->modify('+' . ImageRepository::DELETE_ORPHANS_AFTER_MONTHS . ' months');
     }
 }

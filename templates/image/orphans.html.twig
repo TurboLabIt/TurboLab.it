@@ -58,13 +58,11 @@
                             {%- endfor %}
                         </span>
                         {% set DeletionDate = Image.orphanDeletionDate %}
-                        {% if DeletionDate %}
-                            <span class="tli-check-image-deletion{% if DeletionDate < date('+30 days') %} tli-check-image-deletion-soon{% endif %}">
-                                <i class="fa-regular fa-trash-can"></i>
-                                Cancellazione:
-                                <span class="text-nowrap">{{ DeletionDate > date() ? DeletionDate|format_datetime(locale='it', pattern='d MMM y') : 'a breve' }}</span>
-                            </span>
-                        {% endif %}
+                        <span class="tli-check-image-deletion{% if DeletionDate < date('+30 days') %} tli-check-image-deletion-soon{% endif %}">
+                            <i class="fa-regular fa-trash-can"></i>
+                            Cancellazione:
+                            <span class="text-nowrap">{{ DeletionDate > date() ? DeletionDate|format_datetime(locale='it', pattern='d MMM y') : 'a breve' }}</span>
+                        </span>
                     </li>
                 {% endfor %}
             </ul>

@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use App\Repository\Cms\ImageRepository;
 use App\Service\Entity\Image as ImageEntity;
 use App\Service\Cms\ImageEditor;
 use App\ServiceCollection\Cms\ImageEditorCollection;
@@ -20,11 +21,22 @@ class ImagesDeleteCommand extends AbstractBaseCommand
     protected bool $allowDryRunOpt      = true;
     protected array $arrDeletedImages   = [];
 
-    public function __construct(protected ImageEditorCollection $images) { parent::__construct(); }
+    public function __construct(protected ImageEditorCollection $images, protected ImageRepository $imageRepository)
+    {
+        parent::__construct();
+    }
+
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         parent::execute($input, $output);
+
+        $this->fxTitle("📅 Dating the new orphans, undating the images back in an article...");
+        if( $this->isNotDryRun() ) {
+
+            $arrUpdated = $this->imageRepository->updateOrphanedAt();
+            $this->fxOK("##{$arrUpdated['orphaned']}## new orphan(s), ##{$arrUpdated['adopted']}## back in an article");
+        }
 
         $this->fxTitle("🚚 Loading images...");
         $this->images->loadToDelete();
