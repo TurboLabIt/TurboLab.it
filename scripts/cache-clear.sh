@@ -77,6 +77,18 @@ fxTitle "Granting writing permission to the ForumIntegrationBuilder output folde
 sudo chmod ugo= "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
 sudo chmod ugo=rwX "${PROJECT_DIR}src/Forum/ext-turbolabit/forumintegration/styles/" -R
 
+
+if [ "$APP_ENV" == "dev" ]; then
+
+  # before ForumIntegrationBuilder: on dev it runs as the developer, who can't write var/log/dev.log while var/ is
+  # webstackup's (above), so it died at its first log line, after emptying the forum's event templates
+  fxTitle "chown dev..."
+  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
+  sudo chmod ugo= "${PROJECT_DIR}" -R
+  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
+fi
+
+
 ## GENERATING THE EXT FILES FROM TWIG
 wsuSymfony console ForumIntegrationBuilder
 
@@ -89,11 +101,6 @@ bash ${SCRIPT_DIR}phpbb-cli.sh cache:purge
 
 
 if [ "$APP_ENV" == "dev" ]; then
-
-  fxTitle "chown dev..."
-  sudo chown $(logname):www-data "${PROJECT_DIR}" -R
-  sudo chmod ugo= "${PROJECT_DIR}" -R
-  sudo chmod ugo=rwX "${PROJECT_DIR}" -R
 
   fxTitle "Replacing vendor/turbolabit with a symlink..."
   sudo rm -rf ${PROJECT_DIR}vendor/turbolabit/*
