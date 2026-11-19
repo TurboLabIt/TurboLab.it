@@ -1,5 +1,8 @@
+{% set coverPromptStart = "Crea un'immagine di 1920x1080 pixel, con stile fotorealistico ad alto impatto visivo e altissima qualità per illustrare l'articolo" %}
+{% set coverPromptEnd = "Il tuo output deve essere solo un'immagine con i requisiti indicati, non darmi commenti o spiegazioni." %}
 <div class="tli-cover-prompt mb-3"
-     data-prompt="Crea un'immagine di 1920x1080 pixel, con stile fotorealistico ad alto impatto visivo e altissima qualità per illustrare l'articolo che ti indicherò di seguito. Usa i loghi ufficiali dei marchi e prodotti citati. Il tuo output deve essere solo un'immagine con i requisiti indicati, non darmi commenti o spiegazioni.">
+     data-prompt-titled="{{ coverPromptStart }} intitolato «{titolo}». Usa i loghi ufficiali dei marchi e dei prodotti citati nel titolo. {{ coverPromptEnd }}"
+     data-prompt-untitled="{{ coverPromptStart }} che ti indicherò di seguito. Usa i loghi ufficiali dei marchi e dei prodotti citati. {{ coverPromptEnd }}">
 
     <div class="tli-cover-prompt-card">
 

@@ -1,6 +1,8 @@
 const FLIP_BACK_DELAY_MS = 5000;
 const HALF_FLIP_MS = 180;
 
+const TITLE_SELECTOR = '[data-tli-editable-id="title"]';
+
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 
@@ -46,7 +48,23 @@ document.querySelectorAll('.tli-cover-prompt').forEach(container => {
     const back      = container.querySelector('.tli-cover-prompt-back');
     const message   = container.querySelector('.tli-cover-prompt-message');
     const okMessage = message.innerHTML;
-    const prompt    = container.dataset.prompt;
+
+    // the article title, as typed so far, goes into the prompt: kept in data-prompt on every keystroke
+    const titleField = document.querySelector(TITLE_SELECTOR);
+
+    const buildPrompt = () => {
+
+        const title = (titleField?.value ?? '').replace(/\s+/g, ' ').trim();
+        container.dataset.prompt =
+            title === ''
+                ? container.dataset.promptUntitled
+                : container.dataset.promptTitled.replace('{titolo}', () => title);
+
+        return container.dataset.prompt;
+    };
+
+    buildPrompt();
+    titleField?.addEventListener('input', buildPrompt);
 
     let flipped = false;
     let busy    = false;
@@ -91,6 +109,7 @@ document.querySelectorAll('.tli-cover-prompt').forEach(container => {
         }
 
         busy = true;
+        const prompt = buildPrompt();
         const copied = await copyText(prompt);
 
         if(copied) {
