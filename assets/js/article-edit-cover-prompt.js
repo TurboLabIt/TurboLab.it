@@ -49,22 +49,16 @@ document.querySelectorAll('.tli-cover-prompt').forEach(container => {
     const message   = container.querySelector('.tli-cover-prompt-message');
     const okMessage = message.innerHTML;
 
-    // the article title, as typed so far, goes into the prompt: kept in data-prompt on every keystroke
+    // the article title, as it is in the field at the time of the click
     const titleField = document.querySelector(TITLE_SELECTOR);
 
     const buildPrompt = () => {
 
         const title = (titleField?.value ?? '').replace(/\s+/g, ' ').trim();
-        container.dataset.prompt =
-            title === ''
-                ? container.dataset.promptUntitled
-                : container.dataset.promptTitled.replace('{titolo}', () => title);
-
-        return container.dataset.prompt;
+        return title === ''
+            ? container.dataset.promptUntitled
+            : container.dataset.promptTitled.replace('{titolo}', () => title);
     };
-
-    buildPrompt();
-    titleField?.addEventListener('input', buildPrompt);
 
     let flipped = false;
     let busy    = false;
