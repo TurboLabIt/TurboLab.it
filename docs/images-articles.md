@@ -33,6 +33,10 @@ Il flusso è il seguente:
 Il processo di elaborazione dell'immagine via PHP, ovvero il flusso che termina con il salvataggio dell'immagine modificata nella cache sul disco, avviene dunque solo la prima volta che viene richiesta una determinata immagine (dall'autore stesso, presumibilmente). Allo scopo, si attiva il file [ImageController.php](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Controller/ImageController.php).
 
 
+## Immagine di copertina generata con l'AI
+
+Nella colonna delle immagini dell'editor, sotto "Clicca o trascina un'immagine…", un riquadro copia negli appunti un prompt per far generare la copertina a un'AI (ChatGPT, Gemini…): il testo sta nell'attributo `data-prompt` di [article/editor/cover-prompt.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/article/editor/cover-prompt.html.twig), il comportamento in [article-edit-cover-prompt.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/assets/js/article-edit-cover-prompt.js). Al clic il riquadro si gira e mostra le istruzioni con i link alle due AI; resta girato finché il puntatore ci sta sopra, poi torna indietro dopo 5 secondi. A ruotare è la `.tli-cover-prompt-card` interna, non il riquadro: di taglio, a 90°, il riquadro perderebbe il puntatore e il browser segnalerebbe un `mouseleave` mai avvenuto. L'immagine generata diventa la copertina perché è la prima del testo (la *spotlight* si ricava dalla prima immagine del corpo, al salvataggio). Se la copia negli appunti fallisce, il retro mostra il prompt da selezionare a mano.
+
 ## Immagini animate
 
 Le GIF e le WebP animate (`image.animated = 1`) sono elaborate come le altre: al momento della richiesta, nella stessa cache, con gli stessi percorsi. Cambia solo il risultato, e l'URL: `Image::getUrl()` punta sempre alla versione WebP, quindi animata, a prescindere dai formati supportati dal client.

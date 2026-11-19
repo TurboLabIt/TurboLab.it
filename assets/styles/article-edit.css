@@ -230,3 +230,64 @@
 body.tli-article-deleted {
     background-color: #f8d7da !important;
 }
+
+
+.tli-cover-prompt-front, .tli-cover-prompt-back {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: .5rem;
+    font-size: 16px;
+    text-align: center;
+}
+
+.tli-cover-prompt-front {
+    border: 2px dashed #6f42c1;
+    background-color: #f5f0ff;
+    color: #59359a;
+    font-weight: 600;
+    transition: background-color .2s, border-color .2s;
+}
+
+.tli-cover-prompt-front:hover, .tli-cover-prompt-front:focus-visible {
+    background-color: #e9dfff;
+    border-color: #59359a;
+}
+
+.tli-cover-prompt-back {
+    border: 2px solid #75b798;
+    background-color: #d1e7dd;
+    color: #0a3622;
+}
+
+.tli-cover-prompt-back[hidden] {
+    display: none;
+}
+
+.tli-cover-prompt-message {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.tli-cover-prompt-message.tli-cover-prompt-failed {
+    color: #842029;
+}
+
+.tli-cover-prompt-links {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tli-cover-prompt-links a {
+    padding: 6px 12px;
+    border-radius: .375rem;
+    background-color: #fff;
+    color: #0a58ca;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.tli-cover-prompt-links a:hover, .tli-cover-prompt-links a:focus-visible {
+    background-color: #e7f1ff;
+}

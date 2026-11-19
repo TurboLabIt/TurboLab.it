@@ -14,6 +14,8 @@
         {% block alertBody %}Carica un'immagine per inserirla nell'articolo{% endblock %}
     {% endembed %}
 
+    {% include 'article/editor/cover-prompt.html.twig' %}
+
 
     <div id="tli-images-gallery" class="row row-cols-2 g-1">
         {% embed 'article/editor/images.html.twig' with {'Article': Article, 'Images': Article.Images} only %}

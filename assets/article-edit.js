@@ -5,5 +5,6 @@ import './js/modal-ajax';
 import './js/article-edit-authors';
 import './js/article-edit-tags';
 import './js/article-edit-images-gallery';
+import './js/article-edit-cover-prompt';
 import './js/files-edit';
 import './js/article-edit-ckeditor';
