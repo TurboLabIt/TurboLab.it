@@ -25,6 +25,27 @@ Alcune immagini speciali, come [favicon.ico](https://turbolab.it/favicon.ico) op
 - `/images/logo/icon.png` ➡ `/images/logo/2013/ttt-192px-tiny.png`
 
 
+## 🗄 Immagini indicate dal database: badge e icone dei forum
+
+Due gruppi di immagini sono indicati per nome dal database, non dal codice: cercarne il nome nel repo non trova nulla, ma sono in uso.
+
+- [assets/images/](https://github.com/TurboLabIt/TurboLab.it/tree/main/assets/images) — quasi tutte sono le icone dei *badge*: [article/badges.html.twig](https://github.com/TurboLabIt/TurboLab.it/blob/main/templates/article/badges.html.twig) compone il percorso da `badge.image_url` (`asset('build/images/' ~ Badge.imageUrl)`) ed Encore le pubblica in `public/build/images/` (`copyFiles` in [webpack.config.js](https://github.com/TurboLabIt/TurboLab.it/blob/main/webpack.config.js)). Un articolo mostra un badge se è collegato all'articolo (`article_badge`) o a uno dei suoi tag (`tag_badge`). Il codice assegna solo quello AI (`Badge::ID_AI`, con la spunta su `/scrivi`): gli altri si collegano a mano nel database, senza interfaccia
+- [public/images/forum/icons/](https://github.com/TurboLabIt/TurboLab.it/tree/main/public/images/forum/icons) — le icone dei forum, scelte dal pannello di amministrazione di phpBB e salvate in `phpbb_forums.forum_image` come `../images/forum/icons/<nome>.png`
+
+⚠️ Prima di cancellarne una, controllare il database di produzione: la copia su dev può non avere un forum o un collegamento creato dopo l'ultima importazione.
+
+````sql
+SELECT forum_id, forum_name, forum_image FROM turbolab_it_forum.phpbb_forums WHERE forum_image <> '';
+
+SELECT b.id, b.title, b.image_url,
+  (SELECT COUNT(*) FROM turbolab_it.article_badge ab WHERE ab.badge_id = b.id) AS articoli,
+  (SELECT COUNT(*) FROM turbolab_it.tag_badge tb WHERE tb.badge_id = b.id) AS tag
+FROM turbolab_it.badge b;
+````
+
+I badge ereditati da TLI1 che nessun tag o articolo porta (1, 3, 4, 5, 7, 11, 16: `news`, `prova`, `no-tag`, `bozza`, `vecchio`, `top-visite`, `low-rating`) puntano a immagini che non esistono: alcune non sono mai arrivate in TLI2, le altre sono state rimosse il 2026-11-21 perché inutilizzate. Prima di collegarne uno va rimessa la sua immagine: quelle rimosse sono nella storia di Git (`git log --diff-filter=D -- assets/images/`).
+
+
 ## 🏟 Immagini di phpBB
 
 Pulsanti, smiley ecc. propri della piattaforma phpBB non sono Git-versionate, ma vengono prese dal pacchetto originale di phpBB e utilizzate *as is* (non ci sono particolari benefici a processarle di nuovo).
