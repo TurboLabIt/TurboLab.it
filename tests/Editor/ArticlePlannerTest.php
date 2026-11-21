@@ -202,6 +202,7 @@ class ArticlePlannerTest extends BaseT
     ) : ArticleEditor
     {
         static::loginAs($userId);
+        $this->deleteWhatAnInterruptedRunLeft();
 
         foreach($arrPublished as $when) {
 
@@ -223,6 +224,20 @@ class ArticlePlannerTest extends BaseT
         $article->save();
 
         return $article;
+    }
+
+
+    /** a run stopped half-way never got to tearDown(): its articles sit on the very days these cases need free */
+    private function deleteWhatAnInterruptedRunLeft() : void
+    {
+        $arrIds =
+            static::getEntityManager()->getConnection()->fetchFirstColumn(
+                'SELECT id FROM article WHERE title LIKE ?', [self::FIXTURE_TITLE_PREFIX . '%']
+            );
+
+        foreach($arrIds as $id) {
+            static::getService(Factory::class)->createArticleEditor()->load( (int)$id )->delete();
+        }
     }
 
 
