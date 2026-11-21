@@ -93,7 +93,7 @@ class Article extends BaseCmsService
     public function getRepository() : ArticleRepository
     {
         /** @var ArticleRepository $repository */
-        $repository = $this->factory->getEntityManager()->getRepository(static::ENTITY_CLASS);
+        $repository = $this->factory->getEntityManager()->getRepository(ArticleEntity::class);
         return $repository;
     }
 

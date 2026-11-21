@@ -5,6 +5,7 @@ use App\Serializer\ArticleSearchNormalizer;
 use App\Service\Cms\Article;
 use App\Service\Cms\Tag;
 use App\Service\Cms\Tag as TagService;
+use App\Entity\Cms\Article as ArticleEntity;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Factory;
 use DateInvalidOperationException;
@@ -233,7 +234,7 @@ class ArticleCollection extends BaseArticleCollection
             $searchParams['sort'] = ['publishedAtTimestamp:desc'];
         }
 
-        $arrSearchResult = $this->searchService->search(static::ENTITY_CLASS, $termToSearchNoStopWords, $searchParams);
+        $arrSearchResult = $this->searchService->search(ArticleEntity::class, $termToSearchNoStopWords, $searchParams);
 
         // we could setEntities($arrArticles) directly...
         // ... but then there would be no tags loaded => n+1 queries to generate the URLs
