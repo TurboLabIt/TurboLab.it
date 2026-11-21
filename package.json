@@ -21,7 +21,7 @@
         "file-loader": ">=6.2.0",
         "npm-check-updates": "^23.1.1",
         "raw-loader": ">=4.0.2",
-        "simple-icons": "16.37.0",
+        "simple-icons": "16.38.0",
         "webpack": ">=5.112.2",
         "webpack-cli": "7.3.1"
     },

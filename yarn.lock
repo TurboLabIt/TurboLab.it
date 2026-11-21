@@ -2914,9 +2914,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.464":
-  version: 1.5.485
-  resolution: "electron-to-chromium@npm:1.5.485"
-  checksum: 10c0/a5d44f8cb8b1bd5f996f9be1721fbae98015ad35c13bc47b49c546016402832c6736f86b274fc468697254912765dd05a307ffb10be34e2c8e00378d384e4e2d
+  version: 1.5.486
+  resolution: "electron-to-chromium@npm:1.5.486"
+  checksum: 10c0/be648758ba94b511d4b7598b52868fc7f2fc67690db78cfb9fa3b80395cc443229ede225c334fdc594bf2e02420f7136c543b8c548c375560bc508ecb8965a94
   languageName: node
   linkType: hard
 
@@ -4260,13 +4260,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.2.14, postcss@npm:^8.4.40":
-  version: 8.5.32
-  resolution: "postcss@npm:8.5.32"
+  version: 8.5.33
+  resolution: "postcss@npm:8.5.33"
   dependencies:
     nanoid: "npm:^3.3.20"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.2"
-  checksum: 10c0/5fa6cad84e277c2ced965dc7e8e7c0b8d7e5b76a6835591b57a43fde46e671d0c8428d365e9141c080abaae5441d495ed77ffd7472c5bd41d6c2154bd03c01d7
+  checksum: 10c0/8711c5ad32a798813ae52dd51024881915ecc6171030f9cc1d3766d1969da20ade4cf71a645d7e54668cb45cb9622eac938dc1ce91fe1f9a0fa5f0bc8cbaa05a
   languageName: node
   linkType: hard
 
@@ -4516,7 +4516,7 @@ __metadata:
     npm-check-updates: "npm:^23.1.1"
     odometer: "npm:>=0.4.8"
     raw-loader: "npm:>=4.0.2"
-    simple-icons: "npm:16.37.0"
+    simple-icons: "npm:16.38.0"
     slick-carousel: "npm:^2.0.0"
     spark-md5: "npm:3.0.2"
     webpack: "npm:>=5.112.2"
@@ -4572,10 +4572,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-icons@npm:16.37.0":
-  version: 16.37.0
-  resolution: "simple-icons@npm:16.37.0"
-  checksum: 10c0/cf82482c9f9dab4fd48115515e72b4cbd3c9738a19122899c264d3d897ec631f896c110539411db6a90e96516ad0a2e7bfbd8799fae6378a05fc6f430c5e9bed
+"simple-icons@npm:16.38.0":
+  version: 16.38.0
+  resolution: "simple-icons@npm:16.38.0"
+  checksum: 10c0/d272463f33ca5ef64d09cf0d01fb7f7e19d6701b1824b1089d812f577ac63996171c59be5501592b33a0e5c24a196ceaf562195b0648a2d1661f2d4f091dc4b1
   languageName: node
   linkType: hard
 
