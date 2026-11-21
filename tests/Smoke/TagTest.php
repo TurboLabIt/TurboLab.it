@@ -13,7 +13,7 @@ class TagTest extends BaseT
     protected static array $arrTestTags;
 
 
-    public function testingPlayground()
+    public function testingPlayground() : void
     {
         // 👀 https://turbolab.it/universita-1309
         $tag = static::getTag(1309);
@@ -24,7 +24,7 @@ class TagTest extends BaseT
     }
 
 
-    public function testAppTagPage0Or1()
+    public function testAppTagPage0Or1() : void
     {
         $realTagUrl = $this->generateUrl() . "windows-10";
 
@@ -37,7 +37,7 @@ class TagTest extends BaseT
     }
 
 
-    public function testAppTagLegacy()
+    public function testAppTagLegacy() : void
     {
         $realTagUrl = $this->generateUrl() . "windows-10";
 
@@ -75,7 +75,7 @@ class TagTest extends BaseT
 
 
     #[DataProvider('tagsToTestThoroughlyProvider')]
-    public function testSpecialTags(int $id, string $tagTitle)
+    public function testSpecialTags(int $id, string $tagTitle) : void
     {
         $tag = static::getTag($id);
         $url = $tag->getUrl();
@@ -103,7 +103,7 @@ class TagTest extends BaseT
     }
 
 
-    public function testNoArticlesTag()
+    public function testNoArticlesTag() : void
     {
         $tag = static::getTag(Tag::ID_TEST_NO_ARTICLES);
         $url = $tag->getUrl();
@@ -121,7 +121,7 @@ class TagTest extends BaseT
     }
 
 
-    public function test404()
+    public function test404() : void
     {
         // 👀 https://turbolab.it/turbolab.it-9999
         $this->expect404('/turbolab.it-9999');
@@ -153,7 +153,7 @@ class TagTest extends BaseT
 
 
     #[DataProvider('latestArticlesTagsProvider')]
-    public function testOpenLatestArticlesTags(Tag $tag)
+    public function testOpenLatestArticlesTags(Tag $tag) : void
     {
         static::$client = null;
 

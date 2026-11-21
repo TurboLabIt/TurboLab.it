@@ -28,7 +28,7 @@ class ViewsTest extends BaseT
 
 
     #[DataProvider('trendingWindowProvider')]
-    public function testTrendingRanksByViewsPerDay(int $maxDaysAgo)
+    public function testTrendingRanksByViewsPerDay(int $maxDaysAgo) : void
     {
         $arrExpectedIds =
             static::getEntityManager()->getConnection()->fetchFirstColumn("
@@ -59,7 +59,7 @@ class ViewsTest extends BaseT
 
 
     #[DataProvider('viewSlugProvider')]
-    public function testViewsService($slug)
+    public function testViewsService(string $slug) : void
     {
         $view = static::getService(Views::class)->get($slug);
         $this->assertIsArray($view);
@@ -69,7 +69,7 @@ class ViewsTest extends BaseT
 
 
     #[DataProvider('viewSlugProvider')]
-    public function testPagination0or1RedirectsToView(string $slug)
+    public function testPagination0or1RedirectsToView(string $slug) : void
     {
         foreach([0, 1] as $pageNum) {
 
@@ -81,7 +81,7 @@ class ViewsTest extends BaseT
 
 
     #[DataProvider('viewSlugProvider')]
-    public function testViewOK(string $slug)
+    public function testViewOK(string $slug) : void
     {
         $url = $this->generateUrl('app_views_multi', ['slug' => $slug]);
         $view = static::getService(Views::class)->get($slug);

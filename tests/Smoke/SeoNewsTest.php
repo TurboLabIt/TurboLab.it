@@ -27,7 +27,7 @@ class SeoNewsTest extends BaseT
     }
 
 
-    public function testArticlePageCarriesStructuredDataAndMeta()
+    public function testArticlePageCarriesStructuredDataAndMeta() : void
     {
         $article = static::getArticle();
         $html    = $this->fetchHtml($article->getUrl(), Request::METHOD_GET, false);
@@ -51,7 +51,7 @@ class SeoNewsTest extends BaseT
     }
 
 
-    public function testNewsIsMarkedAsNewsArticle()
+    public function testNewsIsMarkedAsNewsArticle() : void
     {
         foreach(static::getArticleCollection()->loadLatestNewsPublished() as $article) {
 
@@ -63,7 +63,7 @@ class SeoNewsTest extends BaseT
     }
 
 
-    public function testHomePageAllowsLargeImagePreviews()
+    public function testHomePageAllowsLargeImagePreviews() : void
     {
         $html = $this->fetchHtml('/', Request::METHOD_GET, false);
         $this->assertStringContainsString('<meta name="robots" content="index,follow,max-image-preview:large">', $html);
@@ -72,7 +72,7 @@ class SeoNewsTest extends BaseT
     }
 
 
-    public function testNewsSitemap()
+    public function testNewsSitemap() : void
     {
         $xml = $this->fetchHtml('/sitemap/news.xml', Request::METHOD_GET, false);
         $this->assertResponseHeaderSame('content-type', 'application/xml');
@@ -102,7 +102,7 @@ class SeoNewsTest extends BaseT
     }
 
 
-    public function testNewsSitemapIsDeclaredInRobotsTxt()
+    public function testNewsSitemapIsDeclaredInRobotsTxt() : void
     {
         $robotsTxt = file_get_contents( static::getProjectFilePath('public/misc/robots.txt') );
         $this->assertStringContainsString('Sitemap: https://turbolab.it/sitemap/news.xml', $robotsTxt);

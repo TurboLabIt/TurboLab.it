@@ -20,7 +20,7 @@ class InfoTest extends BaseT
 
 
     #[DataProvider('infoRouteProvider')]
-    public function testInfoPageOK(string $route)
+    public function testInfoPageOK(string $route) : void
     {
         $url = $this->generateUrl($route);
         $this->fetchHtml($url);
@@ -143,7 +143,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxPreviousMonth()
+    public function testCalendarAjaxPreviousMonth() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -155,7 +155,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxNoStartDate()
+    public function testCalendarAjaxNoStartDate() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -168,7 +168,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxNoEndDate()
+    public function testCalendarAjaxNoEndDate() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -181,7 +181,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxMalformedStartDate()
+    public function testCalendarAjaxMalformedStartDate() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -195,7 +195,7 @@ class InfoTest extends BaseT
 
 
 
-    public function testCalendarAjaxMalformedEndDate()
+    public function testCalendarAjaxMalformedEndDate() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -208,7 +208,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxTooWideDateRange()
+    public function testCalendarAjaxTooWideDateRange() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [
@@ -221,7 +221,7 @@ class InfoTest extends BaseT
     }
 
 
-    public function testCalendarAjaxSwappedDates()
+    public function testCalendarAjaxSwappedDates() : void
     {
         $url =
             $this->generateUrl('app_calendar_events', [

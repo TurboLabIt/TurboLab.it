@@ -159,7 +159,7 @@ class ArticleEditorTest extends BaseT
 
 
     #[DataProvider('articleEditorTestProvider')]
-    public function testArticleEditorTitle(array $arrTestData)
+    public function testArticleEditorTitle(array $arrTestData) : void
     {
         $editor =
             static::buildEditor()
@@ -179,7 +179,7 @@ class ArticleEditorTest extends BaseT
 
 
     #[DataProvider('articleEditorTestProvider')]
-    public function testArticleEditorAbstract(array $arrTestData)
+    public function testArticleEditorAbstract(array $arrTestData) : void
     {
         $editor =
             static::buildEditor()
@@ -197,7 +197,7 @@ class ArticleEditorTest extends BaseT
 
 
     #[DataProvider('articleEditorTestProvider')]
-    public function testArticleEditorBody(array $arrTestData)
+    public function testArticleEditorBody(array $arrTestData) : void
     {
         $editor =
             static::buildEditor()
@@ -215,7 +215,7 @@ class ArticleEditorTest extends BaseT
 
 
     #[DataProvider('articleEditorTestProvider')]
-    public function testArticleEditorSpotlight(array $arrTestData)
+    public function testArticleEditorSpotlight(array $arrTestData) : void
     {
         $editor =
             static::buildEditor()
@@ -230,7 +230,7 @@ class ArticleEditorTest extends BaseT
     }
 
 
-    public function testArticleEditorImageWithCacheBuster()
+    public function testArticleEditorImageWithCacheBuster() : void
     {
         // The watermark CKEditor plugin appends ?t=<timestamp> to the image URL after the watermark
         // position is changed, to bypass the browser cache. The stored body must still resolve to
@@ -251,7 +251,7 @@ class ArticleEditorTest extends BaseT
     }
 
 
-    public function testArticleEditorFilesAndBadgesAcceptEntities()
+    public function testArticleEditorFilesAndBadgesAcceptEntities() : void
     {
         // addFile()/removeFile()/addBadge()/removeBadge() take the service or its entity, but the File/Badge entity
         // aliases weren't imported: an entity threw a TypeError. Badge junctions also matched by identity, so the

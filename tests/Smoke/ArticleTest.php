@@ -19,7 +19,7 @@ class ArticleTest extends BaseT
     protected static array $arrKoArticles;
 
 
-    public function testingPlayground()
+    public function testingPlayground() : void
     {
         $article    = static::getArticle(488);
         $url        = $article->getUrl();
@@ -29,7 +29,7 @@ class ArticleTest extends BaseT
     }
 
 
-    public function testSpecialArticle()
+    public function testSpecialArticle() : void
     {
         $article    = static::getArticle();
         $url        = $article->getUrl();
@@ -177,7 +177,7 @@ class ArticleTest extends BaseT
     }
 
 
-    public function test404()
+    public function test404() : void
     {
         // 👀 https://turbolab.it/turbolab.it-1/bao-9999
         $this->expect404('/turbolab.it-1/bao-9999');
@@ -197,7 +197,7 @@ class ArticleTest extends BaseT
 
 
     #[DataProvider('latestArticlesProvider')]
-    public function testOpenAllArticles(Article $article)
+    public function testOpenAllArticles(Article $article) : void
     {
         static::$client = null;
 
@@ -272,7 +272,7 @@ class ArticleTest extends BaseT
 
     #[DataProvider('koArticlesProvider')]
     #[Group('KOArticles')]
-    public function testkoArticles(array $arrData)
+    public function testkoArticles(array $arrData) : void
     {
         /** @var Article $article */
         $article = $arrData['Article'];
@@ -337,7 +337,7 @@ class ArticleTest extends BaseT
 
 
     #[DataProvider('otherArticlesToTestProvider')]
-    public function testOtherArticles(array $arrArticleData)
+    public function testOtherArticles(array $arrArticleData) : void
     {
         static::$client = null;
 

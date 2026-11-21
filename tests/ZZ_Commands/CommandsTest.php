@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class CommandsTest extends BaseT
 {
-    public function testNewsletterCommand()
+    public function testNewsletterCommand() : void
     {
         $command = static::getService(NewsletterSendCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
@@ -21,7 +21,7 @@ class CommandsTest extends BaseT
     }
 
 
-    public function testShareOnSocialCommand()
+    public function testShareOnSocialCommand() : void
     {
         $command = static::getService(ShareOnSocialCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
@@ -29,7 +29,7 @@ class CommandsTest extends BaseT
     }
 
 
-    public function testSitemapGeneratorCommand()
+    public function testSitemapGeneratorCommand() : void
     {
         $command = static::getService(SitemapGeneratorCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
@@ -37,7 +37,7 @@ class CommandsTest extends BaseT
     }
 
 
-    public function testChristmasArticleGeneratorCommand()
+    public function testChristmasArticleGeneratorCommand() : void
     {
         $command = static::getService(ChristmasArticleGeneratorCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );
@@ -45,7 +45,7 @@ class CommandsTest extends BaseT
     }
 
 
-    public function testFilesNotFoundCommand()
+    public function testFilesNotFoundCommand() : void
     {
         $command = static::getService(FilesNotFoundCommand::class);
         $result = $command->run( new ArrayInput([]), new ConsoleOutput() );

@@ -18,14 +18,14 @@ class NewsTest extends BaseT
 
 
     #[DataProvider('newsRedirectionProvider')]
-    public function testPaginationRedirectToNews(string $url)
+    public function testPaginationRedirectToNews(string $url) : void
     {
         $homeUrl = $this->generateUrl('app_news');
         $this->expectRedirect($url, $homeUrl);
     }
 
 
-    public function testNewsFirstPage()
+    public function testNewsFirstPage() : void
     {
         $url = "/news";
 

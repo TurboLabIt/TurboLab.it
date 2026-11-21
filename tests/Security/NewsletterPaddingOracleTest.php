@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Security;
 
+use CurlHandle;
 use PHPUnit\Framework\TestCase;
 
 
@@ -141,7 +142,7 @@ class NewsletterPaddingOracleTest extends TestCase
      * Build a curl handle for the token [IV ‖ CIPHER_BLOCK] with IV's last byte set to $ivLastByte.
      * The token is encoded exactly as Encryptor::encrypt() would: base64, then "/" ➡ "__ssym1__".
      */
-    private function makeRequestHandle(string $endpoint, int $ivLastByte)
+    private function makeRequestHandle(string $endpoint, int $ivLastByte) : CurlHandle
     {
         $iv      = self::IV_BASE;
         $iv[15]  = chr($ivLastByte);

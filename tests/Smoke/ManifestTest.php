@@ -7,7 +7,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class ManifestTest extends BaseT
 {
-    public function testManifestIsValidJson()
+    public function testManifestIsValidJson() : void
     {
         // the controller caches the rendered manifest for 90 days:
         // evict it so this test always exercises a fresh render of the template

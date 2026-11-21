@@ -18,7 +18,7 @@ class AuthorTest extends BaseT
     protected static array $arrTestAuthors;
 
 
-    public function testingPlayground()
+    public function testingPlayground() : void
     {
         // 👀 https://turbolab.it/utenti/crazy.cat
         $author = static::getUser(60);
@@ -29,7 +29,7 @@ class AuthorTest extends BaseT
     }
 
 
-    public function testAppAuthorPage0Or1()
+    public function testAppAuthorPage0Or1() : void
     {
         $realAuthorUrl = $this->generateUrl() . "utenti/zane";
 
@@ -58,7 +58,7 @@ class AuthorTest extends BaseT
 
 
     #[DataProvider('authorsToTestThoroughlyProvider')]
-    public function testSpecialAuthors(int $id, string $authorName, string $avatarUrl)
+    public function testSpecialAuthors(int $id, string $authorName, string $avatarUrl) : void
     {
         $author     = static::getUser($id);
         $url        = $author->getUrl();
@@ -93,7 +93,7 @@ class AuthorTest extends BaseT
     }
 
 
-    public function testNoArticlesAuthor()
+    public function testNoArticlesAuthor() : void
     {
         $author = static::getUser(static::NO_ARTICLES_AUTHOR_ID);
         $url    = $author->getUrl();
@@ -115,7 +115,7 @@ class AuthorTest extends BaseT
     }
 
 
-    public function test404()
+    public function test404() : void
     {
         // 👀 https://turbolab.it/utenti/mao-mao-now
         $this->expect404('/utenti/mao-mao-now');
@@ -127,7 +127,7 @@ class AuthorTest extends BaseT
      * Driven at the service layer: the phpBB-cookie authenticator can't be exercised over HTTP in tests.
      * This also guards countByAuthor() against regressing to the all-statuses count when a status is given.
      */
-    public function testAuthorArticlesLoadAllIncludesUnpublished()
+    public function testAuthorArticlesLoadAllIncludesUnpublished() : void
     {
         // any draft will do: pick the most recently updated one (with at least one author)
         $draftArticle   = null;
@@ -214,7 +214,7 @@ class AuthorTest extends BaseT
 
 
     #[DataProvider('latestArticlesAuthorsProvider')]
-    public function testOpenLatestArticlesAuthors(User $author)
+    public function testOpenLatestArticlesAuthors(User $author) : void
     {
         static::$client = null;
 

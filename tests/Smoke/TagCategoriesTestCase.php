@@ -38,7 +38,7 @@ abstract class TagCategoriesTestCase extends BaseT
 
 
     #[DataProvider('categoryProvider')]
-    public function testOpenAllCategories(Tag $category)
+    public function testOpenAllCategories(Tag $category) : void
     {
         static::$client = null;
 

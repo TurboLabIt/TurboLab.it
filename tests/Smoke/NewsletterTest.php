@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NewsletterTest extends BaseT
 {
-    public function testAppNewsletterIndex()
+    public function testAppNewsletterIndex() : void
     {
         $articleUrl = static::getArticle(Article::ID_NEWSLETTER)->getUrl();
         $this->expectRedirect('/newsletter', $articleUrl, Response::HTTP_FOUND);
@@ -21,7 +21,7 @@ class NewsletterTest extends BaseT
         { return $this->generateUrl() . 'newsletter/anteprima'; }
 
 
-    public function testPreview()
+    public function testPreview() : void
     {
         $url  = $this->getPreviewUrl();
         $html = $this->fetchHtml($url);
@@ -39,7 +39,7 @@ class NewsletterTest extends BaseT
     }
 
 
-    public function testPreviewLinks()
+    public function testPreviewLinks() : void
     {
         $url = $this->getPreviewUrl();
         $crawler = $this->fetchDomNode($url, 'body');
@@ -47,7 +47,7 @@ class NewsletterTest extends BaseT
     }
 
 
-    public function testPreviewImages()
+    public function testPreviewImages() : void
     {
         $url = $this->getPreviewUrl();
         $crawler = $this->fetchDomNode($url, 'body');
@@ -55,7 +55,7 @@ class NewsletterTest extends BaseT
     }
 
 
-    public function testUnsubscribe()
+    public function testUnsubscribe() : string
     {
         $firstUnsubscribeUrl = null;
 
@@ -86,7 +86,7 @@ class NewsletterTest extends BaseT
 
 
     #[Depends('testUnsubscribe')]
-    public function testResubscribe(string $unsubscribeUrl)
+    public function testResubscribe(string $unsubscribeUrl) : void
     {
         $firstSubscribeUrl = null;
 
@@ -109,7 +109,7 @@ class NewsletterTest extends BaseT
     }
 
 
-    public function testUnsubscribeAlreadyUnsubscribedError()
+    public function testUnsubscribeAlreadyUnsubscribedError() : void
     {
         $user = static::getUser();
         $user->unsubscribeFromNewsletter();
@@ -128,7 +128,7 @@ class NewsletterTest extends BaseT
     }
 
 
-    public function testSubscribeAlreadySubscribedError()
+    public function testSubscribeAlreadySubscribedError() : void
     {
         $user = static::getUser();
         $user->subscribeToNewsletter();

@@ -31,7 +31,7 @@ class FileUrlEquivalenceTest extends BaseT
 
 
     #[DataProvider('equivalentUrlProvider')]
-    public function testEquivalentUrls(string $url1, string $url2)
+    public function testEquivalentUrls(string $url1, string $url2) : void
     {
         $this->assertSame( File::normalizeUrlForMatching($url1), File::normalizeUrlForMatching($url2) );
     }
@@ -50,13 +50,13 @@ class FileUrlEquivalenceTest extends BaseT
 
 
     #[DataProvider('differentUrlProvider')]
-    public function testDifferentUrls(string $url1, string $url2)
+    public function testDifferentUrls(string $url1, string $url2) : void
     {
         $this->assertNotSame( File::normalizeUrlForMatching($url1), File::normalizeUrlForMatching($url2) );
     }
 
 
-    public function testNonHttpUrlsAreOnlyTrimmed()
+    public function testNonHttpUrlsAreOnlyTrimmed() : void
     {
         $magnet = 'magnet:?xt=urn:btih:c7f67b2aa427fb27d8869750d1e12b6858aaaf61';
         $this->assertSame($magnet, File::normalizeUrlForMatching(" $magnet "));
@@ -77,7 +77,7 @@ class FileUrlEquivalenceTest extends BaseT
 
 
     #[DataProvider('validExternalUrlProvider')]
-    public function testValidExternalUrls(string $url)
+    public function testValidExternalUrls(string $url) : void
     {
         $this->assertTrue( File::isValidExternalUrl($url) );
     }
@@ -99,13 +99,13 @@ class FileUrlEquivalenceTest extends BaseT
 
 
     #[DataProvider('invalidExternalUrlProvider')]
-    public function testInvalidExternalUrls(string $url)
+    public function testInvalidExternalUrls(string $url) : void
     {
         $this->assertFalse( File::isValidExternalUrl($url) );
     }
 
 
-    public function testExistingDownloadFoundByEquivalentUrl()
+    public function testExistingDownloadFoundByEquivalentUrl() : void
     {
         $factory = static::getService(Factory::class);
 

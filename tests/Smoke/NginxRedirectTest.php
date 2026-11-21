@@ -167,7 +167,7 @@ class NginxRedirectTest extends BaseT
 
 
     #[DataProvider('urlProvider')]
-    public function testRedirect(string $requestUrl, string $redirectToUrl, bool $alsoTestWithTrailingSlash)
+    public function testRedirect(string $requestUrl, string $redirectToUrl, bool $alsoTestWithTrailingSlash) : void
     {
         if( stripos($requestUrl, 'https://') !== 0 ) {
             $requestUrl = $this->generateUrl() . ltrim($requestUrl, '/');

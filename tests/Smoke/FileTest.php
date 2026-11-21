@@ -39,7 +39,7 @@ class FileTest extends BaseT
 
 
     #[DataProvider('localFileToTestProvider')]
-    public function testLocalFiles(int $id, string $title, string $contentType, string $format)
+    public function testLocalFiles(int $id, string $title, string $contentType, string $format) : void
     {
         $file = static::getFile($id);
 
@@ -54,7 +54,7 @@ class FileTest extends BaseT
     }
 
 
-    public function test404()
+    public function test404() : void
     {
         // 👀 https://turbolab.it/scarica/9999
         $this->expect404('/scarica/9999');

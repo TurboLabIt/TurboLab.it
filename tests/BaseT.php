@@ -50,7 +50,7 @@ abstract class BaseT extends WebTestCase
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 👷🏻‍♂️ Services ***">
-    protected static function getService(string $name)
+    protected static function getService(string $name) : ?object
     {
         // boots the kernel and prevents LogicException:
         // Booting the kernel before calling "WebTestCase::createClient()" is not supported, the kernel should only be booted once.
@@ -233,7 +233,7 @@ abstract class BaseT extends WebTestCase
     }
 
 
-    public function expectRedirect(string $urlFirst, string $expectedUrlRedirectTo, int $expectedHttpStatus = Response::HTTP_MOVED_PERMANENTLY)
+    public function expectRedirect(string $urlFirst, string $expectedUrlRedirectTo, int $expectedHttpStatus = Response::HTTP_MOVED_PERMANENTLY) : void
     {
         $this->browse($urlFirst);
         $this->assertResponseRedirects(
@@ -270,7 +270,7 @@ abstract class BaseT extends WebTestCase
     //</editor-fold>
 
 
-    protected function generateUrl($name = 'app_home', $arrUrlParams = [], $urlType = UrlGeneratorInterface::ABSOLUTE_URL)
+    protected function generateUrl(string $name = 'app_home', array $arrUrlParams = [], int $urlType = UrlGeneratorInterface::ABSOLUTE_URL) : string
     {
         return static::getService('router.default')->generate($name, $arrUrlParams, $urlType);
     }

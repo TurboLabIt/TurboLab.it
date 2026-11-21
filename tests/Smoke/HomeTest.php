@@ -17,14 +17,14 @@ class HomeTest extends BaseT
 
 
     #[DataProvider('homeRedirectionProvider')]
-    public function testPaginationRedirectToHome(string $url)
+    public function testPaginationRedirectToHome(string $url) : void
     {
         $homeUrl = $this->generateUrl();
         $this->expectRedirect($url, $homeUrl);
     }
 
 
-    public function testHomeH1()
+    public function testHomeH1() : void
     {
         $crawler = $this->fetchDomNode("/");
         $H1FromCrawler = $crawler->filter('body h1')->html();
@@ -33,7 +33,7 @@ class HomeTest extends BaseT
     }
 
 
-    public function testHomeH3s()
+    public function testHomeH3s() : void
     {
         $crawler = $this->fetchDomNode("/", 'body');
         $H3s = $crawler->filter('h3');
@@ -42,21 +42,21 @@ class HomeTest extends BaseT
     }
 
 
-    public function testHomeLinks()
+    public function testHomeLinks() : void
     {
         $crawler = $this->fetchDomNode("/", 'body');
         $this->internalLinksChecker($crawler);
     }
 
 
-    public function testHomeImages()
+    public function testHomeImages() : void
     {
         $crawler = $this->fetchDomNode("/", 'body');
         $this->internalImagesChecker($crawler);
     }
 
 
-    public function testHomePaginator()
+    public function testHomePaginator() : void
     {
         $expectedTotalPages = static::calculateExpectedTotalPages(
             static::getArticleCollection()->loadLatestPublished()->countTotalBeforePagination()

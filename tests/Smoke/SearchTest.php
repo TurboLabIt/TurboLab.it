@@ -23,7 +23,7 @@ class SearchTest extends BaseT
     }
 
     #[DataProvider('legacySearchProvider')]
-    public function testLegacyRedirect(string $origin, $expected) { $this->expectRedirect($origin, $expected); }
+    public function testLegacyRedirect(string $origin, string $expected) : void { $this->expectRedirect($origin, $expected); }
 
 
     public static function searchProvider() : Generator
@@ -38,7 +38,7 @@ class SearchTest extends BaseT
 
 
     #[DataProvider('searchProvider')]
-    public function testSearchPage(string $urlToFetch, string $mustContain)
+    public function testSearchPage(string $urlToFetch, string $mustContain) : void
     {
         $this->fetchDomNode($urlToFetch);
     }
@@ -46,7 +46,7 @@ class SearchTest extends BaseT
 
 
     #[DataProvider('searchProvider')]
-    public function testSearchAjax(string $urlToFetch, string $mustContain)
+    public function testSearchAjax(string $urlToFetch, string $mustContain) : void
     {
         $ajaxUrlToFetch = str_ireplace('/cerca/', '/cerca/ajax/serp/', $urlToFetch);
         $crawler = $this->fetchDomNode($ajaxUrlToFetch, '.card.article-card');
@@ -59,7 +59,7 @@ class SearchTest extends BaseT
     }
 
 
-    public function testNoResults()
+    public function testNoResults() : void
     {
         $urlToFetch = '/cerca/ajax/serp/' . uniqid() . uniqid();
 
@@ -90,7 +90,7 @@ class SearchTest extends BaseT
 
 
     #[DataProvider('fileLookingTermProvider')]
-    public function testFileLookingTermReachesSymfony(string $urlToFetch)
+    public function testFileLookingTermReachesSymfony(string $urlToFetch) : void
     {
         $url = $this->generateUrl() . ltrim($urlToFetch, '/');
 
@@ -115,7 +115,7 @@ class SearchTest extends BaseT
 
 
     #[DataProvider('mainPagesProvider')]
-    public function testOpenSearchXmlAutodiscovery(string $url)
+    public function testOpenSearchXmlAutodiscovery(string $url) : void
     {
         $html       = $this->fetchHtml($url);
         $pattern    = '/<link\s+rel="search"\s+type="application\/opensearchdescription\+xml"[^>]+href="([^"]+)"/';

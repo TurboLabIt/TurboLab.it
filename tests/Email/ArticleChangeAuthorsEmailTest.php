@@ -6,7 +6,7 @@ use App\Service\User;
 
 class ArticleChangeAuthorsEmailTest extends EmailBaseT
 {
-    public function testAuthorsAdded()
+    public function testAuthorsAdded() : void
     {
         $article        = $this->getArticleEditor();
         $currentUser    = $this->getUser();
@@ -63,7 +63,7 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
     }
 
 
-    public function testAuthorsRemoved()
+    public function testAuthorsRemoved() : void
     {
         $article        = $this->getArticleEditor();
         $currentUser    = $this->getUser();
@@ -117,7 +117,7 @@ class ArticleChangeAuthorsEmailTest extends EmailBaseT
     }
 
 
-    public function testAuthorsAddedAndRemoved()
+    public function testAuthorsAddedAndRemoved() : void
     {
         $article        = $this->getArticleEditor();
         $currentUser    = $this->getUser();

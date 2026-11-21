@@ -20,7 +20,7 @@ class FeedTest extends BaseT
 
 
     #[DataProvider('feedToTestProvider')]
-    public function testOpenAllFeeds(string $url)
+    public function testOpenAllFeeds(string $url) : void
     {
         $errorMessage = "Failing URL: " . $url;
         $xml = $this->fetchHtml($url, Request::METHOD_GET, false);

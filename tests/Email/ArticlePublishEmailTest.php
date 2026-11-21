@@ -6,7 +6,7 @@ use App\Service\User;
 
 class ArticlePublishEmailTest extends EmailBaseT
 {
-    public function testEmailArticlePublishedMultipleAuthors()
+    public function testEmailArticlePublishedMultipleAuthors() : void
     {
         $article        = $this->getArticle();
         $currentUser    = $this->getUser();
@@ -47,7 +47,7 @@ class ArticlePublishEmailTest extends EmailBaseT
     }
 
 
-    public function testEmailArticlePublishedSingleAuthor()
+    public function testEmailArticlePublishedSingleAuthor() : void
     {
         $article        = $this->getArticle(2983); // 👀 Uova di camoscio https://turbolab.it/2983
         $currentUser    = $this->getUser(User::ID_SYSTEM);
