@@ -182,15 +182,25 @@ def meant_to_be_public(kind: str, value: str) -> bool:
 def scan(base: str, tree: str) -> list:
     """What the added lines hold that may not belong in a public repository: (file, line, kind, what)."""
     findings, path, line_number = [], None, 0
-    diff = git('diff', '-U0', '--no-color', '--no-ext-diff', base, tree, binary=True).decode('utf-8', 'replace')
+    # git quotes a name with accented letters ("b/citt\303\240.txt") unless core.quotePath is off, and a quoted name
+    # used to leave its file's lines unread
+    diff = git('-c', 'core.quotePath=false', 'diff', '-U0', '--no-color', '--no-ext-diff', base, tree,
+               binary=True).decode('utf-8', 'replace')
     for line in diff.split('\n'):
         if line.startswith('+++ '):
-            path = line[6:] if line.startswith('+++ b/') else None
+            name = line[4:]
+            if len(name) > 1 and name[0] == name[-1] == '"':
+                name = name[1:-1]       # still quoted when it holds a quote, a backslash or a control character
+            path = name[2:] if name.startswith('b/') else None      # None: "+++ /dev/null", a deleted file
         elif line.startswith('@@'):
             match = re.match(r'@@ -\S+ \+(\d+)', line)
             line_number = int(match.group(1)) if match else 0
         elif line.startswith('Binary files ') and line.endswith(' differ'):
-            findings.append((line.split(' and ')[-1][2:-7], 0, 'binary file', 'not readable: check what it is'))
+            # "Binary files a/X and b/X differ", /dev/null standing for the side that doesn't exist: a deleted
+            # file adds nothing to look at. The name is what follows " and b/", so a name with " and " stays whole
+            new = re.search(r' and "?b/(.*?)"? differ$', line)
+            if new and not line.endswith(' and /dev/null differ'):
+                findings.append((new.group(1), 0, 'binary file', 'not readable: check what it is'))
         elif line.startswith('+') and not line.startswith('+++') and path:
             text = line[1:]
             for kind, pattern in SECRETS:
