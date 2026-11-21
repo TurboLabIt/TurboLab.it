@@ -3,11 +3,7 @@ namespace App\Tests\Convention;
 
 use Doctrine\DBAL\Types\Types;
 use FilesystemIterator;
-use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\UseItem;
 use PhpParser\NodeFinder;
@@ -36,8 +32,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  * So the mapping of every entity is read from Doctrine itself, traits from other packages included (Gedmo's
  * TimestampableEntity maps DateTime), and src/ and tests/ are read for the DateTime class itself: a DateTime given to a
  * query goes through the deprecated type too, and from the source a variable's class can't be told, so the class is
- * reported wherever the code names it. The one way to a DateTime is DateTime::createFromImmutable() handed straight to
- * a call, for an API that takes nothing else (DateMagician::intlFormat()). Comments and strings don't count.
+ * reported wherever the code names it, with no exception: DateMagician takes either. Comments and strings don't count.
  */
 class ImmutableDatesTest extends KernelTestCase
 {
@@ -98,8 +93,7 @@ class ImmutableDatesTest extends KernelTestCase
 
         $this->assertSame([], $arrProblems,
             "Dates must be DateTimeImmutable, never DateTime: Doctrine converts a DateTime, query parameters " .
-            "included, with a type deprecated since DBAL 4.6. For an API that takes nothing else, hand it " .
-            "DateTime::createFromImmutable(...) as the argument itself"
+            "included, with a type deprecated since DBAL 4.6"
         );
     }
 
@@ -126,9 +120,9 @@ class ImmutableDatesTest extends KernelTestCase
         yield 'property type'       => ['class A { protected DateTime $d; }', ['1: \DateTime (type)']];
         yield 'closure type'        => ['$f = fn(DateTime $d) => $d;', ['1: \DateTime (type)']];
         yield 'multi-line'          => ["\$d =\n    new DateTime();", ['2: new \DateTime()']];
-        yield 'bridge, stored'      => ['$d = DateTime::createFromImmutable(new DateTimeImmutable());',
+        yield 'converted'           => ['$d = DateTime::createFromImmutable(new DateTimeImmutable());',
                                         ['1: \DateTime::createFromImmutable(new \DateTimeImmutable())']];
-        yield 'other bridge'        => ['f( DateTime::createFromInterface($d) );', ['1: \DateTime::createFromInterface($d)']];
+        yield 'converted, argument' => ['f( DateTime::createFromInterface($d) );', ['1: \DateTime::createFromInterface($d)']];
     }
 
 
@@ -142,7 +136,6 @@ class ImmutableDatesTest extends KernelTestCase
         yield 'immutable'           => ['$d = new DateTimeImmutable(); $e = DateTimeImmutable::createFromFormat("U", "0");'];
         yield 'interface'           => ['function f(DateTimeInterface $d) : ?DateTimeInterface { return $d; }'];
         yield 'time zone'           => ['$z = new DateTimeZone("Europe/Rome");'];
-        yield 'bridge as argument'  => ['use DateTime; f( DateTime::createFromImmutable(new DateTimeImmutable()) );'];
         yield 'import alone'        => ['use DateTime;'];
         yield 'another namespace'   => ['namespace A; $d = new DateTime();'];
         yield 'method named so'     => ['$x->DateTime(); $y = $x->dateTime;'];
@@ -179,7 +172,7 @@ class ImmutableDatesTest extends KernelTestCase
         foreach( (new NodeFinder())->findInstanceOf($ast, Name::class) as $name ) {
 
             $parent = $name->getAttribute('parent');
-            if( $name->toLowerString() != 'datetime' || $parent instanceof UseItem || $this->isBridge($parent) ) {
+            if( $name->toLowerString() != 'datetime' || $parent instanceof UseItem ) {
                 continue;
             }
 
@@ -189,15 +182,5 @@ class ImmutableDatesTest extends KernelTestCase
         }
 
         return $arrFound;
-    }
-
-
-    /** DateTime::createFromImmutable(), handed straight to a call */
-    private function isBridge(?Node $node) : bool
-    {
-        return
-            $node instanceof StaticCall &&
-            $node->name instanceof Identifier && $node->name->toLowerString() == 'createfromimmutable' &&
-            $node->getAttribute('parent') instanceof Arg;
     }
 }

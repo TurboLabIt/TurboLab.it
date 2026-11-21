@@ -13,7 +13,6 @@ use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
-use DateTime;
 use DateTimeImmutable;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -61,10 +60,9 @@ class Newsletter extends Mailer
         $this->newsletterOnSiteUrl = $this->privacyUrl =
             $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        // a copy as DateTime, the only class DateMagician takes
         $newsletterDate =
             (new DateMagician())->intlFormat(
-                DateTime::createFromImmutable( new DateTimeImmutable('+1 day') ), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
+                (new DateTimeImmutable())->modify('+1 day'), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
             );
 
         $this->newsletterName = static::TITLE . " ($newsletterDate)";
