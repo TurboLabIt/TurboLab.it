@@ -3,7 +3,7 @@ includes:
     - vendor/phpstan/phpstan-doctrine/extension.neon
 
 parameters:
-    level: 5
+    level: 6
     paths:
         - bin/
         - config/
@@ -11,6 +11,9 @@ parameters:
         - src/
         - tests/
     ignoreErrors:
+        ## level 6 without the two checks only a docblock can satisfy: PHP has no syntax for array<...> or Collection<...>
+        - identifier: missingType.iterableValue
+        - identifier: missingType.generics
         ## BaseServiceEntity
         - message: '#Call to an undefined method App\\Service\\BaseServiceEntity::setEntity#'
           path: src/Service/BaseServiceEntity.php
