@@ -69,7 +69,11 @@ abstract class BaseT extends WebTestCase
     protected static function getEntityManager() : EntityManagerInterface { return static::getService('doctrine.orm.entity_manager'); }
 
 
-    protected static function loginAsSystem() : void
+    protected static function loginAsSystem() : void { static::loginAs(User::ID_SYSTEM); }
+
+
+    /** for the service layer only: a page is reached through the phpBB cookies (the tli-logged-in-check skill) */
+    protected static function loginAs(int $userId) : void
     {
         // Force a freshly-booted kernel: between tests, tearDown() shuts the kernel down while
         // static::$client retains a stale reference, and loginUser() would throw on getContainer().
@@ -78,7 +82,7 @@ abstract class BaseT extends WebTestCase
         static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
         static::$client->setServerParameter('HTTPS', 'https');
 
-        $userEntity = static::getEntityManager()->find(UserEntity::class, User::ID_SYSTEM);
+        $userEntity = static::getEntityManager()->find(UserEntity::class, $userId);
         static::$client->loginUser($userEntity, 'tli_phpbb_cookies');
     }
 

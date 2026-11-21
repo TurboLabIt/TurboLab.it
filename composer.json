@@ -12,7 +12,6 @@
         "ext-libxml": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "webklex/php-imap": "@stable",
         "doctrine/doctrine-bundle": "@stable",
         "doctrine/doctrine-migrations-bundle": "@stable",
         "doctrine/orm": "@stable",
@@ -26,6 +25,7 @@
         "stof/doctrine-extensions-bundle": "@stable",
         "symfony/asset": "@stable",
         "symfony/cache": "@stable",
+        "symfony/clock": "@stable",
         "symfony/console": "@stable",
         "symfony/dotenv": "@stable",
         "symfony/expression-language": "@stable",
@@ -54,7 +54,8 @@
         "twig/extra-bundle": "@stable",
         "twig/inky-extra": "@stable",
         "twig/intl-extra": "@stable",
-        "twig/twig": "@stable"
+        "twig/twig": "@stable",
+        "webklex/php-imap": "@stable"
     },
     "config": {
         "allow-plugins": {

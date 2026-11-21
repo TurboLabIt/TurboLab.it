@@ -6,6 +6,7 @@ use App\Service\Mailer;
 use App\ServiceCollection\Cms\ArticleCollection;
 use DateTimeImmutable;
 use DateTimeZone;
+use Symfony\Component\Clock\ClockInterface;
 
 
 class ArticlePlanner
@@ -13,7 +14,8 @@ class ArticlePlanner
     protected ?ArticleCollection $articles;
 
 
-    public function __construct(protected Factory $factory, protected Mailer $mailer) {}
+    // the time comes from the clock, not from PHP: the tests set it (tests/Editor/ArticlePlannerTest.php)
+    public function __construct(protected Factory $factory, protected Mailer $mailer, protected ClockInterface $clock) {}
 
 
     public function setPublishingStatus(ArticleEditor $article, int $publishingStatus, bool $publishUrgently) : static
@@ -25,14 +27,14 @@ class ArticlePlanner
 
         //
         if(
-            !empty($publishedAt) && $publishedAt > (new DateTimeImmutable()) &&
+            !empty($publishedAt) && $publishedAt > $this->clock->now() &&
             in_array($publishingStatus, ArticleEditor::PUBLISHING_STATUSES_VISIBLE)
         ) {
             return $this->publishOnDate($article, $publishedAt);
         }
 
         //
-        if( !empty($publishedAt) && $publishedAt < (new DateTimeImmutable('today midnight')) ) {
+        if( !empty($publishedAt) && $publishedAt < $this->clock->now()->modify('today midnight') ) {
             $article->setPublishedAt(null);
         }
 
@@ -42,7 +44,7 @@ class ArticlePlanner
 
             // this is an "urgent" news publication
             if( $publishingStatus == ArticleEditor::PUBLISHING_STATUS_PUBLISHED && $publishUrgently ) {
-                return $this->publishOnDate($article, (new DateTimeImmutable()));
+                return $this->publishOnDate($article, $this->clock->now());
             }
 
             // this is a "regular" news publication
@@ -92,7 +94,7 @@ class ArticlePlanner
 
     protected function findNewsPacedDate(ArticleEditor $article) : DateTimeImmutable
     {
-        $now = new DateTimeImmutable();
+        $now = $this->clock->now();
 
         // Target day's 06:30. Past today's 21:30 → target tomorrow.
         $dayStart = $now->setTime(6, 30);
@@ -158,8 +160,8 @@ class ArticlePlanner
 
     protected function findPublishingDate() : DateTimeImmutable
     {
-        $publishingDate = new DateTimeImmutable();
-        if( (int)date('H') > 12 ) {
+        $publishingDate = $this->clock->now();
+        if( (int)$publishingDate->format('H') > 12 ) {
             $publishingDate = $publishingDate->modify('tomorrow midnight');
         }
 
@@ -232,7 +234,7 @@ class ArticlePlanner
     protected function publishNextBusinessDay(ArticleEditor $article) : static
     {
         $articles = $this->getScheduledArticlesCollection();
-        $now = new DateTimeImmutable();
+        $now = $this->clock->now();
 
         $arrArticlesOfEarlierToday =
             $articles->getFilteredData( function(Article $article) use($now) {
@@ -249,16 +251,16 @@ class ArticlePlanner
             });
 
 
-        if( (int)date('H') < 12 && empty($arrArticlesOfEarlierToday) && empty($arrArticlesOfLaterToday) ) {
+        if( (int)$now->format('H') < 12 && empty($arrArticlesOfEarlierToday) && empty($arrArticlesOfLaterToday) ) {
 
-            $this->publishOnDate($article, new DateTimeImmutable());
+            $this->publishOnDate($article, $this->clock->now());
             return $this;
         }
 
         // it's unusual for an article to be published later today. It there is, it could be important
         // --> skipped working on $arrArticlesOfLaterToday
 
-        $publishingDate = (new DateTimeImmutable())->modify('tomorrow midnight');
+        $publishingDate = $this->clock->now()->modify('tomorrow midnight');
 
         while(true) {
 
