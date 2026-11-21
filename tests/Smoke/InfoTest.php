@@ -147,8 +147,8 @@ class InfoTest extends BaseT
     {
         $url =
             $this->generateUrl('app_calendar_events', [
-                'start' => (new \DateTime('first day of last month'))->format('Y-m-d'),
-                'end'   => (new \DateTime('last day of last month'))->format('Y-m-d')
+                'start' => (new \DateTimeImmutable('first day of last month'))->format('Y-m-d'),
+                'end'   => (new \DateTimeImmutable('last day of last month'))->format('Y-m-d')
             ]);
 
         $this->fetchHtml($url);
@@ -160,7 +160,7 @@ class InfoTest extends BaseT
         $url =
             $this->generateUrl('app_calendar_events', [
                 'start' => null,
-                'end'   => (new \DateTime('last day of last month'))->format('Y-m-d')
+                'end'   => (new \DateTimeImmutable('last day of last month'))->format('Y-m-d')
             ]);
 
         $this->browse($url);
@@ -172,7 +172,7 @@ class InfoTest extends BaseT
     {
         $url =
             $this->generateUrl('app_calendar_events', [
-                'start' => (new \DateTime('first day of last month'))->format('Y-m-d'),
+                'start' => (new \DateTimeImmutable('first day of last month'))->format('Y-m-d'),
                 'end'   => null
             ]);
 
@@ -186,7 +186,7 @@ class InfoTest extends BaseT
         $url =
             $this->generateUrl('app_calendar_events', [
                 'start' => 'bad-start-date',
-                'end'   => (new \DateTime('last day of last month'))->format('Y-m-d')
+                'end'   => (new \DateTimeImmutable('last day of last month'))->format('Y-m-d')
             ]);
 
         $this->browse($url);
@@ -199,7 +199,7 @@ class InfoTest extends BaseT
     {
         $url =
             $this->generateUrl('app_calendar_events', [
-                'start' => (new \DateTime('first day of last month'))->format('Y-m-d'),
+                'start' => (new \DateTimeImmutable('first day of last month'))->format('Y-m-d'),
                 'end'   => 'bad-end-date',
             ]);
 
@@ -212,8 +212,8 @@ class InfoTest extends BaseT
     {
         $url =
             $this->generateUrl('app_calendar_events', [
-                'start' => (new \DateTime('first day of last month'))->modify('-2 months')->format('Y-m-d'),
-                'end'   => (new \DateTime('last day of last month'))->format('Y-m-d')
+                'start' => (new \DateTimeImmutable('first day of last month'))->modify('-2 months')->format('Y-m-d'),
+                'end'   => (new \DateTimeImmutable('last day of last month'))->format('Y-m-d')
             ]);
 
         $this->browse($url);
@@ -225,8 +225,8 @@ class InfoTest extends BaseT
     {
         $url =
             $this->generateUrl('app_calendar_events', [
-                'start' => (new \DateTime('last day of last month'))->format('Y-m-d'),
-                'end'   => (new \DateTime('first day of last month'))->format('Y-m-d')
+                'start' => (new \DateTimeImmutable('last day of last month'))->format('Y-m-d'),
+                'end'   => (new \DateTimeImmutable('first day of last month'))->format('Y-m-d')
             ]);
 
         $this->browse($url);

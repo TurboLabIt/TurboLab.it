@@ -9,7 +9,7 @@ use App\Service\Cms\ImageEditor;
 use App\Service\Factory;
 use App\Service\User;
 use App\Tests\BaseT;
-use DateTime;
+use DateTimeImmutable;
 use Imagick;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -64,11 +64,11 @@ class ImagesDeleteTest extends BaseT
         $months = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
 
         // last changed years ago, an orphan since the previous run: until 2026-11-19, deleted at once
-        $orphanedToday  = $this->uploadImage(updatedAt: new DateTime('-3 years'), orphanedAt: new DateTime('-2 hours'));
+        $orphanedToday  = $this->uploadImage(updatedAt: new DateTimeImmutable('-3 years'), orphanedAt: new DateTimeImmutable('-2 hours'));
         // last changed years ago, an orphan since less than a run: not dated yet
-        $notDatedYet    = $this->uploadImage(updatedAt: new DateTime('-3 years'));
+        $notDatedYet    = $this->uploadImage(updatedAt: new DateTimeImmutable('-3 years'));
         // its year is over
-        $due            = $this->uploadImage(orphanedAt: new DateTime("-$months months -1 day"));
+        $due            = $this->uploadImage(orphanedAt: new DateTimeImmutable("-$months months -1 day"));
 
         // Doctrine clears the ID of an entity it deletes
         [$orphanedTodayId, $notDatedYetId, $dueId] = [$orphanedToday->getId(), $notDatedYet->getId(), $due->getId()];
@@ -89,7 +89,7 @@ class ImagesDeleteTest extends BaseT
         $months = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
 
         $notDatedYet    = $this->uploadImage();
-        $due            = $this->uploadImage(orphanedAt: new DateTime("-$months months -1 day"));
+        $due            = $this->uploadImage(orphanedAt: new DateTimeImmutable("-$months months -1 day"));
 
         $output = $this->runImagesDelete(['--dry-run' => true]);
 
@@ -103,8 +103,8 @@ class ImagesDeleteTest extends BaseT
     public function testTheOrphansAreListedByDeletionDate() : void
     {
         $notDatedYet    = $this->uploadImage();
-        $recent         = $this->uploadImage(orphanedAt: new DateTime('-1 month'));
-        $oldest         = $this->uploadImage(orphanedAt: new DateTime('-6 months'));
+        $recent         = $this->uploadImage(orphanedAt: new DateTimeImmutable('-1 month'));
+        $oldest         = $this->uploadImage(orphanedAt: new DateTimeImmutable('-6 months'));
 
         $arrExpectedIds = [$oldest->getId(), $recent->getId(), $notDatedYet->getId()];
         $arrListedIds   =
@@ -146,7 +146,7 @@ class ImagesDeleteTest extends BaseT
 
     //<editor-fold defaultstate="collapsed" desc="*** 🧰 fixtures ***">
     /** A new image no article uses, with the dates given written straight to the database (Doctrine would set now) */
-    private function uploadImage(?DateTime $updatedAt = null, ?DateTime $orphanedAt = null) : ImageEditor
+    private function uploadImage(?DateTimeImmutable $updatedAt = null, ?DateTimeImmutable $orphanedAt = null) : ImageEditor
     {
         // plasma is random: a new image, with a hash of its own, at every call
         $imagick = new Imagick();
@@ -208,13 +208,13 @@ class ImagesDeleteTest extends BaseT
 
 
     /** read from the database: updateOrphanedAt() is a bulk update, the entities in memory don't see it */
-    private function getOrphanedAt(ImageEditor $image) : ?DateTime
+    private function getOrphanedAt(ImageEditor $image) : ?DateTimeImmutable
     {
         $orphanedAt =
             static::getEntityManager()->getConnection()
                 ->fetchOne('SELECT orphaned_at FROM image WHERE id = ?', [$image->getId()]);
 
-        return empty($orphanedAt) ? null : new DateTime($orphanedAt);
+        return empty($orphanedAt) ? null : new DateTimeImmutable($orphanedAt);
     }
 
 

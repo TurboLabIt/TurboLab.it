@@ -57,7 +57,8 @@ python3 -I $D log --days 14                                 # the dev log: each 
   deprecation must reappear, at that line.
 - **Code that no test runs isn't covered.** For a pattern that can come back unnoticed, a runtime check isn't
   enough: add a static one. `tests/Convention/DoctrineSortDirectionTest.php` reads the source of `src/`, `tests/`
-  and our packages for string sort directions, and fails closed when it can't tell.
+  and our packages for string sort directions, and fails closed when it can't tell; `ImmutableDatesTest.php`,
+  next to it, does the same for the mutable `DateTime`, and reads every entity's mapping from Doctrine.
 - **Read the raw output of a command whose result you filter.** A command that died on a wrong option and an
   empty `grep` once passed for a clean run.
 

@@ -5,7 +5,6 @@ use App\Repository\Cms\ArticleGroupRepository;
 use App\Trait\RankableEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 
 #[ORM\Entity(repositoryClass: ArticleGroupRepository::class)]
@@ -25,7 +24,7 @@ class ArticleGroup extends BaseCmsEntity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $notes = null;
 
-    use TimestampableEntity, RankableEntityTrait;
+    use RankableEntityTrait;
 
 
     public function getGroupName() : ?string { return $this->groupName; }

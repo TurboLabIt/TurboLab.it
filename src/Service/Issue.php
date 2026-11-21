@@ -8,7 +8,7 @@ use App\Entity\PhpBB\Post as PostEntity;
 use App\Repository\BugRepository;
 use App\Service\Cms\Article;
 use App\Service\PhpBB\Post;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -44,7 +44,7 @@ class Issue
         $visit =
             $this->entityManager->getRepository(Visit::class)->getByContentAndUser(
                 $author->getEntity(), $article->getEntity(),
-                (new DateTime())->modify('-' . static::READ_GUIDE_AGAIN_AFTER_DAYS . ' days')
+                (new DateTimeImmutable())->modify('-' . static::READ_GUIDE_AGAIN_AFTER_DAYS . ' days')
             );
 
         if( empty($visit) ) {
@@ -66,8 +66,8 @@ class Issue
 
         if( $this->isProd() && count($bugByUser) >= BugRepository::TIME_LIMIT_BUGS_NUM ) {
 
-            $lastIssueDate = end($bugByUser)->getCreatedAt();
-            $lastIssueDate->modify('+' . BugRepository::TIME_LIMIT_MINUTES . ' minutes');
+            $lastIssueDate =
+                end($bugByUser)->getCreatedAt()->modify('+' . BugRepository::TIME_LIMIT_MINUTES . ' minutes');
             throw new TooManyRequestsHttpException(60 * BugRepository::TIME_LIMIT_MINUTES,
                 "Stai aprendo troppe issue (tu, oppure qualcuno con il tuo stesso indirizzo IP)! " .
                 "Per favore, riprova dopo le ore " . $lastIssueDate->format('H:i:s') . ". Grazie!"

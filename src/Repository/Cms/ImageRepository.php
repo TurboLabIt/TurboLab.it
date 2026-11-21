@@ -4,7 +4,7 @@ namespace App\Repository\Cms;
 use App\Entity\Cms\ArticleImage;
 use App\Entity\Cms\Image;
 use App\Repository\BaseRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\QueryBuilder;
 use SortDirection;
 
@@ -41,7 +41,7 @@ class ImageRepository extends BaseRepository
         return
             $this->getQueryBuilderOrphans()
                 ->andWhere('t.orphanedAt < :limitDate')
-                ->setParameter('limitDate', new DateTime('-' . static::DELETE_ORPHANS_AFTER_MONTHS . ' months') )
+                ->setParameter('limitDate', new DateTimeImmutable('-' . static::DELETE_ORPHANS_AFTER_MONTHS . ' months') )
                 ->getQuery()->getResult();
     }
 
@@ -64,7 +64,7 @@ class ImageRepository extends BaseRepository
                 ->set('t.orphanedAt', ':now')
                 ->where('t.orphanedAt IS NULL')
                 ->andWhere("t.id NOT IN($usedImageIds)")
-                ->setParameter('now', new DateTime())
+                ->setParameter('now', new DateTimeImmutable())
                 ->getQuery()->execute();
 
         $adopted =

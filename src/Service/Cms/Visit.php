@@ -4,7 +4,7 @@ namespace App\Service\Cms;
 use App\Entity\Cms\Visit as VisitEntity;
 use App\Service\Factory;
 use App\Service\User;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -68,15 +68,15 @@ class Visit
         if($isNew) {
 
             $this->em->persist($visitEntity);
-            $visitEntity->setUpdatedAt(new DateTime());
+            $visitEntity->setUpdatedAt(new DateTimeImmutable());
             $this->em->flush();
         }
 
-        if( empty($visitDate) || $visitDate < (new DateTime())->modify('-24 hours') ) {
+        if( empty($visitDate) || $visitDate < (new DateTimeImmutable())->modify('-24 hours') ) {
 
             if( !$isNew ) {
 
-                $visitEntity->setUpdatedAt(new DateTime());
+                $visitEntity->setUpdatedAt(new DateTimeImmutable());
                 $this->em->flush();
             }
 

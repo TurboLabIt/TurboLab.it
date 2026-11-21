@@ -2,7 +2,7 @@
 namespace App\Service;
 
 use App\Exception\YouTubeException;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -130,7 +130,7 @@ class YouTubeChannelApi
                 "abstract"      => trim($oneVideoItem->snippet->description),
                 "thumbnails"    => $oneVideoItem->snippet->thumbnails,
                 "publishedAt"   =>
-                    DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $oneVideoItem->snippet->publishedAt, $utcTimeZone)
+                    DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $oneVideoItem->snippet->publishedAt, $utcTimeZone)
                         ->setTimezone($currentTimeZone)
             ];
         }

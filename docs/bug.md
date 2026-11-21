@@ -105,7 +105,7 @@ Il workflow funziona solo se GitHub Actions è abilitato per il repository a liv
 
 ## Registrazione locale: l'Entity Bug
 
-Ogni issue creata viene salvata come [Entity/Bug](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Bug.php) nel database del CMS. La riga conserva: l'utente, l'indirizzo IP, l'ID remoto (`remoteId`, il *number* della issue su GitHub), l'URL remoto (`remoteUrl`, l'`html_url`), il post di origine e i timestamp (`TimestampableEntity`).
+Ogni issue creata viene salvata come [Entity/Bug](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Entity/Bug.php) nel database del CMS. La riga conserva: l'utente, l'indirizzo IP, l'ID remoto (`remoteId`, il *number* della issue su GitHub), l'URL remoto (`remoteUrl`, l'`html_url`), il post di origine e i timestamp ([TimestampableEntityTrait](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Trait/TimestampableEntityTrait.php)).
 
 Questa tabella ha un duplice scopo: è il *log* delle segnalazioni create ed è la fonte dati per il rate limiting descritto sopra.
 

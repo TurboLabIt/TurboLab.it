@@ -8,7 +8,7 @@ use App\Service\TextProcessor;
 use App\Service\User;
 use App\Trait\SaveableTrait;
 use App\Trait\UploadableFileTrait;
-use DateTime;
+use DateTimeImmutable;
 use Imagine\Exception\NotSupportedException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -61,7 +61,7 @@ class ImageEditor extends Image
         }
 
         if( empty($filename) ) {
-            $filename = 'image-' . (new DateTime())->format('Y-m-d H:i:s') . '-' . rand(0, PHP_INT_MAX);
+            $filename = 'image-' . (new DateTimeImmutable())->format('Y-m-d H:i:s') . '-' . rand(0, PHP_INT_MAX);
         }
 
         $this

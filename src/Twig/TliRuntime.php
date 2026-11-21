@@ -1,7 +1,8 @@
 <?php
 namespace App\Twig;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use NumberFormatter;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -14,13 +15,13 @@ class TliRuntime implements RuntimeExtensionInterface
     }
 
 
-    public function friendlyDate(?DateTime $date = null) : ?string
+    public function friendlyDate(?DateTimeInterface $date = null) : ?string
     {
         if( empty($date) ) {
             return null;
         }
 
-        $oNow = new DateTime();
+        $oNow = new DateTimeImmutable();
         $secDiff = $oNow->getTimestamp() - $date->getTimestamp();
         $oneDayInSec = 3600 * 24;
 

@@ -14,6 +14,7 @@ use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
 use App\ServiceCollection\UserCollection;
 use DateTime;
+use DateTimeImmutable;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -60,9 +61,10 @@ class Newsletter extends Mailer
         $this->newsletterOnSiteUrl = $this->privacyUrl =
             $urlGenerator->generate("app_home", [], UrlGeneratorInterface::ABSOLUTE_URL);
 
+        // a copy as DateTime, the only class DateMagician takes
         $newsletterDate =
             (new DateMagician())->intlFormat(
-                (new DateTime())->modify('+1 day'), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
+                DateTime::createFromImmutable( new DateTimeImmutable('+1 day') ), DateMagician::INTL_FORMAT_IT_DATE_COMPLETE
             );
 
         $this->newsletterName = static::TITLE . " ($newsletterDate)";
@@ -204,8 +206,8 @@ class Newsletter extends Mailer
 
     public function countRecipientsOfTheYear() : int
     {
-        $yearStart  = (new DateTime('first day of January this year 00:00:00'))->getTimestamp();
-        $yearEnd    = (new DateTime('last day of December this year 23:59:59'))->getTimestamp();
+        $yearStart  = (new DateTimeImmutable('first day of January this year 00:00:00'))->getTimestamp();
+        $yearEnd    = (new DateTimeImmutable('last day of December this year 23:59:59'))->getTimestamp();
         $num        = 0;
 
         $this->userCollection->iterate(function(User $user) use($yearStart, $yearEnd, &$num) {
@@ -306,7 +308,7 @@ class Newsletter extends Mailer
 
         $articleTitle = $this->newsletterName;
         if( $this->addTimestampToWebArticle ) {
-            $articleTitle .= ' - ' . (new DateTime())->format('H:i:s');
+            $articleTitle .= ' - ' . (new DateTimeImmutable())->format('H:i:s');
         }
 
         $article =
@@ -317,7 +319,7 @@ class Newsletter extends Mailer
                 ->setFormat(Article::FORMAT_ARTICLE)
                 ->setBody($articleBody)
                 ->setPublishedAt(
-                    ( new DateTime() )
+                    ( new DateTimeImmutable() )
                         ->modify('+1 day')
                         ->setTime(0, 0)
                 )
@@ -340,7 +342,7 @@ class Newsletter extends Mailer
             $userEntity = $this->factory->createUser()->load($userId)->getEntity();
 
             $opener = $this->getRepositoryOpener()->getByUserOrNew($userEntity);
-            $opener->setUpdatedAt( new DateTime() );
+            $opener->setUpdatedAt( new DateTimeImmutable() );
 
             $this->getRepositoryExpiringWarn()->deleteByUserId($userId);
 

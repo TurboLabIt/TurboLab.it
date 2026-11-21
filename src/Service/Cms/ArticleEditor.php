@@ -17,7 +17,7 @@ use App\Service\PhpBB\Topic;
 use App\Entity\PhpBB\Topic as TopicEntity;
 use App\Service\TextProcessor;
 use App\Service\User;
-use DateTimeInterface;
+use DateTimeImmutable;
 use Exception;
 
 
@@ -133,7 +133,7 @@ class ArticleEditor extends Article
     }
 
 
-    public function setPublishedAt(?DateTimeInterface $publishedAt) : static
+    public function setPublishedAt(?DateTimeImmutable $publishedAt) : static
     {
         $this->entity->setPublishedAt($publishedAt);
         return $this;

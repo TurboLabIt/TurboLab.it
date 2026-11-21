@@ -9,7 +9,7 @@ use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
 use App\Service\Cms\Paginator;
 use App\Service\Newsletter;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -433,7 +433,7 @@ class ArticleRepository extends BaseRepository
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_READY_FOR_REVIEW, false)
                 //->andWhere('t.updatedAt >= :dateLimit')
-                    //->setParameter('dateLimit', (new DateTime())->modify('-45 days') )
+                    //->setParameter('dateLimit', (new DateTimeImmutable())->modify('-45 days') )
                 ->orderBy('t.updatedAt', SortDirection::Ascending)
                 ->setFirstResult($startAt)
                 ->setMaxResults($this->itemsPerPage)
@@ -472,17 +472,17 @@ class ArticleRepository extends BaseRepository
 
     public function findLatestForSocialSharing(int $maxPublishedMinutes) : array
     {
-        $lowLimit   = (new DateTime())->modify('-' . $maxPublishedMinutes . " minutes");
+        $lowLimit   = (new DateTimeImmutable())->modify('-' . $maxPublishedMinutes . " minutes");
         // reset the time to zero seconds
         $lowHour    = (int)$lowLimit->format('G');
         $lowMinute  = (int)$lowLimit->format('i');
-        $lowLimit->setTime($lowHour, $lowMinute);
+        $lowLimit   = $lowLimit->setTime($lowHour, $lowMinute);
 
-        $highLimit  = (new DateTime());
+        $highLimit  = (new DateTimeImmutable());
         // reset the time to zero seconds
         $highHour   = (int)$highLimit->format('G');
         $highMinute = (int)$highLimit->format('i');
-        $highLimit->setTime($highHour, $highMinute);
+        $highLimit  = $highLimit->setTime($highHour, $highMinute);
 
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
@@ -557,7 +557,7 @@ class ArticleRepository extends BaseRepository
 
             $query
                 ->andWhere('t.updatedAt >= :daysAgo')
-                    ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"));
+                    ->setParameter('daysAgo', new DateTimeImmutable("-$maxDaysAgo days"));
         }
 
         $query
@@ -584,7 +584,7 @@ class ArticleRepository extends BaseRepository
 
             $query
                 ->andWhere('t.updatedAt >= :daysAgo')
-                ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"));
+                ->setParameter('daysAgo', new DateTimeImmutable("-$maxDaysAgo days"));
         }
 
         $query
@@ -609,7 +609,7 @@ class ArticleRepository extends BaseRepository
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus()
                 ->andWhere('t.publishedAt >= :daysAgo')
-                    ->setParameter('daysAgo', new DateTime("-$maxDaysAgo days"))
+                    ->setParameter('daysAgo', new DateTimeImmutable("-$maxDaysAgo days"))
                 ->addSelect('(
                     SELECT COUNT(visit.id) * 1440 / (CASE WHEN ' . $minutesVisible . ' < 1440 THEN 1440 ELSE ' . $minutesVisible . ' END)
                     FROM ' . Visit::class . ' visit
@@ -793,7 +793,7 @@ class ArticleRepository extends BaseRepository
     }
 
 
-    public function getByPublishedDateInterval(DateTime $startDate, DateTime $endDate) : array
+    public function getByPublishedDateInterval(DateTimeImmutable $startDate, DateTimeImmutable $endDate) : array
     {
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
@@ -945,7 +945,7 @@ class ArticleRepository extends BaseRepository
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
                 ->andWhere('t.format = ' . Article::FORMAT_ARTICLE)
                 ->andWhere('t.publishedAt >= :lowLimit')
-                    ->setParameter('lowLimit', (new DateTime())->modify('today midnight') )
+                    ->setParameter('lowLimit', (new DateTimeImmutable())->modify('today midnight') )
                 ->orderBy('t.publishedAt', SortDirection::Ascending)
                 ->getQuery()
                 ->getResult();
@@ -953,7 +953,7 @@ class ArticleRepository extends BaseRepository
 
 
     /** @return Article[] ordered by publishedAt DESC */
-    public function findAllNewsScheduledFrom(DateTime $from, ?int $excludeArticleId = null) : array
+    public function findAllNewsScheduledFrom(DateTimeImmutable $from, ?int $excludeArticleId = null) : array
     {
         $qb =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
@@ -985,7 +985,7 @@ class ArticleRepository extends BaseRepository
 
     public function findExistingNewsletterOnTheWeb() : ?Article
     {
-        $dateLimit = new DateTime('-72 hours');
+        $dateLimit = new DateTimeImmutable('-72 hours');
 
         return
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)
@@ -1000,8 +1000,8 @@ class ArticleRepository extends BaseRepository
 
     public function findExistingChristmas() : ?Article
     {
-        $decemberStart  = new DateTime('first day of December this year 00:00:00');
-        $yearEnd        = new DateTime('last day of December this year 23:59:59');
+        $decemberStart  = new DateTimeImmutable('first day of December this year 00:00:00');
+        $yearEnd        = new DateTimeImmutable('last day of December this year 23:59:59');
 
         return
             $this->getQueryBuilderComplete()
@@ -1017,8 +1017,8 @@ class ArticleRepository extends BaseRepository
 
     public function findNewOfTheYear(null|int|array $format = null) : array
     {
-        $yearStart  = new DateTime('first day of January this year 00:00:00');
-        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+        $yearStart  = new DateTimeImmutable('first day of January this year 00:00:00');
+        $yearEnd    = new DateTimeImmutable('last day of December this year 23:59:59');
 
         $query =
             $this->getQueryBuilderCompleteWherePublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED, false)

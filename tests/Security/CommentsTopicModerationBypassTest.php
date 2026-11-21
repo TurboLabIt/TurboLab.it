@@ -8,7 +8,7 @@ use App\Service\Factory;
 use App\Service\PhpBB\Topic;
 use App\Service\User;
 use App\Tests\BaseT;
-use DateTime;
+use DateTimeImmutable;
 
 
 /**
@@ -150,7 +150,7 @@ class CommentsTopicModerationBypassTest extends BaseT
                 ->setPublishingStatus($publishingStatus);
 
         if( $publishingStatus == Article::PUBLISHING_STATUS_PUBLISHED ) {
-            $article->setPublishedAt( new DateTime() );
+            $article->setPublishedAt( new DateTimeImmutable() );
         }
 
         foreach($arrAuthorIds as $authorId) {

@@ -8,7 +8,7 @@ use App\Service\Factory;
 use App\Service\FrontendHelper;
 use App\Service\Mailer;
 use App\Service\Sentinel\ArticleSentinel;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -98,7 +98,7 @@ abstract class ArticleEditBaseController extends BaseController
         ];
 
         return $this->json([
-            "message"       => "✅ OK! $okMessage - " . (new DateTime())->format('Y-m-d H:i:s'),
+            "message"       => "✅ OK! $okMessage - " . (new DateTimeImmutable())->format('Y-m-d H:i:s'),
             "path"          => $this->articleEditor->getUrl(UrlGeneratorInterface::RELATIVE_PATH),
             "title"         => $this->articleEditor->getTitle(),
             "strip"         => $this->twig->render('article/meta-strip.html.twig', $arrData),
@@ -119,13 +119,13 @@ abstract class ArticleEditBaseController extends BaseController
         if(
             (
                 !empty($previousPublishedAt) &&
-                $previousPublishedAt >= (new DateTime())->modify('-30 days') &&
-                $previousPublishedAt <= (new DateTime())
+                $previousPublishedAt >= (new DateTimeImmutable())->modify('-30 days') &&
+                $previousPublishedAt <= (new DateTimeImmutable())
             ) ||
             (
                 !empty($publishedAt) &&
-                $publishedAt >= (new DateTime())->modify('-30 days') &&
-                $publishedAt <= (new DateTime())
+                $publishedAt >= (new DateTimeImmutable())->modify('-30 days') &&
+                $publishedAt <= (new DateTimeImmutable())
             )
         ) {
             $arrTagsToDelete = ['app_home_page_1', 'app_feed', 'app_news_page_1'];

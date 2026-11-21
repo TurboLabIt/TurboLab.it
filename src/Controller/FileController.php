@@ -5,7 +5,7 @@ use App\Service\Cms\Visit;
 use App\Service\Cms\File;
 use App\Service\FrontendHelper;
 use App\ServiceCollection\Cms\FileCollection;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
@@ -97,18 +97,18 @@ class FileController extends BaseController
             $arrData += [
                 'AttachedUnused'                => $arrAttachedUnused,
                 'numAttachedUnused'             => number_format(count($arrAttachedUnused), 0, ',', '.'),
-                'dateAttachedUnusedList'        => new DateTime('@' . filemtime($filePathUnused)),
+                'dateAttachedUnusedList'        => new DateTimeImmutable('@' . filemtime($filePathUnused)),
                 //
                 'Orphans'                       => $files,
                 'numOrphans'                    => number_format($orphans->count(), 0, ',', '.'),
                 //
                 'MissingOnFilesystem'           => $arrMissingOnFilesystem,
                 'numMissingOnFilesystem'        => number_format(count($arrMissingOnFilesystem), 0, ',', '.'),
-                'dateMissingOnFilesystemList'   => new DateTime('@' . filemtime($filePathMissingOnFilesystem)),
+                'dateMissingOnFilesystemList'   => new DateTimeImmutable('@' . filemtime($filePathMissingOnFilesystem)),
                 //
                 'MissingOnDatabase'             => $arrMissingOnDatabase,
                 'numMissingOnDatabase'          => number_format(count($arrMissingOnDatabase), 0, ',', '.'),
-                'dateMissingOnDatabaseList'     => new DateTime('@' . filemtime($filePathMissingOnDatabase))
+                'dateMissingOnDatabaseList'     => new DateTimeImmutable('@' . filemtime($filePathMissingOnDatabase))
             ];
         }
 

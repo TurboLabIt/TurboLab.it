@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Service\Cms\Article;
 use App\Service\HtmlProcessorBase;
-use DateTime;
+use DateTimeImmutable;
 use Error;
 use Exception;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -17,7 +17,7 @@ class CalendarController extends BaseController
     #[Route('/calendario', name: 'app_calendar')]
     public function calendar() : Response
     {
-        $now = (new DateTime());
+        $now = (new DateTimeImmutable());
 
         $articles = $this->factory->createArticleCollection()->loadFirstAndLastPublished();
 
@@ -51,8 +51,8 @@ class CalendarController extends BaseController
                 throw new BadRequestException();
             }
 
-            $startDate  = (new DateTime($txtStartDate))->setTime(0, 0);
-            $endDate    = (new DateTime($txtEndDate))->setTime(23, 59);
+            $startDate  = (new DateTimeImmutable($txtStartDate))->setTime(0, 0);
+            $endDate    = (new DateTimeImmutable($txtEndDate))->setTime(23, 59);
 
             $articles   = $this->factory->createArticleCollection()->loadByPublishedDateInterval($startDate, $endDate);
 

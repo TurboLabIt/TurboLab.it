@@ -6,7 +6,7 @@ use App\Service\Cms\Article;
 use App\Service\HtmlProcessorBase;
 use App\Service\YouTubeChannelApi;
 use App\ServiceCollection\Cms\ArticleCollection;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use stdClass;
@@ -43,7 +43,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     protected bool $allowDryRunOpt  = true;
     protected bool $allowIdOpt      = true;
 
-    protected DateTime $oNow;
+    protected DateTimeImmutable $oNow;
     protected array $arrYouTubeVideos = [];
 
 
@@ -55,7 +55,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
     )
     {
         parent::__construct();
-        $this->oNow = new DateTime();
+        $this->oNow = new DateTimeImmutable();
     }
 
 
@@ -206,7 +206,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $this->fxInfo("🌅 This is the very first execution of the day");
 
             $defaultTimeZone = new DateTimeZone(date_default_timezone_get());
-            $oLastMidnight  = DateTime::createFromFormat('U', (string)strtotime('midnight'))->setTimezone($defaultTimeZone);
+            $oLastMidnight  = DateTimeImmutable::createFromFormat('U', (string)strtotime('midnight'))->setTimezone($defaultTimeZone);
             $maxMinutes = ( $this->oNow->format('U') - $oLastMidnight->format('U') ) / 60;
             $maxMinutes = ceil($maxMinutes);
 
@@ -216,7 +216,7 @@ class ShareOnSocialCommand extends AbstractBaseCommand
             $maxMinutes = static::EXEC_INTERVAL;
         }
 
-        $maxEligibleTime = (new DateTime())->modify("-$maxMinutes minutes")->format('Y-m-d H:i:s');
+        $maxEligibleTime = (new DateTimeImmutable())->modify("-$maxMinutes minutes")->format('Y-m-d H:i:s');
         $this->fxInfo("⏱ Max eligible: $maxMinutes minutes ago ($maxEligibleTime)");
 
         return $maxMinutes;

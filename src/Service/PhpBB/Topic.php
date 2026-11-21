@@ -7,7 +7,7 @@ use App\Repository\PhpBB\TopicRepository;
 use App\Service\BaseServiceEntity;
 use App\Service\Factory;
 use App\Service\HtmlProcessorBase;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -103,11 +103,11 @@ class Topic extends BaseServiceEntity
     //</editor-fold>
 
 
-    public function getLastPostDateTime() : DateTime
+    public function getLastPostDateTime() : DateTimeImmutable
     {
-        $oDateTime = DateTime::createFromTimestamp( $this->entity->getLastPostTime() );
-        $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
-        return $oDateTime;
+        return
+            DateTimeImmutable::createFromTimestamp( $this->entity->getLastPostTime() )
+                ->setTimezone(new DateTimeZone('Europe/Rome'));
     }
 
 

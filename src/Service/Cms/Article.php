@@ -16,8 +16,7 @@ use App\Trait\AuthorableTrait;
 use App\Trait\CommentsTopicStatusesTrait;
 use App\Trait\PublishingStatusesTrait;
 use App\Trait\VisitableServiceTrait;
-use DateTime;
-use DateTimeInterface;
+use DateTimeImmutable;
 use IntlDateFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -133,7 +132,7 @@ class Article extends BaseCmsService
 
     public function isKo() : bool { return $this->entity->getPublishingStatus() == static::PUBLISHING_STATUS_KO; }
 
-    public function getPublishedAt() : ?DateTimeInterface { return $this->entity->getPublishedAt(); }
+    public function getPublishedAt() : ?DateTimeImmutable { return $this->entity->getPublishedAt(); }
 
     public function getPublishedAtRecencyLabel() : ?string
     {
@@ -141,7 +140,7 @@ class Article extends BaseCmsService
             return null;
         }
 
-        $diff = $this->getPublishedAt()->getTimestamp() - (new DateTime())->getTimestamp();
+        $diff = $this->getPublishedAt()->getTimestamp() - (new DateTimeImmutable())->getTimestamp();
 
         // upcoming, less than 24 ours)
         if( $diff > 0 && $diff <= 24 * 60 * 60 ) {
@@ -489,7 +488,7 @@ class Article extends BaseCmsService
         }
 
         $updatedAt  = $this->getUpdatedAt();
-        $dateLimit  = (new DateTime())->modify('-2 months');
+        $dateLimit  = (new DateTimeImmutable())->modify('-2 months');
 
         if( !$this->isPublished() || $updatedAt < $dateLimit) {
             return $title;
@@ -648,7 +647,7 @@ class Article extends BaseCmsService
      * The most recent between "published" and "updated": an article scheduled days ahead was last
      * edited before it went out, and a dateModified older than datePublished makes no sense.
      */
-    public function getModifiedAt() : ?DateTimeInterface
+    public function getModifiedAt() : ?DateTimeImmutable
     {
         $publishedAt    = $this->getPublishedAt();
         $updatedAt      = $this->getUpdatedAt();
@@ -664,7 +663,7 @@ class Article extends BaseCmsService
     public function getStructuredData() : ?array
     {
         $publishedAt = $this->getPublishedAt();
-        if( !$this->isPublished() || !$this->isListable() || $publishedAt > new DateTime() ) {
+        if( !$this->isPublished() || !$this->isListable() || $publishedAt > new DateTimeImmutable() ) {
             return null;
         }
 

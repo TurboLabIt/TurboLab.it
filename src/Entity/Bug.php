@@ -5,14 +5,14 @@ use App\Entity\PhpBB\Post;
 use App\Entity\PhpBB\User;
 use App\Repository\BugRepository;
 use App\Trait\IdableEntityTrait;
+use App\Trait\TimestampableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 
 #[ORM\Entity(repositoryClass: BugRepository::class)]
 class Bug
 {
-    use IdableEntityTrait, TimestampableEntity;
+    use IdableEntityTrait, TimestampableEntityTrait;
 
     #[ORM\ManyToOne(inversedBy: 'bugs')]
     #[ORM\JoinColumn(referencedColumnName: 'user_id', nullable: true)]

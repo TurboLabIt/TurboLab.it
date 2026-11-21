@@ -3,7 +3,7 @@ namespace App\Repository\PhpBB;
 
 use App\Entity\PhpBB\User;
 use App\Service\Cms\Article;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
@@ -323,8 +323,8 @@ class UserRepository extends BasePhpBBRepository
 
     public function findNewOfTheYear() : array
     {
-        $yearStart  = new DateTime('first day of January this year 00:00:00');
-        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+        $yearStart  = new DateTimeImmutable('first day of January this year 00:00:00');
+        $yearEnd    = new DateTimeImmutable('last day of December this year 23:59:59');
 
         return
             $this->getQueryBuilderComplete()
@@ -340,8 +340,8 @@ class UserRepository extends BasePhpBBRepository
 
     public function findTopPostersOfTheYear() : array
     {
-        $yearStart  = new DateTime('first day of January this year 00:00:00');
-        $yearEnd    = new DateTime('last day of December this year 23:59:59');
+        $yearStart  = new DateTimeImmutable('first day of January this year 00:00:00');
+        $yearEnd    = new DateTimeImmutable('last day of December this year 23:59:59');
 
         $sqlSelectPostsOfTheYear = '
             SELECT poster_id, COUNT(1) AS num FROM ' . $this->getPhpBBTableName('phpbb_posts') . '

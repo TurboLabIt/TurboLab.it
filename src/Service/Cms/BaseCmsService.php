@@ -2,7 +2,7 @@
 namespace App\Service\Cms;
 
 use App\Service\BaseServiceEntity;
-use DateTime;
+use DateTimeImmutable;
 
 
 abstract class BaseCmsService extends BaseServiceEntity
@@ -46,5 +46,5 @@ abstract class BaseCmsService extends BaseServiceEntity
     }
 
 
-    public function getUpdatedAt() : ?DateTime { return $this->entity->getUpdatedAt(); }
+    public function getUpdatedAt() : ?DateTimeImmutable { return $this->entity->getUpdatedAt(); }
 }

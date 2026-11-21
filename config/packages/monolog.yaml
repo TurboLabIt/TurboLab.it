@@ -31,8 +31,8 @@ when@test:
                 excluded_http_codes: [404, 405]
                 # no deprecations, as in prod: in tests Doctrine reports every single one (the PHPUnit bridge turns
                 # its deduplication off), and the error handler logs them to a kernel's logger that no test resets,
-                # so this buffer kept each one with its stack trace until the class ended: 2 GB per worker with
-                # DBAL 4.6, which deprecates the DateTime type our entities read on every row
+                # so this buffer kept each one with its stack trace until the class ended: 2 GB per worker in
+                # 2026-11, when DBAL 4.6 deprecated the DateTime type our entities then read on every row
                 channels: ["!event", "!deprecation"]
             nested:
                 type: stream

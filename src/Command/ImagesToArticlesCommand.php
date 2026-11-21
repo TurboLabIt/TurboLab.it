@@ -11,7 +11,7 @@ use App\Service\HtmlProcessorForDisplay;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\Trait\CommandTrait;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
@@ -206,7 +206,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
         }
 
 
-        $dateCutoff = (new DateTime())->modify('-' . ImageRepository::ORPHANS_AFTER_MONTHS . ' months');
+        $dateCutoff = (new DateTimeImmutable())->modify('-' . ImageRepository::ORPHANS_AFTER_MONTHS . ' months');
         if( $junction->getUpdatedAt() > $dateCutoff ||  $article->getUpdatedAt() > $dateCutoff ) {
 
             // don't delete "too new" assoc

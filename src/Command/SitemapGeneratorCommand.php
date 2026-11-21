@@ -10,7 +10,7 @@ use App\Service\PhpBB\Topic;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\TagCollection;
 use App\ServiceCollection\PhpBB\TopicCollection;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use DOMDocument;
 use Exception;
@@ -149,7 +149,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = trim($url, "/");
         $this->arrSections["site"][0][] = [
             "url"           => $url,
-            "lastmod"       => (new DateTime())->format(DATE_W3C),
+            "lastmod"       => (new DateTimeImmutable())->format(DATE_W3C),
             "changefreq"    => 'hourly',
             "priority"      => 0.9
         ];
@@ -164,7 +164,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = $this->symfonyUrlGenerator->generate('app_news', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->arrSections["site"][0][] = [
             "url"           => $url,
-            "lastmod"       => (new DateTime())->format(DATE_W3C),
+            "lastmod"       => (new DateTimeImmutable())->format(DATE_W3C),
             "changefreq"    => 'hourly',
             "priority"      => 0.8
         ];
@@ -215,7 +215,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $currentFileItem    = count($this->arrSections["site"][0]);
         $currentFileIndex   = 0;
 
-        $oNow = new DateTime();
+        $oNow = new DateTimeImmutable();
 
        /** @var Article $article */
         foreach($this->articleCollection as $article) {
@@ -244,9 +244,9 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildScanFrequencyFromDateTime(DateTime $date) : string
+    protected function buildScanFrequencyFromDateTime(DateTimeImmutable $date) : string
     {
-        $diff       = (new DateTime())->format('U') - $date->getTimestamp();
+        $diff       = (new DateTimeImmutable())->format('U') - $date->getTimestamp();
         $diffDays   = round($diff / 86400);
 
         if( $diffDays < 7 ) {
@@ -267,7 +267,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         $url = $this->forumUrlGenerator->generateHomeUrl();
         $this->arrSections["forum"][0][] = [
             "url"       => $url,
-            "lastmod"   => (new DateTime())->format(DATE_W3C),
+            "lastmod"   => (new DateTimeImmutable())->format(DATE_W3C),
             "changefreq"=> 'hourly'
         ];
 
@@ -281,8 +281,9 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
         /** @var Forum $forum */
         foreach($arrForums as $forum) {
 
-            $oDateTime = DateTime::createFromFormat('U', (string)$forum->getLastPostTime());
-            $oDateTime->setTimezone(new DateTimeZone('Europe/Rome'));
+            $oDateTime =
+                DateTimeImmutable::createFromFormat('U', (string)$forum->getLastPostTime())
+                    ->setTimezone(new DateTimeZone('Europe/Rome'));
 
             $this->arrSections["forum"][0][] = [
                 "url"       => $this->forumUrlGenerator->generateForumUrlFromId($forum->getId()),
@@ -390,7 +391,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
 
             $arrItems[] = [
                 "url"       => $url,
-                "lastmod"   => (new DateTime())->format(DATE_W3C)
+                "lastmod"   => (new DateTimeImmutable())->format(DATE_W3C)
             ];
         }
 

@@ -8,7 +8,7 @@ use App\Service\Cms\Tag as TagService;
 use App\Entity\Cms\Tag as TagEntity;
 use App\Service\Factory;
 use DateInvalidOperationException;
-use DateTime;
+use DateTimeImmutable;
 use Meilisearch\Bundle\SearchManagerInterface;
 
 
@@ -186,7 +186,7 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadByPublishedDateInterval(DateTime $startDate, DateTime $endDate, ?int $maxDaysApart = 45) : static
+    public function loadByPublishedDateInterval(DateTimeImmutable $startDate, DateTimeImmutable $endDate, ?int $maxDaysApart = 45) : static
     {
         if( $startDate > $endDate || ( !empty($maxDaysApart) && $startDate->diff($endDate)->days > $maxDaysApart )
         ) {
@@ -201,7 +201,7 @@ class ArticleCollection extends BaseArticleCollection
     // Google News ignores anything older than two days
     public function loadForNewsSitemap() : static
     {
-        return $this->loadByPublishedDateInterval(new DateTime('-2 days'), new DateTime());
+        return $this->loadByPublishedDateInterval(new DateTimeImmutable('-2 days'), new DateTimeImmutable());
     }
 
 

@@ -2,7 +2,7 @@
 namespace App\Tests\Smoke;
 
 use App\Tests\BaseT;
-use DateTime;
+use DateTimeImmutable;
 use DOMDocument;
 use DOMXPath;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +87,7 @@ class SeoNewsTest extends BaseT
         $this->assertSame('urlset', $doc->documentElement->localName);
 
         // Google News ignores anything older than two days: the sitemap must not list it
-        $oldestAllowed = new DateTime('-2 days -5 minutes');
+        $oldestAllowed = new DateTimeImmutable('-2 days -5 minutes');
         foreach($xpath->query('//s:url') as $urlNode) {
 
             $this->assertNotEmpty($xpath->evaluate('string(s:loc)', $urlNode));
@@ -95,9 +95,9 @@ class SeoNewsTest extends BaseT
             $this->assertSame('it', $xpath->evaluate('string(news:news/news:publication/news:language)', $urlNode));
             $this->assertNotEmpty($xpath->evaluate('string(news:news/news:title)', $urlNode));
 
-            $publishedAt = new DateTime( $xpath->evaluate('string(news:news/news:publication_date)', $urlNode) );
+            $publishedAt = new DateTimeImmutable( $xpath->evaluate('string(news:news/news:publication_date)', $urlNode) );
             $this->assertGreaterThanOrEqual($oldestAllowed, $publishedAt);
-            $this->assertLessThanOrEqual(new DateTime(), $publishedAt);
+            $this->assertLessThanOrEqual(new DateTimeImmutable(), $publishedAt);
         }
     }
 

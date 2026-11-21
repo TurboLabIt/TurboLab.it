@@ -6,7 +6,7 @@ use App\Service\Cms\Paginator;
 use App\Service\Views;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\Tests\BaseT;
-use DateTime;
+use DateTimeImmutable;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -39,7 +39,7 @@ class ViewsTest extends BaseT
                 ) * 1440 / GREATEST(TIMESTAMPDIFF(MINUTE, published_at, NOW()), 1440) DESC, published_at DESC, id DESC
             ", [
                 'published' => Article::PUBLISHING_STATUS_PUBLISHED,
-                'daysAgo'   => (new DateTime("-$maxDaysAgo days"))->format('Y-m-d H:i:s')
+                'daysAgo'   => (new DateTimeImmutable("-$maxDaysAgo days"))->format('Y-m-d H:i:s')
             ]);
 
         $arrExpectedIds     = array_map('intval', $arrExpectedIds);

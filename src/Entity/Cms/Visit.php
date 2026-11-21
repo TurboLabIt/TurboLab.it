@@ -4,14 +4,14 @@ namespace App\Entity\Cms;
 use App\Entity\PhpBB\User;
 use App\Repository\Cms\VisitRepository;
 use App\Trait\IdableEntityTrait;
+use App\Trait\TimestampableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 
 #[ORM\Entity(repositoryClass: VisitRepository::class)]
 class Visit
 {
-    use IdableEntityTrait, TimestampableEntity;
+    use IdableEntityTrait, TimestampableEntityTrait;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]

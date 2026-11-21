@@ -6,7 +6,7 @@ use App\Entity\PhpBB\User as UserEntity;
 use App\Exception\UserNotFoundException;
 use App\Repository\PhpBB\UserRepository;
 use App\ServiceCollection\Cms\BaseArticleCollection;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -147,7 +147,7 @@ class User extends BaseServiceEntity
 
     public function getPostNum() : ?int { return $this->entity->getPostNum(); }
 
-    public function getRegistrationDate() : DateTime { return $this->entity->getRegistrationDate(); }
+    public function getRegistrationDate() : DateTimeImmutable { return $this->entity->getRegistrationDate(); }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 👮 Roles ***">

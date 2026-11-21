@@ -14,7 +14,7 @@ use App\Service\User;
 use App\ServiceCollection\Cms\ArticleCollection;
 use App\ServiceCollection\Cms\ArticleEditorCollection;
 use App\ServiceCollection\UserCollection;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -208,7 +208,7 @@ class ChristmasArticleGeneratorCommand extends AbstractBaseCommand
             ->addTag($this->tagTli, $this->articleAuthor)
             ->setFormat(Article::FORMAT_ARTICLE)
             ->setBody($articleBody)
-            ->setPublishedAt( new DateTime(date('Y') . '-12-23 00:00:00') )
+            ->setPublishedAt( new DateTimeImmutable(date('Y') . '-12-23 00:00:00') )
             ->setPublishingStatus(Article::PUBLISHING_STATUS_PUBLISHED)
             ->excludeFromPeriodicUpdateList()
             ->save( $this->isNotDryRun(true) );

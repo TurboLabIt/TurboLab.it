@@ -12,7 +12,7 @@ use App\Entity\Cms\TagAuthor;
 use App\Exception\InvalidIdException;
 use App\Exception\InvalidOperationException;
 use App\Repository\PhpBB\UserRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -235,13 +235,13 @@ class User extends BaseEntity implements UserInterface
 
     public function getRegDate() : ?int { return $this->regDate; }
 
-    public function getRegistrationDate() : ?DateTime
+    public function getRegistrationDate() : ?DateTimeImmutable
     {
         $regDate = $this->getRegDate();
 
         return
             empty($regDate) ? null :
-                DateTime::createFromFormat('U', (string)$regDate);
+                DateTimeImmutable::createFromFormat('U', (string)$regDate);
     }
 
     public function setRegDate(?int $regDate) : static

@@ -26,7 +26,7 @@ class ImageUrlGenerator extends UrlGenerator
         if(
             $size === Image::SIZE_REG &&
             $updatedAt > $createdAt &&
-            $updatedAt > new \DateTime('-1 year')
+            $updatedAt > new \DateTimeImmutable('-1 year')
         ) {
             $arrParams["v"] = $updatedAt->getTimestamp();
         }

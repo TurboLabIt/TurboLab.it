@@ -8,7 +8,7 @@ use App\Exception\InvalidEnumException;
 use App\Repository\Cms\ImageRepository;
 use App\Service\Factory;
 use App\Trait\AuthorableTrait;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TurboLabIt\BaseCommand\Service\ProjectDir;
 use Imagine\Gd\Imagine;
@@ -735,10 +735,10 @@ class Image extends BaseCmsService
      * last article (ImageRepository::getToDelete()), at its first run after that (every 3 hours). An orphan the last
      * run hasn't dated yet lost it in the last 3 hours: its months start now
      */
-    public function getOrphanDeletionDate() : DateTime
+    public function getOrphanDeletionDate() : DateTimeImmutable
     {
         return
-            DateTime::createFromInterface( $this->entity->getOrphanedAt() ?? new DateTime() )
+            ( $this->entity->getOrphanedAt() ?? new DateTimeImmutable() )
                 ->modify('+' . ImageRepository::DELETE_ORPHANS_AFTER_MONTHS . ' months');
     }
 }

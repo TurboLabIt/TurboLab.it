@@ -9,7 +9,7 @@ use App\Service\FrontendHelper;
 use App\Service\User;
 use App\ServiceCollection\Cms\ImageCollection;
 use App\Tests\BaseT;
-use DateTime;
+use DateTimeImmutable;
 use IntlDateFormatter;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
@@ -103,16 +103,16 @@ class ImageOrphansTest extends BaseT
 
         $arrOrphanedAt = [
             // goes in months
-            Image::ID_DEFAULT_SPOTLIGHT     => new DateTime('-1 month'),
+            Image::ID_DEFAULT_SPOTLIGHT     => new DateTimeImmutable('-1 month'),
             // goes in 10 days
-            Image::ID_404                   => (new DateTime('+10 days'))->modify("-$months months"),
+            Image::ID_404                   => (new DateTimeImmutable('+10 days'))->modify("-$months months"),
             // due: the next run deletes it
-            Image::ID_CHRISTMAS_SPOTLIGHT   => (new DateTime('-1 hour'))->modify("-$months months"),
+            Image::ID_CHRISTMAS_SPOTLIGHT   => (new DateTimeImmutable('-1 hour'))->modify("-$months months"),
         ];
 
         $crawler = $this->renderPage( array_keys($arrOrphanedAt), $arrOrphanedAt );
 
-        $deletionDate = fn(DateTime $orphanedAt) => $this->formatDate( (clone $orphanedAt)->modify("+$months months") );
+        $deletionDate = fn(DateTimeImmutable $orphanedAt) => $this->formatDate( $orphanedAt->modify("+$months months") );
 
         $this->assertSame([
             ['text' => 'Cancellazione: ' . $deletionDate($arrOrphanedAt[Image::ID_DEFAULT_SPOTLIGHT]), 'soon' => false],
@@ -133,7 +133,7 @@ class ImageOrphansTest extends BaseT
     public function testAnOrphanNotDatedYetGetsItsWholeYear() : void
     {
         $months   = ImageRepository::DELETE_ORPHANS_AFTER_MONTHS;
-        $expected = fn() => ['text' => 'Cancellazione: ' . $this->formatDate( new DateTime("+$months months") ), 'soon' => false];
+        $expected = fn() => ['text' => 'Cancellazione: ' . $this->formatDate( new DateTimeImmutable("+$months months") ), 'soon' => false];
 
         // the date before and after: the page may be built across midnight
         $arrExpected    = [ $expected() ];
@@ -167,7 +167,7 @@ class ImageOrphansTest extends BaseT
     //<editor-fold defaultstate="collapsed" desc="*** 🧰 the page, rendered with the orphans the test chooses ***">
     /**
      * @param int[] $arrImageIds the orphans, in this order
-     * @param array<int, ?DateTime> $arrOrphanedAt image ID => when the test says it lost its last article (null: not
+     * @param array<int, ?DateTimeImmutable> $arrOrphanedAt image ID => when the test says it lost its last article (null: not
      *                                             dated yet); default: its own
      */
     private function renderPage(array $arrImageIds, array $arrOrphanedAt = []) : Crawler
@@ -237,7 +237,7 @@ class ImageOrphansTest extends BaseT
 
 
     /** as the page writes a date: 4 dic 2026 */
-    private function formatDate(DateTime $date) : string
+    private function formatDate(DateTimeImmutable $date) : string
     {
         return
             (new IntlDateFormatter('it', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'd MMM y'))

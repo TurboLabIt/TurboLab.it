@@ -3,7 +3,7 @@ namespace App\Trait;
 
 use App\Exception\InvalidEnumException;
 use App\Service\Cms\Article;
-use DateTimeInterface;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,8 +17,8 @@ trait PublishableEntityTrait
     #[Assert\Choice(choices: self::PUBLISHING_STATUSES, message: 'Invalid publishing status')]
     protected int $publishingStatus = Article::PUBLISHING_STATUS_DRAFT;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    protected ?DateTimeInterface $publishedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    protected ?DateTimeImmutable $publishedAt = null;
 
     public function getPublishingStatus() : int { return $this->publishingStatus; }
 
@@ -33,9 +33,9 @@ trait PublishableEntityTrait
     }
 
 
-    public function getPublishedAt() : ?DateTimeInterface { return $this->publishedAt; }
+    public function getPublishedAt() : ?DateTimeImmutable { return $this->publishedAt; }
 
-    public function setPublishedAt(?DateTimeInterface $publishedAt) : static
+    public function setPublishedAt(?DateTimeImmutable $publishedAt) : static
     {
         $this->publishedAt = $publishedAt;
         return $this;

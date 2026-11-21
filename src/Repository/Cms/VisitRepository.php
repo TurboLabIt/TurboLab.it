@@ -7,7 +7,7 @@ use App\Entity\Cms\File;
 use App\Entity\Cms\Tag;
 use App\Entity\PhpBB\User;
 use App\Repository\BaseRepository;
-use DateTime;
+use DateTimeImmutable;
 use SortDirection;
 
 
@@ -63,7 +63,7 @@ class VisitRepository extends BaseRepository
 
         return
             $this->createVisit($userEntity, $entity, $ipAddress)
-                ->setUpdatedAt(new DateTime());
+                ->setUpdatedAt(new DateTimeImmutable());
     }
 
 
@@ -84,7 +84,7 @@ class VisitRepository extends BaseRepository
     }
 
 
-    public function getByContentAndUser(?User $userEntity, Article|Tag|File $entity, ?DateTime $onlyIfAfter = null) : ?Visit
+    public function getByContentAndUser(?User $userEntity, Article|Tag|File $entity, ?DateTimeImmutable $onlyIfAfter = null) : ?Visit
     {
         $qb =
             $this->createQueryBuilder('t', 't.id')
