@@ -9,7 +9,7 @@ class CommandFailureListener
 {
     public function __construct(protected TelegramMessenger $messenger) {}
 
-    public function onCommandFailure(ConsoleErrorEvent $event)
+    public function onCommandFailure(ConsoleErrorEvent $event) : void
     {
         // escape the dynamic parts: the error message can carry user input / markup and is sent to
         // Telegram with parse_mode=HTML (same class of bug as security-audit #29).

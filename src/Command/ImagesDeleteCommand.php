@@ -71,7 +71,7 @@ class ImagesDeleteCommand extends AbstractBaseCommand
     }
 
 
-    protected function deleteOneImage($key, ImageEditor $image) : static
+    protected function deleteOneImage(int $key, ImageEditor $image) : static
     {
         $imageId = $image->getId();
         $this->arrDeletedImages[$imageId] = [

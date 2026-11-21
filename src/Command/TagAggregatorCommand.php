@@ -81,14 +81,14 @@ class TagAggregatorCommand extends AbstractBaseCommand
      * @param $tag Tag
      * @return bool
      */
-    protected function iteratorSkipCondition($id, $tag) : bool
+    protected function iteratorSkipCondition(mixed $id, mixed $tag) : bool
     {
         $key = $tag->getTitleComparable();
         return !array_key_exists($key, static::BAD_TAGS);
     }
 
 
-    protected function assignReplacement($id, Tag $tag) : static
+    protected function assignReplacement(int $id, Tag $tag) : static
     {
         $key            = $tag->getTitleComparable();
         $replacementId  = static::BAD_TAGS[$key];

@@ -117,7 +117,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
-    protected function tagLinksFromPlaceholderToUrl(DOMDocument $domDoc)
+    protected function tagLinksFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $tagRegEx       = '/(?<=(==###tag::id::))[1-9]+[0-9]*(?=(###==))/';
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $tagRegEx);
@@ -150,7 +150,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
-    protected function fileLinksFromPlaceholderToUrl(DOMDocument $domDoc)
+    protected function fileLinksFromPlaceholderToUrl(DOMDocument $domDoc) : static
     {
         $fileRegEx      = static::REGEX_FILE_PLACEHOLDER;
         $arrLinkNodes   = $this->extractNodes($domDoc, 'a', 'href', $fileRegEx);
@@ -226,7 +226,7 @@ class HtmlProcessorForDisplay extends HtmlProcessorBase
     }
 
 
-    public function extractNodes(DOMDocument $domDoc, $tagName, $attributeToCheck, $attributeRegEx) : array
+    public function extractNodes(DOMDocument $domDoc, string $tagName, string $attributeToCheck, string $attributeRegEx) : array
     {
         $arrNodes = $domDoc->getElementsByTagName($tagName);
         $arrMatchingNodes = [];

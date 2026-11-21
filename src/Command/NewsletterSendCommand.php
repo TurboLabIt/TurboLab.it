@@ -254,7 +254,7 @@ class NewsletterSendCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildItemTitle($key, $item) : string
+    protected function buildItemTitle(mixed $key, mixed $item) : string
     {
         return "[$key] " . $item->getUsername() . " <" . $item->getEmail() . ">";
     }

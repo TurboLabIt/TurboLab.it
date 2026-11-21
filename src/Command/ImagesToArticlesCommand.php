@@ -138,7 +138,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function scanOneArticle($key, Article $article) : static
+    protected function scanOneArticle(int $key, Article $article) : static
     {
         $articleId  = $article->getId();
         $articleUrl = $article->getShortUrl();
@@ -192,7 +192,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function deleteOneJunctionIfUnused($key, ArticleImage $junction) : static
+    protected function deleteOneJunctionIfUnused(int $key, ArticleImage $junction) : static
     {
         $article    = $junction->getArticle();
         $articleId  = $article->getId();
@@ -251,7 +251,7 @@ class ImagesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function createNewJunction($key, array $arrMapItem) : static
+    protected function createNewJunction(int $key, array $arrMapItem) : static
     {
         if( empty($arrMapItem["Images"]) ) {
             return $this;

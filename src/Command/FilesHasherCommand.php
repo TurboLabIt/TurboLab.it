@@ -59,7 +59,7 @@ class FilesHasherCommand extends AbstractBaseCommand
     }
 
 
-    protected function hashOneFile($key, FileEditor $file) : static
+    protected function hashOneFile(int $key, FileEditor $file) : static
     {
         $oldHash    = $file->getHash();
         $url        = $file->getEntity()->getUrl();

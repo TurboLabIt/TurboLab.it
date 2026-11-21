@@ -165,7 +165,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function scanOneArticle($key, Article $article) : static
+    protected function scanOneArticle(int $key, Article $article) : static
     {
         $articleId  = $article->getId();
 
@@ -203,7 +203,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function deleteOneJunctionIfUnused($key, ArticleFile $junction) : static
+    protected function deleteOneJunctionIfUnused(int $key, ArticleFile $junction) : static
     {
         $article    = $junction->getArticle();
         $articleId  = $article->getId();
@@ -337,7 +337,7 @@ class FilesToArticlesCommand extends AbstractBaseCommand
     }
 
 
-    protected function createNewJunction($key, array $arrMapItem) : static
+    protected function createNewJunction(int $key, array $arrMapItem) : static
     {
         if( empty($arrMapItem["Files"]) ) {
             return $this;

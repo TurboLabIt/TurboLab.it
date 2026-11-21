@@ -66,7 +66,7 @@ class ArticleCollection extends BaseArticleCollection
     }
 
 
-    public function loadLatestUpdatedListable(?int $page = 1)
+    public function loadLatestUpdatedListable(?int $page = 1) : static
     {
         $arrArticles = $this->getRepository()->findLatestUpdated($page);
         return $this->setEntities($arrArticles);

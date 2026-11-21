@@ -123,7 +123,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     }
 
 
-    protected function buildItemTitle($key, $item) : string
+    protected function buildItemTitle(mixed $key, mixed $item) : string
     {
         $date       = $item->getDate()->toDate()->format("Y-m-d H:i:s");
         $subject    = mb_substr( (string)$item->getSubject(), 0, 50);
@@ -133,7 +133,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     }
 
 
-    protected function iteratorSkipCondition($key, $item) : bool
+    protected function iteratorSkipCondition(mixed $key, mixed $item) : bool
     {
         $subject = (string)$item->getSubject();
 
@@ -151,7 +151,7 @@ class EmailBounceManagerCommand extends AbstractBaseCommand
     }
 
 
-    protected function processOneMessage($key, $message) : static
+    protected function processOneMessage(int|string $key, Message $message) : static
     {
         $arrAddresses = array_merge( $this->extractAddressesFromBody($message), $this->extractAddressesFromSubParts($message) );
         $arrAddresses = $this->processAddresses($arrAddresses);

@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 trait CommandTrait
 {
-    protected function buildItemTitle($key, $item) : string
+    protected function buildItemTitle(mixed $key, mixed $item) : string
     {
         if( is_string($item) ) {
             return parent::buildItemTitle(null, $item);

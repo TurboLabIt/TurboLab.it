@@ -13,7 +13,7 @@ class ViewsController extends BaseController
 
 
     #[Route('/' . self::SECTION_SLUG . '/{slug}/{page<0|1>}', requirements: ['slug' => '[a-z-]+(?:/[a-z-]+)*'], name: 'app_views_multi_page_0-1')]
-    public function appViewsMulti0Or1($slug) : Response
+    public function appViewsMulti0Or1(string $slug) : Response
     {
         return $this->redirectToRoute('app_views_multi', ["slug" => $slug], Response::HTTP_MOVED_PERMANENTLY);
     }

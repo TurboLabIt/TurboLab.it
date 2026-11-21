@@ -110,7 +110,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     }
 
 
-    protected function matchEntitiesToFilesystem($key, File $file) : static
+    protected function matchEntitiesToFilesystem(int $key, File $file) : static
     {
         if( !$file->isLocal() ) {
             return $this;
@@ -200,7 +200,7 @@ class FilesNotFoundCommand extends AbstractBaseCommand
     }
 
 
-    protected function matchFilesystemToEntities($key, string $filepath) : static
+    protected function matchFilesystemToEntities(int $key, string $filepath) : static
     {
         if( !array_key_exists($filepath, $this->arrFilesByPath) ) {
             $this->arrMissingOnDatabase[] = $filepath;

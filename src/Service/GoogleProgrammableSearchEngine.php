@@ -28,7 +28,7 @@ class GoogleProgrammableSearchEngine
     ) {}
 
 
-    public function query(string $term)
+    public function query(string $term) : array
     {
         $url = static::ENDPOINT . '/customsearch/v1';
 

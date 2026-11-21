@@ -118,7 +118,7 @@ class CommentTopicsUpdateCommand extends AbstractBaseCommand
     }
 
 
-    protected function updateCommentTopic($key, ArticleEditor $article) : static
+    protected function updateCommentTopic(int $key, ArticleEditor $article) : static
     {
         $arrResult = [];
 

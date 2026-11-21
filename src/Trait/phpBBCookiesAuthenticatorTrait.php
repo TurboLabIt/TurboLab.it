@@ -97,7 +97,7 @@ trait phpBBCookiesAuthenticatorTrait
     }
 
 
-    protected function encryptNoRememberMeCookieData($data) : string { return $this->encryptor->encrypt($data); }
+    protected function encryptNoRememberMeCookieData(array $data) : string { return $this->encryptor->encrypt($data); }
 
 
     protected function decryptNoRememberMeCookieData() : ?array

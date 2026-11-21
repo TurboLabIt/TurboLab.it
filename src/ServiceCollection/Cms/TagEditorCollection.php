@@ -8,13 +8,9 @@ use App\Service\User;
 
 class TagEditorCollection extends TagCollection
 {
-    public function setFromIdsAndTags($arrIdsAndTags, User $author) : static
+    public function setFromIdsAndTags(array $arrIdsAndTags, User $author) : static
     {
         $this->clear();
-
-        if( empty($arrIdsAndTags) ) {
-            return $this;
-        }
 
         $arrIdsToLoad = array_column($arrIdsAndTags, 'id');
 

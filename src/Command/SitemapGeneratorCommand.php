@@ -378,7 +378,7 @@ class SitemapGeneratorCommand extends AbstractBaseCommand
     }
 
 
-    public function writeIndex()
+    public function writeIndex() : static
     {
         $this->fxTitle("Building the Sitemap index...");
         $urlBase = $this->symfonyUrlGenerator->generate('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL) . 'sitemap/';

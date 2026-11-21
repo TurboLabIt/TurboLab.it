@@ -32,7 +32,7 @@ class UserRepository extends BasePhpBBRepository
     }
 
 
-    public function findOneByUserSidKey(int $userId, string $sessionId, string $sessionKey)
+    public function findOneByUserSidKey(int $userId, string $sessionId, string $sessionKey) : ?User
     {
         // max_autologin_time is in DAYS; 0 = autologin keys never expire (phpBB default)
         $maxAutologinDays = $this->getPhpBBSessionConfig()['max_autologin_time'];
@@ -76,7 +76,7 @@ class UserRepository extends BasePhpBBRepository
     }
 
 
-    public function findOneByUserSid(int $userId, string $sessionId)
+    public function findOneByUserSid(int $userId, string $sessionId) : ?User
     {
         // reject sessions idle longer than phpBB's session_length (deterministic equivalent of phpBB's own GC)
         $minSessionTime = time() - $this->getPhpBBSessionConfig()['session_length'];
