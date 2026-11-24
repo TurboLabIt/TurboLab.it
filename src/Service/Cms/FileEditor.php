@@ -12,6 +12,7 @@ use App\Trait\UploadableFileTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 
 class FileEditor extends File
@@ -58,6 +59,8 @@ class FileEditor extends File
         // general validation (from UploadableFileTrait)
         $this->validateUploadedFile($file);
 
+        // before anything is saved: a file without extension is refused
+        $format                     = $this->getUploadedFileExtension($file);
         $filenameWithoutExtension   = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $hash                       = hash_file('md5', $file->getPathname() );
 
@@ -65,7 +68,7 @@ class FileEditor extends File
 
         $this
             ->setTitle($effectiveTitle)
-            ->setFormat( $this->getUploadedFileExtension($file) )
+            ->setFormat($format)
             ->setHash($hash)
             ->save();
 
@@ -85,6 +88,9 @@ class FileEditor extends File
     {
         $this->validateUploadedFile($file);
 
+        // before the Download changes: a file without extension is refused
+        $format = $this->getUploadedFileExtension($file);
+
         $hash = hash_file('md5', $file->getPathname() );
         $this->enforceSourceNotUsedElsewhere( $this->factory->createFileCollection()->loadByHash($hash) );
 
@@ -95,7 +101,7 @@ class FileEditor extends File
 
         $this
             ->setExternalDownloadUrl(null)
-            ->setFormat( $this->getUploadedFileExtension($file) )
+            ->setFormat($format)
             ->setHash($hash)
             ->save();
 
@@ -177,7 +183,8 @@ class FileEditor extends File
     protected function getUploadedFileExtension(UploadedFile $file) : string
     {
         $clientExtension    = $file->getClientOriginalExtension();
-        $extension          = $file->guessExtension();
+        $guessedExtension   = $file->guessExtension();
+        $extension          = $guessedExtension;
 
         // some file types, such as .ps1, have no "official" mime-type, thus are recognized as "text/plain" =>
         // this would screw the extension ==> falling back to client-provided extension
@@ -193,7 +200,22 @@ class FileEditor extends File
             $extension = $clientExtension;
         }
 
-        return (string)$extension;
+        // none in the name (LICENSE, hosts) and none from the content (text, HTML, a type without one): a Download
+        // without format has no name on disk, "{id}.{format}". empty() as in getOriginalFileName(), so "0" too
+        if( empty($extension) ) {
+
+            $fileName = $file->getClientOriginalName();
+
+            throw new UnprocessableEntityHttpException(
+                "Il file «{$fileName}» non ha un'estensione: " . (
+                    empty($guessedExtension)
+                        ? "rinominalo aggiungendo quella giusta e riprova."
+                        : "rinominalo, ad esempio «" . rtrim($fileName, '.') . ".{$guessedExtension}», e riprova."
+                )
+            );
+        }
+
+        return $extension;
     }
 
 
