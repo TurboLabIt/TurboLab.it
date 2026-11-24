@@ -6,6 +6,7 @@ use App\Entity\Cms\File as FileEntity;
 use App\Service\Cms\FileEditor;
 use App\Service\Factory;
 use App\Tests\BaseT;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -143,6 +144,50 @@ class FileReplaceTest extends BaseT
     }
 
 
+    /**
+     * The form always sends a format, but the server didn't ask for one: an empty format was saved, and a local file
+     * without one has no name on disk ("{id}.{format}"), so the Download, the page of every article using it and the
+     * file maintenance then failed with "Cannot get the name of a File without format". "0" is no format either
+     */
+    public static function emptyFormatProvider() : array
+    {
+        return [
+            'empty'         => [''],
+            'only spaces'   => ['   '],
+            'zero'          => ['0'],
+        ];
+    }
+
+
+    #[DataProvider('emptyFormatProvider')]
+    public function testModificaRefusesAnEmptyFormat(string $format) : void
+    {
+        static::loginAsSystem();
+
+        $file   = $this->createLocalFile('v1', 'txt');
+        $fileId = $file->getId();
+        $path   = $file->getOriginalFilePath();
+
+        $request = Request::create("/ajax/editor/file/update/$fileId/1", 'POST', [
+            'title' => $file->getTitle(), 'format' => $format
+        ]);
+
+        static::getService('request_stack')->push($request);
+        $response = static::getService(FileEditController::class)->update($fileId, 1);
+
+        $this->assertSame(400, $response->getStatusCode(), $response->getContent());
+        $this->assertStringContainsString("Il formato del file è obbligatorio", $response->getContent());
+
+        static::ensureKernelShutdown();
+        static::loginAsSystem();
+        $reloaded = $this->reload($fileId);
+
+        $this->assertSame('txt', $reloaded->getFormat());
+        $this->assertSame($path, $reloaded->getOriginalFilePath());
+        $this->assertFileExists($path);
+    }
+
+
     protected function tearDown() : void
     {
         static::ensureKernelShutdown();
@@ -150,7 +195,16 @@ class FileReplaceTest extends BaseT
 
         foreach($this->arrFileIds as $fileId) {
 
-            if( static::getEntityManager()->find(FileEntity::class, $fileId) ) {
+            $entity = static::getEntityManager()->find(FileEntity::class, $fileId);
+
+            // without a format, FileEditor can't even load it, nor tell which file on disk was its own
+            if( $entity !== null && empty( $entity->getFormat() ) ) {
+
+                static::getEntityManager()->remove($entity);
+                static::getEntityManager()->flush();
+
+            } elseif( $entity !== null ) {
+
                 $this->reload($fileId)->delete();
             }
         }

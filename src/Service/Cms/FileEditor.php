@@ -329,6 +329,13 @@ class FileEditor extends File
 
     public function save(bool $persist = true) : static
     {
+        // a local file is "{id}.{format}" on disk: without one it has no name, and the Download, the page of every
+        // article using it and the file maintenance fail. Checked before anything is written, whatever path set it
+        // ("Modifica" included); empty() as in getOriginalFileName(), so "0" too. An external Download may have none
+        if( $this->isLocal() && empty( $this->getFormat() ) ) {
+            throw new BadRequestHttpException("Il formato del file è obbligatorio.");
+        }
+
         $this->traitSave($persist);
 
         if( $this->isExternal() ) {
